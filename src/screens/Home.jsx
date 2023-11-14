@@ -1,13 +1,11 @@
 import React from "react";
-import { View } from "react-native";
-import { Text } from "@rneui/themed";
-import { Button } from "@rneui/themed";
-import { useTheme } from "@rneui/themed";
+import { StyleSheet, View } from "react-native";
 import logo from "../../assets/icon.png";
 import { Image } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
 
 function Home({ navigation }) {
-  const { theme, updateTheme } = useTheme();
+  const theme = useTheme();
   return (
     <View
       style={{
@@ -18,51 +16,80 @@ function Home({ navigation }) {
     >
       <View
         style={{
-          flexWrap: "wrap",
-          flexDirection: "row",
-          justifyContent: "center",
+          flex: 1,
+          justifyContent: "flex-end",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Image source={logo} style={{ width: 200, height: 200 }} />
-        <Text h1 h1Style={{ textAlign: "center", color: theme.colors.primary }}>
+        <Text
+          variant="displayMedium"
+          style={{
+            fontWeight: "bold",
+            color: theme.colors.primary,
+            textAlign: "center",
+          }}
+        >
           Welcome to Pinoy
-          <Text h1 h1Style={{ color: "red" }}>
+          <Text
+            variant="displayMedium"
+            style={{ fontWeight: "bold", color: "red" }}
+          >
             Care
           </Text>
         </Text>
-        <Text h4 h4Style={{ fontWeight: "100", color: theme.colors.primary }}>
+        <Text
+          variant="headlineMedium"
+          style={{ fontWeight: "100", color: theme.colors.primary }}
+        >
           The Best Way to Care!
         </Text>
       </View>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          flexWrap: "wrap",
+          flex: 0.7,
           width: "100%",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          marginTop: 30,
         }}
       >
         <Button
-          title="Login"
-          size="lg"
-          color={theme.colors.primary}
-          buttonStyle={{ borderRadius: 16, width: "100%" }}
-          titleStyle={{ fontSize: 30, textAlign: "center" }}
-          containerStyle={{ marginTop: 30, width: "90%" }}
+          style={styles.btn}
+          contentStyle={styles.btnContent}
+          labelStyle={styles.btnLabel}
+          mode="contained"
           onPress={() => navigation.navigate("Login")}
-        />
+        >
+          Login
+        </Button>
         <Button
-          title="Sign Up"
-          size="lg"
-          color={theme.colors.grey4}
-          buttonStyle={{ borderRadius: 16, width: "100%" }}
-          titleStyle={{ fontSize: 30, textAlign: "center" }}
-          containerStyle={{ marginTop: 10, width: "90%" }}
+          style={styles.btn}
+          contentStyle={styles.btnContent}
+          labelStyle={styles.btnLabel}
+          mode="contained"
           onPress={() => navigation.navigate("SignUp")}
-        />
+          buttonColor={theme.colors.onSurfaceDisabled}
+        >
+          Register
+        </Button>
       </View>
     </View>
   );
 }
 
 export default Home;
+
+const styles = StyleSheet.create({
+  btn: {
+    width: "90%",
+    marginBottom: 10,
+  },
+  btnContent: {
+    paddingVertical: 8,
+  },
+  btnLabel: {
+    fontSize: 20,
+  },
+});
