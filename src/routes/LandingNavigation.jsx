@@ -6,7 +6,7 @@ import Login from "../screens/Login";
 import Home from "../screens/Home";
 
 const Stack = createNativeStackNavigator();
-function Navigation() {
+function LandingNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
@@ -18,8 +18,8 @@ function Navigation() {
           <Stack.Screen name="Login" component={Login} />
         </Stack.Group>
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer >
   );
 }
 
-export default Navigation;
+export default LandingNavigation;

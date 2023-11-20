@@ -9,7 +9,7 @@ import {
   configureFonts,
 } from "react-native-paper";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Navigation from "./src/components/Navigation";
+import Navigation from "./src/routes/LandingNavigation";
 
 const fontConfig = {
   web: {
