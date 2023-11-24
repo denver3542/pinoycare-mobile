@@ -8,41 +8,39 @@ import ChoosePinoyCare from "../sections/Home/ChoosePinoyCare";
 
 function Home({ navigation }) {
   const theme = useTheme();
-  const Title = 'Welcome to Pinoy';
+  const Title = 'Welcome to Up';
   const spanTitle = 'Care';
-  const uppercaseTitle = Title.toUpperCase();
-  const uppercaseSpanTitle = spanTitle.toUpperCase();
-
   const windowHeight = Dimensions.get("screen").height;
   return (
     <ScrollView>
       <ImageBackground
-        source={{ uri: 'https://pinoycareph.com/assets/images/hero-bg.jpg' }}
+        source={require('../../assets/images/hero-bg.jpg')}
         style={[styles.backgroundImage, { height: windowHeight }]}
       >
         <View style={styles.container}>
           <View style={styles.innerContainer}>
-            <Image source={logo} style={{ width: 200, height: 200 }} />
+            <Image source={logo} style={{ width: 180, height: 180 }} />
             <Text
-              variant="displaySmall"
+              variant="headlineLarge"
               style={styles.content}
             >
-              {uppercaseTitle}
+              {Title}
               <Text
-                variant="displaySmall"
+                variant="headlineLarge"
                 style={{ fontWeight: "bold", color: "red" }}
               >
-                {uppercaseSpanTitle}
+                {spanTitle}
               </Text>
             </Text>
             <Text
               variant="headlineSmall"
               style={{
                 fontWeight: "100",
-                color: theme.colors.primary,
+                color: '#001c4e',
                 textShadowColor: '#001c4e',
                 textShadowOffset: { width: 0.5, height: 0.5 },
                 textShadowRadius: 1,
+                paddingTop: 10
               }}
             >
               The Best Way to Care!
@@ -53,7 +51,7 @@ function Home({ navigation }) {
                 width: "100%",
                 justifyContent: "flex-start",
                 alignItems: "center",
-                marginTop: 30,
+                paddingTop: 30,
               }}
             >
               <Button
@@ -80,9 +78,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    height: 800,
   },
   container: {
+    flex: 1,
     justifyContent: "flex-end",
     flexDirection: "column",
   },
@@ -93,31 +91,19 @@ const styles = StyleSheet.create({
     color: '#001c4e',
     textAlign: "center",
     fontWeight: 'bold',
-    textShadowColor: '#fff',
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 1,
+    width: '100%'
   },
   btnLogin: {
-    width: "70%",
-    marginBottom: 10,
+    width: '80%',
+    borderRadius: 100
   },
   btnContent: {
     paddingVertical: 8,
   },
   btnLabel: {
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  btnRegister: {
-    width: "70%",
-    marginBottom: 10,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#001c4e ',
-  },
-  btnRegisterLabel: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#001c4e'
   },
 });

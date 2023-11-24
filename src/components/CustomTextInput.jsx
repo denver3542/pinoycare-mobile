@@ -43,11 +43,10 @@ export default CustomTextInput;
 
 const styles = StyleSheet.create({
   inputTextContainer: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
   contentStyle: {
     borderRadius: 10,
-    backgroundColor: "red",
   },
   underlineStyle: {
     display: "none",
