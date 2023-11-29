@@ -10,6 +10,7 @@ import {
 } from "react-native-paper";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Navigation from "./src/routes/LandingNavigation";
+import LandingNavigation from "./src/routes/LandingNavigation";
 
 const fontConfig = {
   web: {
@@ -84,7 +85,7 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
-        <Navigation />
+        <LandingNavigation />
       </SafeAreaProvider>
     </PaperProvider>
   );

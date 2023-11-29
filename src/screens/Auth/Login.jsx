@@ -35,18 +35,6 @@ const Login = ({ navigation }) => {
   const { colors } = useTheme();
   const theme = useTheme();
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   getStoredRememberedUser().then((rememberedUser) => {
-  //     if (rememberedUser) {
-  //       setValue("username", rememberedUser.username);
-  //       setValue("contact_password", rememberedUser.contact_password);
-  //       setChecked(true);
-  //     }
-  //   });
-  //   setLoading(false);
-  // }, []);
-
 
   useEffect(() => {
     setLoading(true);
@@ -147,7 +135,7 @@ const Login = ({ navigation }) => {
           style={styles.btn}
           labelStyle={{
             fontSize: 16, // Increase font size for larger text
-            paddingVertical: 12, // Increase padding for taller button
+            paddingVertical: 8, // Increase padding for taller button
           }}
           mode="contained"
           onPress={handleSubmit(onSubmit)}
@@ -188,7 +176,7 @@ const Login = ({ navigation }) => {
           }}
           labelStyle={{
             fontSize: 16, // Increase font size for larger text
-            paddingVertical: 12, // Increase padding for taller button
+            paddingVertical: 8, // Increase padding for taller button
           }}
           disabled={loading}
           onPress={navSignUp}

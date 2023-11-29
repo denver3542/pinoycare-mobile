@@ -70,7 +70,6 @@ const SignUp = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
   card: {
     backgroundColor: '#FFFFFF',
     padding: 16,

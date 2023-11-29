@@ -21,12 +21,12 @@ function Home({ navigation }) {
           <View style={styles.innerContainer}>
             <Image source={logo} style={{ width: 180, height: 180 }} />
             <Text
-              variant="headlineLarge"
+              variant="displaySmall"
               style={styles.content}
             >
               {Title}
               <Text
-                variant="headlineLarge"
+                variant="displaySmall"
                 style={{ fontWeight: "bold", color: "red" }}
               >
                 {spanTitle}
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   btnLogin: {
-    width: '80%',
+    width: '100%',
     borderRadius: 100
   },
   btnContent: {

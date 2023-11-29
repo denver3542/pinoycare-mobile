@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
     StyleSheet,
     View,
-    SafeAreaView,
-    ScrollView,
 } from "react-native";
 import {
     Button,
@@ -23,16 +21,9 @@ const Professional = ({ navigation }) => {
     const { control, handleSubmit, setError, setValue } = useForm();
     const { colors } = useTheme();
 
-    useEffect(() => {
-        setLoading(true);
+    const onSubmit = () => {
 
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, []);
-
+    }
     return (
         <UnathorizeLayout>
             <Spinner visible={loading} color={colors.primary} />
@@ -44,7 +35,7 @@ const Professional = ({ navigation }) => {
                     marginBottom: 20,
                     textAlign: 'center'
                 }}>
-                    Create an Account
+                    Register as an Professional Account
                 </Text>
                 <CustomTextInput
                     control={control}
@@ -96,6 +87,17 @@ const Professional = ({ navigation }) => {
                     placeholder="Confirm Password"
                     rules={{ required: "Email must not be empty" }}
                 />
+                <Button
+                    style={styles.btn}
+                    labelStyle={{
+                        fontSize: 16, // Increase font size for larger text
+                        paddingVertical: 8, // Increase padding for taller button
+                    }}
+                    mode="contained"
+                    onPress={handleSubmit(onSubmit)}
+                >
+                    Submit
+                </Button>
             </View>
         </UnathorizeLayout>
 
@@ -104,7 +106,10 @@ const Professional = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
+    btn: {
+        marginTop: 20,
+        borderRadius: 5,
+    }
 });
 
 export default Professional;
