@@ -23,11 +23,11 @@ export default function OrganizationEmployer() {
                 <Text style={{
                     fontWeight: "bold",
                     color: colors.primary,
-                    fontSize: 24,
-                    marginBottom: 20,
+                    fontSize: 18,
+                    marginBottom: 30,
                     textAlign: 'center'
                 }}>
-                    Register as an Organizaition Account
+                    Organizaition Account
                 </Text>
                 <CustomTextInput
                     control={control}
@@ -81,9 +81,8 @@ export default function OrganizationEmployer() {
                     }}
                     mode="contained"
                     onPress={handleSubmit(onSubmit)}
-                    icon="login"
                 >
-                    Sign in
+                    Submit
                 </Button>
             </View>
         </UnathorizeLayout>

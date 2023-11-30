@@ -8,6 +8,7 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
+import AuthenticatedLayout from "../Layout/User/Unauthorize/AuthenticatedLayout";
 
 const Stack = createNativeStackNavigator();
 function LandingNavigation() {
@@ -23,6 +24,7 @@ function LandingNavigation() {
           <Stack.Screen name="Professional" component={Professional} />
           <Stack.Screen name="IndividualEmployer" component={IndividualEmployer} />
           <Stack.Screen name="OrganizationEmployer" component={OrganizationEmployer} />
+          <Stack.Screen name="UserHome" component={AuthenticatedLayout} />
         </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer >

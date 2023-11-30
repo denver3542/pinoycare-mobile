@@ -23,11 +23,11 @@ export default function IndividualEmployer() {
                 <Text style={{
                     fontWeight: "bold",
                     color: colors.primary,
-                    fontSize: 24,
-                    marginBottom: 20,
+                    fontSize: 18,
+                    marginBottom: 30,
                     textAlign: 'center'
                 }}>
-                    Register as an Individual Account
+                    Individual Account
                 </Text>
                 <CustomTextInput
                     control={control}

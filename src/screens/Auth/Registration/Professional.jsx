@@ -31,11 +31,11 @@ const Professional = ({ navigation }) => {
                 <Text style={{
                     fontWeight: "bold",
                     color: colors.primary,
-                    fontSize: 24,
-                    marginBottom: 20,
+                    fontSize: 18,
+                    marginBottom: 30,
                     textAlign: 'center'
                 }}>
-                    Register as an Professional Account
+                    Professional Account
                 </Text>
                 <CustomTextInput
                     control={control}

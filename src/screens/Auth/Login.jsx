@@ -48,6 +48,7 @@ const Login = ({ navigation }) => {
 
   const onSubmit = async (data) => {
     // setLoading(true);
+    navigation.replace('UserHome');
   };
 
   const navForgotPassword = async () => {
@@ -86,7 +87,7 @@ const Login = ({ navigation }) => {
           control={control}
           name="email"
           placeholder="Email"
-          rules={{ required: "Email must not be empty" }}
+        // rules={{ required: "Email must not be empty" }}
         />
         <CustomTextInput
           control={control}
@@ -100,13 +101,13 @@ const Login = ({ navigation }) => {
               style={{ backgroundColor: "transparent" }}
             />
           }
-          rules={{
-            required: "Password must not be empty",
-            minLength: {
-              value: 3,
-              message: "Password must be at least  3 characters long",
-            },
-          }}
+        // rules={{
+        //   required: "Password must not be empty",
+        //   minLength: {
+        //     value: 3,
+        //     message: "Password must be at least  3 characters long",
+        //   },
+        // }}
         />
         <View style={styles.checkboxContainer}>
           <View style={{ flexDirection: "row", alignItems: "center", }}>
@@ -134,8 +135,8 @@ const Login = ({ navigation }) => {
         <Button
           style={styles.btn}
           labelStyle={{
-            fontSize: 16, // Increase font size for larger text
-            paddingVertical: 8, // Increase padding for taller button
+            fontSize: 14, // Increase font size for larger text
+            paddingVertical: 6, // Increase padding for taller button
           }}
           mode="contained"
           onPress={handleSubmit(onSubmit)}
@@ -175,8 +176,8 @@ const Login = ({ navigation }) => {
 
           }}
           labelStyle={{
-            fontSize: 16, // Increase font size for larger text
-            paddingVertical: 8, // Increase padding for taller button
+            fontSize: 14, // Increase font size for larger text
+            paddingVertical: 6, // Increase padding for taller button
           }}
           disabled={loading}
           onPress={navSignUp}
