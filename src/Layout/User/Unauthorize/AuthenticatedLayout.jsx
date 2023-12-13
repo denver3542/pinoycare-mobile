@@ -1,20 +1,23 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
-import index from '../../../screens/User';
+import Header from './Header';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
-
-
-const BottomTab = createBottomTabNavigator();
-function AuthenticatedLayout() {
+function AuthenticatedLayout({ children }) {
     return (
-        <BottomTab.Navigator initialRouteName="Home">
-            <BottomTab.Screen name="Home" component={index} />
-            <BottomTab.Screen name="Feeds" component={index} />
-            <BottomTab.Screen name="Jobs" component={index} />
-            <BottomTab.Screen name="Application" component={index} />
-            <BottomTab.Screen name="Account" component={index} />
-        </BottomTab.Navigator>
+        <SafeAreaView style={{ flex: 1 }}>
+            <ScrollView style={styles.container}>
+                <View>
+                    {children}
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: 50
+    },
+});
 export default AuthenticatedLayout

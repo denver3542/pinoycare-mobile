@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-start",
-        marginTop: 50,
+        marginTop: 40,
     },
     logo: {
         fontSize: 20,
