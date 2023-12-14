@@ -2,32 +2,59 @@ import { useState } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
     StyleSheet,
+    ToastAndroid,
     View,
 } from "react-native";
 import {
     Button,
     Text,
+    TextInput,
     useTheme,
 } from "react-native-paper";
-import { TouchableOpacity } from "react-native";
-import { Header } from "../../../Layout/User/Unauthorize";
 import UnathorizeLayout from "../../../Layout/User/Unauthorize/UnathorizeLayout";
 import CustomTextInput from "../../../components/CustomTextInput";
 import { useForm } from "react-hook-form";
 import CustomSelectBox from "../../../components/CustomSelectBox";
+import useAuth from "../../../hooks/useAuth";
+import CustomSnackbar from "../../../components/CustomSnackbar";
 
-const Professional = ({ navigation }) => {
+const Professional = () => {
     const [loading, setLoading] = useState(false);
-    const { control, handleSubmit, setError, setValue } = useForm();
+    const { signup } = useAuth();
+    const { control, handleSubmit, watch, setError } = useForm();
     const { colors } = useTheme();
+    const [showPw, setShowPw] = useState(false);
+    const [snackbarVisible, setSnackbarVisible] = useState(false);
 
-    const onSubmit = () => {
+    const showSnackbar = () => {
+        setSnackbarVisible(true);
+    };
 
+    const hideSnackbar = () => {
+        setSnackbarVisible(false);
+    };
+
+
+    const onSubmit = async (data) => {
+        setLoading(true)
+        signup(data).then((res) => {
+            if (res.success === 0) {
+                setError('email', { type: 'custom', message: 'Email is already taken.' })
+            } else {
+                console.log('success');
+                showSnackbar()
+            }
+        }).catch(err => {
+            setError('email', { type: 'custom', message: 'Email is already taken.' })
+            console.log(err);
+        });
+        setLoading(false)
     }
     return (
         <UnathorizeLayout>
             <Spinner visible={loading} color={colors.primary} />
-            <View style={{ paddingVertical: 20, marginBottom: 20, justifyContent: 'center', gap: 5 }}>
+
+            <View style={{ justifyContent: 'center', gap: 5 }}>
                 <Text style={{
                     fontWeight: "bold",
                     color: colors.primary,
@@ -57,17 +84,18 @@ const Professional = ({ navigation }) => {
                 />
                 <CustomSelectBox
                     control={control}
-                    name="yourFieldName"
+                    name="gender"
                     items={[
-                        { label: 'Male', value: 'option1' },
-                        { label: 'Female', value: 'option2' },
+                        { label: 'Select a Gender', value: '' },
+                        { label: 'Male', value: 'M' },
+                        { label: 'Female', value: 'F' },
                     ]}
                 />
                 <CustomTextInput
                     control={control}
-                    name="date"
-                    placeholder="Date"
-                    rules={{ required: "Email must not be empty" }}
+                    name="date_of_birth"
+                    placeholder="Birthdate"
+                    rules={{ required: "Birthdate must not be empty" }}
                 />
                 <CustomTextInput
                     control={control}
@@ -79,13 +107,17 @@ const Professional = ({ navigation }) => {
                     control={control}
                     name="password"
                     placeholder="Password"
-                    rules={{ required: "Email must not be empty" }}
+                    rules={{ required: "Password must not be empty" }}
+                    secureTextEntry={!showPw}
+                    right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
                 />
                 <CustomTextInput
                     control={control}
                     name="confirmpassword"
                     placeholder="Confirm Password"
-                    rules={{ required: "Email must not be empty" }}
+                    rules={{ required: "Password must not be empty" }}
+                    secureTextEntry={!showPw}
+                    right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
                 />
                 <Button
                     style={styles.btn}
@@ -99,6 +131,12 @@ const Professional = ({ navigation }) => {
                     Submit
                 </Button>
             </View>
+            <CustomSnackbar
+                visible={snackbarVisible}
+                onDismiss={hideSnackbar}
+                message="Login Successfully"
+                color="green"
+            />
         </UnathorizeLayout>
 
 

@@ -1,20 +1,26 @@
 import React from 'react'
 import { Button, Text, useTheme } from 'react-native-paper'
 import UnathorizeLayout from '../../../Layout/User/Unauthorize/UnathorizeLayout'
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { StyleSheet, View } from 'react-native';
 import CustomTextInput from '../../../components/CustomTextInput';
 import CustomSelectBox from '../../../components/CustomSelectBox';
+import useAuth from '../../../hooks/useAuth';
 
 export default function IndividualEmployer() {
     const [loading, setLoading] = useState(false);
-    const { control, handleSubmit, setError, setValue } = useForm();
+    const { signup } = useAuth();
+    const { control, handleSubmit, watch, setError } = useForm();
     const { colors } = useTheme();
 
-    const onSubmit = () => {
 
+    const date_of_birth = watch('date_of_birth');
+
+    const onSubmit = async (data) => {
+        setLoading(true)
+        console.log(data)
     }
     return (
         <UnathorizeLayout>
@@ -77,12 +83,14 @@ export default function IndividualEmployer() {
                 <CustomTextInput
                     control={control}
                     name="password"
+                    type="password"
                     placeholder="Password"
                     rules={{ required: "Email must not be empty" }}
                 />
                 <CustomTextInput
                     control={control}
                     name="confirmpassword"
+                    type="password"
                     placeholder="Confirm Password"
                     rules={{ required: "Email must not be empty" }}
                 />

@@ -11,6 +11,8 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Navigation from "./src/routes/LandingNavigation";
 import LandingNavigation from "./src/routes/LandingNavigation";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./utils/queryClient";
 
 const fontConfig = {
   web: {
@@ -83,11 +85,14 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <LandingNavigation />
-      </SafeAreaProvider>
-    </PaperProvider>
+    <QueryClientProvider client={queryClient}>
+      <PaperProvider theme={theme}>
+        <SafeAreaProvider>
+          <LandingNavigation />
+        </SafeAreaProvider>
+      </PaperProvider>
+    </QueryClientProvider>
+
   );
 }
 
