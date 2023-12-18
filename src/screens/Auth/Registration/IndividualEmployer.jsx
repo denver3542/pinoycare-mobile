@@ -25,7 +25,7 @@ export default function IndividualEmployer() {
     return (
         <UnathorizeLayout>
             <Spinner visible={loading} color={colors.primary} />
-            <View style={{ paddingVertical: 20, marginBottom: 20, justifyContent: 'center', gap: 5 }}>
+            <View style={{ justifyContent: 'center', gap: 5 }}>
                 <Text style={{
                     fontWeight: "bold",
                     color: colors.primary,
@@ -57,8 +57,9 @@ export default function IndividualEmployer() {
                     control={control}
                     name="yourFieldName"
                     items={[
-                        { label: 'Male', value: 'option1' },
-                        { label: 'Female', value: 'option2' },
+                        { label: 'Select a Gender', value: '' },
+                        { label: 'Male', value: 'M' },
+                        { label: 'Female', value: 'F' },
                     ]}
                 />
                 <CustomTextInput
@@ -71,6 +72,7 @@ export default function IndividualEmployer() {
                     control={control}
                     name="Organization Type"
                     items={[
+                        { label: 'Select Organization', value: '' },
                         { label: 'Private Nurse', value: 'Private Nurse' },
                     ]}
                 />

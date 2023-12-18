@@ -42,7 +42,6 @@ export default function useAuth() {
     async function signup(userDetails) {
         return authServerCall("/auth/signup", userDetails);
     }
-
     // async function logout() {
     //     try {
     //         // clear user from stored user data

@@ -53,7 +53,6 @@ const Professional = () => {
     return (
         <UnathorizeLayout>
             <Spinner visible={loading} color={colors.primary} />
-
             <View style={{ justifyContent: 'center', gap: 5 }}>
                 <Text style={{
                     fontWeight: "bold",
@@ -134,7 +133,7 @@ const Professional = () => {
             <CustomSnackbar
                 visible={snackbarVisible}
                 onDismiss={hideSnackbar}
-                message="Login Successfully"
+                message="Registered Successfully"
                 color="green"
             />
         </UnathorizeLayout>

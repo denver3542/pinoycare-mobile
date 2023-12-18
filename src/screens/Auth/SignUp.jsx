@@ -1,115 +1,152 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
   StyleSheet,
+  ToastAndroid,
   View,
-  SafeAreaView,
-  ScrollView,
 } from "react-native";
 import {
   Button,
   Text,
+  TextInput,
   useTheme,
 } from "react-native-paper";
-import { TouchableOpacity } from "react-native";
-import { Header } from "../../Layout/User/Unauthorize";
 import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
+import CustomTextInput from "../../components/CustomTextInput";
+import { useForm } from "react-hook-form";
+import CustomSelectBox from "../../components/CustomSelectBox";
+import useAuth from "../../hooks/useAuth";
+import CustomSnackbar from "../../components/CustomSnackbar";
 
-const SignUp = ({ navigation }) => {
+const Signup = () => {
   const [loading, setLoading] = useState(false);
+  const { signup } = useAuth();
+  const { control, handleSubmit, watch, setError } = useForm();
   const { colors } = useTheme();
+  const [showPw, setShowPw] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const navRegistration = async (route) => {
-    navigation.navigate(route);
+  const showSnackbar = () => {
+    setSnackbarVisible(true);
   };
 
+  const hideSnackbar = () => {
+    setSnackbarVisible(false);
+  };
+
+
+  const onSubmit = async (data) => {
+    setLoading(true)
+    signup(data).then((res) => {
+      if (res.success === 0) {
+        setError('email', { type: 'custom', message: 'Email is already taken.' })
+      } else {
+        console.log('success');
+        showSnackbar()
+      }
+    }).catch(err => {
+      setError('email', { type: 'custom', message: 'Email is already taken.' })
+      console.log(err);
+    });
+    setLoading(false)
+  }
   return (
     <UnathorizeLayout>
       <Spinner visible={loading} color={colors.primary} />
-      <View style={{ paddingVertical: 20, marginBottom: 20, alignItems: 'center' }}>
+      <View style={{ justifyContent: 'center', gap: 5 }}>
         <Text style={{
           fontWeight: "bold",
           color: colors.primary,
-          fontSize: 24,
-          marginBottom: 20,
+          fontSize: 18,
+          marginBottom: 30,
+          textAlign: 'center'
         }}>
-          Select your Role
+          Professional Account
         </Text>
-        <TouchableOpacity onPress={() => navRegistration('Professional')} style={styles.card}>
-          <Text style={styles.header}>Medical Professional</Text>
-          <Text style={styles.body}>I'm a medical professional and I'm currently interested in looking for a job.</Text>
-        </TouchableOpacity>
-        <View style={styles.lineContainer}>
-          <View style={styles.line} />
-          <View>
-            <Text style={styles.lineText}>For Employers</Text>
-          </View>
-          <View style={styles.line} />
-        </View>
-        <TouchableOpacity onPress={() => navRegistration('IndividualEmployer')} style={styles.card}>
-          <Text style={styles.header}>Individual Employer</Text>
-          <Text style={styles.body}>I'm a Individual employer and I'm currently interested in looking for a professional.</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navRegistration('OrganizationEmployer')} style={styles.card}>
-          <Text style={styles.header}>Organization Employer</Text>
-          <Text style={styles.body}>I'm a Organization employer and I'm currently interested in looking for a professional.</Text>
-        </TouchableOpacity>
+        <CustomTextInput
+          control={control}
+          name="firstname"
+          placeholder="Firstname"
+          rules={{ required: "Firstname must not be empty" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="middlename"
+          placeholder="Middlename"
+          rules={{ required: "Middlename must not be empty" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="lastname"
+          placeholder="Lastname"
+          rules={{ required: "Lastname must not be empty" }}
+        />
+        <CustomSelectBox
+          control={control}
+          name="gender"
+          items={[
+            { label: 'Select a Gender', value: '' },
+            { label: 'Male', value: 'M' },
+            { label: 'Female', value: 'F' },
+          ]}
+        />
+        <CustomTextInput
+          control={control}
+          name="date_of_birth"
+          placeholder="Birthdate"
+          rules={{ required: "Birthdate must not be empty" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="email"
+          placeholder="Email"
+          rules={{ required: "Email must not be empty" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="password"
+          placeholder="Password"
+          rules={{ required: "Password must not be empty" }}
+          secureTextEntry={!showPw}
+          right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
+        />
+        <CustomTextInput
+          control={control}
+          name="confirmpassword"
+          placeholder="Confirm Password"
+          rules={{ required: "Password must not be empty" }}
+          secureTextEntry={!showPw}
+          right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
+        />
+        <Button
+          style={styles.btn}
+          labelStyle={{
+            fontSize: 16, // Increase font size for larger text
+            paddingVertical: 8, // Increase padding for taller button
+          }}
+          mode="contained"
+          onPress={handleSubmit(onSubmit)}
+        >
+          Submit
+        </Button>
       </View>
+      <CustomSnackbar
+        visible={snackbarVisible}
+        onDismiss={hideSnackbar}
+        message="Registered Successfully"
+        color="green"
+      />
     </UnathorizeLayout>
+
+
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 8,
-    width: '100%',
-    elevation: 1,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    shadowOpacity: 0.1,
-    marginVertical: 8,
-    padding: 30,
-  },
-  header: {
-    color: '#012970',
-    fontWeight: 'bold',
-    fontSize: 22,
-    marginBottom: 4, // Adjust the space between the header and the body as needed
-  },
-  body: {
-    fontSize: 14,
-    letterSpacing: 0.5,
-    lineHeight: 20,
-  },
-  lineContainer: {
-    flexDirection: 'row', // Align children in a row
-    alignItems: 'center', // Center items vertically
-    marginVertical: 20, // Add vertical spacing
-  },
-  line: {
-    flex: 1, // Take up all available space
-    height: 1, // 1 pixel high line
-    backgroundColor: 'grey', // Line color
-  },
-  lineText: {
-    width: '100%', // Width of the 'or' container
-    textAlign: 'center', // Center text horizontally
-    color: 'grey', // Text color
-    paddingHorizontal: 10, // Horizontal padding
-  },
+  btn: {
+    marginTop: 20,
+    borderRadius: 5,
+  }
 });
 
-export default SignUp;
+export default Signup;
