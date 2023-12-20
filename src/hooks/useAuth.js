@@ -4,6 +4,7 @@ import * as WebBrowser from "expo-web-browser"
 import axios from 'axios';
 import axiosInstancee, { getJWTHeader } from '../../utils/axiosConfig';
 import { useUser } from './useUser';
+import { setStoredUser } from '../user-storage';
 
 WebBrowser.maybeCompleteAuthSession()
 
@@ -19,11 +20,13 @@ export default function useAuth() {
                 data: userDetails,
                 headers: { "Content-Type": "application/json" },
             });
-            if ("user" in data && "token" in data.user) {
+            if ("user" in data && "token" in data) {
                 // update stored user data
+                console.log('Token found, updating user data');
                 setStoredUser(data.user);
                 updateUser(data.user);
             }
+
 
             return data;
         } catch (errorResponse) {

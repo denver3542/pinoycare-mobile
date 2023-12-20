@@ -4,7 +4,7 @@ import axiosInstancee, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 
 export async function getUser(signal) {
-    let user = await AsyncStorage.getItem("nasya_user");
+    let user = await AsyncStorage.getItem("pinoycare_user");
     if (!user) {
         // Logout the user
         return null;

@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Dimensions, ImageBackground, ScrollView, StyleSheet, View } from "react-native";
 import logo from "../../assets/icon.png";
 import { Image } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import Vision from "../sections/Home/Vision";
 import ChoosePinoyCare from "../sections/Home/ChoosePinoyCare";
+import { useUser } from "../hooks/useUser";
 
 function Home({ navigation }) {
   const theme = useTheme();
   const Title = 'Welcome to Up';
   const spanTitle = 'Care';
   const windowHeight = Dimensions.get("screen").height;
+
+  const { user, isFetching, isFetched } = useUser();
+  const [loading, setLoading] = useState(true);
+
+  useLayoutEffect(() => {
+    if (isFetched) {
+      setLoading(false);
+    }
+  }, [isFetched]);
+
   return (
     <ScrollView>
       <ImageBackground

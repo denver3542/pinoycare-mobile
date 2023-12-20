@@ -52,7 +52,15 @@ const Signup = () => {
   }
   return (
     <UnathorizeLayout>
+      {/* <CustomSnackbar
+        visible={snackbarVisible}
+        onDismiss={hideSnackbar}
+        message="Registered Successfully"
+        color="green"
+        sx={{ padding: 0, margin: 0 }}
+      /> */}
       <Spinner visible={loading} color={colors.primary} />
+
       <View style={{ justifyContent: 'center', gap: 5 }}>
         <Text style={{
           fontWeight: "bold",
@@ -130,12 +138,7 @@ const Signup = () => {
           Submit
         </Button>
       </View>
-      <CustomSnackbar
-        visible={snackbarVisible}
-        onDismiss={hideSnackbar}
-        message="Registered Successfully"
-        color="green"
-      />
+
     </UnathorizeLayout>
 
 
