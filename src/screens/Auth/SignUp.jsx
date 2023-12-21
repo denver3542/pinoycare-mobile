@@ -42,7 +42,7 @@ const Signup = () => {
         setError('email', { type: 'custom', message: 'Email is already taken.' })
       } else {
         console.log('success');
-        showSnackbar()
+        // showSnackbar()
       }
     }).catch(err => {
       setError('email', { type: 'custom', message: 'Email is already taken.' })
@@ -52,13 +52,6 @@ const Signup = () => {
   }
   return (
     <UnathorizeLayout>
-      {/* <CustomSnackbar
-        visible={snackbarVisible}
-        onDismiss={hideSnackbar}
-        message="Registered Successfully"
-        color="green"
-        sx={{ padding: 0, margin: 0 }}
-      /> */}
       <Spinner visible={loading} color={colors.primary} />
 
       <View style={{ justifyContent: 'center', gap: 5 }}>

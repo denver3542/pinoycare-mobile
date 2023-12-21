@@ -24,7 +24,7 @@ function AuthenticatedNavigation() {
         <View>
             {loading && <Spinner visible={loading} />}
 
-            <BottomTab.Navigator
+            <BottomTab.Navigator initialRouteName='Home'
                 screenOptions={{ animationEnabled: false, headerShown: false }}
             >
 

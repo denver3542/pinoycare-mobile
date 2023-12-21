@@ -20,6 +20,7 @@ export default function useAuth() {
                 data: userDetails,
                 headers: { "Content-Type": "application/json" },
             });
+            console.log(data);
             if ("user" in data && "token" in data) {
                 // update stored user data
                 console.log('Token found, updating user data');

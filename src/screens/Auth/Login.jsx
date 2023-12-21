@@ -25,30 +25,31 @@ import { useForm } from "react-hook-form";
 import CustomTextInput from "../../components/CustomTextInput";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
+import useAuth from "../../hooks/useAuth";
 
 const Login = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const { control, handleSubmit, setError, setValue } = useForm();
-  const [generalError, setGeneralError] = useState("");
-  const [checked, setChecked] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const { colors } = useTheme();
-  const theme = useTheme();
-
-
-  useEffect(() => {
-    setLoading(true);
-
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const onSubmit = async (data) => {
-    // setLoading(true);
-    navigation.replace('UserHome');
+    setLoading(true)
+    login(data).then((res) => {
+      if (res.success === 0) {
+        setError('email', { type: 'custom', message: 'Your email is existing or not valid.' })
+        setError('password', { type: 'custom', message: 'Your password must be incorrect.' })
+      } else {
+        console.log('success');
+        // showSnackbar()
+      }
+    }).catch(err => {
+      setError('email', { type: 'custom', message: 'Your email is existing or not valid.' })
+      setError('password', { type: 'custom', message: 'Your password must be incorrect.' })
+      console.log(err);
+    });
+    setLoading(false)
   };
 
   const navForgotPassword = async () => {
@@ -75,25 +76,21 @@ const Login = ({ navigation }) => {
           you in.
         </Text>
       </View>
-      {generalError && (
-        <View style={{ marginBottom: 4, marginTop: -8 }}>
-          <HelperText type="error" visible={generalError}>
-            {generalError}
-          </HelperText>
-        </View>
-      )}
+
       <View >
         <CustomTextInput
           control={control}
           name="email"
           placeholder="Email"
+          rules={{ required: "Email must be valid and not empty" }}
         // rules={{ required: "Email must not be empty" }}
         />
         <CustomTextInput
           control={control}
-          name="contact_password"
+          name="password"
           placeholder="Password"
           secureTextEntry={!showPw}
+          rules={{ required: "Password must not be empty" }}
           right={
             <TextInput.Icon
               icon={showPw ? "eye-off" : "eye"}
@@ -101,13 +98,6 @@ const Login = ({ navigation }) => {
               style={{ backgroundColor: "transparent" }}
             />
           }
-        // rules={{
-        //   required: "Password must not be empty",
-        //   minLength: {
-        //     value: 3,
-        //     message: "Password must be at least  3 characters long",
-        //   },
-        // }}
         />
         <View style={styles.checkboxContainer}>
           <View style={{ flexDirection: "row", alignItems: "center", }}>
