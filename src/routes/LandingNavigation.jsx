@@ -1,19 +1,22 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useLayoutEffect, useState } from "react";
-
 import Home from "../screens/Home";
 import SignUp from "../screens/Auth/SignUp";
 import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
-import AuthenticatedNavigation from "./AuthenticatedNavigation";
 import { useUser } from "../hooks/useUser";
 import Spinner from "react-native-loading-spinner-overlay";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import index from "../screens/User";
 import { FontAwesome5 } from "@expo/vector-icons";
+import Feeds from "../screens/User/Feeds";
+import Jobs from "../screens/User/Jobs";
+import Application from "../screens/User/Application";
+import Account from "../screens/User/Account";
+import index from "../screens/User/index";
+
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -41,15 +44,14 @@ function LandingNavigation() {
             <Stack.Screen name="Professional" component={Professional} />
             <Stack.Screen name="IndividualEmployer" component={IndividualEmployer} />
             <Stack.Screen name="OrganizationEmployer" component={OrganizationEmployer} />
-            <Stack.Screen name="UserHome" component={AuthenticatedNavigation} />
           </Stack.Group>
         </Stack.Navigator>
       ) : (
-        <BottomTab.Navigator initialRouteName='Home'
+        <BottomTab.Navigator initialRouteName='index'
           screenOptions={{ animationEnabled: false, headerShown: false }}
         >
 
-          <BottomTab.Screen name="Home" component={index}
+          <BottomTab.Screen name="index" component={index}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
@@ -57,7 +59,7 @@ function LandingNavigation() {
               ),
             }}
           />
-          <BottomTab.Screen name="Feeds" component={index}
+          <BottomTab.Screen name="Feeds" component={Feeds}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
@@ -65,7 +67,7 @@ function LandingNavigation() {
               ),
             }}
           />
-          <BottomTab.Screen name="Jobs" component={index}
+          <BottomTab.Screen name="Jobs" component={Jobs}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
@@ -73,7 +75,7 @@ function LandingNavigation() {
               ),
             }}
           />
-          <BottomTab.Screen name="Application" component={index}
+          <BottomTab.Screen name="Application" component={Application}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
@@ -81,7 +83,7 @@ function LandingNavigation() {
               ),
             }}
           />
-          <BottomTab.Screen name="Account" component={index}
+          <BottomTab.Screen name="Account" component={Account}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
