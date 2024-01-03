@@ -4,7 +4,7 @@ import axiosInstancee, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 
 export async function getUser(signal) {
-    let user = await AsyncStorage.getItem("pinoycare_user");
+    let user = await AsyncStorage.getItem("upcare_user");
     if (!user) {
         // Logout the user
         return null;
@@ -65,17 +65,6 @@ export const useUser = () => {
         });
         return data;
     }
-
-    // async function addPushToken(token) {
-
-    //   queryClient.setQueryData(
-    //     ['user'],
-    //     (oldData) => oldData ? {
-    //       ...oldData,
-    //       push_token: token
-    //     } : oldData
-    //   )
-    // }
 
     return {
         user,

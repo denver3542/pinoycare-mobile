@@ -4,9 +4,12 @@ import { Avatar, Text } from 'react-native-paper'
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout'
 import Carousel from 'react-native-snap-carousel'
 import CustomJobCard, { SLIDER_WIDTH, ITEM_WIDTH } from '../../components/CustomJobCard'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useEffect } from 'react'
 
-function index() {
+function Dashboard() {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [userData, setUserData] = useState();
     const jobs = [
         {
             title: 'Software Engineer',
@@ -31,6 +34,25 @@ function index() {
     const renderItem = ({ item, index }) => {
         return <CustomJobCard job={item} isActive={index === activeIndex} />;
     };
+
+    useEffect(() => {
+        const checkUserData = async () => {
+            try {
+                const storedUserData = await AsyncStorage.getItem('upcare_user');
+                if (storedUserData !== null) {
+                    // We have user data
+                    setUserData(JSON.parse(storedUserData));
+                } else {
+                    setUserData([])
+                }
+            } catch (error) {
+                console.error('Error reading user data:', error);
+            }
+        };
+
+        checkUserData();
+    }, []);
+
 
     return (
         <AuthenticatedLayout>
@@ -61,7 +83,6 @@ function index() {
                             itemWidth={ITEM_WIDTH}
                             onSnapToItem={(index) => setActiveIndex(index)}
                             firstItem={0}
-                            contentContainerCustomStyle={styles.carouselContentContainer}
                         />
                     ) : (
                         <View style={styles.noJobsContainer}>
@@ -70,8 +91,20 @@ function index() {
                     )}
                 </View>
                 <View style={styles.categoryJobsView}>
-                    <Text style={styles.categoryHeader}>Browse by Categories</Text>
-
+                    <View style={styles.categoryBox}>
+                        <Text>asdda</Text>
+                    </View>
+                    <View style={styles.categoryBox}>
+                        <Text>asdda</Text>
+                    </View>
+                </View>
+                <View style={styles.categoryJobsView}>
+                    <View style={styles.categoryBox}>
+                        <Text>asdda</Text>
+                    </View>
+                    <View style={styles.categoryBox}>
+                        <Text>asdda</Text>
+                    </View>
                 </View>
             </View>
         </AuthenticatedLayout >
@@ -96,6 +129,7 @@ const styles = StyleSheet.create({
     },
     redText: {
         color: 'red',
+
     },
     noJobsContainer: {
         flex: 1,
@@ -115,11 +149,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     categoryJobsView: {
-        marginTop: 40
+        marginTop: 20,
+        flexDirection: 'row',
+        gap: 20
     },
-    categoryHeader: {
-        fontWeight: '700',
+    categoryBox: {
+        backgroundColor: 'red',
+        width: '100%',
+        flex: 2,
+        padding: 10,
+        borderRadius: 10,
+        height: 150,
+        shadowColor: 'blue',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
     }
 });
 
-export default index
+export default Dashboard

@@ -15,7 +15,7 @@ import Feeds from "../screens/User/Feeds";
 import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
 import Account from "../screens/User/Account";
-import index from "../screens/User/index";
+import Dashboard from "../screens/User/Dashboard";
 
 
 const Stack = createNativeStackNavigator();
@@ -29,11 +29,13 @@ function LandingNavigation() {
       setLoading(false);
     }
   }, [isFetched]);
-
+  console.log(user);
+  console.log(isFetching);
+  console.log(isFetched);
   return (
     <NavigationContainer>
       {loading && <Spinner visible={loading} />}
-      {!user && !isFetching ? (
+      {!user && isFetching === 'true' ? (
         <Stack.Navigator>
           <Stack.Group
             screenOptions={{ animationEnabled: false, headerShown: false }}
@@ -47,11 +49,11 @@ function LandingNavigation() {
           </Stack.Group>
         </Stack.Navigator>
       ) : (
-        <BottomTab.Navigator initialRouteName='index'
+        <BottomTab.Navigator
           screenOptions={{ animationEnabled: false, headerShown: false }}
         >
 
-          <BottomTab.Screen name="index" component={index}
+          <BottomTab.Screen name="Dashboard" component={Dashboard}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
