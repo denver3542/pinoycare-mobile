@@ -35,7 +35,7 @@ function LandingNavigation() {
   return (
     <NavigationContainer>
       {loading && <Spinner visible={loading} />}
-      {!user && isFetching === 'true' ? (
+      {!user ? (
         <Stack.Navigator>
           <Stack.Group
             screenOptions={{ animationEnabled: false, headerShown: false }}

@@ -46,20 +46,20 @@ export default function useAuth() {
     async function signup(userDetails) {
         return authServerCall("/auth/signup", userDetails);
     }
-    // async function logout() {
-    //     try {
-    //         // clear user from stored user data
-    //         const storedUser = await AsyncStorage.getItem("nasya_user");
-    //         if (storedUser) {
-    //              const headers = getJWTHeader(JSON.parse(storedUser));
-    //             await axiosInstance.post("/auth/logout", {}, { headers });
-    //         }
-    //         clearUser();
-    //     } catch (err) {
-    //         clearUser();
-    //         console.log(err);
-    //     }
-    // }
+    async function logout() {
+        try {
+            // clear user from stored user data
+            const storedUser = await AsyncStorage.getItem("nasya_user");
+            if (storedUser) {
+                const headers = getJWTHeader(JSON.parse(storedUser));
+                await axiosInstancee.post("/auth/logout", {}, { headers });
+            }
+            clearUser();
+        } catch (err) {
+            clearUser();
+            console.log(err);
+        }
+    }
 
 
     return {

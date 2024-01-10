@@ -6,7 +6,6 @@ import { clearStoredUser, setStoredUser } from "../user-storage";
 export async function getUser(signal) {
     let user = await AsyncStorage.getItem("upcare_user");
     if (!user) {
-        // Logout the user
         return null;
     }
 
@@ -14,7 +13,7 @@ export async function getUser(signal) {
         signal, // abortSignal from React Query
         headers: getJWTHeader(JSON.parse(user)),
     });
-    return data.user;
+    return user ?? data;
 }
 
 export const useUser = () => {
