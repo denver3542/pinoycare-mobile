@@ -50,7 +50,7 @@ function LandingNavigation() {
         </Stack.Navigator>
       ) : (
         <BottomTab.Navigator
-          screenOptions={{ animationEnabled: false, headerShown: false }}
+          screenOptions={{ animationEnabled: false }}
         >
 
           <BottomTab.Screen name="Dashboard" component={Dashboard}
@@ -59,6 +59,7 @@ function LandingNavigation() {
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'home'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
+              headerShown: false
             }}
           />
           <BottomTab.Screen name="Feeds" component={Feeds}
@@ -67,6 +68,15 @@ function LandingNavigation() {
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'file-alt'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
+              headerStyle: {
+                backgroundColor: '#001c4e',
+                color: 'white',
+                shadowOpacity: 0,
+                elevation: 0,
+              },
+              headerTitleStyle: {
+                color: 'white'
+              }
             }}
           />
           <BottomTab.Screen name="Jobs" component={Jobs}

@@ -56,7 +56,7 @@ function Dashboard() {
 
     return (
         <AuthenticatedLayout>
-            <View style={styles.header}>
+            <View style={styles.contentStyle}>
                 <View style={styles.headerContainter}>
                     <Avatar.Image size={avatarSize} source={require('../../../assets/images/hero-bg.jpg')} />
                     <View>
@@ -113,9 +113,8 @@ function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-    header: {
-        marginTop: 20,
-        marginHorizontal: 20
+    contentStyle: {
+        marginTop: 50,
     },
     headerContainter: {
         flexDirection: 'row',

@@ -1,5 +1,3 @@
-import React from 'react'
-import { useEffect } from 'react'
 import * as WebBrowser from "expo-web-browser"
 import axios from 'axios';
 import axiosInstancee, { getJWTHeader } from '../../utils/axiosConfig';
