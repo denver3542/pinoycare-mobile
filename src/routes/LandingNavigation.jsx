@@ -16,6 +16,9 @@ import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
 import Account from "../screens/User/Account";
 import Dashboard from "../screens/User/Dashboard";
+import { Text } from "react-native-paper";
+import HeaderAvatar from "../components/HeaderAvatar";
+import HeaderSettings from "../components/HeaderSettings";
 
 
 const Stack = createNativeStackNavigator();
@@ -69,14 +72,19 @@ function LandingNavigation() {
                 <FontAwesome5 name={'file-alt'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
-                backgroundColor: '#001c4e',
+                backgroundColor: '#329acc',
                 color: 'white',
                 shadowOpacity: 0,
                 elevation: 0,
               },
+              headerTitle: 'Your feed',
               headerTitleStyle: {
                 color: 'white'
-              }
+              },
+              headerTitleAlign: 'center',
+              headerRight: () => (
+                <HeaderSettings />
+              ),
             }}
           />
           <BottomTab.Screen name="Jobs" component={Jobs}
