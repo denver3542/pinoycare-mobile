@@ -5,7 +5,7 @@ import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayo
 const Application = () => {
     return (
         <AuthenticatedLayout>
-            <Text>ASD</Text>
+
         </AuthenticatedLayout>
     )
 }

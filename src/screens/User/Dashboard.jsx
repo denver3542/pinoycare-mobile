@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
-import { Avatar, Text } from 'react-native-paper'
+import { Avatar, Searchbar, Text } from 'react-native-paper'
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout'
 import Carousel from 'react-native-snap-carousel'
 import CustomJobCard, { SLIDER_WIDTH, ITEM_WIDTH } from '../../components/CustomJobCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useEffect } from 'react'
 
-function Dashboard() {
+function Dashboard(activeNav) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [userData, setUserData] = useState();
     const jobs = [
@@ -34,6 +34,7 @@ function Dashboard() {
     const renderItem = ({ item, index }) => {
         return <CustomJobCard job={item} isActive={index === activeIndex} />;
     };
+    const activeBottomNav = activeNav.route.name;
 
     useEffect(() => {
         const checkUserData = async () => {
@@ -55,21 +56,10 @@ function Dashboard() {
 
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout activeBottomNav={activeBottomNav}>
             <View style={styles.contentStyle}>
-                <View style={styles.headerContainter}>
-                    <Avatar.Image size={avatarSize} source={require('../../../assets/images/hero-bg.jpg')} />
-                    <View>
-                        <Text style={{ fontWeight: 700 }}>Hi! Francisco</Text>
-                        <Text style={{ fontWeight: 700 }}>Welcome to Upcare!</Text>
-                    </View>
-                </View>
                 <View style={styles.headerJobs}>
-                    <Text style={styles.textStyle} variant='bodyMedium'>Find <Text style={[styles.textStyle, styles.redText]} variant='bodyMedium'>
-                        Jobs
-                    </Text>
-                    </Text>
-                    <Text style={[styles.textStyle, { color: 'blue' }]} variant='bodyMedium'>More
+                    <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recommendation
                     </Text>
                 </View>
                 <View style={styles.carouselContainer}>
@@ -90,13 +80,9 @@ function Dashboard() {
                         </View>
                     )}
                 </View>
-                <View style={styles.categoryJobsView}>
-                    <View style={styles.categoryBox}>
-                        <Text>asdda</Text>
-                    </View>
-                    <View style={styles.categoryBox}>
-                        <Text>asdda</Text>
-                    </View>
+                <View style={styles.headerJobs}>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recent Job List
+                    </Text>
                 </View>
                 <View style={styles.categoryJobsView}>
                     <View style={styles.categoryBox}>
@@ -113,16 +99,14 @@ function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-    contentStyle: {
-        marginTop: 50,
-    },
+
     headerContainter: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10
+        gap: 10,
     },
     headerJobs: {
-        marginTop: 50,
+        marginTop: 15,
         flexDirection: 'row',
         justifyContent: 'space-between'
     },

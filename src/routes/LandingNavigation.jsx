@@ -1,6 +1,6 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import Home from "../screens/Home";
 import SignUp from "../screens/Auth/SignUp";
 import Login from "../screens/Auth/Login";
@@ -19,24 +19,40 @@ import Dashboard from "../screens/User/Dashboard";
 import { Text } from "react-native-paper";
 import HeaderAvatar from "../components/HeaderAvatar";
 import HeaderSettings from "../components/HeaderSettings";
+import HeaderNotification from "../components/HeaderNotification";
 
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
+
+function getActiveRouteName(state) {
+  const route = state.routes[state.index];
+  if (route.state) {
+    return getActiveRouteName(route.state);
+  }
+  return route.name;
+}
+
 function LandingNavigation() {
   const { user, isFetching, isFetched } = useUser();
   const [loading, setLoading] = useState(true);
+  const [activeRouteName, setActiveRouteName] = useState('');
 
   useLayoutEffect(() => {
     if (isFetched) {
       setLoading(false);
     }
   }, [isFetched]);
-  console.log(user);
-  console.log(isFetching);
-  console.log(isFetched);
+
+  const handleStateChange = (state) => {
+    const route = getActiveRouteName(state);
+    setActiveRouteName(route);
+  };
+
+
+
   return (
-    <NavigationContainer>
+    <NavigationContainer onStateChange={handleStateChange}>
       {loading && <Spinner visible={loading} />}
       {!user ? (
         <Stack.Navigator>
@@ -56,16 +72,30 @@ function LandingNavigation() {
           screenOptions={{ animationEnabled: false }}
         >
 
-          <BottomTab.Screen name="Dashboard" component={Dashboard}
+          <BottomTab.Screen name="Dashboard" initialParams={activeRouteName} component={Dashboard}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'home'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-              headerShown: false
+              headerStyle: {
+                backgroundColor: '#329acc',
+                // color: '#fff',
+                shadowOpacity: 0,
+                elevation: 0,
+                height: 150,
+              },
+              headerLeft: () => (
+                <HeaderSettings subtitle={'Hello'} title={'Michael Caligner'} />
+              ),
+              headerTitle: '',
+              headerRight: () => (
+                <HeaderNotification />
+              ),
+              // headerShown: false 
             }}
           />
-          <BottomTab.Screen name="Feeds" component={Feeds}
+          <BottomTab.Screen name="Feeds" initialParams={activeRouteName} component={Feeds}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
@@ -87,27 +117,69 @@ function LandingNavigation() {
               ),
             }}
           />
-          <BottomTab.Screen name="Jobs" component={Jobs}
+          <BottomTab.Screen name="Jobs" initialParams={activeRouteName} component={Jobs}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'briefcase'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
+              headerStyle: {
+                backgroundColor: '#329acc',
+                color: 'white',
+                shadowOpacity: 0,
+                elevation: 0,
+              },
+              headerTitle: 'Find Jobs',
+              headerTitleStyle: {
+                color: 'white'
+              },
+              headerTitleAlign: 'center',
+              headerRight: () => (
+                <HeaderSettings />
+              ),
             }}
           />
-          <BottomTab.Screen name="Application" component={Application}
+          <BottomTab.Screen name="Application" initialParams={activeRouteName} component={Application}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'user-cog'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
+              headerStyle: {
+                backgroundColor: '#329acc',
+                color: 'white',
+                shadowOpacity: 0,
+                elevation: 0,
+              },
+              headerTitle: 'Applications',
+              headerTitleStyle: {
+                color: 'white'
+              },
+              headerTitleAlign: 'center',
+              headerRight: () => (
+                <HeaderSettings />
+              ),
             }}
           />
-          <BottomTab.Screen name="Account" component={Account}
+          <BottomTab.Screen name="Account" initialParams={activeRouteName} component={Account}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'sliders-h'} color={color} size={20} style={{ marginTop: 5 }} />
+              ),
+              headerStyle: {
+                backgroundColor: '#329acc',
+                color: 'white',
+                shadowOpacity: 0,
+                elevation: 0,
+              },
+              headerTitle: 'Account Settings',
+              headerTitleStyle: {
+                color: 'white'
+              },
+              headerTitleAlign: 'center',
+              headerRight: () => (
+                <HeaderSettings />
               ),
             }}
           />

@@ -52,7 +52,8 @@ const Feeds = () => {
 const styles = StyleSheet.create({
     feedContainer: {
         backgroundColor: '#fff',
-        borderRadius: 8
+        borderRadius: 8,
+        marginVertical: 10,
     },
     avatarContainer: {
         marginBottom: 20,

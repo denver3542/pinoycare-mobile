@@ -3,17 +3,27 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 
-function HeaderSettings() {
+function HeaderSettings({ subtitle, title }) {
     return (
         <View style={styles.headerContainer}>
-            <FontAwesome5 name={'ellipsis-h'} color={'white'} size={20} style={{ marginTop: 5 }} />
+            <Text style={styles.subtitleStyle}>{subtitle}</Text>
+            <Text style={styles.titleStyle}>{title}</Text>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingRight: 20,
+        paddingLeft: 20,
+    },
+    subtitleStyle: {
+        color: 'white',
+        fontSize: 12
+    },
+    titleStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 20
     },
 });
 

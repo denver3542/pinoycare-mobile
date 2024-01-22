@@ -12,10 +12,6 @@ const Account = () => {
     console.log(user);
     return (
         <AuthenticatedLayout>
-            <TouchableOpacity style={styles.header}>
-                {/* <Avatar.Image size={40} source={require('../../../assets/icon.png')} style={{ marginLeft: 12 }} /> */}
-                <Text style={styles.title}>Account Settings</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={{ width: '100%' }}>
                 <View style={styles.item}>
                     <Text style={styles.item_title}>Logout</Text>
@@ -27,21 +23,12 @@ const Account = () => {
 }
 
 const styles = StyleSheet.create({
-    header: {
-        flexDirection: "row",
-        padding: 20,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottomWidth: 2, // This adds a bottom border with a height of 1 pixel
-        borderBottomColor: '#ddd', // This sets the color of the bottom border; adjust as needed
-    },
     item: {
         flexDirection: "row",
         paddingVertical: 20,
         alignItems: 'center',
         justifyContent: 'space-between',
         borderBottomWidth: 1, // This adds a bottom border with a height of 1 pixel
-        marginHorizontal: 10,
         borderBottomColor: '#ddd', // This sets the color of the bottom border; adjust as needed
     },
     title: {
