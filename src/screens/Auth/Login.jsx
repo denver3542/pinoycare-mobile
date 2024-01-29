@@ -82,7 +82,7 @@ const Login = ({ navigation }) => {
           control={control}
           name="email"
           placeholder="Email"
-          rules={{ required: "Email must be valid and not empty" }}
+          rules={{ required: "Email is required" }}
         // rules={{ required: "Email must not be empty" }}
         />
         <CustomTextInput
@@ -90,7 +90,7 @@ const Login = ({ navigation }) => {
           name="password"
           placeholder="Password"
           secureTextEntry={!showPw}
-          rules={{ required: "Password must not be empty" }}
+          rules={{ required: "Password is required" }}
           right={
             <TextInput.Icon
               icon={showPw ? "eye-off" : "eye"}
@@ -135,21 +135,14 @@ const Login = ({ navigation }) => {
           Sign in
         </Button>
 
-        {Platform.OS === "ios" ? (
-          <AppleAuthentication.AppleAuthenticationButton
-            buttonType={
-              AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
-            }
-            buttonStyle={
-              AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE
-            }
-            style={[styles.btn, { height: 40 }]}
-            onPress={() => onAppleButtonPress()}
-          />
-        ) : (
-          ""
-        )}
-
+        {Platform.OS === "ios" && (
+        <AppleAuthentication.AppleAuthenticationButton
+          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
+          style={[styles.btn, { height: 40 }]}
+          onPress={onAppleButtonPress}
+        />
+      )}
         <View style={styles.lineContainer}>
           <View style={styles.line} />
           <View>
@@ -162,7 +155,8 @@ const Login = ({ navigation }) => {
           style={{
             textAlign: "left", color: "#008018", borderColor: '#012970',
             borderWidth: 1,
-            borderRadius: 5,
+            borderRadius: 50,
+            marginBottom: 30,
 
           }}
           labelStyle={{
@@ -184,8 +178,7 @@ const Login = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   btn: {
-    marginTop: 20,
-    borderRadius: 5,
+    borderRadius: 50,
   },
   contentContainer: {
     flex: 1,

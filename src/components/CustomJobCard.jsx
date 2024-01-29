@@ -43,22 +43,18 @@ const CustomJobCard = ({ job, isActive }) => {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 15,
         width: ITEM_WIDTH,
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
+   
         height: 'auto',
         marginVertical: 10,
         shadowOpacity: 0.29,
         shadowRadius: 4.65,
-        elevation: 7,
+        // elevation: 7,
         position: 'relative',
         paddingVertical: 10,
         paddingHorizontal: 15,
-        paddingVertical: 15,
     },
     activeCard: {
         // Active styles

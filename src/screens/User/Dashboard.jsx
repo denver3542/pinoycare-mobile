@@ -6,6 +6,8 @@ import Carousel from 'react-native-snap-carousel'
 import CustomJobCard, { SLIDER_WIDTH, ITEM_WIDTH } from '../../components/CustomJobCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useEffect } from 'react'
+import RecentJobCard from '../../components/CustomRecentJobCard';
+
 
 function Dashboard(activeNav) {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -81,26 +83,37 @@ function Dashboard(activeNav) {
                     )}
                 </View>
                 <View style={styles.headerJobs}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recent Job List
-                    </Text>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recent Job List</Text>
                 </View>
                 <View style={styles.categoryJobsView}>
-                    <View style={styles.categoryBox}>
-                        <Text>asdda</Text>
-                    </View>
-                    <View style={styles.categoryBox}>
-                        <Text>asdda</Text>
-                    </View>
+                    {jobs && jobs.length > 0 ? (
+                        jobs.map((job, index) => (
+                            <RecentJobCard
+                                key={index}
+                                jobTitle={job.title}
+                                company={job.company}
+                                location={job.location}
+                                imageUrl={job.imageUrl}
+                                onPress={() => {
+                                    console.log(`Job item ${index + 1} pressed!`);
+                                }}
+                            />
+                        ))
+                    ) : (
+                        <View style={styles.noJobsContainer}>
+                            <Text style={styles.noJobsText}>No Jobs Available</Text>
+                        </View>
+                    )}
                 </View>
+
             </View>
-        </AuthenticatedLayout >
+        </AuthenticatedLayout>
 
     )
 }
 
 const styles = StyleSheet.create({
-
-    headerContainter: {
+    headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
@@ -108,11 +121,10 @@ const styles = StyleSheet.create({
     headerJobs: {
         marginTop: 15,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     redText: {
         color: 'red',
-
     },
     noJobsContainer: {
         flex: 1,
@@ -120,7 +132,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: SLIDER_WIDTH,
-        height: 150, // Adjust the height as needed
+        height: 150, 
     },
     noJobsText: {
         fontSize: 18,
@@ -133,11 +145,9 @@ const styles = StyleSheet.create({
     },
     categoryJobsView: {
         marginTop: 20,
-        flexDirection: 'row',
-        gap: 20
-    },
+      },
     categoryBox: {
-        backgroundColor: 'red',
+        backgroundColor: 'white',
         width: '100%',
         flex: 2,
         padding: 10,
@@ -147,7 +157,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: -2, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
-    }
+    },
 });
+
 
 export default Dashboard

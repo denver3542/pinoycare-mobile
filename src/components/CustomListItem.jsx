@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     item: {
         flexDirection: "row",
         padding: 20,
-        alignItems: 'ceneter'
+        alignItems: 'center'
     },
     title: {
         marginLeft: 20

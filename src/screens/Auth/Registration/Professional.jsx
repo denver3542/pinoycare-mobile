@@ -89,6 +89,7 @@ const Professional = () => {
                         { label: 'Male', value: 'M' },
                         { label: 'Female', value: 'F' },
                     ]}
+                    rules={{ required: "Select a Gender" }}
                 />
                 <CustomTextInput
                     control={control}

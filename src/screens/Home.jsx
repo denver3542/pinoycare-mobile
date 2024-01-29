@@ -23,62 +23,61 @@ function Home({ navigation }) {
   }, [isFetched]);
 
   return (
-    <ScrollView>
-      <ImageBackground
-        source={require('../../assets/images/hero-bg.jpg')}
-        style={[styles.backgroundImage, { height: windowHeight }]}
-      >
-        <View style={styles.container}>
-          <View style={styles.innerContainer}>
-            <Image source={logo} style={{ width: 180, height: 180 }} />
-            <Text
-              variant="displaySmall"
-              style={styles.content}
-            >
-              {Title}
-              <Text
-                variant="displaySmall"
-                style={{ fontWeight: "bold", color: "red" }}
-              >
-                {spanTitle}
-              </Text>
-            </Text>
-            <Text
-              variant="headlineSmall"
-              style={{
-                fontWeight: "100",
-                color: '#001c4e',
-                textShadowColor: '#001c4e',
-                textShadowOffset: { width: 0.5, height: 0.5 },
-                textShadowRadius: 1,
-                paddingTop: 10
-              }}
-            >
-              The Best Way to Care!
-            </Text>
-            <View
-              style={{
-                flex: 0.7,
-                width: "100%",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                paddingTop: 30,
-              }}
-            >
-              <Button
-                style={styles.btnLogin}
-                contentStyle={styles.btnContent}
-                labelStyle={styles.btnLabel}
-                mode="contained"
-                onPress={() => navigation.navigate("Login")}
-              >
-                GET STARTED
-              </Button>
-            </View>
-          </View>
+    <View style={styles.container}>
+    <ImageBackground
+      source={require('../../assets/images/hero-bg.jpg')}
+      style={[styles.backgroundImage, { height: windowHeight }]}
+    >
+      <View style={styles.innerContainer}>
+        <Image source={logo} style={{ width: 180, height: 180 }} />
+        <Text
+          variant="displaySmall"
+          style={styles.content}
+        >
+          {Title}
+          <Text
+            variant="displaySmall"
+            style={{ fontWeight: "bold", color: "red" }}
+          >
+            {spanTitle}
+          </Text>
+        </Text>
+        <Text
+          variant="headlineSmall"
+          style={{
+            fontWeight: "100",
+            color: '#001c4e',
+            textShadowColor: '#001c4e',
+            textShadowOffset: { width: 0.5, height: 0.5 },
+            textShadowRadius: 1,
+            paddingTop: 10
+          }}
+        >
+          The Best Way to Care!
+        </Text>
+        <View
+          style={{
+            flex: 0.7,
+            width: "100%",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            paddingTop: 30,
+          }}
+        >
+          <Button
+            style={styles.btnLogin}
+            contentStyle={styles.btnContent}
+            labelStyle={styles.btnLabel}
+            mode="contained"
+            onPress={() => navigation.navigate("Login")}
+          >
+            GET STARTED
+          </Button>
         </View>
-      </ImageBackground>
-    </ScrollView>
+      </View>
+    </ImageBackground>
+  </View>
+  
   );
 }
 
@@ -92,11 +91,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     flexDirection: "column",
   },
   innerContainer: {
-    alignItems: "center",
+    paddingTop: 130,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     color: '#001c4e',
@@ -107,8 +109,9 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   btnLogin: {
-    width: '100%',
-    borderRadius: 100
+    width: 300,
+    height: "auto",
+    borderRadius: 50,
   },
   btnContent: {
     paddingVertical: 8,
@@ -118,3 +121,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+

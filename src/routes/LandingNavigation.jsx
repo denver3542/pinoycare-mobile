@@ -57,8 +57,7 @@ function LandingNavigation() {
       {!user ? (
         <Stack.Navigator>
           <Stack.Group
-            screenOptions={{ animationEnabled: false, headerShown: false }}
-          >
+            screenOptions={{ animationEnabled: false, headerShown: false }}>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Login" component={Login} />
@@ -79,7 +78,7 @@ function LandingNavigation() {
                 <FontAwesome5 name={'home'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
-                backgroundColor: '#329acc',
+                backgroundColor: '#001C4E',
                 // color: '#fff',
                 shadowOpacity: 0,
                 elevation: 0,
@@ -94,6 +93,7 @@ function LandingNavigation() {
               ),
               // headerShown: false 
             }}
+            
           />
           <BottomTab.Screen name="Feeds" initialParams={activeRouteName} component={Feeds}
             options={{
@@ -102,8 +102,8 @@ function LandingNavigation() {
                 <FontAwesome5 name={'file-alt'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
-                backgroundColor: '#329acc',
-                color: 'white',
+                backgroundColor: '#001C4E',
+               
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -124,8 +124,8 @@ function LandingNavigation() {
                 <FontAwesome5 name={'briefcase'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
-                backgroundColor: '#329acc',
-                color: 'white',
+                backgroundColor: '#001C4E',
+               
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -146,8 +146,8 @@ function LandingNavigation() {
                 <FontAwesome5 name={'user-cog'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
-                backgroundColor: '#329acc',
-                color: 'white',
+                backgroundColor: '#001C4E',
+               
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -168,8 +168,8 @@ function LandingNavigation() {
                 <FontAwesome5 name={'sliders-h'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
-                backgroundColor: '#329acc',
-                color: 'white',
+                backgroundColor: '#001C4E',
+               
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -186,7 +186,7 @@ function LandingNavigation() {
         </BottomTab.Navigator>
       )}
 
-    </NavigationContainer >
+    </NavigationContainer>
   );
 }
 
