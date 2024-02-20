@@ -29,12 +29,12 @@ const CustomJobCard = ({ job, isActive }) => {
             </View>
             <View style={styles.JobContent}>
                 <Text style={{ fontSize: 16 }}>{job.title}</Text>
-                <Text style={{ fontSize: 12, color: 'gray' }}>Remote</Text>
+                <Text style={{ fontSize: 12, color: 'gray' }}>{job.type}</Text>
 
             </View>
             <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'space-between' }}>
                 <Text style={{ fontSize: 12, marginVertical: 15, borderRadius: 10, padding: 8, width: 90, textAlign: 'center', color: 'white', backgroundColor: '#007aff' }}>Apply Now</Text>
-                <Text style={{ fontSize: 14, marginVertical: 15, borderRadius: 10, padding: 8, fontWeight: 'bold' }}>$100 - $200</Text>
+                <Text style={{ fontSize: 14, marginVertical: 15, borderRadius: 10, padding: 8, fontWeight: 'bold' }}>{job.salary_from} - {job.salary_to} </Text>
             </View>
         </View>
     );
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         width: ITEM_WIDTH,
         shadowColor: "#000",
-   
+
         height: 'auto',
         marginVertical: 10,
         shadowOpacity: 0.29,

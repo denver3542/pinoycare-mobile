@@ -12,19 +12,34 @@ import RecentJobCard from '../../components/CustomRecentJobCard';
 import { useJobs } from '../../hooks/jobService';
 
 
+
 function Dashboard(activeNav) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [userData, setUserData] = useState();
-
-    // Use the useJobs hook to fetch jobs data
     const { jobs, loading, error } = useJobs();
-
     const avatarSize = SLIDER_WIDTH * 0.15;
     const renderItem = ({ item, index }) => {
         return <CustomJobCard job={item} isActive={index === activeIndex} />;
     };
     const activeBottomNav = activeNav.route.name;
 
+    useEffect(() => {
+        const checkUserData = async () => {
+            try {
+                const storedUserData = await AsyncStorage.getItem('upcare_user');
+                if (storedUserData !== null) {
+                    // We have user data
+                    setUserData(JSON.parse(storedUserData));
+                } else {
+                    setUserData([])
+                }
+            } catch (error) {
+                console.error('Error reading user data:', error);
+            }
+        };
+
+        checkUserData();
+    }, []);
 
 
     return (
@@ -35,11 +50,7 @@ function Dashboard(activeNav) {
                     </Text>
                 </View>
                 <View style={styles.carouselContainer}>
-                    {loading ? (
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    ) : error ? (
-                        <Text>{error}</Text>
-                    ) : jobs.length > 0 ? (
+                    {jobs.length > 0 ? (
                         <Carousel
                             layout="default"
                             data={jobs}
@@ -79,8 +90,10 @@ function Dashboard(activeNav) {
                         </View>
                     )}
                 </View>
+
             </View>
         </AuthenticatedLayout>
+
     )
 }
 

@@ -6,27 +6,17 @@ export function useJobs() {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { user } = useUser(); // Use the useUser hook to get the user token
+    const { user } = useUser();
 
     useEffect(() => {
         const fetchJobs = async () => {
             try {
                 if (!user) {
-                    // If no user token, set loading to false and return
                     setLoading(false);
                     return;
                 }
-
-                console.log('User exists:', user);
-
-                // Get JWT header for the user token
                 const headers = getJWTHeader(user);
-                console.log('Headers:', headers);
-
-                // Fetch jobs data from the API
                 const response = await axiosInstance.get("auth/jobs", { headers });
-
-                // Set jobs state with fetched data
                 setJobs(response.data.jobs);
                 setLoading(false);
             } catch (error) {
@@ -41,14 +31,8 @@ export function useJobs() {
             }
         };
 
-        // Call fetchJobs function when component mounts
         fetchJobs();
+    }, [user]);
 
-        // Clean up function
-        return () => {
-            // Cleanup code (if needed)
-        };
-    }, [user]); // Include user in the dependency array
-
-    return { jobs, loading, error };
+    return { jobs, loading, error }; // Moved return statement outside of useEffect
 }
