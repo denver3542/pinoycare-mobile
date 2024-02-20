@@ -7,13 +7,13 @@ function Header() {
     const navigation = useNavigation()
     return (
         <View style={styles.logoContainer}>
-            <Button
+            {/* <Button
                 mode="text"
                 icon="arrow-left-thick"
                 labelStyle={styles.logo}
                 compact={true}
                 onPress={() => navigation.goBack()}
-            ></Button>
+            ></Button> */}
         </View>
     )
 }

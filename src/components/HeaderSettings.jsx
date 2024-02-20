@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
     },
     subtitleStyle: {
         color: 'white',
-        fontSize: 12
+        fontSize: 18
     },
     titleStyle: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 24
     },
 });
 

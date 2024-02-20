@@ -18,28 +18,19 @@ function Dashboard(activeNav) {
     const [userData, setUserData] = useState();
     const { jobs, loading, error } = useJobs();
     const avatarSize = SLIDER_WIDTH * 0.15;
+    // Assuming you have defined CustomJobCard component somewhere
+
     const renderItem = ({ item, index }) => {
-        return <CustomJobCard job={item} isActive={index === activeIndex} />;
+        return (
+            <CustomJobCard
+                key={index}
+                job={item}
+                isActive={index === activeIndex}
+            />
+        );
     };
+
     const activeBottomNav = activeNav.route.name;
-
-    useEffect(() => {
-        const checkUserData = async () => {
-            try {
-                const storedUserData = await AsyncStorage.getItem('upcare_user');
-                if (storedUserData !== null) {
-                    // We have user data
-                    setUserData(JSON.parse(storedUserData));
-                } else {
-                    setUserData([])
-                }
-            } catch (error) {
-                console.error('Error reading user data:', error);
-            }
-        };
-
-        checkUserData();
-    }, []);
 
 
     return (
@@ -72,13 +63,13 @@ function Dashboard(activeNav) {
                 </View>
                 <View style={styles.categoryJobsView}>
                     {jobs && jobs.length > 0 ? (
-                        jobs.map((job, index) => (
+                        jobs.slice(0, 5).map((job, index) => (
                             <RecentJobCard
                                 key={index}
-                                jobTitle={job.title}
-                                company={job.company}
-                                location={job.location}
                                 imageUrl={job.imageUrl}
+                                jobTitle={job.title}
+                                company={job.type}
+                                location={job.location}
                                 onPress={() => {
                                     console.log(`Job item ${index + 1} pressed!`);
                                 }}
@@ -90,6 +81,7 @@ function Dashboard(activeNav) {
                         </View>
                     )}
                 </View>
+
 
             </View>
         </AuthenticatedLayout>

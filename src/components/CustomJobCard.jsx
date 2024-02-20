@@ -17,7 +17,7 @@ const CustomJobCard = ({ job, isActive }) => {
                             style={{ width: 50, height: 50, borderRadius: 50, margin: '0 auto' }}
                         />
                         <View>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 3 }}>{job.company}</Text>
+                            <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: 'bold', marginTop: 3 }}>{job.company.length > 20 ? job.company.substring(0, 20) + '...' : job.company}</Text>
                             <Text style={{ fontSize: 12 }}>{job.location}</Text>
                         </View>
                     </View>

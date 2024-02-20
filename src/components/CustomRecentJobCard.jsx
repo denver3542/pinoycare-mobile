@@ -1,4 +1,3 @@
-// RecentJobCard.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -9,6 +8,7 @@ const RecentJobCard = ({ jobTitle, company, location, imageUrl, onPress }) => {
       <View style={styles.jobDetails}>
         <Text style={styles.jobTitle}>{jobTitle}</Text>
         <Text style={styles.company}>{company}</Text>
+        {/* <Text style={styles.type}>{company}</Text> */}
         <Text style={styles.location}>{location}</Text>
       </View>
     </TouchableOpacity>
@@ -18,15 +18,14 @@ const RecentJobCard = ({ jobTitle, company, location, imageUrl, onPress }) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 10,
+    borderRadius: 14,
     padding: 15,
     marginBottom: 15,
-    // elevation: 3,
   },
   jobImage: {
     width: '100%',
     height: 100,
-    borderRadius: 10,
+    borderRadius: 14,
     marginBottom: 10,
   },
   jobDetails: {},

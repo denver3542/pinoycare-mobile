@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import {
   StyleSheet,
   View,
@@ -19,6 +21,7 @@ import useAuth from "../../hooks/useAuth";
 import CustomSnackbar from "../../components/CustomSnackbar";
 
 const Signup = () => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const { control, handleSubmit, watch, setError } = useForm();
@@ -66,73 +69,73 @@ const Signup = () => {
     <UnathorizeLayout>
       <View style={{ justifyContent: 'center', gap: 5 }}>
 
-    
-          <Text style={{
-            fontWeight: "bold",
-            color: colors.primary,
-            fontSize: 18,
-            marginBottom: 30,
-            textAlign: 'center'
-          }}>
-            Professional Account
-          </Text>
-          <CustomTextInput
-            control={control}
-            name="firstname"
-            placeholder="First Name"
-            rules={{ required: "First Name is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="middlename"
-            placeholder="Middle Name"
-            rules={{ required: "Middlename is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="lastname"
-            placeholder="Last Name"
-            rules={{ required: "Last Name is required" }}
-          />
-          <CustomSelectBox
-            control={control}
-            name="gender"
-            items={[
-              { label: 'Select a Gender', value: '' },
-              { label: 'Male', value: 'M' },
-              { label: 'Female', value: 'F' },
-            ]}
-            rules={{ required: "Gender is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="date_of_birth"
-            placeholder="Birthdate"
-            rules={{ required: "Birthdate is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="email"
-            placeholder="Email"
-            rules={{ required: "Email is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="password"
-            placeholder="Password"
-            rules={{ required: "Password is required" }}
-            secureTextEntry={!showPw}
-            right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
-          />
-          <CustomTextInput
-            control={control}
-            name="confirmpassword"
-            placeholder="Confirm Password"
-            rules={{ required: "Password is required" }}
-            secureTextEntry={!showPw}
-            right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
-          />
-      
+
+        <Text style={{
+          fontWeight: "bold",
+          color: colors.primary,
+          fontSize: 18,
+          marginBottom: 30,
+          textAlign: 'center'
+        }}>
+          Professional Account
+        </Text>
+        <CustomTextInput
+          control={control}
+          name="firstname"
+          placeholder="First Name"
+          rules={{ required: "First Name is required" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="middlename"
+          placeholder="Middle Name"
+          rules={{ required: "Middlename is required" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="lastname"
+          placeholder="Last Name"
+          rules={{ required: "Last Name is required" }}
+        />
+        <CustomSelectBox
+          control={control}
+          name="gender"
+          items={[
+            { label: 'Select a Gender', value: '' },
+            { label: 'Male', value: 'M' },
+            { label: 'Female', value: 'F' },
+          ]}
+          rules={{ required: "Gender is required" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="date_of_birth"
+          placeholder="Birthdate"
+          rules={{ required: "Birthdate is required" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="email"
+          placeholder="Email"
+          rules={{ required: "Email is required" }}
+        />
+        <CustomTextInput
+          control={control}
+          name="password"
+          placeholder="Password"
+          rules={{ required: "Password is required" }}
+          secureTextEntry={!showPw}
+          right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
+        />
+        <CustomTextInput
+          control={control}
+          name="confirmpassword"
+          placeholder="Confirm Password"
+          rules={{ required: "Password is required" }}
+          secureTextEntry={!showPw}
+          right={<TextInput.Icon icon={showPw ? "eye-off" : "eye"} onPress={() => setShowPw(pw => !pw)} />}
+        />
+
         <Button
           style={styles.btn}
           labelStyle={{
@@ -143,7 +146,7 @@ const Signup = () => {
           icon="login"
           onPress={handleSubmit(onSubmit)}
         >
-        Sign Up
+          Sign Up
         </Button>
         <View style={styles.checkboxContainer}>
           <Checkbox.Android
@@ -160,7 +163,10 @@ const Signup = () => {
 
 
         <Text style={{ textAlign: 'center', marginBottom: 20, color: colors.text }}>
-          Already have an account? Sign In
+          Already have an account?{' '}
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{ color: 'red' }}>Sign In</Text>
+          </TouchableOpacity>
         </Text>
       </View>
     </UnathorizeLayout>

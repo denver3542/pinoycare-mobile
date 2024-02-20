@@ -11,27 +11,27 @@ function AuthenticatedLayout({ children, activeBottomNav }) {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {isDashboardOrJobs && (
-                <View style={styles.searchContainer}>
-                    <Searchbar
-                        placeholder='Search job title / keyword'
-                        onChangeText={(query) => {
-                            // Handle search functionality here
-                        }}
-                        onBlur={() => {
-                            // Handle search bar blur event here
-                        }}
-                        onFocus={() => {
-                            // Handle search bar focus event here
-                        }}
-                        style={styles.searchBar}
-                        inputStyle={styles.searchBarInput}
-                    />
-                </View>
-            )}
 
             <ScrollView style={styles.container}>
                 <View style={styles.contentContainer}>
+                    {isDashboardOrJobs && (
+                        <View style={styles.searchContainer}>
+                            <Searchbar
+                                placeholder='Search job title / keyword'
+                                onChangeText={(query) => {
+                                    // Handle search functionality here
+                                }}
+                                onBlur={() => {
+                                    // Handle search bar blur event here
+                                }}
+                                onFocus={() => {
+                                    // Handle search bar focus event here
+                                }}
+                                style={styles.searchBar}
+                                inputStyle={styles.searchBarInput}
+                            />
+                        </View>
+                    )}
                     {children}
                 </View>
             </ScrollView>
