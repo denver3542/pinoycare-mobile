@@ -71,30 +71,31 @@ function LandingNavigation() {
           screenOptions={{ animationEnabled: false }}
         >
 
-          <BottomTab.Screen name="Dashboard" initialParams={activeRouteName} component={Dashboard}
-            options={{
+          <BottomTab.Screen
+            name="Dashboard"
+            initialParams={{ activeRouteName: activeRouteName, userData: user }}
+            component={Dashboard}
+            options={({ route }) => ({
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'home'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
               headerStyle: {
                 backgroundColor: '#001C4E',
-                // color: '#fff',
                 shadowOpacity: 0,
                 elevation: 0,
                 height: 150,
               },
               headerLeft: () => (
-                <HeaderSettings subtitle={'Hello'} title={'Michael Caligner'} />
+                <HeaderSettings subtitle={'Hello,'} title={route.params.userData.fullname} />
               ),
               headerTitle: '',
               headerRight: () => (
                 <HeaderNotification />
               ),
-              // headerShown: false 
-            }}
-            
+            })}
           />
+
           <BottomTab.Screen name="Feeds" initialParams={activeRouteName} component={Feeds}
             options={{
               tabBarLabel: '', // Hides the label
@@ -103,7 +104,7 @@ function LandingNavigation() {
               ),
               headerStyle: {
                 backgroundColor: '#001C4E',
-               
+
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -125,7 +126,7 @@ function LandingNavigation() {
               ),
               headerStyle: {
                 backgroundColor: '#001C4E',
-               
+
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -147,7 +148,7 @@ function LandingNavigation() {
               ),
               headerStyle: {
                 backgroundColor: '#001C4E',
-               
+
                 shadowOpacity: 0,
                 elevation: 0,
               },
@@ -169,7 +170,7 @@ function LandingNavigation() {
               ),
               headerStyle: {
                 backgroundColor: '#001C4E',
-               
+
                 shadowOpacity: 0,
                 elevation: 0,
               },

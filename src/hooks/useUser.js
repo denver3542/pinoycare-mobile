@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axiosInstancee, { getJWTHeader } from "../../utils/axiosConfig";
+import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 
 export async function getUser(signal) {
@@ -9,7 +9,7 @@ export async function getUser(signal) {
         return null;
     }
 
-    const { data } = await axiosInstancee.get("/auth", {
+    const { data } = await axiosInstance.get("/auth", {
         signal, // abortSignal from React Query
         headers: getJWTHeader(JSON.parse(user)),
     });
@@ -50,7 +50,7 @@ export const useUser = () => {
     }
 
     async function addPushToken(token) {
-        let user = await AsyncStorage.getItem("nasya_user");
+        let user = await AsyncStorage.getItem("upcare_user");
         if (!user) {
             // Logout the user
             return null;
@@ -59,7 +59,7 @@ export const useUser = () => {
             pushToken: token,
         };
 
-        const { data } = await axiosInstancee.put("/auth/push-token", body, {
+        const { data } = await axiosInstance.put("/auth/push-token", body, {
             headers: getJWTHeader(JSON.parse(user)),
         });
         return data;

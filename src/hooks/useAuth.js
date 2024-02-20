@@ -1,6 +1,5 @@
 import * as WebBrowser from "expo-web-browser"
-import axios from 'axios';
-import axiosInstancee, { getJWTHeader } from '../../utils/axiosConfig';
+import axiosInstance, { getJWTHeader } from '../../utils/axiosConfig';
 import { useUser } from './useUser';
 import { setStoredUser } from '../user-storage';
 
@@ -12,7 +11,7 @@ export default function useAuth() {
 
     async function authServerCall(urlEndpoint, userDetails) {
         try {
-            const { data } = await axiosInstancee({
+            const { data } = await axiosInstance({
                 url: urlEndpoint,
                 method: "POST",
                 data: userDetails,
@@ -47,10 +46,10 @@ export default function useAuth() {
     async function logout() {
         try {
             // clear user from stored user data
-            const storedUser = await AsyncStorage.getItem("nasya_user");
+            const storedUser = await AsyncStorage.getItem("upcare_user");
             if (storedUser) {
                 const headers = getJWTHeader(JSON.parse(storedUser));
-                await axiosInstancee.post("/auth/logout", {}, { headers });
+                await axiosInstance.post("/auth/logout", {}, { headers });
             }
             clearUser();
         } catch (err) {
