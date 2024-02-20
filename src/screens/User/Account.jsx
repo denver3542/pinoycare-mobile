@@ -4,12 +4,21 @@ import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayo
 import CustomListItem from '../../components/CustomListItem'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
+import axiosInstance, { getJWTHeader } from '../../../utils/axiosConfig';
 import { useUser } from '../../hooks/useUser'
 
 
 const Account = () => {
     const { user } = useUser()
     console.log(user);
+
+    // Add a callback function to log the user's token
+    const handleRequest = () => {
+        if (user && user.token) {
+            console.log("User token exists:", user.token);
+        }
+    };
+
     return (
         <AuthenticatedLayout>
             <TouchableOpacity style={{ width: '100%' }}>
@@ -17,7 +26,6 @@ const Account = () => {
                     <Text style={styles.item_title}>Logout</Text>
                 </View>
             </TouchableOpacity>
-
         </AuthenticatedLayout>
     )
 }
@@ -43,6 +51,5 @@ const styles = StyleSheet.create({
         marginRight: 5
     }
 })
-
 
 export default Account

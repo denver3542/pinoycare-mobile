@@ -1,14 +1,16 @@
-import * as WebBrowser from "expo-web-browser"
+// Import necessary modules
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from 'react';
 import axiosInstance, { getJWTHeader } from '../../utils/axiosConfig';
 import { useUser } from './useUser';
 import { setStoredUser } from '../user-storage';
 
-WebBrowser.maybeCompleteAuthSession()
-
+// Define the useAuth hook
 export default function useAuth() {
     const SERVER_ERROR = "There was an error contacting the server.";
     const { clearUser, updateUser } = useUser();
 
+    // Define the authentication function that handles server calls
     async function authServerCall(urlEndpoint, userDetails) {
         try {
             const { data } = await axiosInstance({
@@ -17,14 +19,14 @@ export default function useAuth() {
                 data: userDetails,
                 headers: { "Content-Type": "application/json" },
             });
-            console.log(data);
+            console.log('Auth response data:', data);
+
             if ("user" in data && "token" in data) {
-                // update stored user data
+                console.log('Token found in headers:', data.token);
                 console.log('Token found, updating user data');
                 setStoredUser(data.user);
                 updateUser(data.user);
             }
-
 
             return data;
         } catch (errorResponse) {
@@ -37,6 +39,7 @@ export default function useAuth() {
         }
     }
 
+    // Define login, signup, and logout functions
     async function login(userDetails) {
         return authServerCall("/auth/login", userDetails);
     }
@@ -46,11 +49,7 @@ export default function useAuth() {
     async function logout() {
         try {
             // clear user from stored user data
-            const storedUser = await AsyncStorage.getItem("upcare_user");
-            if (storedUser) {
-                const headers = getJWTHeader(JSON.parse(storedUser));
-                await axiosInstance.post("/auth/logout", {}, { headers });
-            }
+            await AsyncStorage.removeItem("upcare_user");
             clearUser();
         } catch (err) {
             clearUser();
@@ -58,15 +57,10 @@ export default function useAuth() {
         }
     }
 
-
+    // Return the authentication functions
     return {
         login,
         signup,
-        // googleLoginOrSignup,
-        // googleResponse,
-        // facebookLoginOrSignup,
-        // facebookResponse,
-        // appleLoginOrRegister,
-        // logout,
+        logout,
     };
 }

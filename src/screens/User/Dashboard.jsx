@@ -7,6 +7,7 @@ import Carousel from 'react-native-snap-carousel'
 import CustomJobCard, { SLIDER_WIDTH, ITEM_WIDTH } from '../../components/CustomJobCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useEffect } from 'react'
+// import { useUser } from "../hooks/useUser";
 import RecentJobCard from '../../components/CustomRecentJobCard';
 import { useJobs } from '../../hooks/jobService';
 
@@ -24,23 +25,7 @@ function Dashboard(activeNav) {
     };
     const activeBottomNav = activeNav.route.name;
 
-    useEffect(() => {
-        const checkUserData = async () => {
-            try {
-                const storedUserData = await AsyncStorage.getItem('upcare_user');
-                if (storedUserData !== null) {
-                    // We have user data
-                    setUserData(JSON.parse(storedUserData));
-                } else {
-                    setUserData([])
-                }
-            } catch (error) {
-                console.error('Error reading user data:', error);
-            }
-        };
 
-        checkUserData();
-    }, []);
 
     return (
         <AuthenticatedLayout activeBottomNav={activeBottomNav}>
