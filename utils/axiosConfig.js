@@ -4,7 +4,6 @@ import axios from "axios"
 // Production url = https://upcareph.com/api 
 
 const baseURL = "https://phplaravel-719501-3973159.cloudwaysapps.com/api"
-
 const axiosInstance = axios.create({
     baseURL,
 })

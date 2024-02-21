@@ -34,5 +34,5 @@ export function useJobs() {
         fetchJobs();
     }, [user]);
 
-    return { jobs, loading, error }; // Moved return statement outside of useEffect
+    return { jobs, loading, error };
 }

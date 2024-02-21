@@ -14,7 +14,7 @@ const CustomJobCard = ({ job, isActive }) => {
                     <View style={styles.company}>
                         <Image
                             source={require('../../assets/images/hero-bg.jpg')}
-                            style={{ width: 50, height: 50, borderRadius: 50, margin: '0 auto' }}
+                            style={{ width: 50, height: 50, borderRadius: 15, margin: '0 auto' }}
                         />
                         <View>
                             <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: 'bold', marginTop: 3 }}>{job.company.length > 20 ? job.company.substring(0, 20) + '...' : job.company}</Text>
@@ -43,7 +43,7 @@ const CustomJobCard = ({ job, isActive }) => {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: 'white',
-        borderRadius: 15,
+        borderRadius: 20,
         width: ITEM_WIDTH,
         shadowColor: "#000",
 

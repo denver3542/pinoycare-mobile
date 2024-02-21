@@ -17,59 +17,60 @@ import { queryClient } from "./utils/queryClient";
 const fontConfig = {
   web: {
     regular: {
-      fontFamily: "sans-serif",
+      fontFamily: "JakartaSansSatoshi-Regular",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "sans-serif-medium",
+      fontFamily: "JakartaSansSatoshi-Medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "sans-serif-light",
+      fontFamily: "JakartaSansSatoshi-Light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "sans-serif-thin",
+      fontFamily: "JakartaSansSatoshi-Thin",
       fontWeight: "normal",
     },
   },
   ios: {
     regular: {
-      fontFamily: "sans-serif",
+      fontFamily: "JakartaSansSatoshi-Regular",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "sans-serif-medium",
+      fontFamily: "JakartaSansSatoshi-Medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "sans-serif-light",
+      fontFamily: "JakartaSansSatoshi-Light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "sans-serif-thin",
+      fontFamily: "JakartaSansSatoshi-Thin",
       fontWeight: "normal",
     },
   },
   android: {
     regular: {
-      fontFamily: "sans-serif",
+      fontFamily: "JakartaSansSatoshi-Regular",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "sans-serif-medium",
+      fontFamily: "JakartaSansSatoshi-Medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "sans-serif-light",
+      fontFamily: "JakartaSansSatoshi-Light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "sans-serif-thin",
+      fontFamily: "JakartaSansSatoshi-Thin",
       fontWeight: "normal",
     },
   },
 };
+
 
 const theme = {
   ...paperDefaultTheme,

@@ -14,24 +14,21 @@ function AuthenticatedLayout({ children, activeBottomNav }) {
 
             <ScrollView style={styles.container}>
                 <View style={styles.contentContainer}>
-                    {isDashboardOrJobs && (
+                    {/* {isDashboardOrJobs && (
                         <View style={styles.searchContainer}>
                             <Searchbar
                                 placeholder='Search job title / keyword'
                                 onChangeText={(query) => {
-                                    // Handle search functionality here
                                 }}
                                 onBlur={() => {
-                                    // Handle search bar blur event here
                                 }}
                                 onFocus={() => {
-                                    // Handle search bar focus event here
                                 }}
                                 style={styles.searchBar}
                                 inputStyle={styles.searchBarInput}
                             />
                         </View>
-                    )}
+                    )} */}
                     {children}
                 </View>
             </ScrollView>
@@ -56,7 +53,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderWidth: 0.1,
         elevation: 10,
-        backgroundColor: 'white',
+        backgroundColor: '#FBFBFB',
     },
     searchBarInput: {
         fontSize: 16,

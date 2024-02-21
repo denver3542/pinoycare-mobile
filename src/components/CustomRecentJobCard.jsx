@@ -1,39 +1,58 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 
-const RecentJobCard = ({ jobTitle, company, location, imageUrl, onPress }) => {
+const RecentJobCard = ({ jobTitle, type, location, imageUrl }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.card}>
-      <Image source={{ uri: imageUrl }} style={styles.jobImage} />
-      <View style={styles.jobDetails}>
-        <Text style={styles.jobTitle}>{jobTitle}</Text>
-        <Text style={styles.company}>{company}</Text>
-        {/* <Text style={styles.type}>{company}</Text> */}
-        <Text style={styles.location}>{location}</Text>
+    <View style={styles.card}>
+      <View style={styles.cardContent}>
+        {imageUrl ? (
+          <Image source={{ uri: imageUrl }} style={styles.jobImage} />
+        ) : (
+          <Image source={require('../../assets/images/hero-bg.jpg')} style={styles.jobImage} />
+        )}
+        <View style={styles.jobDetails}>
+          <Text style={styles.jobTitle}>{jobTitle}</Text>
+          <Text style={styles.type}>{type}</Text>
+          {/* <Text style={styles.type}>{company}</Text> */}
+          <Text style={styles.location}>{location}</Text>
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 14,
+    borderRadius: 20,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 10,
+    shadowRadius: 50,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   jobImage: {
-    width: '100%',
-    height: 100,
-    borderRadius: 14,
-    marginBottom: 10,
+    width: 60,
+    height: 60,
+    borderRadius: 15,
+    marginRight: 15,
   },
-  jobDetails: {},
+  jobDetails: {
+    flex: 1,
+  },
   jobTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+
   },
-  company: {
+  type: {
     fontSize: 16,
     color: '#555',
   },

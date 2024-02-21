@@ -1,6 +1,7 @@
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useLayoutEffect, useState } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import Home from "../screens/Home";
 import SignUp from "../screens/Auth/SignUp";
 import Login from "../screens/Auth/Login";
@@ -16,11 +17,8 @@ import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
 import Account from "../screens/User/Account";
 import Dashboard from "../screens/User/Dashboard";
-import { Text } from "react-native-paper";
-import HeaderAvatar from "../components/HeaderAvatar";
 import HeaderSettings from "../components/HeaderSettings";
 import HeaderNotification from "../components/HeaderNotification";
-
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -32,6 +30,33 @@ function getActiveRouteName(state) {
   }
   return route.name;
 }
+
+// function CustomHeader({ title, subtitle }) {
+//   const [searchQuery, setSearchQuery] = useState('');
+
+//   const handleSearch = () => {
+//     console.log('Searching for:', searchQuery);
+//   };
+
+//   return (
+//     <View style={styles.header}>
+//       <Text style={styles.headerTitle}>{title}</Text>
+//       {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
+//       <View style={styles.searchContainer}>
+//         <TextInput
+//           style={styles.searchInput}
+//           placeholder="Search"
+//           onChangeText={setSearchQuery}
+//           value={searchQuery}
+//         />
+//         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+//           <FontAwesome5 name="search" size={20} color="white" />
+//         </TouchableOpacity>
+//       </View>
+//     </View>
+//   );
+// }
+
 
 function LandingNavigation() {
   const { user, isFetching, isFetched } = useUser();
@@ -48,8 +73,6 @@ function LandingNavigation() {
     const route = getActiveRouteName(state);
     setActiveRouteName(route);
   };
-
-
 
   return (
     <NavigationContainer onStateChange={handleStateChange}>
@@ -70,95 +93,46 @@ function LandingNavigation() {
         <BottomTab.Navigator
           screenOptions={{ animationEnabled: false }}
         >
-
           <BottomTab.Screen
             name="Dashboard"
             initialParams={{ activeRouteName: activeRouteName, userData: user }}
             component={Dashboard}
             options={({ route }) => ({
+              headerShown: false,
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'home'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-              headerStyle: {
-                backgroundColor: '#001C4E',
-                shadowOpacity: 0,
-                elevation: 0,
-                height: 150,
-              },
-              headerLeft: () => (
-                <HeaderSettings subtitle={'Hello,'} title={route.params.userData.fullname} />
-              ),
-              headerTitle: '',
-              headerRight: () => (
-                <HeaderNotification />
-              ),
+              // header: () => <CustomHeader title={route.params.userData.fullname} subtitle={route.params.userData.profession ?? "None"}
+              // />,
+
+              // headerTitle: '',
+              // headerRight: () => (
+              //   <HeaderNotification notificationsCount={someGlobalState.notificationsCount} />
+              // ),
             })}
           />
-
           <BottomTab.Screen name="Feeds" initialParams={activeRouteName} component={Feeds}
-            options={{
+            options={({ route }) => ({
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'file-alt'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-              headerStyle: {
-                backgroundColor: '#001C4E',
-
-                shadowOpacity: 0,
-                elevation: 0,
-              },
-              headerTitle: 'Your feed',
-              headerTitleStyle: {
-                color: 'white'
-              },
-              headerTitleAlign: 'center',
-              headerRight: () => (
-                <HeaderSettings />
-              ),
-            }}
+            })}
           />
           <BottomTab.Screen name="Jobs" initialParams={activeRouteName} component={Jobs}
-            options={{
+            options={({ route }) => ({
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'briefcase'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-              headerStyle: {
-                backgroundColor: '#001C4E',
-
-                shadowOpacity: 0,
-                elevation: 0,
-              },
-              headerTitle: 'Find Jobs',
-              headerTitleStyle: {
-                color: 'white'
-              },
-              headerTitleAlign: 'center',
-              headerRight: () => (
-                <HeaderSettings />
-              ),
-            }}
+            })}
           />
           <BottomTab.Screen name="Application" initialParams={activeRouteName} component={Application}
             options={{
               tabBarLabel: '', // Hides the label
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'user-cog'} color={color} size={20} style={{ marginTop: 5 }} />
-              ),
-              headerStyle: {
-                backgroundColor: '#001C4E',
-
-                shadowOpacity: 0,
-                elevation: 0,
-              },
-              headerTitle: 'Applications',
-              headerTitleStyle: {
-                color: 'white'
-              },
-              headerTitleAlign: 'center',
-              headerRight: () => (
-                <HeaderSettings />
               ),
             }}
           />
@@ -168,27 +142,54 @@ function LandingNavigation() {
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'sliders-h'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-              headerStyle: {
-                backgroundColor: '#001C4E',
-
-                shadowOpacity: 0,
-                elevation: 0,
-              },
-              headerTitle: 'Account Settings',
-              headerTitleStyle: {
-                color: 'white'
-              },
-              headerTitleAlign: 'center',
-              headerRight: () => (
-                <HeaderSettings />
-              ),
             }}
           />
         </BottomTab.Navigator>
       )}
-
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: "#001C4E",
+    height: 200,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+
+  },
+  headerTitle: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 0,
+    marginTop: 60
+  },
+  headerSubtitle: {
+    color: "#C3C3C3",
+    fontSize: 18,
+    fontWeight: "normal",
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 50,
+  },
+  searchInput: {
+    flex: 1,
+    height: 50,
+    backgroundColor: "white",
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    marginRight: 10,
+  },
+  searchButton: {
+    backgroundColor: "#002884",
+    borderRadius: 20,
+    padding: 10,
+  },
+});
+
 
 export default LandingNavigation;
