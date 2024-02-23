@@ -59,7 +59,7 @@ export const useUser = () => {
             pushToken: token,
         };
 
-        const { data } = await axiosInstance.put("/auth/push-token", body, {
+        const { data } = await axiosInstancee.put("/auth/push-token", body, {
             headers: getJWTHeader(JSON.parse(user)),
         });
         return data;

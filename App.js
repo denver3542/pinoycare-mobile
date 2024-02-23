@@ -17,55 +17,55 @@ import { queryClient } from "./utils/queryClient";
 const fontConfig = {
   web: {
     regular: {
-      fontFamily: "JakartaSansSatoshi-Regular",
+      fontFamily: "Jakarta SansSatoshi-Regular",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "JakartaSansSatoshi-Medium",
+      fontFamily: "Jakarta SansSatoshi-Medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "JakartaSansSatoshi-Light",
+      fontFamily: "Jakarta SansSatoshi-Light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "JakartaSansSatoshi-Thin",
+      fontFamily: "Jakarta SansSatoshi-Thin",
       fontWeight: "normal",
     },
   },
   ios: {
     regular: {
-      fontFamily: "JakartaSansSatoshi-Regular",
+      fontFamily: "Jakarta SansSatoshi-Regular",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "JakartaSansSatoshi-Medium",
+      fontFamily: "Jakarta SansSatoshi-Medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "JakartaSansSatoshi-Light",
+      fontFamily: "Jakarta SansSatoshi-Light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "JakartaSansSatoshi-Thin",
+      fontFamily: "Jakarta SansSatoshi-Thin",
       fontWeight: "normal",
     },
   },
   android: {
     regular: {
-      fontFamily: "JakartaSansSatoshi-Regular",
+      fontFamily: "Jakarta SansSatoshi-Regular",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "JakartaSansSatoshi-Medium",
+      fontFamily: "Jakarta SansSatoshi-Medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "JakartaSansSatoshi-Light",
+      fontFamily: "Jakarta SansSatoshi-Light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "JakartaSansSatoshi-Thin",
+      fontFamily: "Jakarta SansSatoshi-Thin",
       fontWeight: "normal",
     },
   },

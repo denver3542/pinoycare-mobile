@@ -1,55 +1,58 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, View, ImageBackground } from 'react-native';
-import { ActivityIndicator } from 'react-native';
-import { Avatar, Searchbar, Text } from 'react-native-paper';
+import { Dimensions, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { Text } from 'react-native-paper';
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout';
 import Carousel from 'react-native-snap-carousel';
 import CustomJobCard, { SLIDER_WIDTH, ITEM_WIDTH } from '../../components/CustomJobCard';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from 'react';
-// import { useUser } from "../hooks/useUser";
 import RecentJobCard from '../../components/CustomRecentJobCard';
+import { useUser } from "../../hooks/useUser";
 import { useJobs } from '../../hooks/jobService';
+import { Searchbar } from 'react-native-paper';
+import HeaderNotification from "../../components/HeaderNotification";
+import HeaderMessageNotification from "../../components/HeaderMessageNotification";
+
 const screenWidth = Dimensions.get('window').width;
-const imageAspectRatio = 16 / 9; // Adjust this based on your image's aspect ratio
-const imageHeight = screenWidth / imageAspectRatio;
 
 function Dashboard(activeNav) {
     const [activeIndex, setActiveIndex] = useState(0);
-    const [userData, setUserData] = useState();
+    const { user, isFetching, isFetched } = useUser();
     const { jobs, loading, error } = useJobs();
-    const avatarSize = SLIDER_WIDTH * 0.15;
-    // Assuming you have defined CustomJobCard component somewhere
 
     const renderItem = ({ item, index }) => {
-        return (
-            <CustomJobCard
-                key={index}
-                job={item}
-                isActive={index === activeIndex}
-            />
-        );
+        return <CustomJobCard key={index} job={item} isActive={index === activeIndex} />;
     };
-
+    const profileImagePath = user && user.profile_picture ? { uri: user.profile_picture } : require('../../../assets/images/sample-profile.jpg');
     const activeBottomNav = activeNav.route.name;
+    const [searchQuery, setSearchQuery] = React.useState('');
 
     return (
         <AuthenticatedLayout activeBottomNav={activeBottomNav}>
-            <View style={styles.contentStyle}>
-                <View style={[styles.headerContainer, { backgroundColor: '#001234' }]}>
-                    <ImageBackground source={require('C:/xampp/htdocs/UPCareMobile/assets/images/hero-bg.jpg')} style={[styles.imageBackground, { width: screenWidth, height: imageHeight }]}>
-                        <View style={styles.overlay}>
-                            <Text style={styles.headerText}>Noir Tempest</Text>
-                            <Text style={styles.subHeaderText}>Professional Butler</Text>
+            <View style={styles.headerContainer}>
+                <View style={styles.header}>
+                    <View style={styles.userInfoContainer}>
+                        <Image source={profileImagePath} style={styles.profileImage} />
+                        <View style={styles.userInfoText}>
+                            <Text style={styles.headerName}>{user.name || "N/A"}</Text>
+                            <Text style={styles.headerProfession}>{user.profession || "N/A"}</Text>
                         </View>
-                    </ImageBackground>
+                    </View>
+                    <View style={styles.iconsContainer}>
+                        <HeaderMessageNotification />
+                        <HeaderNotification />
+                    </View>
                 </View>
+                <Searchbar
+                    placeholder="Search"
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
+                    style={styles.searchbar}
+                />
+            </View>
 
-
-
-
+            <View style={styles.contentStyle}>
                 <View style={styles.headerJobs}>
                     <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recommendation</Text>
+                    <TouchableOpacity><Text style={{ marginBottom: 15, color: 'gray' }}>Show All</Text></TouchableOpacity>
                 </View>
                 <View style={styles.carouselContainer}>
                     {jobs.length > 0 ? (
@@ -71,6 +74,7 @@ function Dashboard(activeNav) {
                 </View>
                 <View style={styles.headerJobs}>
                     <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recent Job List</Text>
+                    <TouchableOpacity><Text style={{ marginBottom: 15, color: 'gray' }}>Show All</Text></TouchableOpacity>
                 </View>
                 <View style={styles.categoryJobsView}>
                     {jobs && jobs.length > 0 ? (
@@ -79,7 +83,6 @@ function Dashboard(activeNav) {
                                 key={index}
                                 imageUrl={job.imageUrl}
                                 jobTitle={job.title}
-                                // type={`${job.type} / ${job.salary_from} - ${job.salary_to}`}
                                 type={job.type}
                                 location={job.location}
                             />
@@ -96,80 +99,108 @@ function Dashboard(activeNav) {
 }
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-        height: 200,
+    container: {
+        flex: 1,
     },
-    headerText: {
-        fontWeight: 'bold',
-        fontSize: 24,
+    header: {
+        padding: 20,
+        backgroundColor: '#001234',
+        height: 200,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    userInfoContainer: {
+        flexDirection: 'row',  // Align elements horizontally
+        alignItems: 'center',  // Center vertically
+    },
+    profileImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        marginRight: 10,
+    },
+    userInfoText: {
+        flexDirection: 'column',  // Stack the text elements vertically
+    },
+    headerName: {
         color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    headerProfession: {
+        color: 'gray',
+        fontSize: 14,
+    },
+    iconsContainer: {
+        bottom: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    searchbar: {
+        marginHorizontal: 10,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        bottom: 30,
+        backgroundColor: 'white',
+        elevation: 1,
+        borderRadius: 15
     },
     subHeaderText: {
         fontSize: 16,
         color: 'white',
         marginTop: 10,
     },
-    imageBackground: {
-        resizeMode: "cover",
-        justifyContent: "flex-start",
-        alignItems: "center",
-    },
-
     overlay: {
-        backgroundColor: 'rgba(0, 18, 52, 0.70)', // Use provided color with opacity
         position: 'absolute',
         width: '100%',
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        bottom: 0
+        backgroundColor: 'rgba(0, 18, 52, 0.7)',
     },
-
-
-
+    contentStyle: {
+        flex: 1,
+        padding: 10,
+    },
     headerJobs: {
         marginTop: 15,
+        marginBottom: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    redText: {
-        color: 'red',
-    },
-    noJobsContainer: {
-        flex: 1,
-        backgroundColor: 'white',
+    carouselContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: SLIDER_WIDTH,
-        height: 150,
+        marginBottom: 20,
+    },
+    noJobsContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        borderRadius: 10,
     },
     noJobsText: {
         fontSize: 18,
         color: 'gray',
-    },
-    carouselContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     categoryJobsView: {
         marginTop: 15,
     },
     categoryBox: {
         backgroundColor: 'white',
-        width: '100%',
-        flex: 2,
-        padding: 10,
         borderRadius: 10,
-        height: 150,
-        shadowColor: 'blue',
-        shadowOffset: { width: -2, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
+        padding: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+        elevation: 4,
     },
+
 });
+
 
 export default Dashboard;

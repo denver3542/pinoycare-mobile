@@ -99,22 +99,15 @@ function LandingNavigation() {
             component={Dashboard}
             options={({ route }) => ({
               headerShown: false,
-              tabBarLabel: '', // Hides the label
+              tabBarLabel: '',
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'home'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-              // header: () => <CustomHeader title={route.params.userData.fullname} subtitle={route.params.userData.profession ?? "None"}
-              // />,
-
-              // headerTitle: '',
-              // headerRight: () => (
-              //   <HeaderNotification notificationsCount={someGlobalState.notificationsCount} />
-              // ),
             })}
           />
           <BottomTab.Screen name="Feeds" initialParams={activeRouteName} component={Feeds}
             options={({ route }) => ({
-              tabBarLabel: '', // Hides the label
+              tabBarLabel: '',
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'file-alt'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
@@ -122,7 +115,7 @@ function LandingNavigation() {
           />
           <BottomTab.Screen name="Jobs" initialParams={activeRouteName} component={Jobs}
             options={({ route }) => ({
-              tabBarLabel: '', // Hides the label
+              tabBarLabel: '',
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'briefcase'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
@@ -130,19 +123,20 @@ function LandingNavigation() {
           />
           <BottomTab.Screen name="Application" initialParams={activeRouteName} component={Application}
             options={{
-              tabBarLabel: '', // Hides the label
+              tabBarLabel: '',
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'user-cog'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
             }}
           />
           <BottomTab.Screen name="Account" initialParams={activeRouteName} component={Account}
-            options={{
-              tabBarLabel: '', // Hides the label
+            options={({ route }) => ({
+              headerShown: false,
+              tabBarLabel: '',
               tabBarIcon: ({ color, size }) => (
                 <FontAwesome5 name={'sliders-h'} color={color} size={20} style={{ marginTop: 5 }} />
               ),
-            }}
+            })}
           />
         </BottomTab.Navigator>
       )}

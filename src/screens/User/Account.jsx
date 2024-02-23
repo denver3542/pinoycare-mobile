@@ -1,55 +1,60 @@
-import React from 'react'
-import { Avatar, Text } from 'react-native-paper'
-import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout'
-import CustomListItem from '../../components/CustomListItem'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { FontAwesome5 } from '@expo/vector-icons'
-import axiosInstance, { getJWTHeader } from '../../../utils/axiosConfig';
-import { useUser } from '../../hooks/useUser'
+import React, { useState } from 'react';
+import { Text } from 'react-native-paper';
+import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout';
+import CustomListItem from '../../components/CustomListItem';
+import { StyleSheet, Image, View } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { useUser } from '../../hooks/useUser';
 
-
-const Account = () => {
-    const { user } = useUser()
-    console.log(user);
-
-    // Add a callback function to log the user's token
-    const handleRequest = () => {
-        if (user && user.token) {
-            console.log("User token exists:", user.token);
-        }
-    };
-
+function Account(activeNav) {
+    const { user, isFetching, isFetched } = useUser();
+    const [activeIndex, setActiveIndex] = useState(0);
+    const activeBottomNav = activeNav.route.name;
+    const profileImagePath = user && user.profile_picture ? { uri: user.profile_picture } : require('../../../assets/images/sample-profile.jpg');
     return (
-        <AuthenticatedLayout>
-            <TouchableOpacity style={{ width: '100%' }}>
-                <View style={styles.item}>
-                    <Text style={styles.item_title}>Logout</Text>
+        <AuthenticatedLayout activeBottomNav={activeBottomNav}>
+            <View style={styles.headerContainer}>
+                <View style={styles.header}>
+                    <View style={styles.userInfoContainer}>
+                        <Image source={profileImagePath} style={styles.profileImage} />
+                        <View style={styles.userInfoText}>
+                            <Text style={styles.headerName}>{user.name || "N/A"}</Text>
+                            <Text style={styles.headerProfession}>{user.profession || "N/A"}</Text>
+                        </View>
+                    </View>
                 </View>
-            </TouchableOpacity>
+            </View>
         </AuthenticatedLayout>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    item: {
-        flexDirection: "row",
-        paddingVertical: 20,
-        alignItems: 'center',
+    header: {
+        padding: 20,
+        backgroundColor: '#001234',
+        height: 200,
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        borderBottomWidth: 1, // This adds a bottom border with a height of 1 pixel
-        borderBottomColor: '#ddd', // This sets the color of the bottom border; adjust as needed
+        alignItems: 'center',
     },
-    title: {
-        marginLeft: 5,
-        fontSize: 20
+    profileImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        marginRight: 10,
     },
-    item_title: {
-        marginLeft: 5,
-        fontSize: 16
+    headerName: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold',
     },
-    icon: {
-        marginRight: 5
-    }
-})
+    headerProfession: {
+        color: 'gray',
+        fontSize: 14,
+    },
+    userInfoText: {
+        flexDirection: 'column',
+    },
+});
 
-export default Account
+export default Account;

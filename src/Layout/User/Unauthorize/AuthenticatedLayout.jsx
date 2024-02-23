@@ -7,28 +7,10 @@ function AuthenticatedLayout({ children, activeBottomNav }) {
     const navigation = useNavigation();
     const route = useRoute();
 
-    const isDashboardOrJobs = activeBottomNav === 'Dashboard' || activeBottomNav === 'Jobs';
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
-
             <ScrollView style={styles.container}>
                 <View style={styles.contentContainer}>
-                    {/* {isDashboardOrJobs && (
-                        <View style={styles.searchContainer}>
-                            <Searchbar
-                                placeholder='Search job title / keyword'
-                                onChangeText={(query) => {
-                                }}
-                                onBlur={() => {
-                                }}
-                                onFocus={() => {
-                                }}
-                                style={styles.searchBar}
-                                inputStyle={styles.searchBarInput}
-                            />
-                        </View>
-                    )} */}
                     {children}
                 </View>
             </ScrollView>
@@ -40,10 +22,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    contentContainer: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-    },
+
     searchContainer: {
         marginHorizontal: 20,
         marginVertical: 4,
