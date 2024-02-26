@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react';
 import axiosInstance, { getJWTHeader } from '../../utils/axiosConfig';
-import { useUser } from '../hooks/useUser';
 
-export function useProfile() {
+export function useProfile(token) {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { user } = useUser();
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                if (!user) {
+                if (!token) {
                     setLoading(false);
                     return;
                 }
-                const headers = getJWTHeader(user);
+                const headers = getJWTHeader(token);
                 const response = await axiosInstance.get("/auth/profile", { headers });
+                console.log('Profile Data:', response.data); // Log the profile data
                 setProfile(response.data);
                 setLoading(false);
             } catch (error) {
@@ -32,7 +31,7 @@ export function useProfile() {
         };
 
         fetchProfile();
-    }, [user]);
+    }, [token]);
 
     return { profile, loading, error };
 }

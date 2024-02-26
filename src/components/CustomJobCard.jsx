@@ -49,8 +49,6 @@ const styles = StyleSheet.create({
 
         height: 'auto',
         marginVertical: 10,
-        shadowOpacity: 0.29,
-        shadowRadius: 4.65,
         // elevation: 7,
         position: 'relative',
         paddingVertical: 10,

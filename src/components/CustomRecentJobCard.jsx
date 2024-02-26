@@ -13,7 +13,6 @@ const RecentJobCard = ({ jobTitle, type, location, imageUrl }) => {
         <View style={styles.jobDetails}>
           <Text style={styles.jobTitle}>{jobTitle}</Text>
           <Text style={styles.type}>{type}</Text>
-          {/* <Text style={styles.type}>{company}</Text> */}
           <Text style={styles.location}>{location}</Text>
         </View>
       </View>
@@ -32,8 +31,8 @@ const styles = StyleSheet.create({
       width: 0,
       height: 6,
     },
-    shadowOpacity: 10,
-    shadowRadius: 50,
+    // shadowOpacity: 10,
+    // shadowRadius: 50,
   },
   cardContent: {
     flexDirection: 'row',

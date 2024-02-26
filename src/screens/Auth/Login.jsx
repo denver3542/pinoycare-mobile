@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
+// import * as AppleAuthentication from 'expo-apple-authentication';
+
 import {
   StyleSheet,
   View,
@@ -58,6 +60,32 @@ const Login = ({ navigation }) => {
   const navSignUp = async () => {
     navigation.navigate("SignUp");
   };
+
+  async function onAppleButtonPress() {
+
+    setLoading(true);
+
+    // start a login request
+    try {
+      const { identityToken, fullName } = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (identityToken) {
+        const firstname = fullName.givenName ? fullName.givenName : 'New';
+        const lastname = fullName.familyName ? fullName.familyName : 'User';
+        const response = await appleLoginOrRegister(identityToken, firstname, lastname);
+        // console.log(response);
+      }
+
+    } catch (error) {
+      console.error(error.message);
+    }
+    setLoading(false);
+  }
   return (
     <UnathorizeLayout>
       <Spinner visible={loading} color={colors.primary} />
@@ -135,14 +163,13 @@ const Login = ({ navigation }) => {
           Sign in
         </Button>
 
-        {Platform.OS === "ios" && (
-        <AppleAuthentication.AppleAuthenticationButton
+        {/* <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
           style={[styles.btn, { height: 40 }]}
           onPress={onAppleButtonPress}
-        />
-      )}
+        /> */}
+
         <View style={styles.lineContainer}>
           <View style={styles.line} />
           <View>
@@ -180,11 +207,7 @@ const styles = StyleSheet.create({
   btn: {
     borderRadius: 50,
   },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    paddingBottom: 16,
-  },
+
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
