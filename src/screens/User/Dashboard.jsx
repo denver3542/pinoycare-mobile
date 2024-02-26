@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout';
 import Carousel from 'react-native-snap-carousel';
@@ -10,6 +10,7 @@ import { useJobs } from '../../hooks/jobService';
 import { Searchbar } from 'react-native-paper';
 import HeaderNotification from "../../components/HeaderNotification";
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -27,73 +28,77 @@ function Dashboard(activeNav) {
 
     return (
         <AuthenticatedLayout activeBottomNav={activeBottomNav}>
-            <View style={styles.headerContainer}>
-                <View style={styles.header}>
-                    <View style={styles.userInfoContainer}>
-                        <Image source={profileImagePath} style={styles.profileImage} />
-                        <View style={styles.userInfoText}>
-                            <Text style={styles.headerName}>{user.name || "N/A"}</Text>
-                            <Text style={styles.headerProfession}>{user.profession || "N/A"}</Text>
+            <ScrollView>
+                <>
+                    <View style={styles.headerContainer}>
+                        <View style={styles.header}>
+                            <View style={styles.userInfoContainer}>
+                                <Image source={profileImagePath} style={styles.profileImage} />
+                                <View style={styles.userInfoText}>
+                                    <Text style={styles.headerName}>{user.name || "N/A"}</Text>
+                                    <Text style={styles.headerProfession}>{user.profession || "N/A"}</Text>
+                                </View>
+                            </View>
+                            <View style={styles.iconsContainer}>
+                                <HeaderMessageNotification />
+                                <HeaderNotification />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.iconsContainer}>
-                        <HeaderMessageNotification />
-                        <HeaderNotification />
-                    </View>
-                </View>
-                <Searchbar
-                    placeholder="Search"
-                    onChangeText={setSearchQuery}
-                    value={searchQuery}
-                    style={styles.searchbar}
-                />
-            </View>
-
-            <View style={styles.contentStyle}>
-                <View style={styles.headerJobs}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recommendation</Text>
-                    <TouchableOpacity><Text style={{ marginBottom: 15, color: 'gray' }}>Show All</Text></TouchableOpacity>
-                </View>
-                <View style={styles.carouselContainer}>
-                    {jobs.length > 0 ? (
-                        <Carousel
-                            layout="default"
-                            data={jobs}
-                            loop={true}
-                            renderItem={renderItem}
-                            sliderWidth={SLIDER_WIDTH}
-                            itemWidth={ITEM_WIDTH}
-                            onSnapToItem={(index) => setActiveIndex(index)}
-                            firstItem={0}
+                        <Searchbar
+                            placeholder="Search"
+                            onChangeText={setSearchQuery}
+                            value={searchQuery}
+                            style={styles.searchbar}
                         />
-                    ) : (
-                        <View style={styles.noJobsContainer}>
-                            <Text style={styles.noJobsText}>No Jobs Available</Text>
+                    </View>
+
+                    <View style={styles.contentStyle}>
+                        <View style={styles.headerJobs}>
+                            <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recommendation</Text>
+                            <TouchableOpacity><Text style={{ marginBottom: 15, color: 'gray' }}>Show All</Text></TouchableOpacity>
                         </View>
-                    )}
-                </View>
-                <View style={styles.headerJobs}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recent Job List</Text>
-                    <TouchableOpacity><Text style={{ marginBottom: 15, color: 'gray' }}>Show All</Text></TouchableOpacity>
-                </View>
-                <View style={styles.categoryJobsView}>
-                    {jobs && jobs.length > 0 ? (
-                        jobs.slice(0, 5).map((job, index) => (
-                            <RecentJobCard
-                                key={index}
-                                imageUrl={job.imageUrl}
-                                jobTitle={job.title}
-                                type={job.type}
-                                location={job.location}
-                            />
-                        ))
-                    ) : (
-                        <View style={styles.noJobsContainer}>
-                            <Text style={styles.noJobsText}>No Jobs Available</Text>
+                        <View style={styles.carouselContainer}>
+                            {jobs.length > 0 ? (
+                                <Carousel
+                                    layout="default"
+                                    data={jobs}
+                                    loop={true}
+                                    renderItem={renderItem}
+                                    sliderWidth={SLIDER_WIDTH}
+                                    itemWidth={ITEM_WIDTH}
+                                    onSnapToItem={(index) => setActiveIndex(index)}
+                                    firstItem={0}
+                                />
+                            ) : (
+                                <View style={styles.noJobsContainer}>
+                                    <Text style={styles.noJobsText}>No Jobs Available</Text>
+                                </View>
+                            )}
                         </View>
-                    )}
-                </View>
-            </View>
+                        <View style={styles.headerJobs}>
+                            <Text style={{ fontWeight: 'bold', marginBottom: 15, fontSize: 20 }}>Recent Job List</Text>
+                            <TouchableOpacity><Text style={{ marginBottom: 15, color: 'gray' }}>Show All</Text></TouchableOpacity>
+                        </View>
+                        <View style={styles.categoryJobsView}>
+                            {jobs && jobs.length > 0 ? (
+                                jobs.slice(0, 5).map((job, index) => (
+                                    <RecentJobCard
+                                        key={index}
+                                        imageUrl={job.imageUrl}
+                                        jobTitle={job.title}
+                                        type={job.type}
+                                        location={job.location}
+                                    />
+                                ))
+                            ) : (
+                                <View style={styles.noJobsContainer}>
+                                    <Text style={styles.noJobsText}>No Jobs Available</Text>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+                </>
+            </ScrollView>
         </AuthenticatedLayout>
     );
 }
@@ -104,7 +109,7 @@ const styles = StyleSheet.create({
     },
     header: {
         padding: 20,
-        backgroundColor: '#001234',
+        backgroundColor: '#0A3480',
         height: 200,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -152,14 +157,14 @@ const styles = StyleSheet.create({
         color: 'white',
         marginTop: 10,
     },
-    overlay: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 18, 52, 0.7)',
-    },
+    // overlay: {
+    //     position: 'absolute',
+    //     width: '100%',
+    //     height: '100%',
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    //     backgroundColor: 'rgba(0, 18, 52, 0.7)',
+    // },
     contentStyle: {
         flex: 1,
         padding: 10,

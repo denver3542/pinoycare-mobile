@@ -23,14 +23,12 @@ const RecentJobCard = ({ jobTitle, type, location, imageUrl }) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 20,
+    borderRadius: 14,
+    elevation: 0.5,
     padding: 15,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
+
     // shadowOpacity: 10,
     // shadowRadius: 50,
   },

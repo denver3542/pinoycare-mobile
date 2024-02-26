@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Text, ScrollView, View, StyleSheet, TouchableOpacity, Image, Dimensions, FlatList } from 'react-native';
-import { Card, Chip, Divider, List } from 'react-native-paper';
+import { Card, Chip, Divider, List, Title, Paragraph, useTheme, colors } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { useUser } from "../../hooks/useUser";
 import { useProfile } from '../../hooks/useProfile.js';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomAddSkillModal from '../../components/CustomAddSkillModal.jsx';
 
 function Account(activeNav) {
     const { user, isFetching, isFetched, setIsFetched } = useUser();
@@ -18,6 +17,11 @@ function Account(activeNav) {
     const windowHeight = Dimensions.get("screen").height;
     const [error, setError] = useState(null);
     const Tab = createMaterialTopTabNavigator();
+    const theme = useTheme();
+    const [showModal, setShowModal] = useState(false);
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    };
 
     // Define handleEditPress function
     const handleEditPress = () => {
@@ -33,15 +37,28 @@ function Account(activeNav) {
     }, [isProfileFetched, isFetched]);
 
     const workExperienceData = [
-        { id: '1', title: 'Work Experience 1' },
-        { id: '2', title: 'Work Experience 2' },
-        { id: '3', title: 'Work Experience 3' },
+        {
+            id: '1',
+            title: 'Software Engineer',
+            position: 'Fullstack Developer',
+            dateFrom: '2022-01-01',
+            dateTo: '2023-01-01',
+            salary: '$5000'
+        },
+        {
+            id: '2',
+            title: 'Frontend Developer',
+            position: 'Junior Developer',
+            dateFrom: '2023-02-01',
+            dateTo: '2024-02-01',
+            salary: '$6000'
+        },
         // Add more data as needed
     ];
     return (
         <AuthenticatedLayout activeBottomNav={activeBottomNav}>
             <ScrollView>
-                <SafeAreaView style={{ flex: 1 }}>
+                <>
                     <View style={styles.header}>
                         <View style={styles.userInfoContainer}>
                             <View style={styles.userInfoText}>
@@ -90,18 +107,18 @@ function Account(activeNav) {
                         </View>
                     </View>
 
-                    <Card style={{ borderRadius: 0, margin: 0, backgroundColor: "white" }}>
+                    <Card style={{ backgroundColor: '#FFFFFF', borderRadius: 0 }}>
                         <Card.Content>
                             <View style={{ marginBottom: 20 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text variant="titleLarge" style={{ fontSize: 18 }}>Professional Skills</Text>
-                                    <TouchableOpacity>
-                                        <FontAwesome5 name="plus-square" size={18} color="#001C4E" solid />
+                                    <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Professional Skills</Text>
+                                    <TouchableOpacity onPress={toggleModal}>
+                                        <FontAwesome5 name="plus-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ flexDirection: 'row', marginTop: 10, marginLeft: 12 }}>
                                     <Chip
-                                        icon={({ color }) => <FontAwesome5 name="times-circle" size={16} color={color} solid />}
+                                        icon={({ color }) => <FontAwesome5 name="times-circle" size={16} color="#0A3480" solid />}
                                         onPress={() => console.log('Pressed')}
                                         mode="outlined"
                                         style={{ borderRadius: 20, justifyContent: 'center', borderColor: 'gray', borderWidth: 0.6, marginRight: 4 }}
@@ -114,28 +131,28 @@ function Account(activeNav) {
                             <Divider />
                             <View style={{ marginTop: 20 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text variant="titleLarge" style={{ fontSize: 18 }}>Educational Background</Text>
+                                    <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Educational Background</Text>
                                     <TouchableOpacity>
-                                        <FontAwesome5 name="edit" size={16} color="#001C4E" solid />
+                                        <FontAwesome5 name="pen-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
-                                <List.Item title="Elementary" description="Butuan Central Elementary School" titleStyle={{ fontSize: 16, marginBottom: 2, color: "#7F8487" }} descriptionStyle={{ fontWeight: "bold", fontSize: 14 }}>
+                                <List.Item title="Elementary" description="Butuan Central Elementary School" titleStyle={{ fontSize: 18, color: "#7F8487" }} descriptionStyle={{ fontSize: 16 }}>
                                 </List.Item>
-                                <List.Item title="Junior High School" description="Agusan National High School" titleStyle={{ fontSize: 16, marginBottom: 2, color: "#7F8487" }} descriptionStyle={{ fontWeight: "bold", fontSize: 14 }}>
+                                <List.Item title="Junior High School" description="Agusan National High School" titleStyle={{ fontSize: 18, color: "#7F8487" }} descriptionStyle={{ fontSize: 16 }}>
                                 </List.Item>
-                                <List.Item title="Senior High School" description="Father Saturnino Urios University" titleStyle={{ fontSize: 16, marginBottom: 2, color: "#7F8487" }} descriptionStyle={{ fontWeight: "bold", fontSize: 14 }}>
+                                <List.Item title="Senior High School" description="Father Saturnino Urios University" titleStyle={{ fontSize: 18, color: "#7F8487" }} descriptionStyle={{ fontSize: 16 }}>
                                 </List.Item>
-                                <List.Item title="Master" description="None" titleStyle={{ fontSize: 16, marginBottom: 2, color: "#7F8487" }} descriptionStyle={{ fontWeight: "bold", fontSize: 14 }}>
+                                <List.Item title="Master" description="None" titleStyle={{ fontSize: 18, color: "#7F8487" }} descriptionStyle={{ fontSize: 16 }}>
                                 </List.Item>
-                                <List.Item title="Doctorate" description="None" titleStyle={{ fontSize: 16, marginBottom: 2, color: "#7F8487" }} descriptionStyle={{ fontWeight: "bold", fontSize: 14 }}>
+                                <List.Item title="Doctorate" description="None" titleStyle={{ fontSize: 18, color: "#7F8487" }} descriptionStyle={{ fontSize: 16 }}>
                                 </List.Item>
                             </View>
                             <Divider />
                             <View style={{ marginTop: 20, marginBottom: 20 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text variant="titleLarge" style={{ fontSize: 18 }}>Seminars and Trainings</Text>
+                                    <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Seminars and Trainings</Text>
                                     <TouchableOpacity>
-                                        <FontAwesome5 name="edit" size={16} color="#001C4E" solid />
+                                        <FontAwesome5 name="pen-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ marginTop: 20, marginLeft: 12, }}>
@@ -150,38 +167,54 @@ function Account(activeNav) {
                             <Divider />
                             <View style={{ marginTop: 20, }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text variant="titleLarge" style={{ fontSize: 18 }}>Work Experience</Text>
+                                    <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Work Experience</Text>
                                     <TouchableOpacity>
-                                        <FontAwesome5 name="edit" size={16} color="#001C4E" solid />
+                                        <FontAwesome5 name="pen-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
 
-                                <FlatList
-                                    data={workExperienceData}
-                                    keyExtractor={item => item.id}
-                                    renderItem={({ item }) => (
-                                        <View style={styles.card}>
-                                            <Text style={styles.cardText}>{item.title}</Text>
-                                        </View>
-                                    )}
-                                />
+                                {workExperienceData.map((item) => (
+                                    <View key={item.id} style={{ marginTop: 20 }}>
+                                        <Card.Content>
+                                            <View style={styles.row}>
+                                                <Text style={styles.title}>{item.title}</Text>
+                                            </View>
+                                            <View style={[styles.row, { justifyContent: 'space-between' }]}>
+                                                <View>
+                                                    <Text style={styles.label}>Position:</Text>
+                                                    <Text>{item.position}</Text>
+                                                </View>
+                                                <View>
+                                                    <Text style={styles.label}>Date Started  Date Ended</Text>
+                                                    <Text>{item.dateFrom}  {item.dateTo}</Text>
+                                                </View>
+                                            </View>
+                                            <View style={styles.row}>
+                                                <Text style={styles.label}>Salary:</Text>
+                                                <Text>{item.salary}</Text>
+                                            </View>
+                                        </Card.Content>
+                                    </View>
+                                ))}
                             </View>
                         </Card.Content>
                     </Card>
-                    {/* {user && (<Tab.Navigator></Tab.Navigator>)} */}
-                </SafeAreaView>
+                </>
             </ScrollView>
+            <CustomAddSkillModal visible={showModal} onClose={toggleModal} onSave={(skill) => console.log('Saving skill:', skill)} />
+
         </AuthenticatedLayout>
     );
 };
 
 const styles = StyleSheet.create({
-
     header: {
-        backgroundColor: '#001234',
+        backgroundColor: '#0A3480',
         height: 200,
         paddingHorizontal: 20,
         paddingBottom: 20,
+        justifyContent: 'center',
+        // alignItems: 'center'
     },
     userInfoContainer: {
         flexDirection: 'row',
@@ -189,9 +222,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginTop: 30
     },
-    userInfoText: {
-        flex: 1,
-    },
+
     profileImage: {
         width: 100,
         height: 100,
@@ -272,7 +303,29 @@ const styles = StyleSheet.create({
         color: '#001C4E',
         fontSize: 16,
     },
+    // card: {
+    //     backgroundColor: 'white',
+    //     borderRadius: 15,
+    //     justifyContent: 'center',
+    //     paddingVertical: 15,
+    //     marginTop: 10,
+    //     elevation: 0.5
+    // },
+    row: {
 
+        flexDirection: 'row',
+        marginBottom: 5,
+    },
+    title: {
+        fontSize: 16,
+        color: '#7F8487',
+        fontWeight: 'bold',
+    },
+    label: {
+        fontWeight: 'normal',
+        marginRight: 5,
+        fontWeight: 'bold'
+    },
 
 });
 

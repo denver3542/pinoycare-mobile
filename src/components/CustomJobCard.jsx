@@ -44,15 +44,11 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: 'white',
         borderRadius: 20,
-        width: ITEM_WIDTH,
-        shadowColor: "#000",
-
-        height: 'auto',
         marginVertical: 10,
-        // elevation: 7,
-        position: 'relative',
+        // elevation: 0.1,
         paddingVertical: 10,
         paddingHorizontal: 15,
+        justifyContent: 'center'
     },
     activeCard: {
         // Active styles
