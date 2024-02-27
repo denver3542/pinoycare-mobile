@@ -13,59 +13,58 @@ import Navigation from "./src/routes/LandingNavigation";
 import LandingNavigation from "./src/routes/LandingNavigation";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/queryClient";
-
 const fontConfig = {
   web: {
     regular: {
-      fontFamily: "Jakarta SansSatoshi-Regular",
+      fontFamily: "sans-serif",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "Jakarta SansSatoshi-Medium",
+      fontFamily: "sans-serif-medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "Jakarta SansSatoshi-Light",
+      fontFamily: "sans-serif-light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "Jakarta SansSatoshi-Thin",
+      fontFamily: "sans-serif-thin",
       fontWeight: "normal",
     },
   },
   ios: {
     regular: {
-      fontFamily: "Jakarta SansSatoshi-Regular",
+      fontFamily: "sans-serif",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "Jakarta SansSatoshi-Medium",
+      fontFamily: "sans-serif-medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "Jakarta SansSatoshi-Light",
+      fontFamily: "sans-serif-light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "Jakarta SansSatoshi-Thin",
+      fontFamily: "sans-serif-thin",
       fontWeight: "normal",
     },
   },
   android: {
     regular: {
-      fontFamily: "Jakarta SansSatoshi-Regular",
+      fontFamily: "sans-serif",
       fontWeight: "normal",
     },
     medium: {
-      fontFamily: "Jakarta SansSatoshi-Medium",
+      fontFamily: "sans-serif-medium",
       fontWeight: "normal",
     },
     light: {
-      fontFamily: "Jakarta SansSatoshi-Light",
+      fontFamily: "sans-serif-light",
       fontWeight: "normal",
     },
     thin: {
-      fontFamily: "Jakarta SansSatoshi-Thin",
+      fontFamily: "sans-serif-thin",
       fontWeight: "normal",
     },
   },

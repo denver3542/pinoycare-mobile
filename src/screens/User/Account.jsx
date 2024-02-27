@@ -6,7 +6,9 @@ import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayo
 import { useUser } from "../../hooks/useUser";
 import { useProfile } from '../../hooks/useProfile.js';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import CustomAddSkillModal from '../../components/CustomAddSkillModal.jsx';
+import CustomAddSkillModal from '../../components/CustomAddSkillModal';
+import CustomEditEducationalBackground from '../../components/CustomEditEducationalBackground';
+import CustomEditSeminarsAndTranings from '../../components/CustomEditSeminarsAndTranings';
 
 function Account(activeNav) {
     const { user, isFetching, isFetched, setIsFetched } = useUser();
@@ -18,9 +20,21 @@ function Account(activeNav) {
     const [error, setError] = useState(null);
     const Tab = createMaterialTopTabNavigator();
     const theme = useTheme();
-    const [showModal, setShowModal] = useState(false);
-    const toggleModal = () => {
-        setShowModal(!showModal);
+    const [showAddSkillModal, setShowAddSkillModal] = useState(false);
+    const [showEditEducationalBackgroundModal, setShowEditEducationalBackgroundModal] = useState(false);
+    const [showEditSeminarsAndTraningModal, setshowEditSeminarsAndTraningModal] = useState(false);
+
+
+    const toggleAddSkillModal = () => {
+        setShowAddSkillModal(!showAddSkillModal);
+    };
+
+    const toggleEditEducationalBackgroundModal = () => {
+        setShowEditEducationalBackgroundModal(!showEditEducationalBackgroundModal);
+    };
+
+    const toggleshowEditSeminarsAndTraningModal = () => {
+        setshowEditSeminarsAndTraningModal(!showEditSeminarsAndTraningModal);
     };
 
     // Define handleEditPress function
@@ -53,7 +67,6 @@ function Account(activeNav) {
             dateTo: '2024-02-01',
             salary: '$6000'
         },
-        // Add more data as needed
     ];
     return (
         <AuthenticatedLayout activeBottomNav={activeBottomNav}>
@@ -112,7 +125,7 @@ function Account(activeNav) {
                             <View style={{ marginBottom: 20 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Professional Skills</Text>
-                                    <TouchableOpacity onPress={toggleModal}>
+                                    <TouchableOpacity onPress={toggleAddSkillModal}>
                                         <FontAwesome5 name="plus-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
@@ -132,7 +145,7 @@ function Account(activeNav) {
                             <View style={{ marginTop: 20 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Educational Background</Text>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={toggleEditEducationalBackgroundModal}>
                                         <FontAwesome5 name="pen-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
@@ -151,7 +164,7 @@ function Account(activeNav) {
                             <View style={{ marginTop: 20, marginBottom: 20 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Seminars and Trainings</Text>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={toggleshowEditSeminarsAndTraningModal}>
                                         <FontAwesome5 name="pen-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
@@ -201,8 +214,9 @@ function Account(activeNav) {
                     </Card>
                 </>
             </ScrollView>
-            <CustomAddSkillModal visible={showModal} onClose={toggleModal} onSave={(skill) => console.log('Saving skill:', skill)} />
-
+            <CustomAddSkillModal visible={showAddSkillModal} onClose={toggleAddSkillModal} onSave={(a) => console.log('Saving skill:', a)} />
+            <CustomEditEducationalBackground visible={showEditEducationalBackgroundModal} onClose={toggleEditEducationalBackgroundModal} onSave={(b) => console.log('Show Edit Educational :', b)} />
+            <CustomEditSeminarsAndTranings visible={showEditSeminarsAndTraningModal} onClose={toggleshowEditSeminarsAndTraningModal} onSave={(c) => console.log('Show Edit Seminars and Trainings :', c)} />
         </AuthenticatedLayout>
     );
 };

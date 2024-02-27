@@ -21,7 +21,7 @@ const CustomAddSkillModal = ({ visible, onClose, onSave }) => {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
 
-        <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '80%' }}>
+        <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '92%' }}>
           <TouchableOpacity
             style={{ position: 'absolute', top: 20, right: 20, zIndex: 1 }}
             onPress={onClose}
