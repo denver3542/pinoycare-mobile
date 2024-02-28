@@ -9,6 +9,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import CustomAddSkillModal from '../../components/CustomAddSkillModal';
 import CustomEditEducationalBackground from '../../components/CustomEditEducationalBackground';
 import CustomEditSeminarsAndTranings from '../../components/CustomEditSeminarsAndTranings';
+import CustomWorkExperienceModal from '../../components/CustomWorkExperienceModal';
 
 function Account(activeNav) {
     const { user, isFetching, isFetched, setIsFetched } = useUser();
@@ -20,9 +21,10 @@ function Account(activeNav) {
     const [error, setError] = useState(null);
     const Tab = createMaterialTopTabNavigator();
     const theme = useTheme();
-    const [showAddSkillModal, setShowAddSkillModal] = useState(false);
-    const [showEditEducationalBackgroundModal, setShowEditEducationalBackgroundModal] = useState(false);
-    const [showEditSeminarsAndTraningModal, setshowEditSeminarsAndTraningModal] = useState(false);
+    const [showAddSkillModal, setShowAddSkillModal] = useState('');
+    const [showEditEducationalBackgroundModal, setShowEditEducationalBackgroundModal] = useState('');
+    const [showEditSeminarsAndTraningModal, setshowEditSeminarsAndTraningModal] = useState('');
+    const [showWorkExperienceModal, setshowWorkExperienceModal] = useState('');
 
 
     const toggleAddSkillModal = () => {
@@ -35,6 +37,10 @@ function Account(activeNav) {
 
     const toggleshowEditSeminarsAndTraningModal = () => {
         setshowEditSeminarsAndTraningModal(!showEditSeminarsAndTraningModal);
+    };
+
+    const toggleshowWorkExperienceModal = () => {
+        setshowWorkExperienceModal(!showWorkExperienceModal);
     };
 
     // Define handleEditPress function
@@ -181,7 +187,7 @@ function Account(activeNav) {
                             <View style={{ marginTop: 20, }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text variant="titleLarge" style={{ fontSize: 20, fontWeight: 'bold' }}>Work Experience</Text>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={toggleshowWorkExperienceModal}>
                                         <FontAwesome5 name="pen-square" size={20} color="#0A3480" solid />
                                     </TouchableOpacity>
                                 </View>
@@ -217,6 +223,7 @@ function Account(activeNav) {
             <CustomAddSkillModal visible={showAddSkillModal} onClose={toggleAddSkillModal} onSave={(a) => console.log('Saving skill:', a)} />
             <CustomEditEducationalBackground visible={showEditEducationalBackgroundModal} onClose={toggleEditEducationalBackgroundModal} onSave={(b) => console.log('Show Edit Educational :', b)} />
             <CustomEditSeminarsAndTranings visible={showEditSeminarsAndTraningModal} onClose={toggleshowEditSeminarsAndTraningModal} onSave={(c) => console.log('Show Edit Seminars and Trainings :', c)} />
+            <CustomWorkExperienceModal visible={showWorkExperienceModal} onClose={toggleshowWorkExperienceModal} onSave={(c) => console.log('Show Edit Seminars and Trainings :', c)} />
         </AuthenticatedLayout>
     );
 };

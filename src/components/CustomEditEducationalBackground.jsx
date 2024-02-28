@@ -49,11 +49,9 @@ const CustomEditEducationalBackground = ({ visible, onClose, onSave }) => {
             transparent={true}
             onRequestClose={onClose}
         >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
 
-
-                <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 15, width: '92%' }}>
+                <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 15, width: '92%', maxHeight: "80%" }}>
                     <TouchableOpacity
                         style={{ position: 'absolute', top: 20, right: 20, zIndex: 1 }}
                         onPress={onClose}
@@ -63,62 +61,10 @@ const CustomEditEducationalBackground = ({ visible, onClose, onSave }) => {
                     </TouchableOpacity>
 
                     <Text style={{ fontSize: 20, marginBottom: 10 }}>Edit Educational Background</Text>
-                    <Text style={{ paddingBottom: 5, fontWeight: 'bold', color: 'gray', marginTop: 20 }}>Elementary</Text>
-                    <Divider />
-                    <View style={{ marginTop: 10, marginBottom: 20 }}>
-                        <TextInput
-                            mode="outlined"
-                            label="School Name"
-                            placeholder="Type something"
-                            right={<TextInput.Affix />}
-                            value={educationalBackground}
-                            onChangeText={setEducationalBackground}
-                            style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
-                        />
-
-                        <View style={{ flexDirection: 'row' }}>
-                            <TextInput
-                                mode="outlined"
-                                label="Start Date"
-                                placeholder="Select Date"
-                                right={<TextInput.Affix />}
-                                value={startDate.toLocaleDateString()}
-                                style={{ backgroundColor: 'white', height: 40, marginBottom: 20, marginRight: 5 }}
-                                editable={false}
-                            />
-                            <TextInput
-                                mode="outlined"
-                                label="End Date"
-                                placeholder="Select Date"
-                                right={<TextInput.Affix />}
-                                value={endDate.toLocaleDateString()}
-                                style={{ backgroundColor: 'white', height: 40, marginBottom: 20 }}
-                                editable={false}
-                            />
-                        </View>
-
-                        <Text style={{ paddingBottom: 5, fontWeight: 'bold', color: 'gray', marginTop: 20 }}>Junior High School</Text>
+                    <ScrollView>
+                        <Text style={{ paddingBottom: 5, fontWeight: 'bold', color: 'gray', marginTop: 20 }}>Elementary</Text>
                         <Divider />
-
-                        <View>
-                            <Text style={{ marginTop: 10, fontSize: 14, marginRight: 50 }}>Are you a K to 12 student?</Text>
-                            <RadioButton.Group onValueChange={value => setSelectedRadioButton(value)} value={selectedRadioButton}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity onPress={() => setSelectedRadioButton("Yes")} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text>Yes</Text>
-                                        <RadioButton value="Yes" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => setSelectedRadioButton("No")} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text>No</Text>
-                                        <RadioButton value="No" />
-                                    </TouchableOpacity>
-                                </View>
-                            </RadioButton.Group>
-                        </View>
-
-                        <Text style={{ paddingBottom: 5, fontWeight: 'bold', color: 'gray', marginTop: 20 }}>Baccalaureate</Text>
-                        <Divider />
-                        <View style={{ marginTop: 10 }}>
+                        <View style={{ marginTop: 10, marginBottom: 20 }}>
                             <TextInput
                                 mode="outlined"
                                 label="School Name"
@@ -128,33 +74,87 @@ const CustomEditEducationalBackground = ({ visible, onClose, onSave }) => {
                                 onChangeText={setEducationalBackground}
                                 style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
                             />
-                            <TextInput
-                                mode="outlined"
-                                label="Course"
-                                placeholder="Type something"
-                                right={<TextInput.Affix />}
-                                value={educationalBackground}
-                                onChangeText={setEducationalBackground}
-                                style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
-                            />
 
-                            <TouchableOpacity onPress={handleImagePicker}>
-                                {selectedImage ? (
-                                    <Image source={{ uri: selectedImage }} style={[styles.image]} />
-                                ) : (
-                                    <Image source={placeholderImage} style={[styles.image]} />
-                                )}
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TextInput
+                                    mode="outlined"
+                                    label="Start Date"
+                                    placeholder="Select Date"
+                                    right={<TextInput.Affix />}
+                                    value={startDate.toLocaleDateString()}
+                                    style={{ backgroundColor: 'white', height: 40, marginBottom: 20, marginRight: 5 }}
+                                    editable={false}
+                                />
+                                <TextInput
+                                    mode="outlined"
+                                    label="End Date"
+                                    placeholder="Select Date"
+                                    right={<TextInput.Affix />}
+                                    value={endDate.toLocaleDateString()}
+                                    style={{ backgroundColor: 'white', height: 40, marginBottom: 20 }}
+                                    editable={false}
+                                />
+                            </View>
+
+                            <Text style={{ paddingBottom: 5, fontWeight: 'bold', color: 'gray', marginTop: 20 }}>Junior High School</Text>
+                            <Divider />
+
+                            <View>
+                                <Text style={{ marginTop: 10, fontSize: 14, marginRight: 50 }}>Are you a K to 12 student?</Text>
+                                <RadioButton.Group onValueChange={value => setSelectedRadioButton(value)} value={selectedRadioButton}>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <TouchableOpacity onPress={() => setSelectedRadioButton("Yes")} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Text>Yes</Text>
+                                            <RadioButton value="Yes" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => setSelectedRadioButton("No")} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Text>No</Text>
+                                            <RadioButton value="No" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </RadioButton.Group>
+                            </View>
+
+                            <Text style={{ paddingBottom: 5, fontWeight: 'bold', color: 'gray', marginTop: 20 }}>Baccalaureate</Text>
+                            <Divider />
+                            <View style={{ marginTop: 10 }}>
+                                <TextInput
+                                    mode="outlined"
+                                    label="School Name"
+                                    placeholder="Type something"
+                                    right={<TextInput.Affix />}
+                                    value={educationalBackground}
+                                    onChangeText={setEducationalBackground}
+                                    style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
+                                />
+                                <TextInput
+                                    mode="outlined"
+                                    label="Course"
+                                    placeholder="Type something"
+                                    right={<TextInput.Affix />}
+                                    value={educationalBackground}
+                                    onChangeText={setEducationalBackground}
+                                    style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
+                                />
+
+                                <TouchableOpacity onPress={handleImagePicker}>
+                                    {selectedImage ? (
+                                        <Image source={{ uri: selectedImage }} style={[styles.image]} />
+                                    ) : (
+                                        <Image source={placeholderImage} style={[styles.image]} />
+                                    )}
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                    <TouchableOpacity
-                        onPress={handleSave}
-                        style={{ borderRadius: 20, overflow: 'hidden' }}
-                    >
-                        <View style={{ backgroundColor: '#0A347F', paddingVertical: 12, paddingHorizontal: 20 }}>
-                            <Text style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 14 }}>Save</Text>
-                        </View>
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={handleSave}
+                            style={{ borderRadius: 20, overflow: 'hidden' }}
+                        >
+                            <View style={{ backgroundColor: '#0A347F', paddingVertical: 12, paddingHorizontal: 20 }}>
+                                <Text style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 14 }}>Save</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </ScrollView>
                 </View>
 
             </View>

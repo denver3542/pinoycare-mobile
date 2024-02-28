@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import { Text, View, Modal, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { Divider, TextInput, RadioButton } from 'react-native-paper';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from "react";
+import {
+    Text,
+    View,
+    Modal,
+    TouchableOpacity,
+    StyleSheet,
+    Image,
+    Dimensions,
+    ScrollView,
+    Button
+} from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Divider, TextInput, RadioButton } from "react-native-paper";
+import * as ImagePicker from "expo-image-picker";
 
-const placeholderImage = require('../../assets/images/about.jpg');
+const placeholderImage = require("../../assets/images/about.jpg");
 
 const CustomEditSeminarsAndTranings = ({ visible, onClose, onSave }) => {
-    const [educationalBackground, setEducationalBackground] = useState('');
+    const [educationalBackground, setEducationalBackground] = useState("");
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
-    const [selectedImage, setSelectedImage] = useState('');
+    const [selectedImage, setSelectedImage] = useState("");
 
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
+        if (status !== "granted") {
+            alert("Sorry, we need camera roll permissions to make this work!");
             return;
         }
 
@@ -33,13 +43,13 @@ const CustomEditSeminarsAndTranings = ({ visible, onClose, onSave }) => {
 
     const handleSave = () => {
         onSave(educationalBackground, selectedRadioButton);
-        setEducationalBackground('');
-        setSelectedImage('');
+        setEducationalBackground("");
+        setSelectedImage("");
         onClose();
     };
 
     // Get the width of the screen
-    const screenWidth = Dimensions.get('window').width;
+    const screenWidth = Dimensions.get("window").width;
 
     return (
         <Modal
@@ -48,83 +58,120 @@ const CustomEditSeminarsAndTranings = ({ visible, onClose, onSave }) => {
             transparent={true}
             onRequestClose={onClose}
         >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, width: '92%', maxHeight: '80%' }}>
 
-                <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 15, width: '92%' }}>
                     <TouchableOpacity
-                        style={{ position: 'absolute', top: 20, right: 20, zIndex: 1 }}
+                        style={{ position: "absolute", top: 20, right: 20, zIndex: 1 }}
                         onPress={onClose}
                         pointerEvents="box-none"
                     >
                         <FontAwesome5 name="times-circle" size={24} color="#0A347F" solid />
                     </TouchableOpacity>
 
-                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Edit Seminars & Trainings</Text>
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>
+                        Edit Seminars & Trainings
+                    </Text>
 
-                    <View style={{ marginTop: 10, marginBottom: 20 }}>
-                        <TextInput
-                            mode="outlined"
-                            label="Facilitated By"
-                            placeholder=""
-                            right={<TextInput.Affix />}
-                            value={educationalBackground}
-                            onChangeText={setEducationalBackground}
-                            style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
-                        />
-
-                        <TextInput
-                            mode="outlined"
-                            label="Description"
-                            placeholder=""
-                            right={<TextInput.Affix />}
-                            value={educationalBackground}
-                            onChangeText={setEducationalBackground}
-                            style={{ backgroundColor: 'white', marginBottom: 10, height: 40 }}
-                        />
-                        <View style={{ flexDirection: 'row' }}>
+                    <ScrollView>
+                        <View style={{ marginTop: 10, marginBottom: 20 }}>
                             <TextInput
                                 mode="outlined"
-                                label="Start Date"
-                                placeholder="Select Date"
+                                label="Facilitated By"
+                                placeholder=""
                                 right={<TextInput.Affix />}
-                                value={startDate.toLocaleDateString()}
-                                style={{ backgroundColor: 'white', height: 40, marginBottom: 20, marginRight: 5 }}
-                                editable={false}
+                                value={educationalBackground}
+                                onChangeText={setEducationalBackground}
+                                style={{ backgroundColor: "white", marginBottom: 10, height: 40 }}
                             />
+
                             <TextInput
                                 mode="outlined"
-                                label="End Date"
-                                placeholder="Select Date"
+                                label="Description"
+                                placeholder=""
                                 right={<TextInput.Affix />}
-                                value={endDate.toLocaleDateString()}
-                                style={{ backgroundColor: 'white', height: 40, marginBottom: 20 }}
-                                editable={false}
+                                value={educationalBackground}
+                                onChangeText={setEducationalBackground}
+                                style={{ backgroundColor: "white", marginBottom: 10, height: 40 }}
+                            />
+                            <View style={{ flexDirection: "row" }}>
+                                <TextInput
+                                    mode="outlined"
+                                    label="Start Date"
+                                    placeholder="Select Date"
+                                    right={<TextInput.Affix />}
+                                    value={startDate.toLocaleDateString()}
+                                    style={{
+                                        backgroundColor: "white",
+                                        height: 40,
+                                        marginBottom: 20,
+                                        marginRight: 5,
+                                    }}
+                                    editable={false}
+                                />
+                                <TextInput
+                                    mode="outlined"
+                                    label="End Date"
+                                    placeholder="Select Date"
+                                    right={<TextInput.Affix />}
+                                    value={endDate.toLocaleDateString()}
+                                    style={{
+                                        backgroundColor: "white",
+                                        height: 40,
+                                        marginBottom: 20,
+                                    }}
+                                    editable={false}
+                                />
+                            </View>
+                            <TouchableOpacity
+                                onPress={handleImagePicker}
+                                style={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderStyle: "dashed",
+                                    borderWidth: 1,
+                                    borderColor: "gray",
+                                    borderRadius: 5,
+                                    padding: 10,
+                                    marginBottom: 10,
+                                }}
+                            >
+                                {selectedImage ? (
+                                    <>
+                                        <Image
+                                            source={{ uri: selectedImage }}
+                                            style={[styles.image]}
+                                        />
+                                        <Text
+                                            style={{
+                                                position: "absolute",
+                                                bottom: 5,
+                                                right: 5,
+                                                backgroundColor: "#fff",
+                                                padding: 5,
+                                                borderRadius: 5,
+                                            }}
+                                        >
+                                            Change
+                                        </Text>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Text>Select Image</Text>
+                                        <Image source={placeholderImage} style={[styles.image]} />
+                                    </>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ borderRadius: 20, overflow: 'hidden' }}>
+                            <Button
+                                onPress={handleSave}
+                                title="Save"
+                                color="#0A347F"
                             />
                         </View>
-                        <TouchableOpacity onPress={handleImagePicker} style={{ alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: 'gray', borderRadius: 5, padding: 10, marginBottom: 10 }}>
-                            {selectedImage ? (
-                                <>
-                                    <Image source={{ uri: selectedImage }} style={[styles.image]} />
-                                    <Text style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: '#fff', padding: 5, borderRadius: 5 }}>Change</Text>
-                                </>
-                            ) : (
-                                <>
-                                    <Text>Select Image</Text>
-                                    <Image source={placeholderImage} style={[styles.image]} />
-                                </>
-                            )}
-                        </TouchableOpacity>
 
-                    </View>
-                    <TouchableOpacity
-                        onPress={handleSave}
-                        style={{ borderRadius: 20, overflow: 'hidden' }}
-                    >
-                        <View style={{ backgroundColor: '#0A347F', paddingVertical: 12, paddingHorizontal: 20 }}>
-                            <Text style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 14 }}>Save</Text>
-                        </View>
-                    </TouchableOpacity>
+                    </ScrollView>
                 </View>
             </View>
         </Modal>
@@ -135,7 +182,7 @@ const styles = StyleSheet.create({
     image: {
         height: 170,
         marginBottom: 10,
-        width: "auto"
+        width: "auto",
     },
 });
 

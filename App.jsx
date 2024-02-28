@@ -13,6 +13,8 @@ import Navigation from "./src/routes/LandingNavigation";
 import LandingNavigation from "./src/routes/LandingNavigation";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/queryClient";
+import { enGB, registerTranslation } from 'react-native-paper-dates'
+registerTranslation('en-GB', enGB)
 const fontConfig = {
   web: {
     regular: {
