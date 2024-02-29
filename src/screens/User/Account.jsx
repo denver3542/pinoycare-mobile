@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, ScrollView, View, StyleSheet, TouchableOpacity, Image, Dimensions, FlatList } from 'react-native';
 import { Card, Chip, Divider, List, Title, Paragraph, useTheme, colors } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { useUser } from "../../hooks/useUser";
 import { useProfile } from '../../hooks/useProfile.js';
@@ -11,7 +12,7 @@ import CustomEditEducationalBackground from '../../components/CustomEditEducatio
 import CustomEditSeminarsAndTranings from '../../components/CustomEditSeminarsAndTranings';
 import CustomWorkExperienceModal from '../../components/CustomWorkExperienceModal';
 
-function Account(activeNav) {
+const Account = (activeNav) => {
     const { user, isFetching, isFetched, setIsFetched } = useUser();
     const { profile, isFetching: isProfileFetching, isFetched: isProfileFetched, setIsFetched: setProfileIsFetched } = useProfile(user.token);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -25,7 +26,12 @@ function Account(activeNav) {
     const [showEditEducationalBackgroundModal, setShowEditEducationalBackgroundModal] = useState('');
     const [showEditSeminarsAndTraningModal, setshowEditSeminarsAndTraningModal] = useState('');
     const [showWorkExperienceModal, setshowWorkExperienceModal] = useState('');
+    const navigation = useNavigation();
 
+    const toggleEditProfile = () => {
+        console.log("Navigating to EditUserProfile");
+        navigation.navigate("EditUserProfile");
+    };
 
     const toggleAddSkillModal = () => {
         setShowAddSkillModal(!showAddSkillModal);
@@ -75,7 +81,7 @@ function Account(activeNav) {
         },
     ];
     return (
-        <AuthenticatedLayout activeBottomNav={activeBottomNav}>
+        <AuthenticatedLayout >
             <ScrollView>
                 <>
                     <View style={styles.header}>
@@ -116,12 +122,13 @@ function Account(activeNav) {
                                     source={profile?.profile_picture ? { uri: profile.profile_picture } : require('../../../assets/images/sample-profile.jpg')}
                                     style={styles.profileImage}
                                 />
-                                <TouchableOpacity onPress={handleEditPress} style={styles.editButton}>
+                                <TouchableOpacity onPress={toggleEditProfile} style={styles.editButton}>
                                     <View style={styles.editContent}>
                                         <Text style={styles.editText}>Edit</Text>
                                         <FontAwesome5 name="edit" size={14} color="white" style={styles.editIcon} />
                                     </View>
                                 </TouchableOpacity>
+
                             </View>
                         </View>
                     </View>
@@ -308,6 +315,7 @@ const styles = StyleSheet.create({
     },
     editText: {
         color: 'white',
+        marginRight: 2
     },
     editButton: {
         marginTop: 10,

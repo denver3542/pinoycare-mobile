@@ -203,7 +203,6 @@ const CustomWorkExperienceModal = ({ visible, onClose, onSave }) => {
                             <Button
                                 onPress={handleSave}
                                 mode="contained"
-                                color="#0A347F"
                                 labelStyle={{ color: 'white' }}
                             >
                                 Save

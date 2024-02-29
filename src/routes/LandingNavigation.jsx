@@ -1,24 +1,27 @@
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { FontAwesome5 } from "@expo/vector-icons";
+import Spinner from "react-native-loading-spinner-overlay";
+
+// Import screens
 import Home from "../screens/Home";
 import SignUp from "../screens/Auth/SignUp";
 import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
-import { useUser } from "../hooks/useUser";
-import Spinner from "react-native-loading-spinner-overlay";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { FontAwesome5 } from "@expo/vector-icons";
+import EditUserProfile from "../components/EditUserProfile";
 import Feeds from "../screens/User/Feeds";
 import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
-import Account from "../screens/User/Account";
+import Account from "../screens/User/Account"; // Updated import
 import Dashboard from "../screens/User/Dashboard";
-import HeaderSettings from "../components/HeaderSettings";
-import HeaderNotification from "../components/HeaderNotification";
+
+// Import hooks
+import { useUser } from "../hooks/useUser";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -31,35 +34,8 @@ function getActiveRouteName(state) {
   return route.name;
 }
 
-// function CustomHeader({ title, subtitle }) {
-//   const [searchQuery, setSearchQuery] = useState('');
-
-//   const handleSearch = () => {
-//     console.log('Searching for:', searchQuery);
-//   };
-
-//   return (
-//     <View style={styles.header}>
-//       <Text style={styles.headerTitle}>{title}</Text>
-//       {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
-//       <View style={styles.searchContainer}>
-//         <TextInput
-//           style={styles.searchInput}
-//           placeholder="Search"
-//           onChangeText={setSearchQuery}
-//           value={searchQuery}
-//         />
-//         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-//           <FontAwesome5 name="search" size={20} color="white" />
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-//   );
-// }
-
-
 function LandingNavigation() {
-  const { user, isFetching, isFetched } = useUser();
+  const { user, isFetched } = useUser();
   const [loading, setLoading] = useState(true);
   const [activeRouteName, setActiveRouteName] = useState('');
 
@@ -79,8 +55,7 @@ function LandingNavigation() {
       {loading && <Spinner visible={loading} />}
       {!user ? (
         <Stack.Navigator>
-          <Stack.Group
-            screenOptions={{ animationEnabled: false, headerShown: false }}>
+          <Stack.Group screenOptions={{ animationEnabled: false, headerShown: false }}>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Login" component={Login} />
@@ -90,9 +65,7 @@ function LandingNavigation() {
           </Stack.Group>
         </Stack.Navigator>
       ) : (
-        <BottomTab.Navigator
-          screenOptions={{ animationEnabled: false }}
-        >
+        <BottomTab.Navigator screenOptions={{ animationEnabled: false }}>
           <BottomTab.Screen
             name="Dashboard"
             initialParams={{ activeRouteName: activeRouteName, userData: user }}
@@ -129,7 +102,7 @@ function LandingNavigation() {
               ),
             }}
           />
-          <BottomTab.Screen name="Account" initialParams={activeRouteName} component={Account}
+          <BottomTab.Screen name="Account" initialParams={activeRouteName} component={AccountNavigator}
             options={({ route }) => ({
               headerShown: false,
               tabBarLabel: '',
@@ -144,13 +117,21 @@ function LandingNavigation() {
   );
 }
 
+const AccountNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="AccountScreen" component={Account} options={{ headerShown: false }} />
+      <Stack.Screen name="EditUserProfile" component={EditUserProfile} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+};
+
 const styles = StyleSheet.create({
   header: {
     backgroundColor: "#001C4E",
     height: 200,
     justifyContent: "center",
     paddingHorizontal: 20,
-
   },
   headerTitle: {
     color: "white",
@@ -184,6 +165,5 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-
 
 export default LandingNavigation;
