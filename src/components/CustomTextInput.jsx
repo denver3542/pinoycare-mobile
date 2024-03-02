@@ -2,13 +2,13 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { HelperText, TextInput, useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
+import PropTypes from "prop-types";
 
 const CustomTextInput = ({
   control,
   name,
-  mode = "outlined",
-  rules = {},
-  styleContainer = {},
+  rules,
+  styleContainer,
   ...rest
 }) => {
   const theme = useTheme();
@@ -24,7 +24,7 @@ const CustomTextInput = ({
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
-            mode={mode}
+            mode="outlined"
             {...rest}
             error={!!error}
             style={[
@@ -32,13 +32,13 @@ const CustomTextInput = ({
               {
                 fontSize: 14,
                 height: 30,
-                paddingVertical: 8,
+                paddingVertical: 10,
+                backgroundColor: theme.colors.surface, // consistent with theme
               },
             ]}
             contentStyle={styles.contentStyle}
-            underlineColor="transparent"
           />
-          {!!error && error.message && (
+          {error && (
             <HelperText type="error" visible={!!error}>
               {error.message}
             </HelperText>
@@ -49,15 +49,20 @@ const CustomTextInput = ({
   );
 };
 
+CustomTextInput.propTypes = {
+  control: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  rules: PropTypes.object,
+  styleContainer: PropTypes.object,
+};
+
 const styles = StyleSheet.create({
   inputTextContainer: {
     marginBottom: 15,
   },
-
   contentStyle: {
     borderRadius: 10,
   },
- 
 });
 
 export default CustomTextInput;

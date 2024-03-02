@@ -13,11 +13,11 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
-import EditUserProfile from "../components/EditUserProfile";
+import EditUserProfile from "../screens/User/Profile/EditUserProfile";
 import Feeds from "../screens/User/Feeds";
 import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
-import Account from "../screens/User/Account"; // Updated import
+import Account from "../screens/User/Account";
 import Dashboard from "../screens/User/Dashboard";
 
 // Import hooks

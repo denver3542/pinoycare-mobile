@@ -7,7 +7,7 @@ import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayo
 import { useUser } from "../../hooks/useUser";
 import { useProfile } from '../../hooks/useProfile.js';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import CustomAddSkillModal from '../../components/CustomAddSkillModal';
+import CustomAddSkillModal from '../User/Profile/CustomAddSkillModal';
 import CustomEditEducationalBackground from '../../components/CustomEditEducationalBackground';
 import CustomEditSeminarsAndTranings from '../../components/CustomEditSeminarsAndTranings';
 import CustomWorkExperienceModal from '../../components/CustomWorkExperienceModal';

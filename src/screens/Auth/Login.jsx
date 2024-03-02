@@ -111,7 +111,6 @@ const Login = ({ navigation }) => {
           name="email"
           placeholder="Email"
           rules={{ required: "Email is required" }}
-        // rules={{ required: "Email must not be empty" }}
         />
         <CustomTextInput
           control={control}
@@ -123,7 +122,7 @@ const Login = ({ navigation }) => {
             <TextInput.Icon
               icon={showPw ? "eye-off" : "eye"}
               onPress={() => setShowPw((pw) => !pw)}
-              style={{ backgroundColor: "transparent" }}
+
             />
           }
         />
