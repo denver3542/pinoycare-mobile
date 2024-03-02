@@ -8,31 +8,47 @@ import * as ImagePicker from 'expo-image-picker';
 import { useUser } from "../../../hooks/useUser";
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useForm } from "react-hook-form";
+import moment from 'moment';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
 const EditUserProfile = () => {
     const { user } = useUser();
+    const [profileImage, setProfileImage] = useState(defaultProfileImage);
     const { control, handleSubmit, setValue } = useForm({
         defaultValues: {
             "firstname": user?.firstname || "",
             "middlename": user?.middlename || "",
             "lastname": user?.lastname || "",
             "phone": user?.phone || "",
-            "email": user?.email || "", // Assuming you have the email field in your user object
+            "email": user?.email || "",
             "permanent_address": user?.permanent_address || "",
             "current_address": user?.current_address || "",
-            "date_of_birth": user?.date_of_birth || ""
+            "date_of_birth": user?.date_of_birth ? moment(user.date_of_birth).toDate() : null
         }
     });
     const navigation = useNavigation();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [dateOfBirth, setDateOfBirth] = useState('');
-    const [dateInputFocused, setDateInputFocused] = useState(false);
-    const [profileImage, setProfileImage] = useState(defaultProfileImage);
 
     const selectImage = async () => {
-        // Your image selection logic here
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert('Permission to access camera roll is required!');
+            return;
+        }
+
+        const pickerResult = await ImagePicker.launchImageLibraryAsync();
+        if (pickerResult.canceled === true) {
+            return;
+        }
+
+        // Check if assets array is not empty
+        if (pickerResult.assets.length > 0) {
+            // Access the first asset from the array (assuming a single image is selected)
+            const selectedImage = pickerResult.assets[0];
+            // Update the profile image with the selected image URI
+            setProfileImage({ uri: selectedImage.uri });
+        }
     };
 
     const showDatePicker = () => {
@@ -44,12 +60,14 @@ const EditUserProfile = () => {
     };
 
     const handleConfirm = (date) => {
+        const selectedDate = new Date(date);
+        const dateToStore = `${selectedDate.getFullYear()}/${selectedDate.getMonth() + 1}/${selectedDate.getDate()}`
+        setValue('date_of_birth', dateToStore);
+        setDatePickerVisibility(false);
         hideDatePicker();
-        setDateOfBirth(date);
     };
 
     const handleDateInputFocus = () => {
-        setDateInputFocused(true);
         showDatePicker();
     };
 
@@ -97,41 +115,48 @@ const EditUserProfile = () => {
                     <CustomTextInput
                         control={control}
                         name="firstname"
-
+                        right={<FontAwesome5 name="user" size={20} color="black" />}
                     />
+
                     <CustomTextInput
                         control={control}
                         name="middlename"
-
                     />
                     <CustomTextInput
                         control={control}
                         name="lastname"
-
                     />
                     <CustomTextInput
                         control={control}
                         name="phone"
-
                     />
                     <CustomTextInput
                         control={control}
                         name="email"
-
                     />
                     <CustomTextInput
                         control={control}
                         name="permanent_address"
-
                     />
                     <CustomTextInput
                         control={control}
                         name="current_address"
-
                     />
-                    <CustomTextInput
-                        control={control}
-                        name="date_of_birth"
+                    <TouchableOpacity onPress={handleDateInputFocus}>
+                        <CustomTextInput
+                            control={control}
+                            name="date_of_birth"
+                            editable={false}
+                            defaultValue={user?.date_of_birth ? moment(user.date_of_birth).format("YYYY/MM/DD") : ""}
+                        />
+
+                    </TouchableOpacity>
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        date={user.date_of_birth ? new Date(user.date_of_birth) : new Date()}
+                        onConfirm={handleConfirm}
+                        onCancel={hideDatePicker}
                     />
                 </View>
             </ScrollView>
