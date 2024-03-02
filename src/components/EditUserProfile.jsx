@@ -4,11 +4,12 @@ import { Divider, TextInput, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import * as ImagePicker from 'expo-image-picker'; // Importing expo-image-picker
-
+import * as ImagePicker from 'expo-image-picker';
+import { useUser } from "../../hooks/useUser";
 const defaultProfileImage = require('../../assets/images/default-men.png');
 
 const EditUserProfile = () => {
+    const { user } = useUser();
     const navigation = useNavigation();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [dateOfBirth, setDateOfBirth] = useState('');

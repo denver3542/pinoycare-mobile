@@ -16,7 +16,7 @@ const screenWidth = Dimensions.get('window').width;
 
 function Dashboard(activeNav) {
     const [activeIndex, setActiveIndex] = useState(0);
-    const { user, isFetching, isFetched } = useUser();
+    const { user } = useUser();
     const { jobs, loading, error } = useJobs();
 
     const renderItem = ({ item, index }) => {
