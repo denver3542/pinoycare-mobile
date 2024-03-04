@@ -1,34 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform, ActivityIndicator } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from 'expo-image-picker';
-import { useUser } from "../../../hooks/useUser";
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useForm } from "react-hook-form";
 import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
+import { useUser } from "../../../hooks/useUser";
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
+async function updateProfile(userId, updateData) {
+    try {
+        const user = await AsyncStorage.getItem('upcare_user');
+        const headers = user ? getJWTHeader(JSON.parse(user)) : {};
+        const response = await axiosInstance.put(`/auth/profile/update/${userId}`, updateData, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+    }
+}
+
 const EditUserProfile = () => {
     const { user } = useUser();
+    const queryClient = useQueryClient();
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
     const { control, handleSubmit, setValue } = useForm({
         defaultValues: {
-            "firstname": user?.firstname || "",
-            "middlename": user?.middlename || "",
-            "lastname": user?.lastname || "",
-            "phone": user?.phone || "",
-            "email": user?.email || "",
-            "permanent_address": user?.permanent_address || "",
-            "current_address": user?.current_address || "",
-            "date_of_birth": user?.date_of_birth ? moment(user.date_of_birth).toDate() : null
+            firstname: user?.firstname || '',
+            middlename: user?.middlename || '',
+            lastname: user?.lastname || '',
+            phone: user?.phone || '',
+            email: user?.email || '',
+            permanent_address: user?.permanent_address || '',
+            current_address: user?.current_address || '',
+            date_of_birth: user?.date_of_birth ? moment(user.date_of_birth).format("YYYY-MM-DD") : "",
         }
     });
+
     const navigation = useNavigation();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const selectImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -42,14 +60,13 @@ const EditUserProfile = () => {
             return;
         }
 
-        // Check if assets array is not empty
+
         if (pickerResult.assets.length > 0) {
-            // Access the first asset from the array (assuming a single image is selected)
             const selectedImage = pickerResult.assets[0];
-            // Update the profile image with the selected image URI
             setProfileImage({ uri: selectedImage.uri });
         }
     };
+
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -61,23 +78,29 @@ const EditUserProfile = () => {
 
     const handleConfirm = (date) => {
         const selectedDate = new Date(date);
-        const dateToStore = `${selectedDate.getFullYear()}/${selectedDate.getMonth() + 1}/${selectedDate.getDate()}`
+        const dateToStore = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`
         setValue('date_of_birth', dateToStore);
         setDatePickerVisibility(false);
-        hideDatePicker();
-    };
-
-    const handleDateInputFocus = () => {
-        showDatePicker();
-    };
-
-    const handleDateInputChange = (text) => {
-        // Handle text input for date if needed
     };
 
     const handleSaveChanges = () => {
-        // Handle save changes logic here
-        console.log('Save changes');
+        handleSubmit(submitChanges)();
+    };
+
+    const submitChanges = async (data) => {
+        try {
+            setLoading(true);
+
+            const updatedProfile = await updateProfile(user.id, data);
+
+            console.log('Profile updated successfully:', updatedProfile);
+
+            queryClient.invalidateQueries(["user"]);
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -115,51 +138,64 @@ const EditUserProfile = () => {
                     <CustomTextInput
                         control={control}
                         name="firstname"
-                        right={<FontAwesome5 name="user" size={20} color="black" />}
+
                     />
 
                     <CustomTextInput
                         control={control}
                         name="middlename"
+
                     />
+
                     <CustomTextInput
                         control={control}
                         name="lastname"
+
                     />
+
                     <CustomTextInput
                         control={control}
                         name="phone"
+
                     />
+
                     <CustomTextInput
                         control={control}
                         name="email"
+
                     />
+
                     <CustomTextInput
                         control={control}
                         name="permanent_address"
+
                     />
+
                     <CustomTextInput
                         control={control}
                         name="current_address"
-                    />
-                    <TouchableOpacity onPress={handleDateInputFocus}>
-                        <CustomTextInput
-                            control={control}
-                            name="date_of_birth"
-                            editable={false}
-                            defaultValue={user?.date_of_birth ? moment(user.date_of_birth).format("YYYY/MM/DD") : ""}
-                        />
 
-                    </TouchableOpacity>
-                    <DateTimePickerModal
-                        isVisible={isDatePickerVisible}
-                        mode="date"
-                        date={user.date_of_birth ? new Date(user.date_of_birth) : new Date()}
-                        onConfirm={handleConfirm}
-                        onCancel={hideDatePicker}
                     />
+
+                    {/* <TouchableOpacity onPress={showDatePicker}>
+        <CustomTextInput
+            control={control}
+            name="date_of_birth"
+            label="Date of Birth"
+            editable={false}
+        />
+    </TouchableOpacity>
+    <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={new Date()}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+    /> */}
                 </View>
+
             </ScrollView>
+            {loading && <ActivityIndicator style={styles.loadingIndicator} size="large" color="gray" />}
         </KeyboardAvoidingView>
     );
 };
@@ -178,7 +214,6 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 20,
         fontWeight: 'bold',
-        // marginLeft: 100,
         color: 'white'
     },
     backIcon: {
@@ -212,6 +247,11 @@ const styles = StyleSheet.create({
     label: {
         fontWeight: 'bold',
         marginBottom: 4,
+    },
+    loadingIndicator: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
     },
 });
 

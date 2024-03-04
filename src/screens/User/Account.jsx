@@ -49,18 +49,18 @@ const Account = (activeNav) => {
         setshowWorkExperienceModal(!showWorkExperienceModal);
     };
 
-    // Define handleEditPress function
+
     const handleEditPress = () => {
-        // Your edit logic goes here
+
         console.log('Edit button pressed');
     };
 
 
-    useEffect(() => {
-        if (isProfileFetched && isFetched) {
-            console.log('Profile Data in Account Component:', profile);
-        }
-    }, [isProfileFetched, isFetched]);
+    // useEffect(() => {
+    //     if (isProfileFetched && isFetched) {
+    //         console.log('Profile Data in Account Component:', profile);
+    //     }
+    // }, [isProfileFetched, isFetched]);
 
     const workExperienceData = [
         {
