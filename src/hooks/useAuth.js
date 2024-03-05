@@ -9,6 +9,9 @@ export default function useAuth() {
 
     async function authServerCall(urlEndpoint, userDetails) {
         try {
+            console.log('Sending request to:', urlEndpoint);
+            console.log('Request data:', userDetails);
+
             const { data } = await axiosInstance({
                 url: urlEndpoint,
                 method: "POST",
@@ -22,8 +25,6 @@ export default function useAuth() {
                 console.log('Token found in headers:', data.token);
                 console.log('Token found, updating user data');
 
-                console.log('Profile picture:', data.user.profile_picture);
-                // Include profile picture URL if available
                 const profilePicture = data.user.profile_picture || null;
                 const updatedUser = { ...data.user, profile_picture: profilePicture };
 
@@ -33,14 +34,19 @@ export default function useAuth() {
 
             return data;
         } catch (errorResponse) {
+            console.error('Error occurred while making request:', errorResponse);
+
             const title =
                 axios.isAxiosError(errorResponse) &&
                     errorResponse?.response?.data?.message
                     ? errorResponse?.response?.data?.message
                     : SERVER_ERROR;
-            console.log({ errorResponse, title });
+            console.log('Error title:', title);
+
+            return null; // Return null or handle the error accordingly
         }
     }
+
 
     async function login(userDetails) {
         return authServerCall("/auth/login", userDetails);

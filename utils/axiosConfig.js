@@ -15,4 +15,4 @@ export function getJWTHeader(user) {
     }
 }
 
-export default axiosInstance
+export default axiosInstance;

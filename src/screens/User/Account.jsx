@@ -11,23 +11,44 @@ import CustomAddSkillModal from '../User/Profile/CustomAddSkillModal';
 import CustomEditEducationalBackground from '../../components/CustomEditEducationalBackground';
 import CustomEditSeminarsAndTranings from '../../components/CustomEditSeminarsAndTranings';
 import CustomWorkExperienceModal from '../../components/CustomWorkExperienceModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance, { getJWTHeader } from '../../../utils/axiosConfig.js';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { useQuery } from '@tanstack/react-query';
+
+async function getUser(userId) {
+    try {
+        const user = await AsyncStorage.getItem("upcare_user");
+        const headers = getJWTHeader(user);
+        const response = await axiosInstance.get(`/auth/user/${userId}`, { headers });
+        return response.data.user;
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+    }
+}
+
 
 const Account = (activeNav) => {
-    const { user, isFetching, isFetched, setIsFetched } = useUser();
-    const { profile, isFetching: isProfileFetching, isFetched: isProfileFetched, setIsFetched: setProfileIsFetched } = useProfile(user.token);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const activeBottomNav = activeNav.route.name;
+    const { data: user, isLoading: isFetching, error } = useQuery(['user'], getUser);
+    // const userId = user ? user.id : null; // Get userId from user data
+    // const { profile, isFetching: isProfileFetching } = useProfile(user.token);
     const [loading, setLoading] = useState(true);
     const windowHeight = Dimensions.get("screen").height;
-    const [error, setError] = useState(null);
+    const activeBottomNav = activeNav.route.name;
+    // const [error, setError] = useState(null);
     const Tab = createMaterialTopTabNavigator();
     const theme = useTheme();
-    const [showAddSkillModal, setShowAddSkillModal] = useState('');
-    const [showEditEducationalBackgroundModal, setShowEditEducationalBackgroundModal] = useState('');
-    const [showEditSeminarsAndTraningModal, setshowEditSeminarsAndTraningModal] = useState('');
-    const [showWorkExperienceModal, setshowWorkExperienceModal] = useState('');
+    const [showAddSkillModal, setShowAddSkillModal] = useState(false);
+    const [showEditEducationalBackgroundModal, setShowEditEducationalBackgroundModal] = useState(false);
+    const [showEditSeminarsAndTraningModal, setshowEditSeminarsAndTraningModal] = useState(false);
+    const [showWorkExperienceModal, setshowWorkExperienceModal] = useState(false);
     const navigation = useNavigation();
 
+    if (isFetching) {
+        // Render a loading indicator while fetching data
+        return <Spinner visible={true} color={"gray"} />;
+    }
     const toggleEditProfile = () => {
         console.log("Navigating to EditUserProfile");
         navigation.navigate("EditUserProfile");
@@ -118,10 +139,10 @@ const Account = (activeNav) => {
                                 </View>
                             </View>
                             <View style={styles.imageContainer}>
-                                <Image
+                                {/* <Image
                                     source={profile?.profile_picture ? { uri: profile.profile_picture } : require('../../../assets/images/sample-profile.jpg')}
                                     style={styles.profileImage}
-                                />
+                                /> */}
                                 <TouchableOpacity onPress={toggleEditProfile} style={styles.editButton}>
                                     <View style={styles.editContent}>
                                         <Text style={styles.editText}>Edit</Text>

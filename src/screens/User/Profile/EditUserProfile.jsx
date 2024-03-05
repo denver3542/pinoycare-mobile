@@ -7,6 +7,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from 'expo-image-picker';
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useForm } from "react-hook-form";
+import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
@@ -18,29 +19,43 @@ const defaultProfileImage = require('../../../../assets/images/default-men.png')
 async function updateProfile(userId, updateData) {
     try {
         const user = await AsyncStorage.getItem('upcare_user');
-        const headers = user ? getJWTHeader(JSON.parse(user)) : {};
+        const headers = getJWTHeader(user);
         const response = await axiosInstance.put(`/auth/profile/update/${userId}`, updateData, { headers });
-        return response.data;
+        return response.data.user;
     } catch (error) {
-        console.error('Error updating profile:', error);
-        throw error;
+        // console.error('Error updating profile:', error);
+        // throw error;
     }
 }
+
 
 const EditUserProfile = () => {
     const { user } = useUser();
     const queryClient = useQueryClient();
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
-    const { control, handleSubmit, setValue } = useForm({
+    const { control, handleSubmit, setValue, watch, formState: { isDirty } } = useForm({
         defaultValues: {
-            firstname: user?.firstname || '',
-            middlename: user?.middlename || '',
-            lastname: user?.lastname || '',
-            phone: user?.phone || '',
-            email: user?.email || '',
-            permanent_address: user?.permanent_address || '',
-            current_address: user?.current_address || '',
-            date_of_birth: user?.date_of_birth ? moment(user.date_of_birth).format("YYYY-MM-DD") : "",
+            "firstname": user?.firstname || '',
+            "middlename": user?.middlename || '',
+            "lastname": user?.lastname || '',
+            "phone": user?.phone || '',
+            "email": user?.email || '',
+            "permanent_address": user?.permanent_address || '',
+            "current_address": user?.current_address || '',
+        }
+    });
+
+    const { mutate, isLoading } = useMutation((updateData) => updateProfile(user?.id, updateData), {
+        onSuccess: (data, variables, context) => {
+            const updatedUser = { ...user, ...variables };
+            queryClient.setQueryData(["user"], updatedUser);
+            AsyncStorage.setItem("upcare_user", JSON.stringify(updatedUser));
+        },
+        onError: (error) => {
+            console.error('Mutation error:', error);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['user'] })
         }
     });
 
@@ -83,25 +98,30 @@ const EditUserProfile = () => {
         setDatePickerVisibility(false);
     };
 
-    const handleSaveChanges = () => {
-        handleSubmit(submitChanges)();
-    };
-
-    const submitChanges = async (data) => {
-        try {
-            setLoading(true);
-
-            const updatedProfile = await updateProfile(user.id, data);
-
-            console.log('Profile updated successfully:', updatedProfile);
-
-            queryClient.invalidateQueries(["user"]);
-        } catch (error) {
-            console.error("Error updating profile:", error);
-        } finally {
-            setLoading(false);
+    const handleSaveChanges = (data) => {
+        if (user) {
+            mutate(data);
+        } else {
+            console.error('User data is null');
         }
     };
+
+
+    // Watching changes to specific form fields
+    const firstNameValue = watch('firstname');
+    const middlenameValue = watch('middlename');
+    const lastNameValue = watch('lastname');
+    const emailValue = watch('email');
+    const phoneValue = watch('phone');
+    const permanentAddressValue = watch('permanent_address');
+    const currentAddressValue = watch('current_address');
+
+    useEffect(() => {
+        console.log('First Name:', firstNameValue);
+        console.log('Last Name:', lastNameValue);
+        console.log('Email:', emailValue);
+    }, [firstNameValue, middlenameValue, lastNameValue, emailValue, phoneValue, permanentAddressValue, currentAddressValue]);
+
 
     return (
         <KeyboardAvoidingView
@@ -116,7 +136,7 @@ const EditUserProfile = () => {
                             <FontAwesome5 name="arrow-left" size={20} color="white" solid style={styles.backIcon} />
                         </TouchableOpacity>
                         <Text style={styles.headerText}>Edit Profile</Text>
-                        <TouchableOpacity onPress={handleSaveChanges}>
+                        <TouchableOpacity onPress={handleSubmit(handleSaveChanges)}>
                             <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Save</Text>
                         </TouchableOpacity>
                     </View>
@@ -195,7 +215,7 @@ const EditUserProfile = () => {
                 </View>
 
             </ScrollView>
-            {loading && <ActivityIndicator style={styles.loadingIndicator} size="large" color="gray" />}
+            <Spinner visible={isLoading} />
         </KeyboardAvoidingView>
     );
 };

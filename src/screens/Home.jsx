@@ -5,7 +5,7 @@ import { Image } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import Vision from "../sections/Home/Vision";
 import ChoosePinoyCare from "../sections/Home/ChoosePinoyCare";
-import { useUser } from "../hooks/useUser";
+// import { useUser } from "../hooks/useUser";
 
 function Home({ navigation }) {
   const theme = useTheme();
@@ -13,14 +13,14 @@ function Home({ navigation }) {
   const spanTitle = 'Care';
   const windowHeight = Dimensions.get("screen").height;
 
-  const { user, isFetching, isFetched } = useUser();
+  // const { user, isFetching, isFetched } = useUser();
   const [loading, setLoading] = useState(true);
 
-  useLayoutEffect(() => {
-    if (isFetched) {
-      setLoading(false);
-    }
-  }, [isFetched]);
+  // useLayoutEffect(() => {
+  //   if (isFetched) {
+  //     setLoading(false);
+  //   }
+  // }, [isFetched]);
 
   return (
     <View style={styles.container}>
