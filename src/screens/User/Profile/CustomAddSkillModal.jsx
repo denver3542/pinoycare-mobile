@@ -1,14 +1,35 @@
 import React, { useState } from 'react';
 import { Text, View, Modal, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMutation } from 'react-query';
+import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
+
+async function addSkill(addSkillData) {
+  try {
+    const user = await AsyncStorage.getItem('upcare_user');
+    const headers = getJWTHeader(user);
+    const response = await axiosInstance.post(`/user/profile/addskills`, { skills: [addSkillData] }, { headers });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || 'Something went wrong');
+  }
+}
 
 const CustomAddSkillModal = ({ visible, onClose, onSave }) => {
   const [skill, setSkill] = useState('');
 
-  const handleSave = () => {
-    onSave(skill);
-    setSkill('');
-    onClose();
+  const mutation = useMutation(addSkill);
+
+  const handleSave = async () => {
+    try {
+      const data = await mutation.mutateAsync(skill);
+      onSave(data);
+      setSkill('');
+      onClose();
+    } catch (error) {
+      console.error('Error adding skill:', error.message);
+    }
   };
 
   return (

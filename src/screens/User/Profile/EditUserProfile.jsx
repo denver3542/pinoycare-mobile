@@ -20,7 +20,7 @@ async function updateProfile(userId, updateData) {
     try {
         const user = await AsyncStorage.getItem('upcare_user');
         const headers = getJWTHeader(user);
-        const response = await axiosInstance.put(`/auth/profile/update/${userId}`, updateData, { headers });
+        const response = await axiosInstance.put(`/user/profile/update/${userId}`, updateData, { headers });
         return response.data.user;
     } catch (error) {
         // console.error('Error updating profile:', error);

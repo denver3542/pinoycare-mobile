@@ -16,7 +16,7 @@ export function useJobs() {
                     return;
                 }
                 const headers = getJWTHeader(user);
-                const response = await axiosInstance.get("auth/jobs", { headers });
+                const response = await axiosInstance.get("/jobs/posted-job", { headers });
                 setJobs(response.data.jobs);
                 setLoading(false);
             } catch (error) {
