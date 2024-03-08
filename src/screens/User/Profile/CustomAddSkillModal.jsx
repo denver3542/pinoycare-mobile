@@ -5,11 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation } from 'react-query';
 import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
 
-async function addSkill(addSkillData, id) {
+async function addSkill(id) {
   try {
     const user = await AsyncStorage.getItem('upcare_user');
     const headers = getJWTHeader(user);
-    const response = await axiosInstance.post(`/user/${id}/profile/addSkills`, { skills: [addSkillData] }, { headers });
+    const response = await axiosInstance.post(`/user/profile/add-skills/${id}`, { skills: [addSkillData] }, { headers });
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.message || 'Something went wrong');

@@ -20,7 +20,7 @@ async function editTrainings(id) {
     try {
         const user = await AsyncStorage.getItem('upcare_user');
         const headers = getJWTHeader(user);
-        const response = await axiosInstance.post(`/user/profile/editTrainings/${id}`, { headers });
+        const response = await axiosInstance.post(`/user/profile/store-trainings/${id}`, { headers });
         return response.data;
     } catch (error) {
         throw new Error(error.response.data.message || 'Something went wrong');

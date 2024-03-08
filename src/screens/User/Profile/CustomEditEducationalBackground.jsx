@@ -11,7 +11,7 @@ async function editEducation(id, editEducationData) {
     try {
         const user = await AsyncStorage.getItem('upcare_user');
         const headers = getJWTHeader(user);
-        const response = await axiosInstance.put(`/user/${id}/profile/editEducation`, editEducationData, { headers });
+        const response = await axiosInstance.put(`/user/profile/edit-educations/${id}`, editEducationData, { headers });
         return response.data;
     } catch (error) {
         throw new Error(error.response.data.message || 'Something went wrong');
