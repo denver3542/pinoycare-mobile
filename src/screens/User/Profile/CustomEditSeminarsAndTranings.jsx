@@ -16,6 +16,16 @@ import * as ImagePicker from "expo-image-picker";
 
 const placeholderImage = require("../../assets/images/about.jpg");
 
+async function editTrainings(id) {
+    try {
+        const user = await AsyncStorage.getItem('upcare_user');
+        const headers = getJWTHeader(user);
+        const response = await axiosInstance.post(`/user/profile/editTrainings/${id}`, { headers });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || 'Something went wrong');
+    }
+}
 const CustomEditSeminarsAndTranings = ({ visible, onClose, onSave }) => {
     const [educationalBackground, setEducationalBackground] = useState("");
     const [startDate, setStartDate] = useState(new Date());
@@ -36,7 +46,7 @@ const CustomEditSeminarsAndTranings = ({ visible, onClose, onSave }) => {
             quality: 1,
         });
 
-        if (!result.cancelled) {
+        if (!result.canceled) {
             setSelectedImage(result.uri);
         }
     };

@@ -16,15 +16,14 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
-async function updateProfile(userId, updateData) {
+async function updateProfile(userId) {
     try {
         const user = await AsyncStorage.getItem('upcare_user');
         const headers = getJWTHeader(user);
-        const response = await axiosInstance.put(`/user/profile/update/${userId}`, updateData, { headers });
+        const response = await axiosInstance.put(`/user/profile/update/${userId}`, { headers });
         return response.data.user;
     } catch (error) {
-        // console.error('Error updating profile:', error);
-        // throw error;
+        throw new Error(error.response.data.message || 'Something went wrong');
     }
 }
 

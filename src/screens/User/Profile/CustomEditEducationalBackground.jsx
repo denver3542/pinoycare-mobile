@@ -6,6 +6,18 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const placeholderImage = require('../../assets/images/about.jpg');
+
+async function editEducation(id, editEducationData) {
+    try {
+        const user = await AsyncStorage.getItem('upcare_user');
+        const headers = getJWTHeader(user);
+        const response = await axiosInstance.put(`/user/${id}/profile/editEducation`, editEducationData, { headers });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || 'Something went wrong');
+    }
+}
+
 const CustomEditEducationalBackground = ({ visible, onClose, onSave }) => {
     const [educationalBackground, setEducationalBackground] = useState('');
     const [startDate, setStartDate] = useState(new Date());
