@@ -14,7 +14,7 @@ import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
 import EditUserProfile from "../screens/User/Profile/EditUserProfile";
-import VerificationScreen from '../screens/User/Profile/VerificationScreen';
+import VerificationScreen from '../screens/User/Profile/Verification';
 import Feeds from "../screens/User/Feeds";
 import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
