@@ -44,7 +44,7 @@ const CustomWorkExperienceModal = ({ visible, onClose, onSave }) => {
             quality: 1,
         });
 
-        if (!result.cancelled) {
+        if (!result.canceled) {
             setSelectedImage(result.uri);
         }
     };

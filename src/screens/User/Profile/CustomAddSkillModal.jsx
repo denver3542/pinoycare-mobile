@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, Modal, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useMutation } from 'react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
 
 async function addSkill(id) {
