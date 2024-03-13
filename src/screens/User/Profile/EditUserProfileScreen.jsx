@@ -28,7 +28,7 @@ async function updateProfile(userId) {
 }
 
 
-const EditUserProfile = () => {
+const EditUserProfileScreen = () => {
     const { user } = useUser();
     const queryClient = useQueryClient();
     const [profileImage, setProfileImage] = useState(defaultProfileImage);
@@ -274,4 +274,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default EditUserProfile;
+export default EditUserProfileScreen;

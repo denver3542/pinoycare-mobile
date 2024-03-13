@@ -1,10 +1,24 @@
 import React from 'react';
 import { Divider, IconButton, MD3Colors } from 'react-native-paper';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout'
+import { useUser } from "../../hooks/useUser";
 
+async function getUser(userData) {
+    try {
+        const user = await AsyncStorage.getItem('upcare_user');
+        const headers = getJWTHeader(user);
+        const response = await axiosInstance.get(`/user/user/profile`, userData, { headers });
+        return response.data.user;
+    } catch (error) {
+        throw new Error(error.response.data.message || 'Something went wrong')
+    }
+}
 const Account = () => {
+    const navigation = useNavigation();
+    const { user } = useUser();
     return (
         <AuthenticatedLayout>
             <ScrollView style={styles.container}>
@@ -22,48 +36,89 @@ const Account = () => {
                 <View style={styles.card}>
                     <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                         <View style={styles.cardContent}>
-                            <FontAwesome5 name="user" size={20} color="#0A3480" style={styles.cardIcon} solid />
-                            <Text style={styles.cardTitle}>About me</Text>
+                            <FontAwesome5 name="user-circle" size={20} color="#0A3480" style={styles.cardIcon} solid />
+                            <Text style={styles.cardTitle}>About Me</Text>
                         </View>
-                        <IconButton icon="pen" size={24} selected onPress={() => { }} />
+                        <IconButton icon="pencil-box" size={20} selected onPress={() => navigation.navigate('AboutMeScreen')} />
                     </View>
 
                     <Divider style={{
-                        marginTop: 15
+                        marginTop: 0
                     }} />
-                    <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
+                    <Text style={styles.cardDescription}>{user?.about_me}</Text>
+
                 </View>
                 {/* End of About Me Card */}
+
+                {/* Skills Card */}
                 <View style={styles.card}>
                     <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                         <View style={styles.cardContent}>
-                            <FontAwesome5 name="briefcase" size={20} color="#0A3480" style={styles.cardIcon} />
-                            <Text style={styles.cardTitle}>Work Experiences</Text>
+                            <FontAwesome5 name="star" size={18} color="#0A3480" style={styles.cardIcon} solid />
+                            <Text style={styles.cardTitle}>Professional Skills</Text>
                         </View>
-                        <IconButton icon="pen" size={24} selected onPress={() => { }} />
+                        <IconButton icon="pencil-box" size={20} selected onPress={() => { }} />
                     </View>
 
                     <Divider style={{
-                        marginTop: 15
+                        marginTop: 0
                     }} />
                     <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
                 </View>
-                <View style={styles.section}>
-                    <FontAwesome5 name="graduation-cap" size={24} color="#0A3480" />
-                    <Text style={styles.sectionText}>Education</Text>
+                {/* End of Sill Card */}
+
+                {/* Education Card */}
+                <View style={styles.card}>
+                    <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                        <View style={styles.cardContent}>
+                            <FontAwesome5 name="graduation-cap" size={20} color="#0A3480" style={styles.cardIcon} />
+                            <Text style={styles.cardTitle}>Education</Text>
+                        </View>
+                        <IconButton icon="pencil-box" size={20} selected onPress={() => { }} />
+                    </View>
+
+                    <Divider style={{
+                        marginTop: 0
+                    }} />
+                    <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
                 </View>
-                <View style={styles.section}>
-                    <AntDesign name="staro" size={24} color="#0A3480" />
-                    <Text style={styles.sectionText}>Skill</Text>
+                {/* End of Education Card */}
+
+                {/* Education Card */}
+                <View style={styles.card}>
+                    <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                        <View style={styles.cardContent}>
+                            <FontAwesome5 name="users" size={18} color="#0A3480" style={styles.cardIcon} solid />
+                            <Text style={styles.cardTitle}>Seminars and Trainings</Text>
+                        </View>
+                        <IconButton icon="pencil-box" size={20} selected onPress={() => { }} />
+                    </View>
+
+                    <Divider style={{
+                        marginTop: 0
+                    }} />
+                    <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
                 </View>
-                <View style={styles.section}>
-                    <AntDesign name="earth" size={24} color="#0A3480" />
-                    <Text style={styles.sectionText}>Language</Text>
+                {/* End of Education Card */}
+
+
+                {/* Work Experience Card */}
+                <View style={styles.card}>
+                    <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                        <View style={styles.cardContent}>
+                            <FontAwesome5 name="briefcase" size={18} color="#0A3480" style={styles.cardIcon} />
+                            <Text style={styles.cardTitle}>Work Experience</Text>
+                        </View>
+                        <IconButton icon="pencil-box" size={20} selected onPress={() => { }} />
+                    </View>
+
+                    <Divider style={{
+                        marginTop: 0
+                    }} />
+                    <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
                 </View>
-                <View style={styles.section}>
-                    <FontAwesome5 name="heart" size={24} color="#0A3480" />
-                    <Text style={styles.sectionText}>Appreciation</Text>
-                </View>
+                {/* End of Work Experience Card */}
+
             </ScrollView>
         </AuthenticatedLayout>
 
@@ -78,8 +133,8 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: '#0A3480',
         padding: 20,
-        // borderBottomRightRadius: 30,
-        // borderBottomLeftRadius: 30,
+        // borderBottomRightRadius: 25,
+        // borderBottomLeftRadius: 25,
         // borderTopRightRadius: 30,
         // borderTopLeftRadius: 30,
         // marginVertical: 15,
@@ -124,7 +179,7 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         color: '#0A3480',
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
     },
     cardDescription: {
