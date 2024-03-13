@@ -13,8 +13,9 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
-import EditUserProfile from "../screens/User/Profile/EditUserProfile";
-import VerificationScreen from '../screens/User/Profile/Verification';
+import EditUserProfileScreen from "../screens/User/Profile/EditUserProfileScreen";
+import VerificationScreen from '../screens/User/Profile/VerificationScreen';
+import AboutMeScreen from '../screens/User/Profile/AboutMeScreen';
 import Feeds from "../screens/User/Feeds";
 import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
@@ -60,7 +61,6 @@ function LandingNavigation() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
             <Stack.Screen name="Professional" component={Professional} />
             <Stack.Screen name="IndividualEmployer" component={IndividualEmployer} />
             <Stack.Screen name="OrganizationEmployer" component={OrganizationEmployer} />
@@ -123,8 +123,9 @@ const AccountNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="AccountScreen" component={Account} options={{ headerShown: false }} />
-      <Stack.Screen name="EditUserProfile" component={EditUserProfile} options={{ headerShown: false }} />
+      <Stack.Screen name="EditUserProfileScreen" component={EditUserProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="VerificationScreen" component={VerificationScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 };

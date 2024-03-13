@@ -33,7 +33,7 @@ const CustomTextInput = ({
                 fontSize: 14,
                 height: 30,
                 paddingVertical: 10,
-                backgroundColor: theme.colors.surface, // consistent with theme
+                backgroundColor: theme.colors.surface,
               },
             ]}
             contentStyle={styles.contentStyle}
