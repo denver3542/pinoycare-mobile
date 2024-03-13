@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const USER_LOCALSTORAGE_KEY = "nasya_user";
-const REMEMBERED_USER_LOCALSTORAGE_KEY = "nasya_remembered_user";
+const USER_LOCALSTORAGE_KEY = "upcare_user";
+const REMEMBERED_USER_LOCALSTORAGE_KEY = "upcare_remembered_user";
 
 // helper to get user from localstorage
 export async function getStoredUser() {

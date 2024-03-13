@@ -1,24 +1,71 @@
-import React from 'react';
-import { Divider, IconButton, MD3Colors } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { Chip, Divider, IconButton, Snackbar } from 'react-native-paper';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import AuthenticatedLayout from '../../Layout/User/Unauthorize/AuthenticatedLayout'
-import { useUser } from "../../hooks/useUser";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance, { getJWTHeader } from "../../../utils/axiosConfig";
 
-async function getUser(userData) {
-    try {
-        const user = await AsyncStorage.getItem('upcare_user');
-        const headers = getJWTHeader(user);
-        const response = await axiosInstance.get(`/user/user/profile`, userData, { headers });
-        return response.data.user;
-    } catch (error) {
-        throw new Error(error.response.data.message || 'Something went wrong')
-    }
-}
+const SkillsChip = ({ skill, setSnackbarProperties }) => {
+    return (
+        <Chip
+            compact
+            mode="outlined"
+            onPress={() => { }}
+            onClose={() =>
+                setSnackbarProperties({
+                    visible: true,
+                    text: 'Skill Removed',
+                })
+            }
+            style={styles.chip}
+        >
+            <Text style={{ fontSize: 10 }}>   {skill}</Text>
+        </Chip>
+    );
+};
+
 const Account = () => {
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        if (isFocused) {
+            fetchUserData();
+        }
+    }, [isFocused]);
     const navigation = useNavigation();
-    const { user } = useUser();
+    const [snackbarProperties, setSnackbarProperties] = React.useState({
+        visible: false,
+        text: '',
+    });
+    const [user, setUser] = useState(null);
+    const handleRemoveSkill = (index) => {
+        const newSkills = [...selectedSkills];
+        newSkills.splice(index, 1);
+        setSelectedSkills(newSkills);
+    };
+    const fetchUserData = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('upcare_user');
+            if (!userData) {
+                console.error('User data not found in AsyncStorage');
+                return;
+            }
+            const user = JSON.parse(userData);
+            const headers = getJWTHeader(user);
+
+            const response = await axiosInstance.get('/user/profile', { headers });
+            setUser(response.data.user);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchUserData();
+    }, []);
     return (
         <AuthenticatedLayout>
             <ScrollView style={styles.container}>
@@ -60,10 +107,21 @@ const Account = () => {
                         <IconButton icon="pencil-box" size={20} selected onPress={() => { }} />
                     </View>
 
-                    <Divider style={{
-                        marginTop: 0
-                    }} />
-                    <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
+                    <Divider style={{ marginBottom: 20 }} />
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {user?.skills && user.skills.length > 0 ?
+                            user.skills.map((skill, index) => (
+                                <SkillsChip
+                                    key={index}
+                                    skill={skill.skill_name}
+                                    setSnackbarProperties={setSnackbarProperties}
+                                />
+                            )) :
+                            <Text>No skills found</Text>
+                        }
+                    </View>
+
+
                 </View>
                 {/* End of Sill Card */}
 
@@ -118,8 +176,15 @@ const Account = () => {
                     <Text style={styles.cardDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero eget magna euismod, a facilisis felis sollicitudin.</Text>
                 </View>
                 {/* End of Work Experience Card */}
-
+                <Snackbar
+                    visible={snackbarProperties.visible}
+                    onDismiss={() => setSnackbarProperties({ visible: false, text: '' })}
+                    duration={Snackbar.DURATION_SHORT}
+                >
+                    {snackbarProperties.text}
+                </Snackbar>
             </ScrollView>
+
         </AuthenticatedLayout>
 
     );
@@ -195,6 +260,10 @@ const styles = StyleSheet.create({
     },
     sectionText: {
         marginLeft: 10,
+    },
+    chip: {
+        margin: 4,
+        borderRadius: 20
     },
 });
 

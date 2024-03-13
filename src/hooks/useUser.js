@@ -10,7 +10,7 @@ export async function getUser(signal) {
   }
 
   const { data } = await axiosInstance.get("/auth", {
-    signal, // abortSignal from React Query
+    signal,
     headers: getJWTHeader(JSON.parse(user)),
   });
   return data.user;
