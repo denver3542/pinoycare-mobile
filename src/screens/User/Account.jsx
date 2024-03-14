@@ -22,7 +22,7 @@ const SkillsChip = ({ skill, setSnackbarProperties }) => {
             }
             style={styles.chip}
         >
-            <Text style={{ fontSize: 10 }}>   {skill}</Text>
+            <Text style={{ fontSize: 10 }}>{skill}</Text>
         </Chip>
     );
 };

@@ -58,7 +58,7 @@ const AboutMeScreen = () => {
     };
     const onSubmit = async (data) => {
         mutate(data)
-        navigation.goBack();
+        // navigation.goBack();
     };
 
     return (
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AboutMeScreen;
+export default AboutMeScreen; 
