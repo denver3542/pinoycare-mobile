@@ -40,11 +40,7 @@ const Account = () => {
         text: '',
     });
     const [user, setUser] = useState(null);
-    const handleRemoveSkill = (index) => {
-        const newSkills = [...selectedSkills];
-        newSkills.splice(index, 1);
-        setSelectedSkills(newSkills);
-    };
+
     const fetchUserData = async () => {
         try {
             const userData = await AsyncStorage.getItem('upcare_user');
@@ -104,7 +100,7 @@ const Account = () => {
                             <FontAwesome5 name="star" size={18} color="#0A3480" style={styles.cardIcon} solid />
                             <Text style={styles.cardTitle}>Professional Skills</Text>
                         </View>
-                        <IconButton icon="pencil-box" size={20} selected onPress={() => { }} />
+                        <IconButton icon="pencil-box" size={20} selected onPress={() => navigation.navigate('AddSkillScreen')} />
                     </View>
 
                     <Divider style={{ marginBottom: 20 }} />
@@ -193,7 +189,6 @@ const Account = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // padding: 10
     },
     header: {
         backgroundColor: '#0A3480',

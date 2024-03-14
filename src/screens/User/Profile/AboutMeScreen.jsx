@@ -11,6 +11,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from '../../../../utils/axiosConfig';
 
+
+
 async function updateAboutMe(dataToUpdate) {
     const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
     const headers = getJWTHeader(user);
@@ -20,13 +22,14 @@ async function updateAboutMe(dataToUpdate) {
 
     try {
         const { data } = await axiosInstance.put(`/user/profile/update-about`, dataToUpdate, { headers });
-        console.log('Update successful:', data); // Log success message
+        console.log('Update successful:', data);
         return data;
     } catch (error) {
         console.error('Error updating about me:', error);
-        throw error; // Rethrow the error to be handled by the caller
+        throw error;
     }
 };
+
 
 
 const AboutMeScreen = () => {

@@ -16,6 +16,7 @@ import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmplo
 import EditUserProfileScreen from "../screens/User/Profile/EditUserProfileScreen";
 import VerificationScreen from '../screens/User/Profile/VerificationScreen';
 import AboutMeScreen from '../screens/User/Profile/AboutMeScreen';
+import AddSkillScreen from '../screens/User/Profile/AddSkillScreen';
 import Feeds from "../screens/User/Feeds";
 import Jobs from "../screens/User/Jobs";
 import Application from "../screens/User/Application";
@@ -126,6 +127,7 @@ const AccountNavigator = () => {
       <Stack.Screen name="EditUserProfileScreen" component={EditUserProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="VerificationScreen" component={VerificationScreen} options={{ headerShown: false }} />
       <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 };
