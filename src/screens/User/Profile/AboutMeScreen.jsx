@@ -17,7 +17,6 @@ async function updateAboutMe(dataToUpdate) {
     const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
     const headers = getJWTHeader(user);
 
-    // Log the token before making the request
     console.log('Token:', headers.Authorization);
 
     try {

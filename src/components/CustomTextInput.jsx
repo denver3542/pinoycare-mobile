@@ -34,7 +34,7 @@ const CustomTextInput = ({
                 height: 30,
                 paddingVertical: 10,
                 backgroundColor: theme.colors.surface,
-                borderRadius: 10, // Add border radius here
+                borderRadius: 10,
               },
             ]}
             contentStyle={styles.contentStyle}
