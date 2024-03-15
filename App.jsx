@@ -77,6 +77,10 @@ const theme = {
     ...paperDefaultTheme.colors,
     primary: "#012970",
     secondary: "red",
+    facebook: "#3b5998",
+    instagram: "#C13584",
+    linkedin: "#0077b5",
+    twitter: "#1DA1F2",
   },
   fonts: configureFonts(fontConfig),
 };

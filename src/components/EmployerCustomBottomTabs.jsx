@@ -6,6 +6,9 @@ import Jobs from "../screens/User/Jobs";
 import Feeds from "../screens/User/Feeds";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Applications from "../screens/Applications/Applications";
+import Candidates from "../screens/Employer/Candidates";
+import AppliedCandidatesScreen from "../screens/Employer/Candidates";
+import PostedJobsScreen from "../screens/Employer/Jobs";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,13 +27,13 @@ const tabScreens = [
   },
   {
     name: "Jobs",
-    component: Applications,
+    component: PostedJobsScreen,
     iconName: "plus-circle",
-    iconNameOutlined: "home-circle-outline",
+    iconNameOutlined: "plus-circle-outline",
   },
   {
     name: "Candidates",
-    component: Applications,
+    component: AppliedCandidatesScreen,
     iconName: "briefcase-account",
     iconNameOutlined: "briefcase-account-outline",
   },
@@ -46,7 +49,7 @@ function EmployerCustomBottomTabs() {
   return (
     <Tab.Navigator
       screenOptions={{ animationEnabled: false, headerShown: false }}
-      initialRouteName="Feeds"
+      initialRouteName="Jobs"
     >
       {tabScreens.map((screen, index) => (
         <Tab.Screen

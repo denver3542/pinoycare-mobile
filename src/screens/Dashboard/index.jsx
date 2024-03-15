@@ -23,6 +23,7 @@ import ApplicationListCard from "../../components/ApplicationListCard";
 import HeaderNotification from "../../components/HeaderNotification";
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import { useNavigation } from "@react-navigation/native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 function Dashboard({ activeNav }) {
   const { colors } = useTheme();
