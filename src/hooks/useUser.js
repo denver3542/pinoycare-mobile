@@ -13,6 +13,7 @@ export async function getUser(signal) {
     signal,
     headers: getJWTHeader(JSON.parse(user)),
   });
+
   return data.user;
 }
 

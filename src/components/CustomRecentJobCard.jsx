@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
 
 const RecentJobCard = ({ jobTitle, type, location, imageUrl }) => {
   return (
@@ -8,7 +8,10 @@ const RecentJobCard = ({ jobTitle, type, location, imageUrl }) => {
         {imageUrl ? (
           <Image source={{ uri: imageUrl }} style={styles.jobImage} />
         ) : (
-          <Image source={require('../../assets/images/hero-bg.jpg')} style={styles.jobImage} />
+          <Image
+            source={require("../../assets/images/hero-bg.jpg")}
+            style={styles.jobImage}
+          />
         )}
         <View style={styles.jobDetails}>
           <Text style={styles.jobTitle}>{jobTitle}</Text>
@@ -22,19 +25,19 @@ const RecentJobCard = ({ jobTitle, type, location, imageUrl }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 14,
     elevation: 0.5,
     padding: 15,
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
 
     // shadowOpacity: 10,
     // shadowRadius: 50,
   },
   cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   jobImage: {
     width: 60,
@@ -47,15 +50,14 @@ const styles = StyleSheet.create({
   },
   jobTitle: {
     fontSize: 18,
-
   },
   type: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
   location: {
     fontSize: 14,
-    color: '#888',
+    color: "#888",
   },
 });
 

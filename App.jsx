@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // import { ThemeProvider, createTheme } from "@rneui/themed";
 import {
@@ -13,8 +12,8 @@ import Navigation from "./src/routes/LandingNavigation";
 import LandingNavigation from "./src/routes/LandingNavigation";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/queryClient";
-import { enGB, registerTranslation } from 'react-native-paper-dates'
-registerTranslation('en-GB', enGB)
+import { enGB, registerTranslation } from "react-native-paper-dates";
+registerTranslation("en-GB", enGB);
 const fontConfig = {
   web: {
     regular: {
@@ -72,7 +71,6 @@ const fontConfig = {
   },
 };
 
-
 const theme = {
   ...paperDefaultTheme,
   colors: {
@@ -83,18 +81,13 @@ const theme = {
   fonts: configureFonts(fontConfig),
 };
 
-const Stack = createNativeStackNavigator();
-
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider theme={theme}>
-        <SafeAreaProvider>
-          <LandingNavigation />
-        </SafeAreaProvider>
+        <LandingNavigation />
       </PaperProvider>
     </QueryClientProvider>
-
   );
 }
 

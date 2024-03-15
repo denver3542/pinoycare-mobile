@@ -1,0 +1,71 @@
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React from "react";
+import Dashboard from "../screens/Dashboard";
+import Account from "../screens/User/Account";
+import Jobs from "../screens/User/Jobs";
+import Feeds from "../screens/User/Feeds";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import Applications from "../screens/Applications/Applications";
+
+const Tab = createBottomTabNavigator();
+
+const tabScreens = [
+  {
+    name: "Home",
+    component: Feeds,
+    iconName: "home-circle",
+    iconNameOutlined: "home-circle-outline",
+  },
+  {
+    name: "Feeds",
+    component: Jobs,
+    iconName: "newspaper-variant",
+    iconNameOutlined: "newspaper-variant-outline",
+  },
+  {
+    name: "Jobs",
+    component: Applications,
+    iconName: "plus-circle",
+    iconNameOutlined: "home-circle-outline",
+  },
+  {
+    name: "Candidates",
+    component: Applications,
+    iconName: "briefcase-account",
+    iconNameOutlined: "briefcase-account-outline",
+  },
+  {
+    name: "Account",
+    component: Account,
+    iconName: "account-circle",
+    iconNameOutlined: "account-circle-outline",
+  },
+];
+
+function EmployerCustomBottomTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{ animationEnabled: false, headerShown: false }}
+      initialRouteName="Feeds"
+    >
+      {tabScreens.map((screen, index) => (
+        <Tab.Screen
+          key={index}
+          name={screen.name}
+          component={screen.component}
+          options={{
+            tabBarIcon: ({ color, size, focused }) => (
+              <MaterialCommunityIcons
+                name={focused ? screen.iconNameOutlined : screen.iconName}
+                size={focused ? 40 : size}
+                color={color}
+              />
+            ),
+          }}
+        />
+      ))}
+    </Tab.Navigator>
+  );
+}
+
+export default EmployerCustomBottomTabs;
