@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Platform } from 'react-native';
-import { Button, Appbar } from 'react-native-paper';
+import { TextInput, Button, Card, Title, Appbar } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
@@ -10,8 +10,8 @@ import axiosInstance, { getJWTHeader } from '../../../../utils/axiosConfig';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomMultilineTextInput from '../../../components/CustomMultilineTextInput';
 import { useUser } from '../../../hooks/useUser';
-
-const AboutMeScreen = () => {
+import CustomTextInput from '../../../components/CustomTextInput';
+const EditEducation = () => {
     const { user } = useUser();
     const navigation = useNavigation();
     const queryClient = useQueryClient();
@@ -20,7 +20,6 @@ const AboutMeScreen = () => {
             about_me: user?.about_me || '',
         },
     });
-
     const [isLoading, setIsLoading] = useState(false);
 
     const updateAboutMe = async (dataToUpdate) => {
@@ -50,26 +49,66 @@ const AboutMeScreen = () => {
         <AuthenticatedLayout>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Update About" />
+                <Appbar.Content title="Edit Editcational Background" />
             </Appbar.Header>
             <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
-                <View style={{ padding: 15, marginTop: 60 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>About Me</Text>
-                    <CustomMultilineTextInput control={control} name="about_me" placeholder="Tell me about yourself" />
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)} style={{ marginTop: 40 }}>
-                        Save
-                    </Button>
+                <View style={{ padding: 15, marginTop: 40 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>Educational Background</Text>
+                    <CustomTextInput
+                        placeholder="Level of education"
+                        control={control}
+                        name="about_me"
+                    />
+                    <CustomTextInput
+                        control={control}
+                        placeholder="Institution name"
+                        name="about_me"
+
+                    />
+                    <CustomTextInput
+                        control={control}
+                        placeholder="Field of study"
+                        name="about_me"
+                    />
+                    {/* <View style={styles.dateContainer}>
+                        <TextInput
+                            placeholder="Start date"
+                            style={styles.dateInput}
+                        />
+                        <TextInput
+                            placeholder="End date"
+                            style={styles.dateInput}
+                        />
+                    </View> */}
+                    <CustomMultilineTextInput
+                        placeholder="Description"
+                        control={control}
+                        name="about_me"
+
+                    />
+                    <Card.Actions>
+                        <Button onPress={() => { }}>Remove</Button>
+                        <Button mode="contained" onPress={() => { }}>Save</Button>
+                    </Card.Actions>
                 </View>
+
             </View>
-            <Spinner visible={isLoading} />
         </AuthenticatedLayout>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1
+    },
+    // dateContainer: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-between',
+    // },
+    dateInput: {
         flex: 1,
+        marginHorizontal: 4,
     },
 });
 
-export default AboutMeScreen;
+export default EditEducation;

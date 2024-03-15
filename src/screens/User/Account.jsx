@@ -21,7 +21,7 @@ const SkillsChip = ({ skill, setSnackbarProperties }) => {
     <Chip
       compact
       mode="outlined"
-      onPress={() => {}}
+      onPress={() => { }}
       onClose={() =>
         setSnackbarProperties({
           visible: true,
@@ -36,7 +36,7 @@ const SkillsChip = ({ skill, setSnackbarProperties }) => {
 };
 
 const Account = () => {
-  const isFocused = useIsFocused();
+  const navigation = useNavigation();
   const { user, isFetched } = useUser();
   const { logout } = useAuth();
   // useEffect(() => {
@@ -49,28 +49,7 @@ const Account = () => {
     visible: false,
     text: "",
   });
-  // const [user, setUser] = useState(null);
 
-  // const fetchUserData = async () => {
-  //   try {
-  //     const userData = await AsyncStorage.getItem("upcare_user");
-  //     if (!userData) {
-  //       console.error("User data not found in AsyncStorage");
-  //       return;
-  //     }
-  //     const user = JSON.parse(userData);
-  //     const headers = getJWTHeader(user);
-
-  //     const response = await axiosInstance.get("/user/profile", { headers });
-  //     setUser(response.data.user);
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUserData();
-  // }, []);
   return (
     <AuthenticatedLayout>
       <ScrollView style={styles.container}>
@@ -177,7 +156,7 @@ const Account = () => {
               icon="pencil-box"
               size={20}
               selected
-              onPress={() => {}}
+              onPress={() => navigation.navigate("EditEducationScreen")}
             />
           </View>
 
@@ -212,7 +191,7 @@ const Account = () => {
               icon="pencil-box"
               size={20}
               selected
-              onPress={() => {}}
+              onPress={() => { }}
             />
           </View>
 
@@ -246,7 +225,7 @@ const Account = () => {
               icon="pencil-box"
               size={20}
               selected
-              onPress={() => {}}
+              onPress={() => { }}
             />
           </View>
 

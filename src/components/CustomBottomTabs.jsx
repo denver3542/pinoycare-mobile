@@ -4,8 +4,8 @@ import Dashboard from "../screens/Dashboard";
 import Account from "../screens/User/Account";
 import Jobs from "../screens/User/Jobs";
 import Feeds from "../screens/User/Feeds";
-import { MaterialIcons } from "@expo/vector-icons";
 import Applications from "../screens/Applications/Applications";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +16,6 @@ const tabScreens = [
   { name: "Application", component: Applications, iconName: "assignment" },
   { name: "Account", component: Account, iconName: "account-circle" },
 ];
-
 function CustomBottomTabs() {
   return (
     <Tab.Navigator
@@ -38,5 +37,6 @@ function CustomBottomTabs() {
     </Tab.Navigator>
   );
 }
+
 
 export default CustomBottomTabs;

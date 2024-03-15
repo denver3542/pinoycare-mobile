@@ -10,6 +10,9 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
+import AboutMeScreen from '../screens/User/Profile/AboutMeScreen';
+import AddSkillScreen from '../screens/User/Profile/AddSkillScreen';
+import EditEducationScreen from '../screens/User/Profile/EditEducationScreen';
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
 
@@ -58,6 +61,9 @@ function LandingNavigation() {
             <>
               <Stack.Screen name="BottomTabs" component={CustomBottomTabs} />
               <Stack.Screen name="Job" component={Job} />
+              <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
+              <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
+              <Stack.Screen name="EditEducationScreen" component={EditEducationScreen} />
             </>
           ) : (
             <>
@@ -65,7 +71,7 @@ function LandingNavigation() {
                 name="BottomTabs"
                 component={EmployerCustomBottomTabs}
               />
-              {/* <Stack.Screen name="Home" component={Home} /> */}
+
             </>
           )}
         </Stack.Navigator>
