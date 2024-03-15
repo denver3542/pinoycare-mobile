@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Platform } from 'react-native';
-import { TextInput, Button, Card, Title, Appbar } from 'react-native-paper';
+import { TextInput, Button, Card, Title, Appbar, Divider } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
@@ -49,11 +49,14 @@ const EditEducation = () => {
         <AuthenticatedLayout>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Edit Editcational Background" />
+                <Appbar.Content title="Edit Educational Background" />
             </Appbar.Header>
             <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
                 <View style={{ padding: 15, marginTop: 40 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>Educational Background</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#0A3480' }}>Elementary</Text>
+                    <Divider style={{ margin: 10 }}></Divider>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0A3480', marginBottom: 4 }}>School Name</Text>
                     <CustomTextInput
                         placeholder="Level of education"
                         control={control}
