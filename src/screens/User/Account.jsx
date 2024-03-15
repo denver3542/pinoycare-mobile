@@ -39,12 +39,6 @@ const Account = () => {
   const navigation = useNavigation();
   const { user, isFetched } = useUser();
   const { logout } = useAuth();
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     fetchUserData();
-  //   }
-  // }, [isFocused]);
-  // const navigation = useNavigation();
   const [snackbarProperties, setSnackbarProperties] = React.useState({
     visible: false,
     text: "",

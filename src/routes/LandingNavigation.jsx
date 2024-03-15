@@ -19,6 +19,8 @@ import Job from "../screens/Jobs/Job";
 // Import hooks
 import { useUser } from "../hooks/useUser";
 import EmployerCustomBottomTabs from "../components/EmployerCustomBottomTabs";
+import CandidateDetailsScreen from "../screens/Employer/Candidates/CandidateDetailsScreen";
+import JobDetailsScreen from "../screens/Employer/Jobs/JobDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -71,7 +73,11 @@ function LandingNavigation() {
                 name="BottomTabs"
                 component={EmployerCustomBottomTabs}
               />
-
+              <Stack.Screen
+                name="CandidateDetails"
+                component={CandidateDetailsScreen}
+              />
+              <Stack.Screen name="JobDetails" component={JobDetailsScreen} />
             </>
           )}
         </Stack.Navigator>
