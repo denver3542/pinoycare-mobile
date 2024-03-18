@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import { Card, Title, Paragraph, useTheme, Appbar } from "react-native-paper";
-import moment from "moment"; // Make sure to install moment for date formatting
+import {
+  Card,
+  Title,
+  Paragraph,
+  useTheme,
+  Appbar,
+  Searchbar,
+} from "react-native-paper";
+import moment from "moment";
 import useJobs from "./hook/useJobs";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,14 +17,23 @@ const PostedJobsScreen = () => {
   const { colors } = useTheme();
   const { data: jobs, isFetching, isFetched } = useJobs();
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const onChangeSearch = (query) => setSearchQuery(query);
+
+  const filteredJobs = jobs?.filter(
+    (job) =>
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderJob = ({ item }) => {
     const postedDate = moment(item.date_posted).format("LL");
-    const numberOfApplicants = item.offer.length; // Assuming 'offer' contains applicants
-    const numberOfProfessionalsOfferedTo = item.max_applicant; // Total professionals offered the job
-    const navigateToJobDetails = () => {
+    const numberOfApplicants = item.offer.length;
+    const numberOfProfessionalsOfferedTo = item.max_applicant;
+    const navigateToJobDetails = () =>
       navigation.navigate("JobDetails", { job: item });
-    };
 
     return (
       <Card style={styles.card} elevation={4} onPress={navigateToJobDetails}>
@@ -55,21 +71,30 @@ const PostedJobsScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <Appbar.Header>
         <Appbar.Content title="JOBS POSTED" />
       </Appbar.Header>
+      <Searchbar
+        placeholder="Search jobs"
+        onChangeText={onChangeSearch}
+        value={searchQuery}
+        style={styles.searchBar}
+      />
       <FlatList
-        data={jobs}
+        data={filteredJobs}
         renderItem={renderJob}
         keyExtractor={(item) => item.uuid}
         contentContainerStyle={styles.listContainer}
       />
-    </View>
+    </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
+  searchBar: {
+    margin: 10,
+    borderRadius: 8,
+  },
   listContainer: {
     padding: 10,
   },
