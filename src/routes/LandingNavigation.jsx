@@ -10,7 +10,7 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
-import AboutMeScreen from '../screens/User/Profile/AboutMeScreen';
+import AboutMeScreen from '../screens/User/About/AboutMeForm';
 import AddSkillScreen from '../screens/User/Profile/AddSkillScreen';
 import EditEducationScreen from '../screens/User/Profile/EditEducationScreen';
 import CustomBottomTabs from "../components/CustomBottomTabs";
