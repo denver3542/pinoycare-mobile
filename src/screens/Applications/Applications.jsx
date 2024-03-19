@@ -1,28 +1,33 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { Appbar, Text } from "react-native-paper";
 import ApplicationListCard from "../../components/ApplicationListCard";
 import useApplications from "./hook/useApplications";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const Applications = () => {
   const { data, isFetching, isFetched } = useApplications();
+  const navigation = useNavigation();
+
+  const renderJob = ({ item }) => {
+    // const navigateToJobDetails = () =>
+    //   navigation.navigate("Job", { job: item });
+
+    return <ApplicationListCard application={item} />;
+  };
   return (
     <View style={{ flex: 1 }}>
+      {isFetching && <Spinner />}
       <Appbar.Header mode="small">
         <Appbar.Content title="Job Applications" />
       </Appbar.Header>
-      <View style={{ flex: 1 }}>
-        <View style={styles.applicationList}>
-          {isFetched && data ? (
-            data.map((app, key) => (
-              <ApplicationListCard key={key} application={app} />
-            ))
-          ) : (
-            <Text style={styles.noJobsText}>No Jobs Available</Text>
-          )}
-        </View>
-      </View>
+      <FlatList
+        data={data}
+        renderItem={renderJob}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+      />
     </View>
   );
 };
