@@ -12,7 +12,8 @@ import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer"
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
 import AboutMeScreen from '../screens/User/About/AboutMeForm';
 import AddSkillScreen from '../screens/User/Profile/AddSkillScreen';
-import EditEducationScreen from '../screens/User/Profile/EditEducationScreen';
+import AddEducationScreen from '../screens/User/Profile/AddEducationScreen';
+import SettingsScreen from '../screens/User/Profile/SettingsScreen';
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
 
@@ -65,7 +66,8 @@ function LandingNavigation() {
               <Stack.Screen name="Job" component={Job} />
               <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
               <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
-              <Stack.Screen name="EditEducationScreen" component={EditEducationScreen} />
+              <Stack.Screen name="AddEducationScreen" component={AddEducationScreen} />
+              <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
             </>
           ) : (
             <>

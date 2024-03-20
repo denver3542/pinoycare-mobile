@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { IconButton, Divider, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 const SkillsChip = ({ skill }) => {
     const navigation = useNavigation();
+    const [showAllSkills, setShowAllSkills] = useState(false);
+    const displayedSkills = showAllSkills ? skill : skill.slice(0, 5);
 
     return (
         <View style={styles.card}>
@@ -37,7 +39,7 @@ const SkillsChip = ({ skill }) => {
             </View>
             <Divider style={styles.divider} />
             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {skill.map((skillItem, index) => (
+                {displayedSkills.map((skillItem, index) => (
                     <Chip
                         key={index}
                         onPress={() => { }}
@@ -47,6 +49,16 @@ const SkillsChip = ({ skill }) => {
                     </Chip>
                 ))}
             </View>
+            {!showAllSkills && skill.length > 5 && (
+                <TouchableOpacity onPress={() => setShowAllSkills(true)}>
+                    <Text style={styles.showAllButton}>Show All</Text>
+                </TouchableOpacity>
+            )}
+            {showAllSkills && (
+                <TouchableOpacity onPress={() => setShowAllSkills(false)}>
+                    <Text style={styles.showAllButton}>Show Less</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 };
@@ -85,10 +97,12 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
     },
-    iconButton: {
-        marginHorizontal: 2,
-        padding: 0,
-    },
+    showAllButton: {
+        color: '#0A3480',
+        textAlign: 'center',
+        marginTop: 10,
+        fontWeight: 'bold'
+    }
 });
 
 export default SkillsChip;

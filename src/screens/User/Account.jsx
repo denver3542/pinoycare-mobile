@@ -34,8 +34,17 @@ const Account = ({ activeNav }) => {
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.header}>
+            <View style={styles.iconButtonContainer}>
+              <IconButton
+                icon={() => <MaterialIcons name="settings" size={20} color="white" />}
+                size={25}
+                selected
+                onPress={() => navigation.navigate("SettingsScreen")}
+              />
+            </View>
+
             <View style={styles.userInfoContainer}>
-              <View style={{ alignItems: 'center' }}>
+              <View style={styles.profileImageContainer}>
                 <Image
                   source={
                     user && user.media[0]
@@ -44,34 +53,24 @@ const Account = ({ activeNav }) => {
                   }
                   style={styles.profileImage}
                 />
+
+
               </View>
 
-              <View>
-                <Text style={styles.headerName}>{user?.name || ""}</Text>
+              <View style={styles.userInfo}>
+                <Text style={styles.headerName}>{user?.firstname || ""} {user?.lastname}</Text>
                 <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
               </View>
-
-              <View style={{ marginLeft: 10 }}>
-                <Button
-                  icon="pencil"
-                  onPress={() => { }}
-                  style={[styles.button]}
-                  contentStyle={styles.flexReverse}
-                  labelStyle={{ color: 'white', fontSize: 14 }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  onPress={logout}
-                  icon="logout"
-                  style={[styles.button]}
-                  contentStyle={styles.flexReverse}
-                  labelStyle={{ color: 'white', fontSize: 14 }}
-                >
-                  Logout
-                </Button>
-              </View>
+              <Button
+                icon="pencil"
+                onPress={() => { }}
+                contentStyle={styles.buttonContent}
+                labelStyle={styles.buttonLabel}
+              >
+                Edit
+              </Button>
             </View>
+
           </View>
         </View>
 
@@ -128,35 +127,67 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
-  sectionContainer: {
-    marginBottom: 20
-  },
   header: {
     flexDirection: "row",
     backgroundColor: "#0A3480",
-    paddingVertical: 30,
-    paddingHorizontal: 15,
+
+    paddingHorizontal: 20,
+    justifyContent: "space-between",
     height: 200,
+    position: 'relative',
+  },
+
+  iconButtonContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    marginTop: 20
   },
   userInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: 'center'
   },
-  headerName: {
-    color: "white",
-    fontSize: 25,
-    fontWeight: "bold",
+
+  profileImageContainer: {
+    alignItems: 'center',
   },
-  headerProfession: {
-    color: "white",
-    fontSize: 16,
-  },
+
   profileImage: {
     width: 80,
     height: 80,
     borderRadius: 100,
-    marginRight: 20,
+    marginRight: 10,
   },
+
+  userInfo: {
+    marginLeft: 10,
+  },
+
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginLeft: 20
+  },
+
+  buttonContent: {
+    flexDirection: 'row-reverse',
+  },
+
+  buttonLabel: {
+    color: 'white',
+    fontSize: 14,
+  },
+  headerName: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerProfession: {
+    color: "white",
+  },
+
   button: {
     marginLeft: 10
   },
@@ -181,10 +212,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginVertical: 10,
     padding: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
     elevation: 1,
   },
 
@@ -236,6 +263,10 @@ const styles = StyleSheet.create({
   },
   educationDescription: {
     marginBottom: 5,
+  },
+
+  button: {
+    padding: 0,
   },
 
 });

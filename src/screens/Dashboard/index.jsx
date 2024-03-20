@@ -54,7 +54,7 @@ function Dashboard({ activeNav }) {
                   style={styles.profileImage}
                 />
                 <View>
-                  <Text style={styles.headerName}>{user?.name || "N/A"}</Text>
+                  <Text style={styles.headerName}>{user?.firstname || "N/A"} {user?.lastname || "N/A"}</Text>
                   <Text style={styles.headerProfession}>
                     {user?.profession || "N/A"}
                   </Text>
