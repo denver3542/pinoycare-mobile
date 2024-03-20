@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Divider, IconButton } from 'react-native-paper';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 const getEducationLevelName = (level) => {
@@ -40,12 +40,20 @@ const EducationItem = ({ educations }) => {
                         />
                         <Text style={styles.cardTitle}>Education</Text>
                     </View>
-                    <IconButton
-                        icon="plus-box"
-                        size={20}
-                        selected
-                        onPress={() => navigation.navigate("EditEducationScreen")}
-                    />
+                    <View style={styles.iconContainer}>
+                        <IconButton
+                            icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
+                            size={20}
+                            selected
+                            onPress={() => navigation.navigate("EditEducationScreen")}
+                        />
+                        <IconButton
+                            icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                            size={25}
+                            selected
+                            onPress={() => { /* Handle edit button press */ }}
+                        />
+                    </View>
                 </View>
                 <Divider style={styles.divider} />
                 <View style={styles.educationContainer}>
@@ -55,12 +63,12 @@ const EducationItem = ({ educations }) => {
                                 <Text style={styles.educationTitle}>
                                     {getEducationLevelName(education.level)}
                                 </Text>
-                                <IconButton
+                                {/* <IconButton
                                     icon="pencil-box"
                                     size={20}
                                     selected
                                     onPress={() => navigation.navigate("EditEducationScreen")}
-                                />
+                                /> */}
 
                             </View>
                             <Text style={styles.educationDescription}>{education.school_name}</Text>
@@ -206,6 +214,9 @@ const styles = StyleSheet.create({
     },
     educationDescription: {
         marginBottom: 5,
+    },
+    iconContainer: {
+        flexDirection: 'row',
     },
 
 });

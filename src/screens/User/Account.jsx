@@ -8,36 +8,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import Spinner from 'react-native-loading-spinner-overlay';
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
+import SkillsChip from "./Profile/Skills/SkillsCardList";
 import SeminarsTrainings from "./Profile/SeminarsAndTrainings/SeminarsTrainingsCardList";
 import EducationItem from "./Profile/Education/EducationCardList";
 import WorkExperience from "./Profile/WorkExperience/WorkExperienceCardList";
 import { useUser } from "../../hooks/useUser";
+import useSkills from "./Profile/Skills/hooks/useSkills";
 import useAuth from "../../hooks/useAuth";
-
-const SkillsChip = ({ skill, setSnackbarProperties }) => {
-  return (
-    <Chip
-      compact
-      mode="outlined"
-      onPress={() => { }}
-      onClose={() =>
-        setSnackbarProperties({
-          visible: true,
-          text: "Skill Removed",
-        })
-      }
-      style={styles.chip}
-    >
-      <Text style={{ fontSize: 10 }}>{skill.skill_name}</Text>
-    </Chip>
-  );
-};
 
 const Account = ({ activeNav }) => {
   const navigation = useNavigation();
-  const { user, isFetching, isFetched } = useUser();
+  const { user, isFetching, isLoading } = useUser();
   const { logout } = useAuth();
   const [snackbarProperties, setSnackbarProperties] = useState({
     visible: false,
@@ -46,119 +30,95 @@ const Account = ({ activeNav }) => {
 
   return (
     <AuthenticatedLayout activeBottomNav={activeNav?.route?.name}>
-      {isFetching ? (
-        <Spinner visible={loading} />
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <View style={styles.header}>
-              <View style={styles.userInfoContainer}>
-                <View style={{ alignItems: 'center' }}>
-                  <Image
-                    source={
-                      user && user.media[0]
-                        ? { uri: user.media[0].original_url }
-                        : require("../../../assets/images/sample-profile.jpg")
-                    }
-                    style={styles.profileImage}
-                  />
-                </View>
 
-                <View>
-                  <Text style={styles.headerName}>{user?.name || ""}</Text>
-                  <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
-                </View>
-
-                <View style={{ marginLeft: 10 }}>
-                  <Button
-                    icon="pencil"
-                    onPress={() => { }}
-                    style={[styles.button]}
-                    contentStyle={styles.flexReverse}
-                    labelStyle={{ color: 'white', fontSize: 14 }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onPress={logout}
-                    icon="logout"
-                    style={[styles.button]}
-                    contentStyle={styles.flexReverse}
-                    labelStyle={{ color: 'white', fontSize: 14 }}
-                  >
-                    Logout
-                  </Button>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.contentStyle}>
-            <View style={styles.card}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <View style={styles.sectionContent}>
-                  <FontAwesome5
-                    name="user-circle"
-                    size={20}
-                    color="#0A3480"
-                    style={styles.cardIcon}
-                    solid
-                  />
-                  <Text style={styles.cardTitle}>About Me</Text>
-                </View>
-                <IconButton
-                  icon="pencil-box"
-                  size={20}
-                  selected
-                  onPress={() => navigation.navigate("AboutMeScreen")}
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.header}>
+            <View style={styles.userInfoContainer}>
+              <View style={{ alignItems: 'center' }}>
+                <Image
+                  source={
+                    user && user.media[0]
+                      ? { uri: user.media[0].original_url }
+                      : require("../../../assets/images/sample-profile.jpg")
+                  }
+                  style={styles.profileImage}
                 />
               </View>
 
-              <Divider
-                style={styles.divider}
-              />
-              <View style={styles.contentContainer}>
-                <Text style={styles.cardDescription}>{user?.about_me}</Text>
+              <View>
+                <Text style={styles.headerName}>{user?.name || ""}</Text>
+                <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
+              </View>
+
+              <View style={{ marginLeft: 10 }}>
+                <Button
+                  icon="pencil"
+                  onPress={() => { }}
+                  style={[styles.button]}
+                  contentStyle={styles.flexReverse}
+                  labelStyle={{ color: 'white', fontSize: 14 }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  onPress={logout}
+                  icon="logout"
+                  style={[styles.button]}
+                  contentStyle={styles.flexReverse}
+                  labelStyle={{ color: 'white', fontSize: 14 }}
+                >
+                  Logout
+                </Button>
               </View>
             </View>
+          </View>
+        </View>
 
-
-
-            <View style={styles.sectionContainer}>
-              {user?.educations && user.educations.length > 0 ? (
-                <EducationItem educations={user.educations} />
-              ) : (
-                <Text>No education found</Text>
-              )}
+        <View style={styles.contentStyle}>
+          <View style={styles.card}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <View style={styles.sectionContent}>
+                <FontAwesome5
+                  name="user-circle"
+                  size={20}
+                  color="#0A3480"
+                  style={styles.cardIcon}
+                  solid
+                />
+                <Text style={styles.cardTitle}>About Me</Text>
+              </View>
+              <IconButton
+                icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                size={20}
+                selected
+                onPress={() => navigation.navigate("AboutMeScreen")}
+              />
             </View>
 
-            <View style={styles.sectionContainer}>
-              {user?.trainings && user.trainings.length > 0 ? (
-                <SeminarsTrainings trainings={user.trainings} />
-              ) : (
-                <Text>No Trainings found</Text>
-              )}
-            </View>
-
-
-            <View style={styles.sectionContainer}>
-              {user?.work_experiences && user.work_experiences.length > 0 ? (
-                <WorkExperience work_experiences={user.work_experiences} />
-              ) : (
-                <Text>No Work Experience found</Text>
-              )}
+            <Divider
+              style={styles.divider}
+            />
+            <View style={styles.contentContainer}>
+              <Text style={styles.cardDescription}>{user?.about_me}</Text>
             </View>
           </View>
 
-          <Snackbar
-            visible={snackbarProperties.visible}
-            onDismiss={() => setSnackbarProperties({ visible: false, text: "" })}
-            duration={Snackbar.DURATION_SHORT}
-          >
-            {snackbarProperties.text}
-          </Snackbar>
+          <SkillsChip skill={user.skills} />
+          <EducationItem educations={user.educations} />
+          <SeminarsTrainings trainings={user.trainings} />
+          <WorkExperience work_experiences={user.work_experiences} />
         </View>
-      )}
+
+        <Snackbar
+          visible={snackbarProperties.visible}
+          onDismiss={() => setSnackbarProperties({ visible: false, text: "" })}
+          duration={Snackbar.DURATION_SHORT}
+        >
+          {snackbarProperties.text}
+        </Snackbar>
+      </View>
+
     </AuthenticatedLayout>
   );
 };

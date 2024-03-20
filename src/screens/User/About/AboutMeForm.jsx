@@ -58,7 +58,7 @@ const AboutMeScreen = () => {
                     <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>About Me</Text>
                     <CustomMultilineTextInput control={control} name="about_me" placeholder="Tell me about yourself" />
                     <Button mode="contained" onPress={handleSubmit(onSubmit)} style={{ marginTop: 40 }}>
-                        Save
+                        Update
                     </Button>
                 </View>
             </View>

@@ -26,7 +26,7 @@ const screenWidth = Dimensions.get("window").width;
 
 function Dashboard(activeNav) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { user, isFetching } = useUser();
+  const { user, isFetching, loading } = useUser();
   const { jobs, isLoading, error } = useJobs();
 
   const renderItem = ({ item, index }) => {
@@ -44,7 +44,7 @@ function Dashboard(activeNav) {
   return (
     <AuthenticatedLayout activeBottomNav={activeBottomNav}>
       <ScrollView>
-        {!isFetching && (
+        {!loading && (
           <>
             <View style={styles.headerContainer}>
               <View style={styles.header}>

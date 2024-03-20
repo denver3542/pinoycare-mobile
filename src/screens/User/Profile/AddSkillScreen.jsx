@@ -1,50 +1,41 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'; // Import Keyboard
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Chip, Button, Appbar, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { useUser } from '../../../hooks/useUser';
+import useSkills from './Skills/hooks/useSkills';
+import Spinner from 'react-native-loading-spinner-overlay';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../components/CustomTextInput';
 
 const AddSkillScreen = () => {
   const { user } = useUser();
   const navigation = useNavigation();
-  const { control, handleSubmit, setValue, watch } = useForm({
+  const { control, handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
       skill_name: user?.skill_name || '',
     },
   });
+  const { mutate, isLoading } = useSkills();
+  const [tags, setTags] = useState([]);
 
-  const initialTags = useMemo(() => [
-    'Leadership',
-    'Teamwork',
-    'Visionary',
-    'Target oriented',
-    'Consistent',
-    'Good communication skills',
-    'English',
-    'Responsibility'
-  ], []);
-
-  const [tags, setTags] = useState(initialTags);
-  const [text, setText] = useState('');
-
-  const addTag = useCallback(() => {
+  const addTag = () => {
+    const text = getValues('skill_name');
     if (text && !tags.includes(text)) {
       setTags(prevTags => [...prevTags, text]);
-      setText('');
+      setValue('skill_name', '');
     }
-  }, [text, tags]);
+  };
 
-  const removeTag = useCallback((index) => {
+  const removeTag = (index) => {
     setTags(prevTags => prevTags.filter((_, i) => i !== index));
-  }, []);
+  };
 
-  const onSave = useCallback(() => {
-    // Implement your save logic here
-    console.log('Tags to save: ', tags);
-  }, [tags]);
+  const onSubmit = async () => {
+    await mutate({ skills: tags });
+    // Navigation will occur after the mutation is settled
+  };
 
   return (
     <AuthenticatedLayout>
@@ -52,38 +43,29 @@ const AddSkillScreen = () => {
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Add Skill" />
       </Appbar.Header>
-      <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
+      <View style={styles.container}>
         <ScrollView>
-          <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40, marginTop: 60 }}>Professional Skills</Text>
+          <Text style={styles.headerText}>Professional Skills</Text>
           <CustomTextInput
-            placeholder="Search skills"
-            value={text}
+            placeholder="Add Skill"
             control={control}
             name="skill_name"
-            onChangeText={setText}
             onSubmitEditing={addTag}
           />
           <View style={styles.chipContainer}>
             {tags.map((tag, index) => (
-              <Chip
-                key={`tag-${index}`}
-                onClose={() => removeTag(index)}
-                style={styles.chip}
-              >
+              <Chip key={`tag-${index}`} onClose={() => removeTag(index)} style={styles.chip}>
                 {tag}
               </Chip>
             ))}
           </View>
         </ScrollView>
         <View style={styles.buttonContainer}>
-          <Button mode="outlined" onPress={addTag} style={styles.button}>
-            Add
-          </Button>
-          <Button mode="contained" onPress={onSave} style={styles.button}>
-            Save
-          </Button>
+          <Button mode="outlined" onPress={addTag} style={styles.button}>Add</Button>
+          <Button mode="contained" onPress={onSubmit} style={styles.button}>Save</Button>
         </View>
       </View>
+      <Spinner visible={isLoading} />
     </AuthenticatedLayout>
   );
 };
@@ -94,9 +76,12 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'space-between'
   },
-  input: {
-    width: '100%',
-    marginBottom: 20,
+  headerText: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#0A3480',
+    marginBottom: 40,
+    marginTop: 60
   },
   chipContainer: {
     flexDirection: 'row',

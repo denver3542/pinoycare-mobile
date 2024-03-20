@@ -27,7 +27,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 
 function Dashboard({ activeNav }) {
   const { colors } = useTheme();
-  const { user, isFetching } = useUser();
+  const { user, isFetching, isLoading } = useUser();
   const { data, isFetched, isFetching: dashboardIsFetching } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
@@ -39,7 +39,7 @@ function Dashboard({ activeNav }) {
   return (
     <AuthenticatedLayout activeBottomNav={activeNav?.route?.name}>
       {isFetching ? (
-        <Spinner visible={loading} />
+        <Spinner visible={isLoading} />
       ) : (
         <ScrollView style={styles.container}>
           <View style={styles.headerContainer}>
