@@ -92,18 +92,18 @@ const EducationForm = () => {
                         rules={{ required: "Please Select a Level" }}
                     />
                     <CustomTextInput
-                        placeholder="School Name"
                         control={control}
                         name="school_name"
+                        label="School Name"
                         mode="outlined"
                         rules={{ required: 'School Name is required' }}
                     />
                     {(selectedLevel !== 'elementary' && selectedLevel !== 'secondary') && (
                         <CustomTextInput
-                            placeholder="Course"
                             control={control}
                             name="course"
                             mode="outlined"
+                            label="Course"
                             rules={{ required: 'Course is required' }}
                         />
                     )}
@@ -126,6 +126,7 @@ const EducationForm = () => {
                             control={control}
                             mode="outlined"
                             name="from"
+                            label="Date Started"
                             editable={false}
                             value={fromValue.toLocaleDateString()}
                             rules={{ required: 'Start Date is required' }}
@@ -140,6 +141,7 @@ const EducationForm = () => {
                             control={control}
                             mode="outlined"
                             name="to"
+                            label="Date Ended"
                             editable={false}
                             value={toValue.toLocaleDateString()}
                             rules={{ required: 'End Date is required' }}
