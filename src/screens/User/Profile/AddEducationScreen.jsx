@@ -95,6 +95,7 @@ const EducationForm = () => {
                         placeholder="School Name"
                         control={control}
                         name="school_name"
+                        mode="outlined"
                         rules={{ required: 'School Name is required' }}
                     />
                     {(selectedLevel !== 'elementary' && selectedLevel !== 'secondary') && (
@@ -102,6 +103,7 @@ const EducationForm = () => {
                             placeholder="Course"
                             control={control}
                             name="course"
+                            mode="outlined"
                             rules={{ required: 'Course is required' }}
                         />
                     )}
@@ -110,6 +112,7 @@ const EducationForm = () => {
                             placeholder="Track"
                             control={control}
                             name="track"
+                            mode="outlined"
                             rules={{ required: 'Track is required' }}
                         />
                     )}
@@ -121,6 +124,7 @@ const EducationForm = () => {
                         <CustomTextInput
                             placeholder="Start date"
                             control={control}
+                            mode="outlined"
                             name="from"
                             editable={false}
                             value={fromValue.toLocaleDateString()}
@@ -134,6 +138,7 @@ const EducationForm = () => {
                         <CustomTextInput
                             placeholder="End date"
                             control={control}
+                            mode="outlined"
                             name="to"
                             editable={false}
                             value={toValue.toLocaleDateString()}
