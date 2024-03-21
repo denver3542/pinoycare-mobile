@@ -20,9 +20,6 @@ import { useJobs } from "../../hooks/jobService";
 import { Searchbar } from "react-native-paper";
 import HeaderNotification from "../../components/HeaderNotification";
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-const screenWidth = Dimensions.get("window").width;
 
 function Dashboard(activeNav) {
   const [activeIndex, setActiveIndex] = useState(0);
