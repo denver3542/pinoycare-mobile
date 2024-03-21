@@ -1,233 +1,159 @@
-import { useState, useEffect } from "react";
-import Spinner from "react-native-loading-spinner-overlay";
-// import * as AppleAuthentication from 'expo-apple-authentication';
-
+import { useState } from "react";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ScrollView,
-  Platform,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import {
-  Button,
-  HelperText,
   Text,
+  Button,
   TextInput,
   useTheme,
+  HelperText,
 } from "react-native-paper";
-// import {
-//   clearStoredRememberedUser,
-//   getStoredRememberedUser,
-//   setStoredRememberedUser,
-// } from "../../utils";
 import { useForm } from "react-hook-form";
-import CustomTextInput from "../../components/CustomTextInput";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
+import Spinner from "react-native-loading-spinner-overlay";
 import useAuth from "../../hooks/useAuth";
+import CustomTextInput from "../../components/CustomTextInput";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+
+// Define your validation schema
+const validationSchema = Yup.object({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+}).required();
 
 const Login = ({ navigation }) => {
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const { control, handleSubmit, setError, setValue } = useForm();
-  const [showPw, setShowPw] = useState(false);
-  const { colors } = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+  const [generalError, setGeneralError] = useState("");
+  const {
+    control,
+    handleSubmit,
+    setError,
+
+    formState: { errors, isLoading, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
   const onSubmit = async (data) => {
-    setLoading(true)
-    login(data).then((res) => {
-      if (res.success === 0) {
-        setError('email', { type: 'custom', message: 'Your email is existing or not valid.' })
-        setError('password', { type: 'custom', message: 'Your password must be incorrect.' })
-      } else {
-        console.log('success');
-        // showSnackbar()
-      }
-    }).catch(err => {
-      setError('email', { type: 'custom', message: 'Your email is existing or not valid.' })
-      setError('password', { type: 'custom', message: 'Your password must be incorrect.' })
-      console.log(err);
-    });
-    setLoading(false)
-  };
-
-  const navForgotPassword = async () => {
-    navigation.navigate("ForgotPassword");
-  };
-  const navSignUp = async () => {
-    navigation.navigate("SignUp");
-  };
-
-  async function onAppleButtonPress() {
-
     setLoading(true);
-
-    // start a login request
     try {
-      const { identityToken, fullName } = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
-
-      if (identityToken) {
-        const firstname = fullName.givenName ? fullName.givenName : 'New';
-        const lastname = fullName.familyName ? fullName.familyName : 'User';
-        const response = await appleLoginOrRegister(identityToken, firstname, lastname);
-        // console.log(response);
+      const res = await login(data);
+      if (res.success === 0) {
+        setError("email", {
+          type: "custom",
+          message: "Email doesn't exist or isn't valid.",
+        });
+        setError("password", {
+          type: "custom",
+          message: "Password is incorrect.",
+        });
+        setGeneralError(res?.message || "Invalid username or password.");
+      } else {
+        console.log("Login success");
       }
-
-    } catch (error) {
-      console.error(error.message);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }
+  };
+
   return (
-    <UnathorizeLayout>
+    <View style={styles.container}>
       <Spinner visible={loading} color={colors.primary} />
-      <View style={{ paddingVertical: 20, marginBottom: 20, alignItems: 'center' }}>
-        <Text style={{
-          fontWeight: "bold",
-          color: colors.primary,
-          fontSize: 24
-        }}
-        >
-          Let's{" "}
-          <Text style={{ fontWeight: "bold", color: "red", fontSize: 24 }}
-          >
-            Sign
-          </Text>{" "}
-          you in.
+      <Text style={[styles.title, { color: colors.primary }]}>
+        Let's <Text style={styles.highlight}>Sign</Text> you in.
+      </Text>
+      {generalError && (
+        <View style={{ marginBottom: 4, marginTop: -8 }}>
+          <HelperText type="error" visible={generalError}>
+            {generalError}
+          </HelperText>
+        </View>
+      )}
+      <CustomTextInput
+        control={control}
+        name="email"
+        label="Email"
+        rules={{ required: "Email is required" }}
+        autoCapitalize="none"
+        mode="outlined"
+        // style={styles.input}
+      />
+      <CustomTextInput
+        control={control}
+        name="password"
+        label="Password"
+        secureTextEntry={!showPassword}
+        rules={{ required: "Password is required" }}
+        mode="outlined"
+        // style={styles.input}
+        error={errors.password}
+        right={
+          <TextInput.Icon
+            name={showPassword ? "eye-off" : "eye"}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        }
+      />
+      <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+        <Text style={styles.linkText}>Forgot Password?</Text>
+      </TouchableOpacity>
+      <Button
+        mode="contained"
+        onPress={handleSubmit(onSubmit)}
+        loading={isLoading || isSubmitting}
+        style={styles.button}
+      >
+        LOGIN
+      </Button>
+      {/* Include other buttons like 'SIGN IN WITH GOOGLE', etc., here */}
+      <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+        <Text style={styles.signUpText}>
+          You don't have an account yet?{" "}
+          <Text style={styles.linkText}>Sign up</Text>
         </Text>
-      </View>
-
-      <View >
-        <CustomTextInput
-          control={control}
-          name="email"
-          placeholder="Email"
-          rules={{ required: "Email is required" }}
-        />
-        <CustomTextInput
-          control={control}
-          name="password"
-          placeholder="Password"
-          secureTextEntry={!showPw}
-          rules={{ required: "Password is required" }}
-          right={
-            <TextInput.Icon
-              icon={showPw ? "eye-off" : "eye"}
-              onPress={() => setShowPw((pw) => !pw)}
-
-            />
-          }
-        />
-        <View style={styles.checkboxContainer}>
-          <View style={{ flexDirection: "row", alignItems: "center", }}>
-            {/* <Checkbox.Android
-                status={checked ? "checked" : "unchecked"}
-                onPress={() => {
-                  setChecked(!checked);
-                }}
-              />
-              <Text variant="labelLarge" style={{ color: "#575757" }}>
-                Remember me
-              </Text> */}
-          </View>
-
-          <Button
-            disabled={loading}
-            mode="text"
-            icon="lock-question"
-            onPress={navForgotPassword}
-          >
-            Forgot password
-          </Button>
-        </View>
-
-        <Button
-          style={styles.btn}
-          labelStyle={{
-            fontSize: 14, // Increase font size for larger text
-            paddingVertical: 6, // Increase padding for taller button
-          }}
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
-          icon="login"
-        >
-          Sign in
-        </Button>
-
-        {/* <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
-          style={[styles.btn, { height: 40 }]}
-          onPress={onAppleButtonPress}
-        /> */}
-
-        <View style={styles.lineContainer}>
-          <View style={styles.line} />
-          <View>
-            <Text style={styles.lineText}>or</Text>
-          </View>
-          <View style={styles.line} />
-        </View>
-
-        <Button
-          style={{
-            textAlign: "left", color: "#008018", borderColor: '#012970',
-            borderWidth: 1,
-            borderRadius: 50,
-            marginBottom: 30,
-
-          }}
-          labelStyle={{
-            fontSize: 14, // Increase font size for larger text
-            paddingVertical: 6, // Increase padding for taller button
-          }}
-          disabled={loading}
-          onPress={navSignUp}
-          icon="account-plus"
-        >
-          Sign Up
-        </Button>
-      </View>
-    </UnathorizeLayout>
-
-
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  btn: {
-    borderRadius: 50,
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
   },
-
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: 'space-between',
+  title: {
+    fontSize: 30,
+    textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
+  highlight: {
+    fontWeight: "bold",
+    color: "red",
+  },
+  input: {
     marginBottom: 8,
   },
-  lineContainer: {
-    flexDirection: 'row', // Align children in a row
-    alignItems: 'center', // Center items vertically
-    marginVertical: 20, // Add vertical spacing
+  button: {
+    marginTop: 8,
+    paddingVertical: 8,
   },
-  line: {
-    flex: 1, // Take up all available space
-    height: 1, // 1 pixel high line
-    backgroundColor: 'grey', // Line color
+  linkText: {
+    color: "blue",
+    textDecorationLine: "underline",
+    textAlign: "right",
+    marginBottom: 8,
   },
-  lineText: {
-    width: 50, // Width of the 'or' container
-    textAlign: 'center', // Center text horizontally
-    color: 'grey', // Text color
-    paddingHorizontal: 10, // Horizontal padding
+  signUpText: {
+    marginTop: 16,
+    textAlign: "center",
   },
 });
 

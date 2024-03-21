@@ -10,10 +10,10 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
-import AboutMeScreen from '../screens/User/About/AboutMeForm';
-import AddSkillScreen from '../screens/User/Profile/AddSkillScreen';
-import AddEducationScreen from '../screens/User/Profile/AddEducationScreen';
-import SettingsScreen from '../screens/User/Profile/SettingsScreen';
+import AboutMeScreen from "../screens/User/About/AboutMeForm";
+import AddSkillScreen from "../screens/User/Profile/AddSkillScreen";
+import AddEducationScreen from "../screens/User/Profile/AddEducationScreen";
+import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
 
@@ -22,14 +22,15 @@ import { useUser } from "../hooks/useUser";
 import EmployerCustomBottomTabs from "../components/EmployerCustomBottomTabs";
 import CandidateDetailsScreen from "../screens/Employer/Candidates/CandidateDetailsScreen";
 import JobDetailsScreen from "../screens/Employer/Jobs/JobDetailsScreen";
+import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
+import MessageList from "../screens/Messaging/MessageList";
+import ChatConversation from "../screens/Messaging/ChatConversation";
 
 const Stack = createNativeStackNavigator();
 
 function LandingNavigation() {
   const { user, isFetched, isFetching } = useUser();
   const [loading, setLoading] = useState(true);
-
-  console.log(user && user.role);
 
   useEffect(() => {
     if (isFetched) {
@@ -48,6 +49,10 @@ function LandingNavigation() {
               <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="SignUp" component={SignUp} />
               <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPasswordScreen}
+              />
               <Stack.Screen name="Professional" component={Professional} />
               <Stack.Screen
                 name="IndividualEmployer"
@@ -60,18 +65,9 @@ function LandingNavigation() {
             </>
           ) : user.role === "admin" ? (
             <></>
-          ) : user.role === "user" ? (
+          ) : user.role === "employer" ? (
             <>
-              <Stack.Screen name="BottomTabs" component={CustomBottomTabs} />
-              <Stack.Screen name="Job" component={Job} />
-              <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
-              <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
-              <Stack.Screen name="AddEducationScreen" component={AddEducationScreen} />
-              <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="BottomTabs"
                 component={EmployerCustomBottomTabs}
               />
@@ -79,7 +75,23 @@ function LandingNavigation() {
                 name="CandidateDetails"
                 component={CandidateDetailsScreen}
               />
-              <Stack.Screen name="JobDetails" component={JobDetailsScreen} />
+              <Stack.Screen name="JobDetails" component={JobDetailsScreen} /> */}
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="BottomTabs" component={CustomBottomTabs} />
+              <Stack.Screen name="Job" component={Job} />
+              <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
+              <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
+              <Stack.Screen name="MessageList" component={MessageList} />
+              <Stack.Screen
+                name="ChatConversation"
+                component={ChatConversation}
+              />
+              <Stack.Screen
+                name="EditEducationScreen"
+                component={EditEducationScreen}
+              />
             </>
           )}
         </Stack.Navigator>

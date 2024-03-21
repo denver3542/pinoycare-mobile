@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { HelperText, useTheme } from 'react-native-paper';
-import { Controller } from 'react-hook-form';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { HelperText, useTheme } from "react-native-paper";
+import { Controller } from "react-hook-form";
+import { Picker } from "@react-native-picker/picker";
 
 const CustomSelectBox = ({
   control,
   name,
-  mode = 'outlined',
+  mode = "outlined",
   rules = {},
   styleContainer = {},
   items,
@@ -21,7 +21,10 @@ const CustomSelectBox = ({
       control={control}
       name={name}
       rules={rules}
-      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
+      render={({
+        field: { value, onChange, onBlur },
+        fieldState: { error },
+      }) => (
         <View>
           <View
             style={[
@@ -51,12 +54,21 @@ const CustomSelectBox = ({
               {...rest}
             >
               {items.map((item) => (
-                <Picker.Item key={item.value} label={item.label} value={item.value} mode={mode} />
+                <Picker.Item
+                  key={item.value}
+                  label={item.label}
+                  value={item.value}
+                  mode={mode}
+                />
               ))}
             </Picker>
           </View>
           {!!error && error.message && (
-            <HelperText type="error" visible={!!error} style={{ color: theme.colors.error }}>
+            <HelperText
+              type="error"
+              visible={!!error}
+              style={{ color: theme.colors.error }}
+            >
               {error.message}
             </HelperText>
           )}
@@ -71,12 +83,12 @@ export default CustomSelectBox;
 const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 10,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     height: 50,
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   errorContainer: {
-    borderColor: 'red',
+    borderColor: "red",
   },
 });
