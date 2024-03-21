@@ -7287,7 +7287,7 @@ yocto-queue@^0.1.0:
 
 yup@^1.4.0:
   version "1.4.0"
-  resolved "https://registry.yarnpkg.com/yup/-/yup-1.4.0.tgz#898dcd660f9fb97c41f181839d3d65c3ee15a43e"
+  resolved "https://registry.npmjs.org/yup/-/yup-1.4.0.tgz#898dcd660f9fb97c41f181839d3d65c3ee15a43e"
   integrity sha512-wPbgkJRCqIf+OHyiTBQoJiP5PFuAXaWiJK6AmYkzQAh5/c2K9hzSApBZG5wV9KoKSePF7sAxmNSvh/13YHkFDg==
   dependencies:
     property-expr "^2.0.5"

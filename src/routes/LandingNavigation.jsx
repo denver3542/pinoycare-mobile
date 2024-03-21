@@ -89,8 +89,8 @@ function LandingNavigation() {
                 component={ChatConversation}
               />
               <Stack.Screen
-                name="EditEducationScreen"
-                component={EditEducationScreen}
+                name="AddEducationScreen"
+                component={AddEducationScreen}
               />
             </>
           )}

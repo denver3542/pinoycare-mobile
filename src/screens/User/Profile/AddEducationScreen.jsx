@@ -71,7 +71,7 @@ const EducationForm = () => {
             </Appbar.Header>
             <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
                 <View style={{ paddingHorizontal: 15, marginTop: 60 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>About Me</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>Education</Text>
 
                     <CustomSelectBox
                         selectedValue={selectedLevel}
