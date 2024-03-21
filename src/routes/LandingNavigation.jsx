@@ -92,6 +92,10 @@ function LandingNavigation() {
                 name="AddEducationScreen"
                 component={AddEducationScreen}
               />
+              <Stack.Screen
+                name="SettingsScreen"
+                component={SettingsScreen}
+              />
             </>
           )}
         </Stack.Navigator>
