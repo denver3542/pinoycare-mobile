@@ -4,14 +4,18 @@ import { IconButton, Divider, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
-const SkillsChip = ({ skill }) => {
+const SkillsChip = ({ skills }) => {
     const navigation = useNavigation();
     const [showAllSkills, setShowAllSkills] = useState(false);
-    const displayedSkills = showAllSkills ? skill : skill.slice(0, 5);
+    const displayedSkills = Array.isArray(skills) ? (showAllSkills ? skills : skills.slice(0, 5)) : [];
+
+    const handlePress = () => {
+        setShowAllSkills(!showAllSkills);
+    };
 
     return (
         <View style={styles.card}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <View style={styles.header}>
                 <View style={styles.sectionHeader}>
                     <FontAwesome5
                         name="star"
@@ -33,29 +37,26 @@ const SkillsChip = ({ skill }) => {
                         icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                         size={25}
                         selected
-                        onPress={() => { /* Handle edit button press */ }}
+                        onPress={() => { }}
                     />
                 </View>
             </View>
             <Divider style={styles.divider} />
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <View style={styles.skillsContainer}>
                 {displayedSkills.map((skillItem, index) => (
-                    <Chip
-                        key={index}
-                        onPress={() => { }}
-                        style={styles.chip}
-                    >
-                        <Text style={styles.smallFont}>{skillItem.skill_name}</Text>
+                    <Chip key={index} onPress={() => { }} style={styles.chip}>
+                        <Text style={styles.skillText}>{skillItem.skill_name}</Text>
                     </Chip>
                 ))}
             </View>
-            {!showAllSkills && skill.length > 5 && (
-                <TouchableOpacity onPress={() => setShowAllSkills(true)}>
+
+            {!showAllSkills && skills && skills.length > 5 && (
+                <TouchableOpacity onPress={handlePress}>
                     <Text style={styles.showAllButton}>Show All</Text>
                 </TouchableOpacity>
             )}
             {showAllSkills && (
-                <TouchableOpacity onPress={() => setShowAllSkills(false)}>
+                <TouchableOpacity onPress={handlePress}>
                     <Text style={styles.showAllButton}>Show Less</Text>
                 </TouchableOpacity>
             )}
@@ -70,6 +71,11 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         padding: 15,
         elevation: 1,
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     sectionHeader: {
         flexDirection: "row",
@@ -87,11 +93,15 @@ const styles = StyleSheet.create({
         height: 0.5,
         marginBottom: 10,
     },
+    skillsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
     chip: {
         margin: 4,
         borderRadius: 10,
     },
-    smallFont: {
+    skillText: {
         fontSize: 10,
     },
     iconContainer: {

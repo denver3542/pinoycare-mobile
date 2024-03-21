@@ -25,7 +25,7 @@ const getEducationLevelName = (level) => {
 
 const EducationItem = ({ educations }) => {
     const [showAllEducations, setShowAllEducations] = useState(false);
-    const limitedEducations = showAllEducations ? educations : educations.slice(0, 1);
+    const limitedEducations = Array.isArray(educations) ? (showAllEducations ? educations : educations.slice(0, 1)) : [];
     const navigation = useNavigation();
     return (
         <View style={styles.card}>

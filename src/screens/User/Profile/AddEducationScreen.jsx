@@ -1,213 +1,169 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { View, StyleSheet, Text, Platform, TouchableOpacity, ScrollView } from 'react-native';
-import { TextInput, Button, Card, RadioButton, Appbar, Divider } from 'react-native-paper';
-import { useForm, useFieldArray } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
+import { Text, StyleSheet, View, TouchableOpacity, Platform } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import Spinner from 'react-native-loading-spinner-overlay';
+import CustomSelectBox from "../../../components/CustomSelectBox";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Button, Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance, { getJWTHeader } from '../../../../utils/axiosConfig';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import CustomDatePicker from '../../../components/CustomDatePicker';
-import { useUser } from '../../../hooks/useUser';
 import CustomTextInput from '../../../components/CustomTextInput';
+import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
+import { useForm } from 'react-hook-form';
+import { useUser } from '../../../hooks/useUser';
+import useEducations from './Education/hooks/useEducations';
 
-const EditEducation = () => {
+const EducationForm = () => {
     const { user } = useUser();
     const navigation = useNavigation();
-    const queryClient = useQueryClient();
-
-    const { control, handleSubmit } = useForm({
+    const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
         defaultValues: {
-            educations: user?.educations || [],
+            level: '',
+            school_name: '',
+            course: '',
+            track: '',
+            from: new Date(),
+            to: new Date(),
         },
     });
 
-    const { fields, append, remove } = useFieldArray({ control, name: 'educations' });
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [selectedDateField, setSelectedDateField] = useState(null);
 
+    const fromValue = watch('from') || new Date();
+    const toValue = watch('to') || new Date();
 
-    const updateEducations = useCallback(async (dataToUpdate) => {
-        try {
-            const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
-            const headers = getJWTHeader(user);
-            const { data } = await axiosInstance.put('/user/profile/edit-educations', dataToUpdate, { headers });
-
-            // Log data being submitted
-            console.log('LOG Data being submitted:');
-            dataToUpdate.educations.forEach((education, index) => {
-                console.log(`LOG Education ${index + 1} ID:`, education.id);
-                console.log(`LOG Education ${index + 1} Data:`, education);
-            });
-
-            const updatedUser = { ...user, ...dataToUpdate };
-            queryClient.setQueryData(['user'], updatedUser);
-            await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
-            console.log('LOG Education update successful:', data);
-
-            return { originalData: dataToUpdate, responseData: data };
-        } catch (error) {
-            console.error('Error updating education:', error);
-            throw error;
+    const handleDateChange = (event, selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDateField) {
+            setValue(selectedDateField, selectedDate || new Date());
         }
-    }, [queryClient]);
+    };
 
-    const onSubmit = useCallback(async (data) => {
-        try {
-            const responseData = await updateEducations(data);
+    const { mutate, isLoading } = useEducations();
 
-
-            console.log('LOG Education update response:');
-            console.log('LOG originalData:');
-            responseData.originalData.educations.forEach((education, index) => {
-                console.log(`LOG Education ${index + 1}:`, education);
-            });
-            console.log('LOG responseData:', responseData.responseData);
-
-            navigation.goBack();
-        } catch (error) {
-            console.error('Error submitting data:', error);
-
+    useEffect(() => {
+        if (user) {
+            setValue('level', user.level);
+            setValue('school_name', user.school_name);
+            setValue('course', user.course);
+            setValue('track', user.track);
+            setValue('from', user.from);
+            setValue('to', user.to);
         }
-    }, [navigation, updateEducations]);
+    }, [user, setValue]);
 
+    const onSave = handleSubmit(data => {
+        mutate(data);
+    });
 
+    const selectedLevel = watch('level');
 
-
-    const [selectedRadioButton, setSelectedRadioButton] = useState('');
-    const showK12Fields = useMemo(() => selectedRadioButton === 'Yes', [selectedRadioButton]);
-
-    const handleRadioButtonChange = useCallback((value) => {
-        setSelectedRadioButton(value);
-    }, []);
+    const showDatePickerForField = (fieldName) => {
+        setSelectedDateField(fieldName);
+        setShowDatePicker(true);
+    };
 
     return (
         <AuthenticatedLayout>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Edit Educational Background" />
+                <Appbar.Content title="Add Education" />
             </Appbar.Header>
-            <ScrollView>
-                <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
-                    <View style={{ padding: 15, marginTop: 40 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>Educational Background</Text>
+            <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
+                <View style={{ paddingHorizontal: 15, marginTop: 60 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>About Me</Text>
 
-                        <View style={styles.radioButton}>
-                            <Text style={{ marginTop: 10, fontSize: 14, marginRight: 50, color: '#0A3480', fontWeight: 'bold' }}>Are you a K to 12 student?</Text>
-                            <RadioButton.Group onValueChange={handleRadioButtonChange} value={showK12Fields ? 'Yes' : 'No'}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity onPress={() => handleRadioButtonChange("Yes")} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text>Yes</Text>
-                                        <RadioButton value="Yes" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => handleRadioButtonChange("No")} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text>No</Text>
-                                        <RadioButton value="No" />
-                                    </TouchableOpacity>
-                                </View>
-                            </RadioButton.Group>
-                        </View>
-                        {fields.map((item, index) => (
-                            <View key={item.id}>
-                                {(showK12Fields || item.level !== 'secondary_k12') && (
-                                    <View style={styles.card}>
-                                        <View style={styles.cardContent}>
-                                            <View style={styles.sectionHeader}>
-                                                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0A3480' }}>
-                                                    {item.level === 'elementary' ? 'Elementary' :
-                                                        item.level === 'secondary' ? 'Secondary' :
-                                                            item.level === 'secondary_k12' ? 'Senior High School' :
-                                                                item.level === 'baccalaureate' ? 'Baccalaureate' :
-                                                                    item.level === 'master' ? 'Master' :
-                                                                        item.level === 'doctorate' ? 'Doctorate' : item.level}
-                                                </Text>
+                    <CustomSelectBox
+                        selectedValue={selectedLevel}
+                        onValueChange={(itemValue) => {
+                            setValue('level', itemValue);
+                        }}
+                        control={control}
+                        name="level"
+                        items={[
+                            { label: 'Select a Level', value: '' },
+                            { label: 'Elementary Education', value: 'elementary' },
+                            { label: 'Junior High School', value: 'secondary' },
+                            { label: 'Senior High School', value: 'secondary_k12' },
+                            { label: 'Bacalaureate', value: 'bacalaureate' },
+                            { label: "Master's Degree", value: 'master' },
+                            { label: "Doctorate Degree", value: 'doctorate' },
+                        ]}
+                        rules={{ required: "Please Select a Level" }}
+                    />
+                    <CustomTextInput
+                        placeholder="School Name"
+                        control={control}
+                        name="school_name"
+                        rules={{ required: 'School Name is required' }}
+                    />
+                    {(selectedLevel !== 'elementary' && selectedLevel !== 'secondary') && (
+                        <CustomTextInput
+                            placeholder="Course"
+                            control={control}
+                            name="course"
+                            rules={{ required: 'Course is required' }}
+                        />
+                    )}
+                    {selectedLevel === 'secondary_k12' && (
+                        <CustomTextInput
+                            placeholder="Track"
+                            control={control}
+                            name="track"
+                            rules={{ required: 'Track is required' }}
+                        />
+                    )}
 
-                                                <Button onPress={() => remove(index)}>Remove</Button>
-                                            </View>
-                                            <Divider style={styles.divider} />
-                                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0A3480', marginBottom: 4 }}>School Name</Text>
-                                            <CustomTextInput
-                                                placeholder=""
-                                                control={control}
-                                                name={`educations.${index}.school_name`}
-                                            />
-                                            <View style={styles.datePicker}>
-                                                <View style={styles.datePickerContainer}>
-                                                    <Text style={styles.label}>Date Started</Text>
-                                                    <CustomDatePicker control={control} name={`educations.${index}.from`} />
-                                                </View>
-                                                <View style={styles.datePickerContainer}>
-                                                    <Text style={styles.label}>Date Ended</Text>
-                                                    <CustomDatePicker control={control} name={`educations.${index}.to`} />
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </View>
-                                )}
-                            </View>
-                        ))}
-                        <Card.Actions>
-                            <Button onPress={() => append({ level: '', school_name: '', from: '', to: '', is_k12: '' })} mode=''>Add Education</Button>
-                            <Button onPress={handleSubmit(onSubmit)} mode='contained'>Save</Button>
-                        </Card.Actions>
-                    </View>
+                    <TouchableOpacity
+                        style={styles.dateContainer}
+                        onPress={() => showDatePickerForField('from')}
+                    >
+                        <CustomTextInput
+                            placeholder="Start date"
+                            control={control}
+                            name="from"
+                            editable={false}
+                            value={fromValue.toLocaleDateString()}
+                            rules={{ required: 'Start Date is required' }}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.dateContainer}
+                        onPress={() => showDatePickerForField('to')}
+                    >
+                        <CustomTextInput
+                            placeholder="End date"
+                            control={control}
+                            name="to"
+                            editable={false}
+                            value={toValue.toLocaleDateString()}
+                            rules={{ required: 'End Date is required' }}
+                        />
+                    </TouchableOpacity>
+
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={selectedDateField === 'from' ? fromValue : toValue}
+                            mode="date"
+                            display="default"
+                            onChange={handleDateChange}
+                        />
+                    )}
+
+                    <Button mode="contained" onPress={onSave} disabled={isLoading}>
+                        Save
+                    </Button>
                 </View>
-            </ScrollView>
+            </View>
+            <Spinner visible={isLoading} />
         </AuthenticatedLayout>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    divider: {
-        backgroundColor: "#ccc",
-        marginBottom: 10,
-        marginTop: 10
-    },
-    datePicker: {
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    datePickerContainer: {
         flex: 1,
-        marginHorizontal: 4,
-    },
-    radioButton: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20
-    },
-    label: {
-        marginBottom: 4,
-        fontWeight: 'bold',
-        color: '#0A3480'
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    card: {
-        borderRadius: 10,
-        marginVertical: 10,
-        paddingVertical: 15,
-        paddingHorizontal: 10,
-        backgroundColor: 'white',
-        elevation: 1,
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    removeButton: {
-        fontSize: 14,
-        color: 'red',
-    },
-    cardContent: {
-        padding: 5
     },
 });
 
-
-export default EditEducation;
+export default EducationForm;

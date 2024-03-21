@@ -27,20 +27,19 @@ export default function useSkills() {
         },
         {
             onMutate: () => {
-                // Optionally, set some global or context-based loading state here
+
             },
             onSuccess: (updatedUser) => {
                 queryClient.setQueryData(['user'], updatedUser);
                 queryClient.invalidateQueries(['user']);
-                // Trigger navigation here after the mutation is successful
                 navigation.goBack();
             },
             onError: (error) => {
                 console.error("Error adding skills:", error);
-                // Handle error state update or show a notification here
+
             },
             onSettled: () => {
-                // Reset any global loading states or perform any cleanup necessary
+                queryClient.invalidateQueries({ queryKey: ['user'] })
             },
         }
     );

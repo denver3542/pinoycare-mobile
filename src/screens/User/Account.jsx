@@ -21,103 +21,121 @@ import useAuth from "../../hooks/useAuth";
 
 const Account = ({ activeNav }) => {
   const navigation = useNavigation();
-  const { user, isFetching, isLoading } = useUser();
+  const { user, isFetched, isLoading } = useUser();
   const { logout } = useAuth();
   const [snackbarProperties, setSnackbarProperties] = useState({
     visible: false,
     text: "",
   });
 
+
+  if (isLoading) {
+    return <Spinner visible={true} textContent={'Loading...'} />;
+  }
+
+  if (!isFetched) {
+    return <Text>Error fetching user data.</Text>;
+  }
+
+
   return (
     <AuthenticatedLayout activeBottomNav={activeNav?.route?.name}>
-
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.header}>
-            <View style={styles.iconButtonContainer}>
-              <IconButton
-                icon={() => <MaterialIcons name="settings" size={20} color="white" />}
-                size={25}
-                selected
-                onPress={() => navigation.navigate("SettingsScreen")}
-              />
-            </View>
-
-            <View style={styles.userInfoContainer}>
-              <View style={styles.profileImageContainer}>
-                <Image
-                  source={
-                    user && user.media[0]
-                      ? { uri: user.media[0].original_url }
-                      : require("../../../assets/images/sample-profile.jpg")
-                  }
-                  style={styles.profileImage}
+      {isLoading ? (
+        <Spinner
+          visible={true}
+          textContent={'Loading...'}
+        />
+      ) : isFetched ? (
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <View style={styles.iconButtonContainer}>
+                <IconButton
+                  icon={() => <MaterialIcons name="settings" size={20} color="white" />}
+                  size={25}
+                  selected
+                  onPress={() => navigation.navigate("SettingsScreen")}
                 />
-
-
               </View>
 
-              <View style={styles.userInfo}>
-                <Text style={styles.headerName}>{user?.firstname || ""} {user?.lastname}</Text>
-                <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
+              <View style={styles.userInfoContainer}>
+                <View style={styles.profileImageContainer}>
+                  <Image
+                    source={
+                      user && user.media[0]
+                        ? { uri: user.media[0].original_url }
+                        : require("../../../assets/images/sample-profile.jpg")
+                    }
+                    style={styles.profileImage}
+                  />
+                </View>
+
+                <View style={styles.userInfo}>
+                  <Text style={styles.headerName}>{user?.firstname || ""} {user?.lastname}</Text>
+                  <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
+                </View>
+                <Button
+                  icon="pencil"
+                  onPress={() => { }}
+                  contentStyle={styles.buttonContent}
+                  labelStyle={styles.buttonLabel}
+                >
+                  Edit
+                </Button>
               </View>
-              <Button
-                icon="pencil"
-                onPress={() => { }}
-                contentStyle={styles.buttonContent}
-                labelStyle={styles.buttonLabel}
-              >
-                Edit
-              </Button>
             </View>
-
           </View>
-        </View>
 
-        <View style={styles.contentStyle}>
-          <View style={styles.card}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <View style={styles.sectionContent}>
-                <FontAwesome5
-                  name="user-circle"
+          <View style={styles.contentStyle}>
+            <View style={styles.card}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={styles.sectionContent}>
+                  <FontAwesome5
+                    name="user-circle"
+                    size={20}
+                    color="#0A3480"
+                    style={styles.cardIcon}
+                    solid
+                  />
+                  <Text style={styles.cardTitle}>About Me</Text>
+                </View>
+                <IconButton
+                  icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                   size={20}
-                  color="#0A3480"
-                  style={styles.cardIcon}
-                  solid
+                  selected
+                  onPress={() => navigation.navigate("AboutMeScreen")}
                 />
-                <Text style={styles.cardTitle}>About Me</Text>
               </View>
-              <IconButton
-                icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
-                size={20}
-                selected
-                onPress={() => navigation.navigate("AboutMeScreen")}
+              <Divider
+                style={styles.divider}
               />
+              <View style={styles.contentContainer}>
+                <Text style={styles.cardDescription}>{user?.about_me}</Text>
+              </View>
             </View>
 
-            <Divider
-              style={styles.divider}
-            />
-            <View style={styles.contentContainer}>
-              <Text style={styles.cardDescription}>{user?.about_me}</Text>
-            </View>
+            {isFetched && (
+              <>
+                <SkillsChip skills={user.skills} />
+                <EducationItem educations={user.educations} />
+                <SeminarsTrainings trainings={user.trainings} />
+                <WorkExperience work_experiences={user.work_experiences} />
+              </>
+            )}
           </View>
-
-          <SkillsChip skill={user.skills} />
-          <EducationItem educations={user.educations} />
-          <SeminarsTrainings trainings={user.trainings} />
-          <WorkExperience work_experiences={user.work_experiences} />
+          <Snackbar
+            visible={snackbarProperties.visible}
+            onDismiss={() => setSnackbarProperties({ visible: false, text: "" })}
+            duration={Snackbar.DURATION_SHORT}
+          >
+            {snackbarProperties.text}
+          </Snackbar>
         </View>
-
-        <Snackbar
-          visible={snackbarProperties.visible}
-          onDismiss={() => setSnackbarProperties({ visible: false, text: "" })}
-          duration={Snackbar.DURATION_SHORT}
-        >
-          {snackbarProperties.text}
-        </Snackbar>
-      </View>
-
+      ) : ( // Show error message if data fetching fails
+        <View>
+          <Text>Error fetching user data.</Text>
+        </View>
+      )}
     </AuthenticatedLayout>
   );
 };

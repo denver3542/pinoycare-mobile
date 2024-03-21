@@ -33,8 +33,8 @@ const CustomSelectBox = ({
                 borderColor: isFocused
                   ? theme.colors.primary // Border color when focused
                   : error
-                  ? theme.colors.error
-                  : theme.colors.primary, // Border color when not focused and no error
+                    ? theme.colors.error
+                    : theme.colors.primary, // Border color when not focused and no error
                 borderWidth: isFocused || error ? 2 : 1, // Border width based on focus and error state
               },
             ]}
@@ -70,7 +70,7 @@ export default CustomSelectBox;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginBottom: 10,
+    marginBottom: 15,
     backgroundColor: 'white',
     height: 50,
     borderRadius: 4,

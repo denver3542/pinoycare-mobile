@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Text, Button, Portal, Appbar, Card, List } from 'react-native-paper';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-
+import useAuth from "../../../hooks/useAuth";
 const SettingsScreen = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const [visible, setVisible] = useState(false);
-    // const { logout } = useAuth();
+    const { logout } = useAuth();
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
@@ -30,7 +30,7 @@ const SettingsScreen = ({ navigation }) => {
                     <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modal}>
                         <Text style={styles.modalTitle}>Log out</Text>
                         <Text style={styles.modalText}>Are you sure you want to leave?</Text>
-                        <Button mode="contained" onPress={hideModal} style={styles.button}>
+                        <Button mode="contained" onPress={logout} style={styles.button}>
                             Yes
                         </Button>
                         <Button onPress={hideModal} style={styles.button}>
