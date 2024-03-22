@@ -54,7 +54,9 @@ function Dashboard({ activeNav }) {
                   style={styles.profileImage}
                 />
                 <View>
-                  <Text style={styles.headerName}>{user?.firstname || "N/A"} {user?.lastname || "N/A"}</Text>
+                  <Text style={styles.headerName}>
+                    {user?.firstname || "N/A"} {user?.lastname || "N/A"}
+                  </Text>
                   <Text style={styles.headerProfession}>
                     {user?.profession || "N/A"}
                   </Text>
@@ -82,15 +84,15 @@ function Dashboard({ activeNav }) {
               {dashboardIsFetching && (
                 <ActivityIndicator animating={true} color={colors.primary} />
               )}
-              {isFetched && data.applications.length > 0 ? (
-                data.applications.map((app, key) => (
+              {isFetched && data.applications?.length > 0 ? (
+                data.applications?.map((app, key) => (
                   <ApplicationListCard key={key} application={app} />
                 ))
               ) : (
                 <Text style={styles.noJobsText}>No Jobs Available</Text>
               )}
             </View>
-            {isFetched && data.applications.length > 0 ? (
+            {/* {isFetched && data.applications?.length > 0 ? (
               <View style={{ flex: 1 }}>
                 <Button icon="redo" mode="contained" onPress={handleSeeMore}>
                   See more
@@ -98,7 +100,7 @@ function Dashboard({ activeNav }) {
               </View>
             ) : (
               <></>
-            )}
+            )} */}
           </View>
 
           <View style={[styles.contentStyle, { marginTop: 20 }]}>
@@ -110,15 +112,15 @@ function Dashboard({ activeNav }) {
               {dashboardIsFetching && (
                 <ActivityIndicator animating={true} color={colors.primary} />
               )}
-              {isFetched && data.applications.length > 0 ? (
-                data.applications.map((app, key) => (
+              {isFetched && data.applications?.length > 0 ? (
+                data.applications?.map((app, key) => (
                   <ApplicationListCard key={key} application={app} />
                 ))
               ) : (
                 <Text style={styles.noJobsText}>No Jobs Available</Text>
               )}
             </View>
-            {isFetched && data.applications.length > 0 ? (
+            {isFetched && data.applications?.length > 0 ? (
               <View style={{ flex: 1 }}>
                 <Button icon="redo" mode="contained" onPress={handleSeeMore}>
                   See more

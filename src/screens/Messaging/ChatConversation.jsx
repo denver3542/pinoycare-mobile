@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   View,
@@ -8,68 +8,86 @@ import {
   TouchableOpacity,
   Text,
   KeyboardAvoidingView,
+  RefreshControl,
 } from "react-native";
 import { Appbar, Avatar, Card, Title, Paragraph } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
-const sampleMessages = [
-  {
-    id: "m1",
-    text: "Hello sir, Good Morning",
-    isIncoming: false,
-    timestamp: "09:30 am",
-    isRead: true,
-  },
-  {
-    id: "m2",
-    text: "Morning, Can I help you?",
-    isIncoming: true,
-    timestamp: "09:31 am",
-    isRead: true,
-  },
-  {
-    id: "m3",
-    text: "I saw the UI/UX Designer vacancy that you uploaded on LinkedIn yesterday and I am interested in joining your company.",
-    isIncoming: false,
-    timestamp: "09:33 am",
-    isRead: true,
-  },
-  {
-    id: "m4",
-    text: "Oh yes, please send your CV/Resume here",
-    isIncoming: true,
-    timestamp: "09:35 am",
-    isRead: true,
-  },
-  {
-    id: "m5",
-    text: "Jamet - CV - UI/UX Designer.PDF",
-    isIncoming: false,
-    timestamp: "09:36 am",
-    isFile: true,
-    fileSize: "867 KB PDF",
-    isRead: true,
-  },
-];
+import { fDate, fTimestamp } from "../../../utils/formatTime";
+import moment from "moment";
+import useMessaging, { useConvo } from "./hook/useMessaging";
+import Ably from "ably/promises";
+import { useUser } from "../../hooks/useUser";
 
 const ChatConversation = () => {
-  const [text, setText] = useState("");
-  const navigation = useNavigation();
   const { params } = useRoute();
-
   const contact = params.contact;
-  console.log(contact);
+  const [text, setText] = useState("");
+  const messages = contact.receivedMessages;
+  const navigation = useNavigation();
+  const { user } = useUser();
+
+  // console.log(contact.receivedMessages);
+  const { data, isFetched, isRefetching, refetch } = useConvo(contact.id);
+  const [conversation, setData] = useState(data?.conversations);
+  const { sendMessage: send } = useMessaging();
+
+  useEffect(() => {
+    console.log(data?.ablyApiKey);
+    const ably = new Ably.Realtime.Promise({
+      key: data?.ablyApiKey,
+      clientId: user.id.toString(),
+    });
+
+    const channel = ably.channels.get(
+      `private-chat-${Math.min(user?.id, contact.id)}-${Math.max(
+        user.id,
+        contact.id
+      )}`
+    ); // 'chat-channel' is an example, use appropriate channel name
+    channel.subscribe("message", (message) => {
+      const incomingMessage = {
+        id: message.id,
+        sender: { media: contact.media },
+        message: message.data.message,
+        created_at: message.timestamp,
+        isCurrentUser: false, // Update based on your logic to identify if the message was sent by the current user
+        // Add other necessary fields
+      };
+
+      // Update local state with the incoming message
+      setData([incomingMessage, ...conversation]);
+      // refetch();
+    });
+
+    return () => channel.unsubscribe(); // Clean up subscription
+  }, [isFetched, conversation]);
 
   // This function would add a new message to the chat
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (text.trim()) {
+      const newMessage = {
+        id: "temp-" + Date.now(), // Temporary ID, replace with backend response if available
+        message: text.trim(),
+        created_at: new Date().toISOString(),
+        isCurrentUser: true,
+        // Add other necessary fields for your message object
+      };
       // Add the new message to your state and send it to your backend
-      setText(""); // Reset the input field
+      try {
+        await send(contact.id, text);
+
+        setData([newMessage, ...conversation]);
+
+        setText(""); // Reset the input field
+        refetch();
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      }
     }
   };
 
   const renderMessageItem = ({ item }) => {
-    const isMyMessage = !item.isIncoming;
+    const isMyMessage = item.isCurrentUser;
 
     return (
       <View
@@ -78,14 +96,22 @@ const ChatConversation = () => {
           isMyMessage ? styles.myMessage : styles.theirMessage,
         ]}
       >
-        <Card style={styles.cardStyle}>
-          {/* {!isMyMessage && (
-            <Avatar.Image
-              size={36}
-              source={{ uri: contact.avatar }}
-              style={styles.avatarStyle}
-            />
-          )} */}
+        {!isMyMessage && (
+          <Avatar.Image
+            size={36}
+            source={{ uri: item.sender.media[0].original_url }}
+            style={styles.avatarStyle}
+          />
+        )}
+        <Card
+          style={[
+            styles.cardStyle,
+            {
+              borderBottomRightRadius: isMyMessage ? 0 : 20,
+              borderTopLeftRadius: !isMyMessage ? 0 : 20,
+            },
+          ]}
+        >
           <Card.Content
             style={
               isMyMessage ? styles.myMessageContent : styles.theirMessageContent
@@ -96,9 +122,11 @@ const ChatConversation = () => {
                 isMyMessage ? styles.myMessageText : styles.theirMessageText
               }
             >
-              {item.text}
+              {item.message}
             </Paragraph>
-            <Text style={styles.timeStampText}>{item.timestamp}</Text>
+            <Text style={styles.timeStampText}>
+              {moment(item.created_at).format("HH:mm A")}
+            </Text>
           </Card.Content>
         </Card>
       </View>
@@ -109,26 +137,33 @@ const ChatConversation = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 40}
     >
-      <Appbar.Header>
+      <Appbar.Header mode="small">
         <Appbar.BackAction
           onPress={() => {
             navigation.goBack();
           }}
         />
-        <Avatar.Image size={36} source={{ uri: contact.avatar }} />
-        <Appbar.Content title={contact.name} />
-        <Appbar.Action icon="phone" onPress={() => {}} />
-        <Appbar.Action icon="magnify" onPress={() => {}} />
+        <Avatar.Image
+          style={{ marginRight: 10 }}
+          size={36}
+          source={{ uri: contact.media[0].original_url }}
+        />
+        <Appbar.Content title={data?.otherUser?.name} />
+        {/* <Appbar.Action icon="phone" onPress={() => {}} />
+        <Appbar.Action icon="magnify" onPress={() => {}} /> */}
       </Appbar.Header>
 
       <FlatList
         inverted
-        data={sampleMessages}
+        data={conversation}
         renderItem={renderMessageItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
       />
 
       <View style={styles.inputContainer}>
@@ -170,16 +205,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
   },
   cardStyle: {
-    maxWidth: "80%",
     borderRadius: 20,
   },
   myMessageContent: {
     backgroundColor: "#dcf8c6",
     borderBottomRightRadius: 0,
+    borderRadius: 20,
   },
   theirMessageContent: {
     backgroundColor: "#fff",
-    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 0,
+    borderRadius: 20,
   },
   myMessageText: {
     color: "#000",
