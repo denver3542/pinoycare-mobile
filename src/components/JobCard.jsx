@@ -5,7 +5,7 @@ import { Button, Card, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Job from "../screens/Jobs/Job";
 
-const ApplicationListCard = ({ application }) => {
+const JobCard = ({ application }) => {
   const navigation = useNavigation();
   const { colors } = useTheme();
   return (
@@ -69,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ApplicationListCard;
+export default JobCard;

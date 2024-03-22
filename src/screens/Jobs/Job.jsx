@@ -19,6 +19,7 @@ export default function Job() {
   const { params } = useRoute();
   const job = params.job;
 
+  console.log(job);
   const handleSave = () => {
     console.log("save job");
   };

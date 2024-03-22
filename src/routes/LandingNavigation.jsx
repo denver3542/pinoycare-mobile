@@ -26,6 +26,7 @@ import JobDetailsScreen from "../screens/Employer/Jobs/JobDetailsScreen";
 import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
 import MessageList from "../screens/Messaging/MessageList";
 import ChatConversation from "../screens/Messaging/ChatConversation";
+import NotificationsList from "../screens/Notifications/NotificationsList";
 
 const Stack = createNativeStackNavigator();
 
@@ -97,9 +98,10 @@ function LandingNavigation() {
                 name="EditUserProfileScreen"
                 component={EditUserProfileScreen}
               />
+              <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
               <Stack.Screen
-                name="SettingsScreen"
-                component={SettingsScreen}
+                name="NotificationsList"
+                component={NotificationsList}
               />
             </>
           )}
