@@ -10,6 +10,7 @@ import Login from "../screens/Auth/Login";
 import Professional from "../screens/Auth/Registration/Professional";
 import IndividualEmployer from "../screens/Auth/Registration/IndividualEmployer";
 import OrganizationEmployer from "../screens/Auth/Registration/OrganizationEmployer";
+import EditUserProfileScreen from "../screens/User/Profile/EditUserProfileScreen";
 import AboutMeScreen from "../screens/User/About/AboutMeForm";
 import AddSkillScreen from "../screens/User/Profile/AddSkillScreen";
 import AddEducationScreen from "../screens/User/Profile/AddEducationScreen";
@@ -91,6 +92,10 @@ function LandingNavigation() {
               <Stack.Screen
                 name="AddEducationScreen"
                 component={AddEducationScreen}
+              />
+              <Stack.Screen
+                name="EditUserProfileScreen"
+                component={EditUserProfileScreen}
               />
               <Stack.Screen
                 name="SettingsScreen"

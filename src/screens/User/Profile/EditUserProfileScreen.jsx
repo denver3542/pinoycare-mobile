@@ -1,277 +1,255 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform, ActivityIndicator } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { Button, Appbar, RadioButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome5 } from '@expo/vector-icons';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import * as ImagePicker from 'expo-image-picker';
 import CustomTextInput from '../../../components/CustomTextInput';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import Spinner from 'react-native-loading-spinner-overlay';
-import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
+import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
+import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
-async function updateProfile(userId) {
-    try {
-        const user = await AsyncStorage.getItem('upcare_user');
-        const headers = getJWTHeader(user);
-        const response = await axiosInstance.put(`/user/profile/update/${userId}`, { headers });
-        return response.data.user;
-    } catch (error) {
-        throw new Error(error.response.data.message || 'Something went wrong');
-    }
-}
-
-
 const EditUserProfileScreen = () => {
+    const navigation = useNavigation();
     const { user } = useUser();
     const queryClient = useQueryClient();
-    const [profileImage, setProfileImage] = useState(defaultProfileImage);
-    const { control, handleSubmit, setValue, watch, formState: { isDirty } } = useForm({
+    const [gender, setGender] = useState(user?.gender || '');
+    const [profileImage, setProfileImage] = useState(user?.media[0]?.original_url || defaultProfileImage); // Set profile image from user data if available
+    const [isLoading, setIsLoading] = useState(false);
+    const { control, handleSubmit, setValue } = useForm({
         defaultValues: {
             "firstname": user?.firstname || '',
             "middlename": user?.middlename || '',
             "lastname": user?.lastname || '',
             "phone": user?.phone || '',
             "email": user?.email || '',
+            "gender": user?.gender || '',
             "permanent_address": user?.permanent_address || '',
             "current_address": user?.current_address || '',
         }
     });
 
-    const { mutate, isLoading } = useMutation((updateData) => updateProfile(user?.id, updateData), {
-        onSuccess: (data, variables, context) => {
-            const updatedUser = { ...user, ...variables };
-            queryClient.setQueryData(["user"], updatedUser);
-            AsyncStorage.setItem("upcare_user", JSON.stringify(updatedUser));
-        },
-        onError: (error) => {
-            console.error('Mutation error:', error);
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['user'] })
-        }
-    });
-
-    const navigation = useNavigation();
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const selectImage = async () => {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
-            return;
-        }
-
-        const pickerResult = await ImagePicker.launchImageLibraryAsync();
-        if (pickerResult.canceled === true) {
-            return;
-        }
-
-
-        if (pickerResult.assets.length > 0) {
-            const selectedImage = pickerResult.assets[0];
-            setProfileImage({ uri: selectedImage.uri });
+    const updateProfile = async (dataToUpdate) => {
+        try {
+            setIsLoading(true);
+            const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
+            const headers = getJWTHeader(user);
+            const { data } = await axiosInstance.put(`/user/profile/update`, {
+                ...dataToUpdate,
+                gender: gender
+            }, { headers });
+            const updatedUser = { ...user, ...dataToUpdate };
+            queryClient.setQueryData(['user'], updatedUser);
+            AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
+            console.log('Profile update successful:', data);
+            return data;
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    const handleProfilePictureUpload = async () => {
+        try {
+            const imagePickerResponse = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
 
-    const showDatePicker = () => {
-        setDatePickerVisibility(true);
-    };
+            if (!imagePickerResponse.canceled) {
+                setIsLoading(true);
+                const formData = new FormData();
+                formData.append('profile', {
+                    uri: imagePickerResponse.assets[0].uri,
+                    name: 'profile_picture.jpg',
+                    type: 'image/jpeg',
+                });
 
-    const hideDatePicker = () => {
-        setDatePickerVisibility(false);
-    };
+                const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
+                const headers = getJWTHeader(user);
 
-    const handleConfirm = (date) => {
-        const selectedDate = new Date(date);
-        const dateToStore = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`
-        setValue('date_of_birth', dateToStore);
-        setDatePickerVisibility(false);
-    };
+                const { data } = await axiosInstance.post(`/user/profile/change-profile`, formData, { headers });
 
-    const handleSaveChanges = (data) => {
-        if (user) {
-            mutate(data);
-        } else {
-            console.error('User data is null');
+                // Update profile image
+                setProfileImage(data.profile_picture);
+
+                console.log('Profile picture updated successfully:', data);
+            }
+        } catch (error) {
+            console.error('Error updating profile picture:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
 
-    // Watching changes to specific form fields
-    const firstNameValue = watch('firstname');
-    const middlenameValue = watch('middlename');
-    const lastNameValue = watch('lastname');
-    const emailValue = watch('email');
-    const phoneValue = watch('phone');
-    const permanentAddressValue = watch('permanent_address');
-    const currentAddressValue = watch('current_address');
 
+    const onSubmit = async (data) => {
+        data.gender = gender;
+        await updateProfile(data);
+        navigation.goBack();
+    };
+
+    // Update gender state when user selects a gender
+    const handleGenderChange = (value) => {
+        setGender(value);
+    };
+
+    // Set gender value in form when user data changes
     useEffect(() => {
-        console.log('First Name:', firstNameValue);
-        console.log('Last Name:', lastNameValue);
-        console.log('Email:', emailValue);
-    }, [firstNameValue, middlenameValue, lastNameValue, emailValue, phoneValue, permanentAddressValue, currentAddressValue]);
-
+        setValue("gender", gender);
+    }, [gender, setValue]);
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : null}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
-        >
-            <ScrollView>
+        <AuthenticatedLayout>
+            <View style={styles.container}>
+                <Appbar.Header>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} />
+                    <Appbar.Content title="Profile" />
+                    <Appbar.Action icon="cog" onPress={() => navigation.navigate("SettingsScreen")} />
+                </Appbar.Header>
                 <View style={styles.header}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5, top: 30 }}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <FontAwesome5 name="arrow-left" size={20} color="white" solid style={styles.backIcon} />
-                        </TouchableOpacity>
-                        <Text style={styles.headerText}>Edit Profile</Text>
-                        <TouchableOpacity onPress={handleSubmit(handleSaveChanges)}>
-                            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.profileImageContainer}>
-                        <TouchableOpacity onPress={selectImage}>
+                    <View style={styles.headerContainer}>
+                        <View style={styles.imageUpdate}>
                             <Image
-                                source={profileImage}
+                                source={
+                                    user && user.media[0]
+                                        ? { uri: user.media[0].original_url }
+                                        : require("../../../../assets/images/sample-profile.jpg")
+                                }
                                 style={styles.profileImage}
                             />
-                            <View style={styles.cameraIconContainer}>
-                                <FontAwesome5 name="camera" size={24} color="black" />
-                            </View>
-                        </TouchableOpacity>
+
+                            <Button icon="camera" mode="contained" onPress={handleProfilePictureUpload}>
+                                Update Image
+                            </Button>
+                        </View>
+
                     </View>
                 </View>
 
-                <View style={{ padding: 15, marginTop: 60 }}>
+                <View style={{ padding: 8 }}>
                     <CustomTextInput
                         control={control}
                         name="firstname"
-
+                        label="First Name"
+                        mode="outlined"
                     />
-
                     <CustomTextInput
                         control={control}
                         name="middlename"
-
+                        label="Middle Name"
+                        mode="outlined"
                     />
-
                     <CustomTextInput
                         control={control}
                         name="lastname"
-
+                        label="Last Name"
+                        mode="outlined"
                     />
+
+                    <View style={styles.genderRadioButton}>
+                        <View>
+                            <Text>Select a Gender</Text>
+                        </View>
+                        <View style={styles.radioGroup}>
+                            <RadioButton
+                                value="M"
+                                status={gender === 'M' ? 'checked' : 'unchecked'}
+                                onPress={() => handleGenderChange('M')}
+                            />
+                            <Text>Male</Text>
+
+                            <RadioButton
+                                value="F"
+                                status={gender === 'F' ? 'checked' : 'unchecked'}
+                                onPress={() => handleGenderChange('F')}
+                            />
+                            <Text>Female</Text>
+                        </View>
+                    </View>
 
                     <CustomTextInput
                         control={control}
                         name="phone"
-
+                        label="Phone"
+                        mode="outlined"
                     />
-
                     <CustomTextInput
                         control={control}
                         name="email"
-
+                        label="Email"
+                        mode="outlined"
                     />
-
                     <CustomTextInput
                         control={control}
+                        label="Permanent Address"
                         name="permanent_address"
-
+                        mode="outlined"
                     />
-
                     <CustomTextInput
                         control={control}
+                        label="Current Address"
                         name="current_address"
-
+                        mode="outlined"
                     />
 
-                    {/* <TouchableOpacity onPress={showDatePicker}>
-        <CustomTextInput
-            control={control}
-            name="date_of_birth"
-            label="Date of Birth"
-            editable={false}
-        />
-    </TouchableOpacity>
-    <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        date={new Date()}
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-    /> */}
+                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+                        Save
+                    </Button>
                 </View>
 
-            </ScrollView>
-            <Spinner visible={isLoading} />
-        </KeyboardAvoidingView>
+                <Spinner visible={isLoading} />
+            </View>
+        </AuthenticatedLayout>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
     },
     header: {
-        bottom: 5,
-        backgroundColor: '#001C4E',
-        height: 180,
-        padding: 15
+        padding: 8,
     },
-    headerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white'
+    headerContainer: {
+        backgroundColor: 'white',
+        elevation: 0.5,
+        borderRadius: 14,
+        justifyContent: 'center',
+        height
+            : 180
     },
-    backIcon: {
-        marginRight: 10,
-    },
-    profileImageContainer: {
+    imageUpdate: {
         alignItems: 'center',
-        marginBottom: 20,
-        top: 60
+        flexDirection: 'column'
     },
     profileImage: {
-        width: 120,
-        height: 120,
+        width: 60,
+        height: 60,
         borderRadius: 60,
-        borderWidth: 2,
-        borderColor: 'gray',
-        backgroundColor: '#fff',
+        backgroundColor: 'white',
         marginTop: 10,
     },
-    cameraIconContainer: {
-        position: 'absolute',
-        bottom: 5,
-        right: 5,
-        backgroundColor: '#fff',
-        borderRadius: 50,
-        borderWidth: 1,
-        borderColor: 'gray',
-        padding: 5,
+    radioGroup: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    genderRadioButton: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-    },
-    label: {
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    loadingIndicator: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-    },
+        marginBottom: 4
+    }
 });
 
 export default EditUserProfileScreen;
