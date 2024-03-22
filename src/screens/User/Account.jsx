@@ -76,7 +76,7 @@ const Account = ({ activeNav }) => {
                 </View>
                 <Button
                   icon="pencil"
-                  onPress={() => { }}
+                  onPress={() => navigation.navigate("EditUserProfileScreen")}
                   contentStyle={styles.buttonContent}
                   labelStyle={styles.buttonLabel}
                 >
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contentStyle: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingVertical: 30,
     backgroundColor: "#F4F7FB",
     borderTopLeftRadius: 20,
@@ -228,8 +228,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 20,
-    marginVertical: 10,
-    padding: 15,
+    // marginVertical: 10,
+    padding: 10,
     elevation: 1,
   },
 
