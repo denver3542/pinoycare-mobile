@@ -26,7 +26,7 @@ const WorkExperience = ({ work_experiences }) => {
                     icon="plus-box"
                     size={20}
                     selected
-                    onPress={() => { /* Handle edit button press */ }}
+                    onPress={() => { }}
                 />
             </View>
             <Divider style={styles.divider} />

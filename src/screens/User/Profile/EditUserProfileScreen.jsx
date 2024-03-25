@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Appbar, RadioButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
@@ -58,6 +58,10 @@ const EditUserProfileScreen = () => {
 
     const handleProfilePictureUpload = async () => {
         try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                throw new Error('Permission to access camera roll is required!');
+            }
             const imagePickerResponse = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
@@ -65,31 +69,49 @@ const EditUserProfileScreen = () => {
                 quality: 1,
             });
 
-            if (!imagePickerResponse.canceled) {
-                setIsLoading(true);
-                const formData = new FormData();
-                formData.append('profile', {
-                    uri: imagePickerResponse.assets[0].uri,
-                    name: 'profile_picture.jpg',
-                    type: 'image/jpeg',
-                });
-
-                const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
-                const headers = getJWTHeader(user);
-
-                const { data } = await axiosInstance.post(`/user/profile/change-profile`, formData, { headers });
-
-                // Update profile image
-                setProfileImage(data.profile_picture);
-
-                console.log('Profile picture updated successfully:', data);
+            if (imagePickerResponse.canceled) {
+                console.log('Image picker cancelled by user.');
+                return;
             }
+
+            setIsLoading(true);
+
+            const formData = new FormData();
+            formData.append('profile', {
+                uri: imagePickerResponse.assets[0].uri,
+                name: 'profile_picture.jpg',
+                type: 'image/jpeg',
+            });
+
+            const user = JSON.parse(await AsyncStorage.getItem('upcare_user'));
+            const headers = {
+                ...getJWTHeader(user),
+                'Content-Type': 'multipart/form-data',
+            };
+            const { data } = await axiosInstance.post(`/user/profile/change-profile`, formData, { headers });
+
+            // Update profile image state first
+            setProfileImage(data.profile_picture);
+
+            // Then update AsyncStorage and query data
+            const updatedUser = { ...user, profile_picture: data.profile_picture };
+            AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
+            queryClient.setQueryData(['user'], updatedUser);
+
+            console.log('Profile picture updated successfully:', data);
+            return data;
         } catch (error) {
-            console.error('Error updating profile picture:', error);
+            console.error('Error updating profile picture:', error.message);
+            if (error.message === 'Permission to access camera roll is required!') {
+                alert('Permission to access camera roll is required!');
+            } else {
+                alert('An error occurred while updating profile picture. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
+
 
 
 
@@ -99,12 +121,12 @@ const EditUserProfileScreen = () => {
         navigation.goBack();
     };
 
-    // Update gender state when user selects a gender
+
     const handleGenderChange = (value) => {
         setGender(value);
     };
 
-    // Set gender value in form when user data changes
+
     useEffect(() => {
         setValue("gender", gender);
     }, [gender, setValue]);
@@ -130,7 +152,7 @@ const EditUserProfileScreen = () => {
                             />
 
                             <Button icon="camera" mode="contained" onPress={handleProfilePictureUpload}>
-                                Update Image
+                                Upload
                             </Button>
                         </View>
 
@@ -226,19 +248,20 @@ const styles = StyleSheet.create({
         elevation: 0.5,
         borderRadius: 14,
         justifyContent: 'center',
-        height
-            : 180
+        alignItems: 'center',
+        height: 180
     },
     imageUpdate: {
         alignItems: 'center',
         flexDirection: 'column'
     },
     profileImage: {
-        width: 60,
-        height: 60,
-        borderRadius: 60,
+        width: 120,
+        height: 120,
+        borderRadius: 80,
         backgroundColor: 'white',
         marginTop: 10,
+        margin: 5
     },
     radioGroup: {
         flexDirection: 'row',

@@ -34,7 +34,6 @@ const AddSkillScreen = () => {
 
   const onSubmit = async () => {
     await mutate({ skills: tags });
-    // Navigation will occur after the mutation is settled
   };
 
   return (
@@ -49,6 +48,8 @@ const AddSkillScreen = () => {
           <CustomTextInput
             placeholder="Add Skill"
             control={control}
+            label="Skill Name"
+            mode="outlined"
             name="skill_name"
             onSubmitEditing={addTag}
           />

@@ -3,7 +3,7 @@ import React from "react";
 import Dashboard from "../screens/Dashboard";
 import Account from "../screens/User/Account";
 import Jobs from "../screens/User/Jobs/Jobs";
-import Feeds from "../screens/User/Feeds";
+import Feeds from "../screens/User/Feeds/Feeds";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Applications from "../screens/Applications/Applications";
 import Candidates from "../screens/Employer/Candidates";
