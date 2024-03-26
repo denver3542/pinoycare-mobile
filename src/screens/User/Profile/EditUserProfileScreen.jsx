@@ -180,8 +180,8 @@ const EditUserProfileScreen = () => {
                     />
 
                     <View style={styles.genderRadioButton}>
-                        <View>
-                            <Text>Select a Gender</Text>
+                        <View style={{}}>
+                            <Text style={{ fontSize: 16 }}>Choose Gender</Text>
                         </View>
                         <View style={styles.radioGroup}>
                             <RadioButton
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     },
     genderRadioButton: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-round',
         alignItems: 'center',
         marginBottom: 4
     }

@@ -15,10 +15,8 @@ import axiosInstance, { getJWTHeader } from "../../../../../utils/axiosConfig";
 import { useUpdateEducations } from './hooks/useEducationActions';
 
 const UpdateEducation = () => {
-    const { user } = useUser(); // Ensure useUser hook provides user object
     const navigation = useNavigation();
     const route = useRoute();
-    const queryClient = useQueryClient();
     const { control, handleSubmit, setValue, watch } = useForm({
         defaultValues: {
             "level": route.params.educationItem?.level || '',
@@ -55,13 +53,7 @@ const UpdateEducation = () => {
     const { mutate, isLoading } = useUpdateEducations();
 
     const onSave = handleSubmit(async (data) => {
-        try {
-            console.log('Data to update:', data);
-            await mutate(data);
-        } catch (error) {
-            console.error('Error updating education:', error);
-            alert('Error updating education: ' + error.message);
-        }
+        mutate(data);
     });
 
 
