@@ -28,39 +28,44 @@ const ChatConversation = () => {
 
   // console.log(contact.receivedMessages);
   const { data, isFetched, isRefetching, refetch } = useConvo(contact.id);
-  const [conversation, setData] = useState(data?.conversations);
+  const [conversation, setConversation] = useState([]);
   const { sendMessage: send } = useMessaging();
 
+  // Update to use useEffect for initializing conversation state
   useEffect(() => {
-    console.log(data?.ablyApiKey);
-    const ably = new Ably.Realtime.Promise({
-      key: data?.ablyApiKey,
-      clientId: user.id.toString(),
-    });
+    if (isFetched) {
+      setConversation(data?.conversations || []);
+    }
+  }, [data, isFetched]);
 
-    const channel = ably.channels.get(
-      `private-chat-${Math.min(user?.id, contact.id)}-${Math.max(
-        user.id,
+  useEffect(() => {
+    if (data?.ablyApiKey && isFetched) {
+      const ably = new Ably.Realtime.Promise({
+        key: data.ablyApiKey,
+        clientId: user.id.toString(),
+      });
+
+      const channelName = `private-chat-${Math.min(
+        user?.id,
         contact.id
-      )}`
-    ); // 'chat-channel' is an example, use appropriate channel name
-    channel.subscribe("message", (message) => {
-      const incomingMessage = {
-        id: message.id,
-        sender: { media: contact.media },
-        message: message.data.message,
-        created_at: message.timestamp,
-        isCurrentUser: false, // Update based on your logic to identify if the message was sent by the current user
-        // Add other necessary fields
-      };
+      )}-${Math.max(user.id, contact.id)}`;
+      const channel = ably.channels.get(channelName);
 
-      // Update local state with the incoming message
-      setData([incomingMessage, ...conversation]);
-      // refetch();
-    });
+      channel.subscribe("message", (message) => {
+        const incomingMessage = {
+          id: message.id,
+          sender: { media: contact.media },
+          message: message.data.message,
+          created_at: message.timestamp,
+          isCurrentUser: false,
+        };
 
-    return () => channel.unsubscribe(); // Clean up subscription
-  }, [isFetched, conversation]);
+        setConversation((prevConvo) => [incomingMessage, ...prevConvo]);
+      });
+
+      return () => channel.unsubscribe();
+    }
+  }, [data?.ablyApiKey, user.id, contact.id, isFetched]);
 
   // This function would add a new message to the chat
   const sendMessage = async () => {
@@ -155,16 +160,18 @@ const ChatConversation = () => {
         <Appbar.Action icon="magnify" onPress={() => {}} /> */}
       </Appbar.Header>
 
-      <FlatList
-        inverted
-        data={conversation}
-        renderItem={renderMessageItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-        }
-      />
+      {isFetched && (
+        <FlatList
+          inverted
+          data={conversation}
+          renderItem={renderMessageItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
+        />
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput

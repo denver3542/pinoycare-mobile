@@ -18,6 +18,11 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "../upcare-mobile-418309-e544c53e442f.json",
+        "track": "internal"
+      }
+    }
   }
 }

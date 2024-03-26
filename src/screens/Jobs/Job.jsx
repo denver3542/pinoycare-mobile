@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import {
   Appbar,
@@ -13,18 +13,39 @@ import {
 import HTMLView from "react-native-htmlview";
 import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
+import { useUser } from "../../hooks/useUser";
+import useJob from "./hook/useJob";
 
 export default function Job() {
   const navigation = useNavigation();
   const { params } = useRoute();
+  const { user, isFetched } = useUser();
+  const [isApplied, setIsApplied] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const job = params.job;
+  const { data: jobData, isFetching } = useJob(job.uuid);
+
+  useEffect(() => {
+    if (user && isFetched) {
+      const appliedJob = user.applications?.find(
+        (app) => app.job_id === job.id
+      );
+      setIsApplied(!!appliedJob);
+    }
+  }, [user, isFetched]);
+
+  useEffect(() => {
+    if (jobData && !isFetching) {
+      setQuestions(jobData.question || []);
+    }
+  }, [jobData, isFetching]);
 
   const handleSave = () => {
     console.log("save job");
   };
 
   const handleApply = () => {
-    console.log("apply job");
+    navigation.navigate("Questionnaire", { questions });
   };
   return (
     <View style={{ flex: 1 }}>
@@ -39,8 +60,15 @@ export default function Job() {
             <Button icon="" style={styles.saveButton} onPress={handleSave}>
               Save
             </Button>
-            <Button style={styles.applyButton} onPress={handleApply}>
-              Apply
+            <Button
+              style={[
+                // styles.applyButton,
+                { color: isApplied ? "#fff" : "primary" },
+              ]}
+              onPress={handleApply}
+              disabled={isApplied}
+            >
+              {isApplied ? "Applied" : "Apply"}
             </Button>
           </Card.Actions>
           <Card.Content>

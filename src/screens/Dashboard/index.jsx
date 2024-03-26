@@ -1,20 +1,12 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Image, ScrollView } from "react-native";
 import {
   Text,
   Searchbar,
-  List,
   Divider,
   Button,
   useTheme,
   ActivityIndicator,
-  MD2Colors,
 } from "react-native-paper";
 import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
 import { useUser } from "../../hooks/useUser";
@@ -31,6 +23,19 @@ function Dashboard({ activeNav }) {
   const { data, isFetched, isFetching: dashboardIsFetching } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
+  const [applications, setApplications] = useState([]);
+  const [offeredJobs, setOfferedJobs] = useState([]);
+  const [savedJobs, setSavedJobs] = useState([]);
+
+  useEffect(() => {
+    setApplications(data?.applications);
+  }, [isFetched, data?.applications]);
+  useEffect(() => {
+    setOfferedJobs(data?.job_offers);
+  }, [isFetched, data?.job_offers]);
+  useEffect(() => {
+    setSavedJobs(data?.saved_jobs);
+  }, [isFetched, data?.saved_jobs]);
 
   const handleSeeMore = () => {
     navigation.navigate("Application");
@@ -84,36 +89,8 @@ function Dashboard({ activeNav }) {
               {dashboardIsFetching && (
                 <ActivityIndicator animating={true} color={colors.primary} />
               )}
-              {isFetched && data.applications?.length > 0 ? (
-                data.applications?.map((app, key) => (
-                  <ApplicationListCard key={key} application={app} />
-                ))
-              ) : (
-                <Text style={styles.noJobsText}>No Jobs Available</Text>
-              )}
-            </View>
-            {/* {isFetched && data.applications?.length > 0 ? (
-              <View style={{ flex: 1 }}>
-                <Button icon="redo" mode="contained" onPress={handleSeeMore}>
-                  See more
-                </Button>
-              </View>
-            ) : (
-              <></>
-            )} */}
-          </View>
-
-          <View style={[styles.contentStyle, { marginTop: 20 }]}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Job Offers</Text>
-            </View>
-            <Divider style={styles.divider} />
-            <View style={styles.applicationList}>
-              {dashboardIsFetching && (
-                <ActivityIndicator animating={true} color={colors.primary} />
-              )}
-              {isFetched && data.applications?.length > 0 ? (
-                data.applications?.map((app, key) => (
+              {isFetched && applications ? (
+                applications?.map((app, key) => (
                   <ApplicationListCard key={key} application={app} />
                 ))
               ) : (
@@ -129,6 +106,44 @@ function Dashboard({ activeNav }) {
             ) : (
               <></>
             )}
+          </View>
+
+          <View style={[styles.contentStyle, { marginTop: 20 }]}>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Job Offers</Text>
+            </View>
+            <Divider style={styles.divider} />
+            <View style={styles.applicationList}>
+              {dashboardIsFetching && (
+                <ActivityIndicator animating={true} color={colors.primary} />
+              )}
+              {isFetched && offeredJobs?.length > 0 ? (
+                offeredJobs?.map((app, key) => (
+                  <ApplicationListCard key={key} application={app} />
+                ))
+              ) : (
+                <Text style={styles.noJobsText}>No Jobs Available</Text>
+              )}
+            </View>
+          </View>
+
+          <View style={[styles.contentStyle, { marginTop: 20 }]}>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Saved Jobs</Text>
+            </View>
+            <Divider style={styles.divider} />
+            <View style={styles.applicationList}>
+              {dashboardIsFetching && (
+                <ActivityIndicator animating={true} color={colors.primary} />
+              )}
+              {isFetched && savedJobs ? (
+                data.saved_jobs?.map((app, key) => (
+                  <ApplicationListCard key={key} application={app} />
+                ))
+              ) : (
+                <Text style={styles.noJobsText}>No Jobs Available</Text>
+              )}
+            </View>
           </View>
         </ScrollView>
       )}
