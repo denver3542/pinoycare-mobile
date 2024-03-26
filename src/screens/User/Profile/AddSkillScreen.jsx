@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Chip, Button, Appbar, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -12,7 +12,7 @@ import CustomTextInput from '../../../components/CustomTextInput';
 const AddSkillScreen = () => {
   const { user } = useUser();
   const navigation = useNavigation();
-  const { control, handleSubmit, setValue, getValues } = useForm({
+  const { control, handleSubmit, setValue, getValues, formState: { errors, isSubmitted } } = useForm({
     defaultValues: {
       skill_name: user?.skill_name || '',
     },
@@ -52,6 +52,7 @@ const AddSkillScreen = () => {
             mode="outlined"
             name="skill_name"
             onSubmitEditing={addTag}
+            error={(isSubmitted && tags.length === 0 && errors.skill_name) ? "Skill name is required" : undefined}
           />
           <View style={styles.chipContainer}>
             {tags.map((tag, index) => (
@@ -63,7 +64,7 @@ const AddSkillScreen = () => {
         </ScrollView>
         <View style={styles.buttonContainer}>
           <Button mode="outlined" onPress={addTag} style={styles.button}>Add</Button>
-          <Button mode="contained" onPress={onSubmit} style={styles.button}>Save</Button>
+          <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>Save</Button>
         </View>
       </View>
       <Spinner visible={isLoading} />

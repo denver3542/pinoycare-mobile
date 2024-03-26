@@ -10,7 +10,7 @@ import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
 import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+import * as ImagePicker from 'expo-image-picker';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 

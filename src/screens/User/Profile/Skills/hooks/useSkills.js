@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance, { getJWTHeader } from "../../../../../../utils/axiosConfig";
 import { useNavigation } from "@react-navigation/native";
+
 async function addSkills(dataToUpdate, user) {
     if (!user) {
         throw new Error("User not found");
@@ -23,6 +24,9 @@ export default function useSkills() {
         async (dataToUpdate) => {
             const userStr = await AsyncStorage.getItem("upcare_user");
             const user = userStr ? JSON.parse(userStr) : null;
+            if (!dataToUpdate.skills || dataToUpdate.skills.length === 0) {
+                throw new Error("At least one skill is required");
+            }
             return addSkills(dataToUpdate, user);
         },
         {
@@ -35,8 +39,9 @@ export default function useSkills() {
                 navigation.goBack();
             },
             onError: (error) => {
-                console.error("Error adding skills:", error);
-
+                if (error.message !== "At least one skill is required") {
+                    console.error("Error adding skills:", error);
+                }
             },
             onSettled: () => {
                 queryClient.invalidateQueries({ queryKey: ['user'] })
@@ -44,3 +49,4 @@ export default function useSkills() {
         }
     );
 }
+

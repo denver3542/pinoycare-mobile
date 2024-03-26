@@ -33,12 +33,12 @@ const SkillsChip = ({ skills }) => {
                         selected
                         onPress={() => navigation.navigate("AddSkillScreen")}
                     />
-                    <IconButton
+                    {/* <IconButton
                         icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                         size={25}
                         selected
                         onPress={() => { }}
-                    />
+                    /> */}
                 </View>
             </View>
             <Divider style={styles.divider} />

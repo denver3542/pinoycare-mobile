@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 const MAX_LENGTH = 150;
 
@@ -19,7 +20,7 @@ const FeedsCard = ({ feed }) => {
             <View style={styles.header}>
                 <View style={styles.creatorInfo}>
                     <Image
-                        source={require('../../../../../assets/icon.png')} // Use the local file path for the static image
+                        source={require('../../../../../assets/icon.png')}
                         style={styles.userImage}
                     />
                     <Text style={styles.creatorName}>{feed.user.name}</Text>

@@ -27,6 +27,7 @@ const EducationItem = ({ educations }) => {
     const [showAllEducations, setShowAllEducations] = useState(false);
     const limitedEducations = Array.isArray(educations) ? (showAllEducations ? educations : educations.slice(0, 1)) : [];
     const navigation = useNavigation();
+
     return (
         <View style={styles.card}>
             <View style={styles.cardContent}>
@@ -51,7 +52,7 @@ const EducationItem = ({ educations }) => {
                             icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                             size={25}
                             selected
-                            onPress={() => { /* Handle edit button press */ }}
+                            onPress={() => navigation.navigate("EditEducation")}
                         />
                     </View>
                 </View>
@@ -63,13 +64,6 @@ const EducationItem = ({ educations }) => {
                                 <Text style={styles.educationTitle}>
                                     {getEducationLevelName(education.level)}
                                 </Text>
-                                {/* <IconButton
-                                    icon="pencil-box"
-                                    size={20}
-                                    selected
-                                    onPress={() => navigation.navigate("EditEducationScreen")}
-                                /> */}
-
                             </View>
                             <Text style={styles.educationDescription}>{education.school_name}</Text>
                             {education.course && (
@@ -80,7 +74,7 @@ const EducationItem = ({ educations }) => {
                         </View>
                     ))}
                 </View>
-                {!showAllEducations && educations.length > 3 && (
+                {!showAllEducations && educations?.length > 3 && (
                     <TouchableOpacity
                         onPress={() => setShowAllEducations(true)}
                         style={{ alignItems: 'center', marginTop: 10 }}
@@ -100,6 +94,7 @@ const EducationItem = ({ educations }) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

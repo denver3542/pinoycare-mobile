@@ -11,6 +11,7 @@ import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedL
 import CustomMultilineTextInput from '../../../components/CustomMultilineTextInput';
 import { useUser } from '../../../hooks/useUser';
 
+
 const AboutMeScreen = () => {
     const { user } = useUser();
     const navigation = useNavigation();
