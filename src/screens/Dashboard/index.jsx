@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Image, ScrollView } from "react-native";
 import {
   Text,
   Searchbar,
-  List,
   Divider,
   Button,
   useTheme,
   ActivityIndicator,
-  MD2Colors,
 } from "react-native-paper";
 import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
 import { useUser } from "../../hooks/useUser";
@@ -125,8 +117,8 @@ function Dashboard({ activeNav }) {
               {dashboardIsFetching && (
                 <ActivityIndicator animating={true} color={colors.primary} />
               )}
-              {isFetched && offeredJobs.length > 0 ? (
-                offeredJobs.map((app, key) => (
+              {isFetched && offeredJobs?.length > 0 ? (
+                offeredJobs?.map((app, key) => (
                   <ApplicationListCard key={key} application={app} />
                 ))
               ) : (
