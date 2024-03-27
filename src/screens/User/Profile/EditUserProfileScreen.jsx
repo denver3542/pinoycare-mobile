@@ -138,7 +138,7 @@ const EditUserProfileScreen = () => {
                 <Appbar.Header>
                     <Appbar.BackAction onPress={() => navigation.goBack()} />
                     <Appbar.Content title="Profile" />
-                    <Appbar.Action icon="cog" onPress={() => navigation.navigate("SettingsScreen")} />
+                    <Appbar.Action icon="content-save" color="#0A3480" onPress={handleSubmit(onSubmit)} />
                 </Appbar.Header>
                 <View style={styles.header}>
                     <View style={styles.headerContainer}>
@@ -230,9 +230,9 @@ const EditUserProfileScreen = () => {
                         mode="outlined"
                     />
 
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+                    {/* <Button mode="contained" onPress={handleSubmit(onSubmit)}>
                         Save
-                    </Button>
+                    </Button> */}
                 </View>
 
                 <Spinner visible={isLoading} />

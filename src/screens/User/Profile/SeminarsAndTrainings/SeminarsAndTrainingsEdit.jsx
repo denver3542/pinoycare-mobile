@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, View, FlatList, Image } from 'react-native';
-import { IconButton, Appbar, Divider } from 'react-native-paper';
+import { Appbar, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../../../hooks/useUser';
@@ -9,37 +9,39 @@ const SeminarsAndTrainingsEdit = () => {
     const navigation = useNavigation();
     const { user } = useUser();
 
-    const renderItem = ({ item }) => (
-        <View style={styles.trainingsContainer}>
-            <View style={styles.sectionContainer}>
-                <Text style={styles.textTitle}>{item.facilitated_by}</Text>
-                <IconButton
-                    icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
-                    size={25}
-                    selected
-                    onPress={() => navigation.navigate("UpdateSeminars", { seminarsItem: item })}
-                />
-            </View>
 
-            {item.media.length > 0 ? (
-                item.media.map((mediaItem, index) => (
+    const renderItem = ({ item }) => {
+        let description = item.description;
+        if (description.length > 100) {
+            description = description.substring(0, 100) + '...';
+        }
+
+        return (
+            <View style={styles.itemContainer}>
+                {/* <View style={styles.imageContainer}>
                     <Image
-                        key={index}
-                        source={{ uri: mediaItem.original_url }}
+                        source={item.media.length > 0 ? { uri: item.media[0].original_url } : require('../../../../../assets/images/sample-profile.jpg')}
                         style={styles.mediaImage}
                     />
-                ))
-            ) : (
-                <Image
-                    source={require('../../../../../assets/images/sample-profile.jpg')}
-                    style={styles.mediaImage}
-                />
-            )}
-            <Text style={styles.descriptionText}>{item.description}</Text>
-            <Text style={styles.contentText}>Date Started: {item.date_started}</Text>
-            <Text style={styles.contentText}>Date Completed: {item.date_completed}</Text>
-        </View>
-    );
+                </View> */}
+                <View style={styles.textContainer}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.textTitle}>{item.facilitated_by}</Text>
+                        <IconButton selected icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={25} onPress={() => handleEdit(item)} />
+                    </View>
+                    <Text style={styles.descriptionText}>{description}</Text>
+                    <View style={{ flexDirection: 'column', }}>
+                        <Text style={styles.contentText}>Start: {item.date_started}</Text>
+                        <Text style={styles.contentText}>End: {item.date_completed}</Text>
+                    </View>
+                </View>
+            </View>
+        );
+    };
+
+
+    const handleEdit = (item) => {
+    };
 
     return (
         <View style={styles.container}>
@@ -53,52 +55,55 @@ const SeminarsAndTrainingsEdit = () => {
                 keyExtractor={(item, index) => index.toString()}
             />
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         backgroundColor: '#F5F5F5',
     },
-    trainingsContainer: {
+    itemContainer: {
+        flexDirection: 'row',
         backgroundColor: 'white',
-        padding: 15,
-        marginTop: 8,
+        padding: 10,
+        marginVertical: 4,
+        marginHorizontal: 0,
         borderRadius: 10,
         elevation: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems: 'center'
     },
-    sectionContainer: {
+    imageContainer: {
+        marginRight: 10,
+    },
+    mediaImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+    },
+    textContainer: {
+        flex: 1,
+        margin: 8
+    },
+    titleContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%',
-    },
-    descriptionText: {
-        fontSize: 15,
-        textAlign: 'justify',
-        marginBottom: 5,
-        width: '100%',
-    },
-    contentText: {
-        fontSize: 14,
-        width: '100%',
     },
     textTitle: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#0A3480',
-        width: '70%',
     },
-    mediaImage: {
-        width: "100%",
-        height: 200,
-        borderRadius: 10,
-        marginBottom: 10,
-    }
+    descriptionText: {
+        fontSize: 14,
+        textAlign: 'justify',
+
+    },
+    contentText: {
+        fontSize: 13,
+        color: '#666',
+    },
 });
 
 export default SeminarsAndTrainingsEdit;

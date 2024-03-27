@@ -48,16 +48,18 @@ const ChangeEducationScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={{ flex: 1 }}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
                 <Appbar.Content title="Edit Education" />
             </Appbar.Header>
-            <FlatList
-                data={user.educations}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
-            />
+            <View style={styles.container}>
+                <FlatList
+                    data={user.educations}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                />
+            </View>
         </View>
     );
 };
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
     educationContainer: {
         backgroundColor: 'white',
         padding: 15,
-        marginTop: 5,
+        marginVertical: 4,
         borderRadius: 10,
         paddingVertical: 8,
         elevation: 1
