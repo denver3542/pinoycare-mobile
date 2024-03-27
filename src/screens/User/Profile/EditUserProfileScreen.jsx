@@ -97,6 +97,7 @@ const EditUserProfileScreen = () => {
             const updatedUser = { ...user, profile_picture: data.profile_picture };
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
             queryClient.setQueryData(['user'], updatedUser);
+            queryClient.invalidateQueries(['user']);
 
             console.log('Profile picture updated successfully:', data);
             return data;
