@@ -46,10 +46,8 @@ const EditUserProfileScreen = () => {
             const updatedUser = { ...user, ...dataToUpdate };
             queryClient.setQueryData(['user'], updatedUser);
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
-            console.log('Profile update successful:', data);
             return data;
         } catch (error) {
-            console.error('Error updating profile:', error);
             throw error;
         } finally {
             setIsLoading(false);
@@ -97,10 +95,8 @@ const EditUserProfileScreen = () => {
             queryClient.setQueryData(['user'], updatedUser);
             queryClient.invalidateQueries(['user']);
 
-            console.log('Profile picture updated successfully:', data);
             return data;
         } catch (error) {
-            console.error('Error updating profile picture:', error.message);
             if (error.message === 'Permission to access camera roll is required!') {
                 alert('Permission to access camera roll is required!');
             } else {
