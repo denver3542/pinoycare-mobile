@@ -16,6 +16,7 @@ import AddSkillScreen from "../screens/User/Profile/AddSkillScreen";
 import EditEducation from "../screens/User/Profile/Education/EditEducations";
 import UpdateEducation from "../screens/User/Profile/Education/UpdateEducation";
 import AddEducationScreen from "../screens/User/Profile/AddEducationScreen";
+import SeminarsAndTrainingsEdit from "../screens/User/Profile/SeminarsAndTrainings/SeminarsAndTrainingsEdit";
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
@@ -108,6 +109,10 @@ function LandingNavigation() {
               <Stack.Screen
                 name="EditUserProfileScreen"
                 component={EditUserProfileScreen}
+              />
+              <Stack.Screen
+                name="SeminarsAndTrainingsEdit"
+                component={SeminarsAndTrainingsEdit}
               />
               <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
               <Stack.Screen

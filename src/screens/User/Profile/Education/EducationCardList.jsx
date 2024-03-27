@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: "#fff",
         borderRadius: 20,
-        marginVertical: 10,
         padding: 15,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -163,7 +162,6 @@ const styles = StyleSheet.create({
 
     cardContent: {
         justifyContent: 'center',
-        flex: 1
     },
 
     education: { margin: 10 },

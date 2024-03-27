@@ -94,13 +94,13 @@ const UpdateEducation = () => {
                         mode="outlined"
                         rules={{ required: 'School Name is required' }}
                     />
-                    {selectedLevel === 'secondary_k12' && (
+                    {((selectedLevel === 'secondary_k12') || (selectedLevel === 'bacalaureate') || (selectedLevel === 'master') || (selectedLevel === 'doctorate')) && (
                         <CustomTextInput
                             control={control}
                             name="course"
-                            label="Track"
                             mode="outlined"
-                            rules={{ required: 'Course is required' }}
+                            label={(selectedLevel === 'bacalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') ? 'Course' : 'Track'}
+                            rules={{ required: (selectedLevel === 'secondary_k12') ? 'Track is required' : 'Course is required' }}
                         />
                     )}
 

@@ -33,7 +33,7 @@ const SeminarsTrainings = ({ trainings }) => {
                         icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                         size={20}
                         selected
-                        onPress={() => navigation.navigate("EditEducationScreen")}
+                        onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
                     />
                 </View>
             </View>

@@ -69,20 +69,23 @@ const Account = ({ activeNav }) => {
                     }
                     style={styles.profileImage}
                   />
+
+                  <View style={styles.userInfo}>
+                    <Text style={styles.headerName}>{user?.name || ""}</Text>
+                    <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
+                  </View>
                 </View>
 
-                <View style={styles.userInfo}>
-                  <Text style={styles.headerName}>{user?.firstname || ""} {user?.lastname}</Text>
-                  <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
+                <View>
+                  <Button
+                    icon="pencil"
+                    onPress={() => navigation.navigate("EditUserProfileScreen")}
+                    contentStyle={styles.buttonContent}
+                    labelStyle={styles.buttonLabel}
+                  >
+                    Edit
+                  </Button>
                 </View>
-                <Button
-                  icon="pencil"
-                  onPress={() => navigation.navigate("EditUserProfileScreen")}
-                  contentStyle={styles.buttonContent}
-                  labelStyle={styles.buttonLabel}
-                >
-                  Edit
-                </Button>
               </View>
             </View>
           </View>
@@ -132,7 +135,7 @@ const Account = ({ activeNav }) => {
             {snackbarProperties.text}
           </Snackbar>
         </View>
-      ) : ( // Show error message if data fetching fails
+      ) : (
         <View>
           <Text>Error fetching user data.</Text>
         </View>
@@ -147,13 +150,12 @@ const styles = StyleSheet.create({
 
   },
   header: {
-    flexDirection: "row",
+    // flexDirection: "row",
     backgroundColor: "#0A3480",
-
     paddingHorizontal: 20,
-    justifyContent: "space-between",
-    height: 200,
-    position: 'relative',
+    justifyContent: "center",
+    height: 150,
+    // position: 'relative',
   },
 
   iconButtonContainer: {
@@ -165,16 +167,17 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: 'center'
+    justifyContent: 'space-between'
   },
 
   profileImageContainer: {
     alignItems: 'center',
+    flexDirection: 'row'
   },
 
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     borderRadius: 100,
     marginRight: 10,
   },
@@ -215,8 +218,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contentStyle: {
-    paddingHorizontal: 10,
-    paddingVertical: 30,
+    // paddingHorizontal: 10,
+    // paddingVertical: 30,
     backgroundColor: "#F4F7FB",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

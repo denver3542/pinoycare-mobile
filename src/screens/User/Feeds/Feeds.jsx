@@ -13,19 +13,6 @@ function Feeds({ navigation }) {
                     title="Feeds"
                     titleStyle={styles.title}
                 />
-                <Appbar.Action
-                    icon={({ color, size }) => (
-                        <Image
-                            source={
-                                user && user.media[0]
-                                    ? { uri: user.media[0].original_url }
-                                    : require("../../../../assets/images/sample-profile.jpg")
-                            }
-                            style={{ width: size, height: size, borderRadius: 50 }}
-                        />
-                    )}
-                    onPress={() => navigation.navigate("SettingsScreen")}
-                />
             </Appbar.Header>
             {/* <Text style={styles.header}>Welcome to UPCare</Text> */}
             <FlatList
