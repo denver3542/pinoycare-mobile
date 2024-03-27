@@ -50,7 +50,9 @@ const WorkExperience = ({ work_experiences }) => {
                         <Text style={styles.educationDescription}>Phone: {experience.contact_phone}</Text>
                         <Text style={styles.educationDescription}>Date Started: {experience.date_started}</Text>
                         <Text style={styles.educationDescription}>Date Completed: {experience.date_ended}</Text>
+
                     </View>
+
                 ))}
                 {!showAllWorkExperience && work_experiences.length > 3 && (
                     <TouchableOpacity

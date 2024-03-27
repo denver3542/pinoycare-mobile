@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Button, Appbar, RadioButton } from 'react-native-paper';
+import { Button, Appbar, RadioButton, IconButton, } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useForm } from 'react-hook-form';
@@ -46,8 +46,10 @@ const EditUserProfileScreen = () => {
             const updatedUser = { ...user, ...dataToUpdate };
             queryClient.setQueryData(['user'], updatedUser);
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
+            console.log('Profile update successful:', data);
             return data;
         } catch (error) {
+            console.error('Error updating profile:', error);
             throw error;
         } finally {
             setIsLoading(false);
@@ -88,15 +90,19 @@ const EditUserProfileScreen = () => {
             };
             const { data } = await axiosInstance.post(`/user/profile/change-profile`, formData, { headers });
 
+            // Update profile image state first
             setProfileImage(data.profile_picture);
 
+            // Then update AsyncStorage and query data
             const updatedUser = { ...user, profile_picture: data.profile_picture };
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
             queryClient.setQueryData(['user'], updatedUser);
             queryClient.invalidateQueries(['user']);
 
+            console.log('Profile picture updated successfully:', data);
             return data;
         } catch (error) {
+            console.error('Error updating profile picture:', error.message);
             if (error.message === 'Permission to access camera roll is required!') {
                 alert('Permission to access camera roll is required!');
             } else {
@@ -145,10 +151,14 @@ const EditUserProfileScreen = () => {
                                 }
                                 style={styles.profileImage}
                             />
-
-                            <Button icon="camera" mode="contained" onPress={handleProfilePictureUpload}>
-                                Upload
-                            </Button>
+                            <IconButton
+                                mode="outlined"
+                                selected
+                                icon="camera"
+                                size={16}
+                                style={styles.cameraIcon}
+                                onPress={handleProfilePictureUpload}
+                            />
                         </View>
 
                     </View>
@@ -239,7 +249,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     headerContainer: {
-        backgroundColor: 'white',
+        backgroundColor: '#0A3480',
         elevation: 0.5,
         borderRadius: 14,
         justifyContent: 'center',
@@ -256,7 +266,20 @@ const styles = StyleSheet.create({
         borderRadius: 80,
         backgroundColor: 'white',
         marginTop: 10,
-        margin: 5
+        margin: 5,
+        borderWidth: 1,
+        borderColor: 'gray'
+    },
+    cameraIcon: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        // backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        // borderWidth: 1,
+        // borderColor: 'white',
+        // height: 40, // Adjust the height as needed
+        // width: 40, // Optional: Set width to maintain aspect ratio
+        // borderRadius: 20, // Optional: Make it circular
     },
     radioGroup: {
         flexDirection: 'row',
