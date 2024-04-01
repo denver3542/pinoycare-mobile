@@ -13,6 +13,13 @@ import LandingNavigation from "./src/routes/LandingNavigation";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/queryClient";
 import { enGB, registerTranslation } from "react-native-paper-dates";
+import * as SplashScreen from "expo-splash-screen";
+
+import "expo-dev-client";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
+
 registerTranslation("en-GB", enGB);
 const fontConfig = {
   web: {
@@ -86,6 +93,12 @@ const theme = {
 };
 
 export default function App() {
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 2000);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider theme={theme}>
