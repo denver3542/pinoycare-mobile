@@ -7,7 +7,7 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 const SkillsChip = ({ skills }) => {
     const navigation = useNavigation();
     const [showAllSkills, setShowAllSkills] = useState(false);
-    const displayedSkills = Array.isArray(skills) ? (showAllSkills ? skills : skills.slice(0, 5)) : [];
+    const displayedSkills = Array.isArray(skills) ? (showAllSkills ? skills : skills.slice(0, 8)) : [];
 
     const handlePress = () => {
         setShowAllSkills(!showAllSkills);
@@ -33,12 +33,7 @@ const SkillsChip = ({ skills }) => {
                         selected
                         onPress={() => navigation.navigate("AddSkillScreen")}
                     />
-                    {/* <IconButton
-                        icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
-                        size={25}
-                        selected
-                        onPress={() => { }}
-                    /> */}
+
                 </View>
             </View>
             <Divider style={styles.divider} />

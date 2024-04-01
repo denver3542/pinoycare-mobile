@@ -33,21 +33,19 @@ export const useEducations = () => {
         async (dataToUpdate) => {
             try {
                 const userStr = await AsyncStorage.getItem("upcare_user");
-                console.log('User string from AsyncStorage:', userStr);
                 const user = userStr ? JSON.parse(userStr) : null;
-                console.log('Parsed user:', user);
                 await addEducation(dataToUpdate, user);
             } catch (error) {
                 throw new Error("Failed to add education: " + error.message);
             }
         },
         {
-            onMutate: () => { },
-            onSuccess: (updatedUser) => {
+            onMutate: (updatedUser) => {
                 queryClient.setQueryData(['user'], updatedUser);
-                console.log('Education added successfully:', updatedUser);
+                // console.log('Education added successfully:', updatedUser);
                 navigation.goBack();
             },
+
 
             onSettled: () => {
                 queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -57,61 +55,51 @@ export const useEducations = () => {
 }
 
 
-async function updateEducation(dataToUpdate, user) {
+
+async function updateEducation(dataToEdit, user) {
     if (!user) {
         throw new Error("User not found");
     }
 
+    const headers = getJWTHeader(user);
     try {
-        const headers = getJWTHeader(user);
-        console.log('Headers:', headers);
-        console.log('Data to update:', dataToUpdate);
-        const { data } = await axiosInstance.put("/user/profile/edit-educations", dataToUpdate, { headers });
-        console.log('Response data:', data);
-        const updatedUser = { ...user, ...data };
+        const { data } = await axiosInstance.post("/user/profile/edit-educations", dataToEdit, { headers });
+        const updatedUser = { ...user, ...data }; // Ensure server response data is used
         await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
-        // console.log('Updated user:', updatedUser);
-        return data.user;
+        return updatedUser; // Return the updated user object
     } catch (error) {
-        if (error.response && error.response.status === 422) {
-            console.error("Failed to update education - Validation error:", error.response.data);
-            throw new Error("Failed to update education: " + JSON.stringify(error.response.data));
-        } else {
-            console.error("Failed to update education:", error);
-            throw new Error("Failed to update education: " + error.message);
-        }
+        // Simplify error handling
+        const errorMsg = error.response?.data?.error || error.message;
+        throw new Error(`Failed to update education: ${errorMsg}`);
     }
 }
-
-
 
 export const useUpdateEducations = () => {
     const queryClient = useQueryClient();
     const navigation = useNavigation();
 
     return useMutation(
-        async (dataToUpdate) => {
-            try {
-                const userStr = await AsyncStorage.getItem("upcare_user");
-                // console.log('User string from AsyncStorage:', userStr);
-                const user = userStr ? JSON.parse(userStr) : null;
-                // console.log('Parsed user:', user);
-                await updateEducation(dataToUpdate, user);
-            } catch (error) {
-                throw new Error("Failed to update education: " + error.message);
-            }
+        async (dataToEdit) => {
+            const userStr = await AsyncStorage.getItem("upcare_user");
+            const user = userStr ? JSON.parse(userStr) : null;
+            if (!user) throw new Error("User session not found.");
+            return await updateEducation(dataToEdit, user); // Rely on updateEducation to throw errors
         },
         {
-            // onMutate: () => { },
             onSuccess: (updatedUser) => {
-                queryClient.setQueryData(['user'], updatedUser);
-                console.log('Education update successfully');
+                // console.log("Education updated successfully.", updatedUser);
+                queryClient.setQueryData(['user'], updatedUser); // Use updatedUser from updateEducation
                 navigation.goBack();
             },
+            onError: (error) => {
+                console.error("Failed to update education:", error);
+            },
             onSettled: () => {
-                queryClient.invalidateQueries({ queryKey: ['user'] });
+                queryClient.invalidateQueries(['user']);
             },
         }
     );
 }
+
+
 

@@ -3,7 +3,7 @@ import moment from 'moment';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import { Divider } from 'react-native-paper';
 
-const MAX_LENGTH = 150;
+const MAX_LENGTH = 300;
 
 const FeedsCard = ({ feed }) => {
     const [showFullContent, setShowFullContent] = useState(false);
@@ -13,7 +13,6 @@ const FeedsCard = ({ feed }) => {
     };
 
     const formattedDate = moment(feed.published_at).fromNow();
-    console.log("Feed data:", feed);
 
     return (
         <View style={styles.feedContainer}>
@@ -51,7 +50,7 @@ const FeedsCard = ({ feed }) => {
 
 const styles = StyleSheet.create({
     feedContainer: {
-        marginBottom: 20,
+        marginBottom: 8,
         padding: 15,
         backgroundColor: 'white',
         borderRadius: 10,

@@ -4,17 +4,16 @@ import { Appbar } from "react-native-paper";
 import FeedsCard from './hooks/FeedsCard';
 import useFeeds from './hooks/useFeeds';
 function Feeds({ navigation }) {
-    const { data: feeds, user } = useFeeds();
+    const { data: feeds } = useFeeds();
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.Content
                     title="Feeds"
                     titleStyle={styles.title}
                 />
             </Appbar.Header>
-            {/* <Text style={styles.header}>Welcome to UPCare</Text> */}
             <FlatList
                 data={feeds}
                 renderItem={({ item }) => <FeedsCard feed={item} />}
@@ -27,20 +26,18 @@ function Feeds({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 8
+        flex: 1
     },
     title: {
         color: '#0A3480',
         fontWeight: 'bold'
     },
-    listContainer: { padding: 8 },
+    listContainer: { marginTop: 10 },
     header: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#0A3480',
         alignSelf: 'center',
-        marginTop: 10
     }
 });
 

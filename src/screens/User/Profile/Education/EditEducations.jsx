@@ -36,7 +36,11 @@ const ChangeEducationScreen = () => {
                     icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                     size={25}
                     selected
-                    onPress={() => navigation.navigate("UpdateEducation", { educationItem: item })}
+                    onPress={() => {
+                        console.log("Navigating to UpdateEducation with educationItem:", item);
+                        navigation.navigate("UpdateEducation", { educationItem: item });
+                    }}
+
                 />
 
             </View>

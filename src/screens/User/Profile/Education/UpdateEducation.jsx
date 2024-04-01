@@ -3,45 +3,40 @@ import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Button, Appbar } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
-import { useUser } from '../../../../hooks/useUser'; // Import useUser hook
 import CustomTextInput from '../../../../components/CustomTextInput';
 import CustomSelectBox from '../../../../components/CustomSelectBox';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance, { getJWTHeader } from "../../../../../utils/axiosConfig";
 import { useUpdateEducations } from './hooks/useEducationActions';
 
 const UpdateEducation = () => {
     const navigation = useNavigation();
-    const route = useRoute();
+    const { params } = useRoute();
     const { control, handleSubmit, setValue, watch } = useForm({
         defaultValues: {
-            "level": route.params.educationItem?.level || '',
-            "school_name": route.params.educationItem?.school_name || '',
-            "course": route.params.educationItem?.course || '',
-            "from": route.params.educationItem?.from || '',
-            "to": route.params.educationItem?.to || '',
+            level: params.educationItem?.level || '',
+            school_name: params.educationItem?.school_name || '',
+            course: params.educationItem?.course || '',
+            from: params.educationItem?.from || '',
+            to: params.educationItem?.to || '',
         },
     });
 
-    const [fromValue, setFromValue] = useState(new Date(watch('from') || new Date()));
-    const [toValue, setToValue] = useState(new Date(watch('to') || new Date()));
-
+    const [fromValue, setFromValue] = useState(() => new Date(watch('from') || new Date()));
+    const [toValue, setToValue] = useState(() => new Date(watch('to') || new Date()));
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState(null);
 
     const handleDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || (selectedDateField === 'from' ? fromValue : toValue);
         setShowDatePicker(false);
-        if (selectedDateField && selectedDate) {
-            setValue(selectedDateField, selectedDate);
-            if (selectedDateField === 'from') {
-                setFromValue(selectedDate);
-            } else {
-                setToValue(selectedDate);
-            }
+        setValue(selectedDateField, moment(currentDate).format('YYYY-MM-DD'));
+
+        if (selectedDateField === 'from') {
+            setFromValue(currentDate);
+        } else if (selectedDateField === 'to') {
+            setToValue(currentDate);
         }
     };
 
@@ -51,13 +46,11 @@ const UpdateEducation = () => {
     };
 
     const { mutate, isLoading } = useUpdateEducations();
-
-    const onSave = handleSubmit(async (data) => {
+    const onSave = handleSubmit((data) => {
+        console.log("Submitting Data:", data);
         mutate(data);
     });
 
-
-    const selectedLevel = watch('level');
 
     return (
         <AuthenticatedLayout>
@@ -68,22 +61,15 @@ const UpdateEducation = () => {
             <View style={styles.container}>
                 <View style={styles.formContainer}>
                     <Text style={styles.heading}>Education</Text>
-
                     <CustomSelectBox
                         control={control}
                         name="level"
                         label="School Level"
                         mode="outlined"
-                        value={selectedLevel}
-                        onChangeText={(text) => setValue('level', text)}
                         items={[
                             { label: 'Select a Level', value: '' },
-                            { label: 'Elementary Education', value: 'elementary' },
-                            { label: 'Junior High School', value: 'secondary' },
-                            { label: 'Senior High School', value: 'secondary_k12' },
-                            { label: 'Bacalaureate', value: 'bacalaureate' },
-                            { label: "Master's Degree", value: 'master' },
-                            { label: "Doctorate Degree", value: 'doctorate' },
+                            ...['Elementary Education', 'Junior High School', 'Senior High School', 'Baccalaureate', "Master's Degree", "Doctorate Degree"]
+                                .map(level => ({ label: level, value: level.toLowerCase().replace(/\s+/g, '_') })),
                         ]}
                         rules={{ required: 'Please select a level' }}
                     />
@@ -94,48 +80,33 @@ const UpdateEducation = () => {
                         mode="outlined"
                         rules={{ required: 'School Name is required' }}
                     />
-                    {((selectedLevel === 'secondary_k12') || (selectedLevel === 'bacalaureate') || (selectedLevel === 'master') || (selectedLevel === 'doctorate')) && (
+                    {['secondary_k12', 'bacalaureate', 'master', 'doctorate'].includes(watch('level')) && (
                         <CustomTextInput
                             control={control}
                             name="course"
+                            label={watch('level') === 'bacalaureate' || watch('level') === 'master' || watch('level') === 'doctorate' ? 'Course' : 'Track'}
                             mode="outlined"
-                            label={(selectedLevel === 'bacalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') ? 'Course' : 'Track'}
-                            rules={{ required: (selectedLevel === 'secondary_k12') ? 'Track is required' : 'Course is required' }}
+                            rules={{ required: 'Course/Track is required' }}
                         />
                     )}
-
-                    <TouchableOpacity
-                        style={styles.dateContainer}
-                        onPress={() => showDatePickerForField('from')}
-                    >
-                        <CustomTextInput
-                            placeholder="Start date"
-                            control={control}
-                            mode="outlined"
-                            name="from"
-                            label="Date Started"
-                            editable={false}
-                            value={moment(fromValue).format('YYYY-MM-DD')}
-                            rules={{ required: 'Start Date is required' }}
-                        />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.dateContainer}
-                        onPress={() => showDatePickerForField('to')}
-                    >
-                        <CustomTextInput
-                            placeholder="End date"
-                            control={control}
-                            mode="outlined"
-                            name="to"
-                            label="Date Ended"
-                            editable={false}
-                            value={moment(toValue).format('YYYY-MM-DD')}
-                            rules={{ required: 'End Date is required' }}
-                        />
-                    </TouchableOpacity>
-
+                    {['from', 'to'].map((field) => (
+                        <TouchableOpacity
+                            key={field}
+                            style={styles.dateContainer}
+                            onPress={() => showDatePickerForField(field)}
+                        >
+                            <CustomTextInput
+                                placeholder={field === 'from' ? 'Start date' : 'End date'}
+                                control={control}
+                                mode="outlined"
+                                name={field}
+                                label={field === 'from' ? 'Date Started' : 'Date Ended'}
+                                editable={false}
+                                value={moment(field === 'from' ? fromValue : toValue).format('YYYY-MM-DD')}
+                                rules={{ required: `${field === 'from' ? 'Start' : 'End'} Date is required` }}
+                            />
+                        </TouchableOpacity>
+                    ))}
                     {showDatePicker && (
                         <DateTimePicker
                             value={selectedDateField === 'from' ? fromValue : toValue}
