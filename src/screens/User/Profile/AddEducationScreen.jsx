@@ -83,7 +83,7 @@ const EducationForm = () => {
                             { label: 'Elementary Education', value: 'elementary' },
                             { label: 'Junior High School', value: 'secondary' },
                             { label: 'Senior High School', value: 'secondary_k12' },
-                            { label: 'Bacalaureate', value: 'bacalaureate' },
+                            { label: 'Baccalaureate', value: 'baccalaureate' },
                             { label: "Master's Degree", value: 'master' },
                             { label: "Doctorate Degree", value: 'doctorate' },
                         ]}
@@ -96,12 +96,12 @@ const EducationForm = () => {
                         mode="outlined"
                         rules={{ required: 'School Name is required' }}
                     />
-                    {((selectedLevel === 'secondary_k12') || (selectedLevel === 'bacalaureate') || (selectedLevel === 'master') || (selectedLevel === 'doctorate')) && (
+                    {((selectedLevel === 'secondary_k12') || (selectedLevel === 'baccalaureate') || (selectedLevel === 'master') || (selectedLevel === 'doctorate')) && (
                         <CustomTextInput
                             control={control}
                             name="course"
                             mode="outlined"
-                            label={(selectedLevel === 'bacalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') ? 'Course' : 'Track'}
+                            label={(selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') ? 'Course' : 'Track'}
                             rules={{ required: (selectedLevel === 'secondary_k12') ? 'Track is required' : 'Course is required' }}
                         />
                     )}

@@ -33,19 +33,21 @@ export const useEducations = () => {
         async (dataToUpdate) => {
             try {
                 const userStr = await AsyncStorage.getItem("upcare_user");
+                console.log('User string from AsyncStorage:', userStr);
                 const user = userStr ? JSON.parse(userStr) : null;
+                console.log('Parsed user:', user);
                 await addEducation(dataToUpdate, user);
             } catch (error) {
                 throw new Error("Failed to add education: " + error.message);
             }
         },
         {
-            onMutate: (updatedUser) => {
+            onMutate: () => { },
+            onSuccess: (updatedUser) => {
                 queryClient.setQueryData(['user'], updatedUser);
-                // console.log('Education added successfully:', updatedUser);
+                console.log('Education added successfully:', updatedUser);
                 navigation.goBack();
             },
-
 
             onSettled: () => {
                 queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -53,6 +55,7 @@ export const useEducations = () => {
         }
     );
 }
+
 
 
 
