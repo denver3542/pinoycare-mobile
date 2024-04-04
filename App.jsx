@@ -17,6 +17,7 @@ import * as SplashScreen from "expo-splash-screen";
 
 import "expo-dev-client";
 import { useEffect } from "react";
+import { UserApplicationsProvider } from "./src/components/useUserApplications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -102,7 +103,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider theme={theme}>
-        <LandingNavigation />
+        <UserApplicationsProvider>
+          <LandingNavigation />
+        </UserApplicationsProvider>
       </PaperProvider>
     </QueryClientProvider>
   );

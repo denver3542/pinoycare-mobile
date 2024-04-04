@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   FlatList,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -9,12 +10,13 @@ import {
 import useJobs from "./hook/useJobs";
 import Spinner from "react-native-loading-spinner-overlay";
 import Job from "./Job";
-import { Appbar, Searchbar } from "react-native-paper";
+import { Appbar, Searchbar, useTheme } from "react-native-paper";
 import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 
 const Jobs = () => {
-  const { data, isLoading } = useJobs();
+  const { colors } = useTheme();
+  const { data, isLoading, isRefetching, refetch } = useJobs();
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
 
@@ -43,7 +45,7 @@ const Jobs = () => {
       {isLoading && <Spinner isLoading={isLoading} />}
 
       <Appbar.Header>
-        <Appbar.Content title="Jobs" />
+        <Appbar.Content title="Find Jobs" />
       </Appbar.Header>
 
       <Searchbar
@@ -57,6 +59,13 @@ const Jobs = () => {
         renderItem={renderJob}
         keyExtractor={(item) => item.uuid}
         contentContainerStyle={styles.listContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={colors.primary}
+          />
+        }
       />
       {/* {data &&
           data.map((job, i) => {

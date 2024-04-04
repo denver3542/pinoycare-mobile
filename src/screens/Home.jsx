@@ -1,5 +1,11 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Dimensions, ImageBackground, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import logo from "../../assets/icon.png";
 import { Image } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
@@ -9,8 +15,8 @@ import ChoosePinoyCare from "../sections/Home/ChoosePinoyCare";
 
 function Home({ navigation }) {
   const theme = useTheme();
-  const Title = 'Welcome to Up';
-  const spanTitle = 'Care';
+  const Title = "Welcome to Up";
+  const spanTitle = "Care";
   const windowHeight = Dimensions.get("screen").height;
 
   // const { user, isFetching, isFetched } = useUser();
@@ -25,15 +31,12 @@ function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../assets/images/hero-bg.jpg')}
+        source={require("../../assets/images/hero-bg.jpg")}
         style={[styles.backgroundImage, { height: windowHeight }]}
       >
         <View style={styles.innerContainer}>
           <Image source={logo} style={{ width: 180, height: 180 }} />
-          <Text
-            variant="displaySmall"
-            style={styles.content}
-          >
+          <Text variant="displaySmall" style={styles.content}>
             {Title}
             <Text
               variant="displaySmall"
@@ -46,11 +49,11 @@ function Home({ navigation }) {
             variant="headlineSmall"
             style={{
               fontWeight: "100",
-              color: '#001c4e',
-              textShadowColor: '#001c4e',
+              color: "#001c4e",
+              textShadowColor: "#001c4e",
               textShadowOffset: { width: 0.5, height: 0.5 },
               textShadowRadius: 1,
-              paddingTop: 10
+              paddingTop: 10,
             }}
           >
             The Best Way to Care!
@@ -81,7 +84,6 @@ function Home({ navigation }) {
         </View>
       </ImageBackground>
     </View>
-
   );
 }
 
@@ -101,15 +103,14 @@ const styles = StyleSheet.create({
   innerContainer: {
     paddingTop: 130,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     textAlign: "center",
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   btnLogin: {
-
     borderRadius: 50,
   },
   btnContent: {
@@ -117,12 +118,11 @@ const styles = StyleSheet.create({
   },
   btnLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   textShadow: {
-    textShadowColor: 'transparent',
+    textShadowColor: "transparent",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 0,
   },
 });
-

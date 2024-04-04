@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, RefreshControl } from "react-native";
 import {
   Appbar,
   Button,
@@ -15,15 +15,22 @@ import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
 import useJob from "./hook/useJob";
+import { useUserApplications } from "../../components/useUserApplications";
 
 export default function Job() {
   const navigation = useNavigation();
   const { params } = useRoute();
   const { user, isFetched } = useUser();
+  const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
   const [questions, setQuestions] = useState([]);
   const job = params.job;
-  const { data: jobData, isFetching } = useJob(job.uuid);
+  const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
+
+  useEffect(() => {
+    // Check if the current job ID is in the list of applied jobs
+    setIsApplied(appliedJobs.includes(job.id));
+  }, [appliedJobs, job.id]);
 
   useEffect(() => {
     if (user && isFetched) {
@@ -36,6 +43,7 @@ export default function Job() {
 
   useEffect(() => {
     if (jobData && !isFetching) {
+      // console.log(jobData.question);
       setQuestions(jobData.question || []);
     }
   }, [jobData, isFetching]);
@@ -45,7 +53,7 @@ export default function Job() {
   };
 
   const handleApply = () => {
-    navigation.navigate("Questionnaire", { questions });
+    navigation.navigate("Questionnaire", { jobData });
   };
   return (
     <View style={{ flex: 1 }}>
@@ -53,7 +61,12 @@ export default function Job() {
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title={params.job.title} />
       </Appbar.Header>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
+      >
         <Card style={styles.card}>
           <Card.Cover source={{ uri: params.job.media[0].original_url }} />
           <Card.Actions style={styles.cardActions}>

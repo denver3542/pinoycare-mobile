@@ -1,49 +1,52 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
-import {
-  Button,
-  TextInput,
-  Text,
-  RadioButton,
-  Appbar,
-} from "react-native-paper";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-
-const ApplicationSchema = yup.object().shape({
-  question: yup.array().of(
-    yup.object().shape({
-      question_answer: yup.string().required("Please answer this question"),
-    })
-  ),
-});
-
-const schema = yup
-  .object({
-    // Define your form fields validation here
-  })
-  .required();
+import { Button, Appbar } from "react-native-paper";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import InputField from "../../components/DynamicCustomInputField";
+import { submitApplication } from "./hook/useJob";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserApplications } from "../../components/useUserApplications";
 
 const JobApplicationQuestionnaire = () => {
   const navigation = useNavigation();
-  const { params } = useRoute();
-  const questions = params?.questions || []; // Ensure you have a fallback
-  console.log(questions);
+  const [isSending, setSending] = useState(false);
+  const { addAppliedJob } = useUserApplications();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: questions.reduce((acc, question) => {
-      // Setup default values based on question types
-      acc[question.id] = question.type === "boolean" ? "false" : "true";
+  const queryClient = useQueryClient();
+
+  const { params } = useRoute();
+
+  const jobID = params.jobData.id;
+  const questions = params.jobData.question || [];
+
+  const [answers, setAnswers] = React.useState(
+    questions.reduce((acc, question) => {
       return acc;
-    }, {}),
-  });
+    }, {})
+  );
+
+  const handleChange = (id, value) => {
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [id]: value,
+    }));
+  };
+  const handleSubmit = () => {
+    onSubmit(answers);
+  };
+
+  const onSubmit = async (data) => {
+    setSending(true);
+    const dataArray = Object.keys(data).map((key) => ({ [key]: data[key] }));
+    const inputData = { data: dataArray, id: jobID };
+    const res = await submitApplication(inputData);
+    if (res.data.success === true) {
+      queryClient.invalidateQueries([`job_${jobID}`]);
+      addAppliedJob(jobID); // Update the global state
+      navigation.goBack();
+    }
+    setSending(false);
+  };
 
   return (
     <>
@@ -52,77 +55,26 @@ const JobApplicationQuestionnaire = () => {
         <Appbar.Content title="Job Application Questionnaire" />
       </Appbar.Header>
       <ScrollView style={{ flex: 1, padding: 16 }}>
-        {questions &&
-          questions.map((question) => (
-            <View key={question.id} style={{ marginBottom: 20 }}>
-              {/* <InputField question={question} control={control} /> */}
-            </View>
-          ))}
+        {questions.map((question) => (
+          <View key={question.id} style={{ marginBottom: 20 }}>
+            <InputField
+              question={question}
+              value={answers[question.id]}
+              onChange={(value) => handleChange(question.id, value)}
+            />
+          </View>
+        ))}
         <Button
           mode="contained"
           onPress={handleSubmit}
           style={{ marginTop: 20 }}
+          loading={isSending}
         >
           Submit Answers
         </Button>
       </ScrollView>
     </>
   );
-};
-
-const InputField = ({ question, control, errors }) => {
-  switch (question.type) {
-    case "text":
-    case "number":
-      return (
-        <Controller
-          control={control}
-          name={question.id}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <>
-              <TextInput
-                mode="outlined"
-                label={question.question}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                keyboardType={
-                  question.type === "number" ? "numeric" : "default"
-                }
-                placeholder={
-                  question.type === "number"
-                    ? "Enter a number"
-                    : "Type your answer here"
-                }
-              />
-              {errors[question.id] && (
-                <Text style={{ color: "red" }}>
-                  {errors[question.id].message}
-                </Text>
-              )}
-            </>
-          )}
-        />
-      );
-    case "boolean":
-      return (
-        <Controller
-          control={control}
-          name={question.id}
-          render={({ field: { onChange, value } }) => (
-            <RadioButton.Group onValueChange={onChange} value={value}>
-              <Text>{question.question}</Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <RadioButton.Item label="Yes" value="true" position="leading" />
-                <RadioButton.Item label="No" value="false" position="leading" />
-              </View>
-            </RadioButton.Group>
-          )}
-        />
-      );
-    default:
-      return null;
-  }
 };
 
 export default JobApplicationQuestionnaire;
