@@ -34,7 +34,7 @@ const SettingsScreen = ({ navigation }) => {
                     <Divider />
                     <List.Item
                         title="Delete Account"
-                        left={props => <List.Icon {...props} icon="delete" />}
+                        left={props => <List.Icon {...props} icon="delete-outline" />}
                         right={props => <List.Icon {...props} icon="chevron-right" />}
                         onPress={showDeleteModal}
                     />
