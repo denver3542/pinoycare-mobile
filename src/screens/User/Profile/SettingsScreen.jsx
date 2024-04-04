@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Modal, Text, Button, Portal, Appbar, Card, List } from 'react-native-paper';
+import { Modal, Text, Button, Portal, Appbar, Card, List, Divider } from 'react-native-paper';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import useAuth from "../../../hooks/useAuth";
+
 const SettingsScreen = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
-    const [visible, setVisible] = useState(false);
-    const { logout } = useAuth();
-    const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
-    const showModal = () => setVisible(true);
-    const hideModal = () => setVisible(false);
+    const [logoutVisible, setLogoutVisible] = useState(false);
+    const [deleteVisible, setDeleteVisible] = useState(false);
+    const { logout, deleteUser } = useAuth();
+
+    const showLogoutModal = () => setLogoutVisible(true);
+    const hideLogoutModal = () => setLogoutVisible(false);
+
+    const showDeleteModal = () => setDeleteVisible(true);
+    const hideDeleteModal = () => setDeleteVisible(false);
+
 
     return (
         <AuthenticatedLayout>
@@ -23,17 +29,39 @@ const SettingsScreen = ({ navigation }) => {
                         title="Logout"
                         left={props => <List.Icon {...props} icon="exit-to-app" />}
                         right={props => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={showModal}
+                        onPress={showLogoutModal}
+                    />
+                    <Divider />
+                    <List.Item
+                        title="Delete Account"
+                        left={props => <List.Icon {...props} icon="delete" />}
+                        right={props => <List.Icon {...props} icon="chevron-right" />}
+                        onPress={showDeleteModal}
                     />
                 </Card>
+
+
                 <Portal>
-                    <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modal}>
+                    <Modal visible={logoutVisible} onDismiss={hideLogoutModal} contentContainerStyle={styles.modal}>
                         <Text style={styles.modalTitle}>Log out</Text>
                         <Text style={styles.modalText}>Are you sure you want to leave?</Text>
                         <Button mode="contained" onPress={logout} style={styles.button}>
                             Yes
                         </Button>
-                        <Button onPress={hideModal} style={styles.button}>
+                        <Button onPress={hideLogoutModal} style={styles.button}>
+                            Cancel
+                        </Button>
+                    </Modal>
+                </Portal>
+
+                <Portal>
+                    <Modal visible={deleteVisible} onDismiss={hideDeleteModal} contentContainerStyle={styles.modal}>
+                        <Text style={styles.modalTitle}>Delete Account</Text>
+                        <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                        <Button mode="contained" onPress={deleteUser} style={styles.button}>
+                            Yes, Delete
+                        </Button>
+                        <Button onPress={hideDeleteModal} style={styles.button}>
                             Cancel
                         </Button>
                     </Modal>
@@ -57,7 +85,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.1,
         shadowRadius: 1,
-        elevation: 4, // Adjust the elevation for Android to match your design
+        elevation: 4,
     },
     modal: {
         backgroundColor: 'white',
@@ -72,7 +100,7 @@ const styles = StyleSheet.create({
     },
     modalText: {
         fontSize: 16,
-        marginBottom: 20,
+        marginBottom: 20
     },
     button: {
         marginTop: 10,

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axiosInstance from "../../utils/axiosConfig";
+import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { useUser } from "./useUser";
 import axios from "axios";
 import { setStoredUser } from "../user-storage";
@@ -57,6 +57,39 @@ export default function useAuth() {
     }
   }
 
+  async function deleteUser() {
+    try {
+      const user = await AsyncStorage.getItem("upcare_user");
+      if (!user) {
+        // Handle case where user is not authenticated
+        return { success: false, message: "User not authenticated" };
+      }
+
+      // Parse the user object
+      const parsedUser = JSON.parse(user);
+
+      // Get the JWT header containing the authentication token
+      const headers = getJWTHeader(parsedUser);
+
+      // Make a request to delete the user account with the token in the headers
+      const response = await axiosInstance.delete("/user/delete-account", { headers });
+
+      // Handle success response
+      if (response.data.success) {
+        // Clear user data from storage and update user state
+        clearUser();
+        return { success: true, message: response.data.message };
+      } else {
+        // Handle failure response
+        return { success: false, message: response.data.message };
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error deleting user account:", error);
+      return { success: false, message: "Error deleting user account" };
+    }
+  }
+
   // Function to initiate password reset
   async function initiatePasswordReset(email) {
     return authServerCall("/auth/forgot-password", { email });
@@ -73,5 +106,6 @@ export default function useAuth() {
     logout,
     initiatePasswordReset,
     resetPassword,
+    deleteUser,
   };
 }
