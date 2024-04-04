@@ -15,15 +15,22 @@ import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
 import useJob from "./hook/useJob";
+import { useUserApplications } from "../../components/useUserApplications";
 
 export default function Job() {
   const navigation = useNavigation();
   const { params } = useRoute();
   const { user, isFetched } = useUser();
+  const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
   const [questions, setQuestions] = useState([]);
   const job = params.job;
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
+
+  useEffect(() => {
+    // Check if the current job ID is in the list of applied jobs
+    setIsApplied(appliedJobs.includes(job.id));
+  }, [appliedJobs, job.id]);
 
   useEffect(() => {
     if (user && isFetched) {

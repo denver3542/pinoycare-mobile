@@ -5,10 +5,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import InputField from "../../components/DynamicCustomInputField";
 import { submitApplication } from "./hook/useJob";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUserApplications } from "../../components/useUserApplications";
 
 const JobApplicationQuestionnaire = () => {
   const navigation = useNavigation();
   const [isSending, setSending] = useState(false);
+  const { addAppliedJob } = useUserApplications();
 
   const queryClient = useQueryClient();
 
@@ -38,12 +40,12 @@ const JobApplicationQuestionnaire = () => {
     const dataArray = Object.keys(data).map((key) => ({ [key]: data[key] }));
     const inputData = { data: dataArray, id: jobID };
     const res = await submitApplication(inputData);
-    console.log("Response: " + res);
-    if (res.success) {
+    if (res.data.success === true) {
       queryClient.invalidateQueries([`job_${jobID}`]);
+      addAppliedJob(jobID); // Update the global state
+      navigation.goBack();
     }
     setSending(false);
-    navigation.goBack();
   };
 
   return (
