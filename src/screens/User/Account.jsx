@@ -72,8 +72,23 @@ const Account = ({ activeNav }) => {
 
                   <View style={styles.userInfo}>
                     <Text style={styles.headerName}>{user?.name || ""}</Text>
-                    <Text style={styles.headerProfession}>{user?.profession || ""}</Text>
+                    <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
+                    {/* <Chip
+                      mode="outlined"
+                      icon="check"
+                      onPress={() => { }}
+                      // onClose={() =>
+                      //   setSnackbarProperties({
+                      //     visible: true,
+                      //     text: 'Heart icon close button pressed',
+                      //   })
+                      // }
+                      style={styles.chip}
+                    >
+                      Verify
+                    </Chip> */}
                   </View>
+
                 </View>
 
                 <View>
@@ -87,7 +102,9 @@ const Account = ({ activeNav }) => {
                   </Button>
                 </View>
               </View>
+
             </View>
+
           </View>
 
           <View style={styles.contentStyle}>
@@ -148,6 +165,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
 
+  },
+  chip: {
+    margin: 4,
   },
   header: {
     // flexDirection: "row",

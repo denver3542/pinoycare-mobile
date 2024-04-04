@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import {
   View,
@@ -8,11 +8,10 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { IconButton } from "react-native-paper";
+import { Divider, IconButton } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useMutation } from "@tanstack/react-query"; // Import useMutation
-import { useReactToPost } from "./useFeeds.js"; // Import the useReactToPost hook
+import { useReactToPost } from "./useFeeds.js";
 
 const MAX_LENGTH = 300;
 
@@ -21,7 +20,11 @@ const FeedsCard = ({ feed }) => {
   const [selectedReaction, setSelectedReaction] = useState(null); // Default reaction
   const [modalVisible, setModalVisible] = useState(false);
   const reactToPostMutation = useReactToPost(); // Initialize the mutation hook
-  const mutation = useMutation(reactToPostMutation); // Initialize the mutation
+
+  // useEffect(() => {
+  //   // Set the initial selected reaction based on the user's reaction in the feed
+  //   setSelectedReaction(feed.reactions.find((reaction) => reaction.user_id === feed.user.id)?.reaction || null);
+  // }, [feed]);
 
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
@@ -31,13 +34,11 @@ const FeedsCard = ({ feed }) => {
 
   const handleReact = async (reaction) => {
     try {
-      const user = await AsyncStorage.getItem("upcare_user");
-      const response = await mutation.mutateAsync({
+      await reactToPostMutation.mutateAsync({
         postId: feed.id,
         reaction,
-        user: JSON.parse(user),
       });
-      setSelectedReaction(response.reaction); // Update the selected reaction from the response
+      setSelectedReaction(reaction);
     } catch (error) {
       console.error("Error reacting to post:", error);
     }
@@ -61,9 +62,26 @@ const FeedsCard = ({ feed }) => {
             source={require("../../../../../assets/icon.png")}
             style={styles.userImage}
           />
-          <Text style={styles.creatorName}>Upcare</Text>
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={styles.creatorName}>Upcare</Text>
+            <Text style={styles.publishedDate}>{formattedDate}</Text>
+          </View>
         </View>
-        <Text style={styles.publishedDate}>{formattedDate}</Text>
+        <MaterialCommunityIcons
+          name={
+            selectedReaction === "like"
+              ? "thumb-up"
+              : selectedReaction === "dislike"
+                ? "thumb-down"
+                : selectedReaction === "love"
+                  ? "heart"
+                  : "thumb-up-outline"
+          }
+          size={24}
+          color={selectedReaction ? (selectedReaction === "love" ? "red" : "black") : "black"}
+          onPress={() => handleReact(selectedReaction ? null : "love")}
+          onLongPress={handleLongPress}
+        />
       </View>
       {feed.image ? (
         <Image source={{ uri: feed.image }} style={styles.image} />
@@ -73,6 +91,7 @@ const FeedsCard = ({ feed }) => {
           ? feed.content
           : `${feed.content.substring(0, MAX_LENGTH)}...`}
       </Text>
+
       {feed.content.length > MAX_LENGTH && (
         <TouchableOpacity onPress={toggleContent}>
           <Text style={styles.toggleButton}>
@@ -81,25 +100,9 @@ const FeedsCard = ({ feed }) => {
         </TouchableOpacity>
       )}
 
-      {/* Icon button for reaction */}
-      <MaterialCommunityIcons
-        name={
-          selectedReaction === "like"
-            ? "thumb-up"
-            : selectedReaction === "dislike"
-              ? "thumb-down"
-              : selectedReaction === "love"
-                ? "heart"
-                : "thumb-up-outline" // Default icon when no reaction is selected
-        }
-        size={24}
-        color={selectedReaction ? (selectedReaction === "love" ? "red" : "black") : "black"}
-        onPress={() => handleReact(selectedReaction ? null : "love")} // Toggle between null and "love"
-        onLongPress={handleLongPress}
-      />
 
+      {/* <Divider style={{ marginVertical: 10 }} /> */}
 
-      {/* Reaction selection modal */}
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -159,7 +162,7 @@ const styles = StyleSheet.create({
     color: "#0A3480",
   },
   publishedDate: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#888",
   },
   image: {

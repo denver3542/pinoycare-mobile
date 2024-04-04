@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import * as ImagePicker from 'expo-image-picker';
+import { addCommasToNumber } from '../../../../utils/currencyFormat';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
@@ -31,6 +32,8 @@ const EditUserProfileScreen = () => {
             "gender": user?.gender || '',
             "permanent_address": user?.permanent_address || '',
             "current_address": user?.current_address || '',
+            "preferred_rate": user?.preferred_rate || '',
+            "profession": user?.profession || '',
         }
     });
 
@@ -227,6 +230,19 @@ const EditUserProfileScreen = () => {
                         control={control}
                         label="Current Address"
                         name="current_address"
+                        mode="outlined"
+                    />
+                    <CustomTextInput
+                        control={control}
+                        label="Preferred Rate"
+                        name="preferred_rate"
+                        mode="outlined"
+                        type="money"
+                    />
+                    <CustomTextInput
+                        control={control}
+                        label="Profession"
+                        name="profession"
                         mode="outlined"
                     />
 

@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import { HelperText, TextInput, useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import PropTypes from "prop-types";
-
 const CustomTextInput = ({ control, name, rules, styleContainer, ...rest }) => {
   const theme = useTheme();
 
@@ -23,16 +22,6 @@ const CustomTextInput = ({ control, name, rules, styleContainer, ...rest }) => {
             onBlur={onBlur}
             {...rest}
             error={!!error}
-            // style={[
-            //   styles.textInput,
-            //   {
-            //     fontSize: 14,
-            //     height: 30,
-            //     paddingVertical: 10,
-            //     backgroundColor: theme.colors.surface,
-            //     borderRadius: 10,
-            //   },
-            // ]}
             contentStyle={styles.contentStyle}
           />
           {error && (
