@@ -72,21 +72,20 @@ const Account = ({ activeNav }) => {
 
                   <View style={styles.userInfo}>
                     <Text style={styles.headerName}>{user?.name || ""}</Text>
-                    <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
-                    {/* <Chip
-                      mode="outlined"
-                      icon="check"
-                      onPress={() => { }}
-                      // onClose={() =>
-                      //   setSnackbarProperties({
-                      //     visible: true,
-                      //     text: 'Heart icon close button pressed',
-                      //   })
-                      // }
-                      style={styles.chip}
-                    >
-                      Verify
-                    </Chip> */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
+                      <Text style={{ color: 'white', marginHorizontal: 5 }}>|</Text>
+                      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate("WalkThroughVerificationScreen")}>
+                        <MaterialIcons name="check-circle" size={14} color="white" style={{ marginRight: 3 }} />
+                        <Text style={{ color: 'white' }}>
+                          {user?.status === 'approved' ? 'Verified' :
+                            user?.status === 'pending' ? 'Pending' :
+                              user?.status === 'created' ? 'Verify Now' :
+                                user?.status === 'rejected' ? 'Rejected' : user?.status || ""}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
                   </View>
 
                 </View>
@@ -231,10 +230,11 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginLeft: 10
+    marginLeft: 10,
+    padding: 0, // Smaller padding for the button
   },
   flexReverse: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
   contentStyle: {
@@ -308,6 +308,7 @@ const styles = StyleSheet.create({
 
   button: {
     padding: 0,
+    width: 100,
   },
 
 });

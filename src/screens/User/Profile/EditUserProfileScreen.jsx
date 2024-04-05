@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Button, Appbar, RadioButton, IconButton, } from 'react-native-paper';
+import { Button, Appbar, RadioButton, IconButton, Portal, Modal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useForm } from 'react-hook-form';
@@ -11,11 +11,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import * as ImagePicker from 'expo-image-picker';
-import { addCommasToNumber } from '../../../../utils/currencyFormat';
+import useAuth from "../../../hooks/useAuth";
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
 const EditUserProfileScreen = () => {
+    const { deleteUser } = useAuth();
+    const [deleteVisible, setDeleteVisible] = useState(false);
+    const showDeleteModal = () => setDeleteVisible(true);
+    const hideDeleteModal = () => setDeleteVisible(false);
     const navigation = useNavigation();
     const { user } = useUser();
     const queryClient = useQueryClient();
@@ -246,10 +250,22 @@ const EditUserProfileScreen = () => {
                         mode="outlined"
                     />
 
-                    {/* <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-                        Save
-                    </Button> */}
+                    <Button mode="contained" onPress={showDeleteModal}>
+                        Delete Account
+                    </Button>
                 </View>
+                <Portal>
+                    <Modal visible={deleteVisible} onDismiss={hideDeleteModal} contentContainerStyle={styles.modal}>
+                        <Text style={styles.modalTitle}>Delete Account</Text>
+                        <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                        <Button mode="contained" onPress={deleteUser} style={styles.button}>
+                            Yes, Delete
+                        </Button>
+                        <Button onPress={hideDeleteModal} style={styles.button}>
+                            Cancel
+                        </Button>
+                    </Modal>
+                </Portal>
 
                 <Spinner visible={isLoading} />
             </View>
@@ -306,7 +322,25 @@ const styles = StyleSheet.create({
         justifyContent: 'space-round',
         alignItems: 'center',
         marginBottom: 4
-    }
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalText: {
+        fontSize: 16,
+        marginBottom: 20
+    },
+    modal: {
+        backgroundColor: 'white',
+        padding: 20,
+        margin: 20,
+        borderRadius: 10,
+    },
+    button: {
+        marginTop: 10,
+    },
 });
 
 export default EditUserProfileScreen;

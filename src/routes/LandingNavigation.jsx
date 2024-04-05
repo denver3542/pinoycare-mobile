@@ -18,6 +18,8 @@ import UpdateEducation from "../screens/User/Profile/Education/UpdateEducation";
 import AddEducationScreen from "../screens/User/Profile/AddEducationScreen";
 import SeminarsAndTrainingsEdit from "../screens/User/Profile/SeminarsAndTrainings/SeminarsAndTrainingsEdit";
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
+import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTroughVerificationScreen";
+import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
 
@@ -114,7 +116,12 @@ function LandingNavigation() {
                 name="SeminarsAndTrainingsEdit"
                 component={SeminarsAndTrainingsEdit}
               />
-              <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+              <Stack.Screen name="SettingsScreen"
+                component={SettingsScreen} />
+              <Stack.Screen name="VerificationScreen"
+                component={VerificationScreen} />
+              <Stack.Screen name="WalkThroughVerificationScreen"
+                component={WalkThroughVerificationScreen} />
               <Stack.Screen
                 name="NotificationsList"
                 component={NotificationsList}

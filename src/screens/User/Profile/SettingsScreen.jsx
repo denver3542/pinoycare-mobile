@@ -7,14 +7,14 @@ import useAuth from "../../../hooks/useAuth";
 const SettingsScreen = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const [logoutVisible, setLogoutVisible] = useState(false);
-    const [deleteVisible, setDeleteVisible] = useState(false);
+    // const [deleteVisible, setDeleteVisible] = useState(false);
     const { logout, deleteUser } = useAuth();
 
     const showLogoutModal = () => setLogoutVisible(true);
     const hideLogoutModal = () => setLogoutVisible(false);
 
-    const showDeleteModal = () => setDeleteVisible(true);
-    const hideDeleteModal = () => setDeleteVisible(false);
+    // const showDeleteModal = () => setDeleteVisible(true);
+    // const hideDeleteModal = () => setDeleteVisible(false);
 
 
     return (
@@ -31,13 +31,13 @@ const SettingsScreen = ({ navigation }) => {
                         right={props => <List.Icon {...props} icon="chevron-right" />}
                         onPress={showLogoutModal}
                     />
-                    <Divider />
-                    <List.Item
+                    {/* <Divider /> */}
+                    {/* <List.Item
                         title="Delete Account"
                         left={props => <List.Icon {...props} icon="delete-outline" />}
                         right={props => <List.Icon {...props} icon="chevron-right" />}
                         onPress={showDeleteModal}
-                    />
+                    /> */}
                 </Card>
 
 
@@ -54,7 +54,7 @@ const SettingsScreen = ({ navigation }) => {
                     </Modal>
                 </Portal>
 
-                <Portal>
+                {/* <Portal>
                     <Modal visible={deleteVisible} onDismiss={hideDeleteModal} contentContainerStyle={styles.modal}>
                         <Text style={styles.modalTitle}>Delete Account</Text>
                         <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
@@ -65,7 +65,7 @@ const SettingsScreen = ({ navigation }) => {
                             Cancel
                         </Button>
                     </Modal>
-                </Portal>
+                </Portal> */}
             </View>
         </AuthenticatedLayout>
     );
