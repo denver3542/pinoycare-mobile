@@ -67,27 +67,6 @@ const FeedsCard = ({ feed }) => {
             <Text style={styles.publishedDate}>{formattedDate}</Text>
           </View>
         </View>
-        <MaterialCommunityIcons
-          name={
-            selectedReaction === "like"
-              ? "thumb-up"
-              : selectedReaction === "dislike"
-              ? "thumb-down"
-              : selectedReaction === "love"
-              ? "heart"
-              : "thumb-up-outline"
-          }
-          size={24}
-          color={
-            selectedReaction
-              ? selectedReaction === "love"
-                ? "red"
-                : "black"
-              : "black"
-          }
-          onPress={() => handleReact(selectedReaction ? null : "love")}
-          onLongPress={handleLongPress}
-        />
       </View>
       {feed.image ? (
         <Image source={{ uri: feed.image }} style={styles.image} />
@@ -106,8 +85,28 @@ const FeedsCard = ({ feed }) => {
         </TouchableOpacity>
       )}
 
-      {/* <Divider style={{ marginVertical: 10 }} /> */}
-
+      <Divider style={{ marginVertical: 10 }} />
+      <MaterialCommunityIcons
+        name={
+          selectedReaction === "like"
+            ? "thumb-up"
+            : selectedReaction === "dislike"
+              ? "thumb-down"
+              : selectedReaction === "love"
+                ? "heart"
+                : "thumb-up-outline"
+        }
+        size={24}
+        color={
+          selectedReaction
+            ? selectedReaction === "love"
+              ? "red"
+              : "black"
+            : "black"
+        }
+        onPress={() => handleReact(selectedReaction ? null : "love")}
+        onLongPress={handleLongPress}
+      />
       <Modal
         transparent={true}
         visible={modalVisible}
