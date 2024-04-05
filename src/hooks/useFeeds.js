@@ -1,17 +1,17 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import axiosInstance, { getJWTHeader } from "../../../../../utils/axiosConfig";
+import axiosInstance from "../../utils/axiosConfig";
 
-async function getFeeds(signal, user) {
+async function getFeeds(signal) {
   try {
-    if (!user) {
-      return null;
-    }
+    // if (!user) {
+    //   return null;
+    // }
 
-    const { data } = await axiosInstance.get("/feeds", {
+    const { data } = await axiosInstance.get("/public/feeds", {
       signal,
-      headers: getJWTHeader(user),
+      // headers: getJWTHeader(user),
     });
 
     return data.posts;
@@ -24,8 +24,9 @@ export default function useFeeds() {
   return useQuery(
     ["feeds"],
     async () => {
-      const user = await AsyncStorage.getItem("upcare_user");
-      return getFeeds(undefined, JSON.parse(user));
+      // const user = await AsyncStorage.getItem("upcare_user");
+      // return getFeeds(undefined, JSON.parse(user));
+      return getFeeds(undefined);
     },
     {
       retry: false,

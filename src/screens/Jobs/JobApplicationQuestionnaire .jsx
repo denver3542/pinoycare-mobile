@@ -39,12 +39,15 @@ const JobApplicationQuestionnaire = () => {
     setSending(true);
     const dataArray = Object.keys(data).map((key) => ({ [key]: data[key] }));
     const inputData = { data: dataArray, id: jobID };
+    console.log(inputData);
     const res = await submitApplication(inputData);
-    if (res.data.success === true) {
-      queryClient.invalidateQueries([`job_${jobID}`]);
-      addAppliedJob(jobID); // Update the global state
-      navigation.goBack();
-    }
+    console.log(res);
+    // if (res.data.success === true) {
+    // }
+
+    queryClient.invalidateQueries([`job_${jobID}`]);
+    addAppliedJob(jobID); // Update the global state
+    navigation.goBack();
     setSending(false);
   };
 

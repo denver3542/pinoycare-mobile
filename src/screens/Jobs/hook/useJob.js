@@ -34,17 +34,10 @@ export async function submitApplication(inputData) {
   try {
     const storedUser = await AsyncStorage.getItem("upcare_user");
     const headers = storedUser ? getJWTHeader(JSON.parse(storedUser)) : {};
-    const res = await axiosInstance.post(
-      `/application/store`,
-      { data: inputData.data, id: inputData.id },
-      {
-        headers,
-      }
-    );
+    const res = await axiosInstance.post(`/application/store`, inputData, {
+      headers,
+    });
 
-    // return inputData;
-    if (res.success) {
-    }
     return res;
   } catch (error) {
     console.log(error);
@@ -52,7 +45,7 @@ export async function submitApplication(inputData) {
     let errors = [];
     if (axios.isAxiosError(error)) {
       errorMessage = error.response.data.message || errorMessage;
-      errors = error.response.data.errors;
+      errors = error.response.data.error;
     }
     return { success: 0, message: errorMessage, errors: errors };
   }

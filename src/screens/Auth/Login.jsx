@@ -6,6 +6,8 @@ import {
   TextInput,
   useTheme,
   HelperText,
+  Appbar,
+  IconButton,
 } from "react-native-paper";
 import { useForm } from "react-hook-form";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -63,70 +65,89 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Spinner visible={loading} color={colors.primary} />
-      <Text style={[styles.title, { color: colors.primary }]}>
-        Let's <Text style={styles.highlight}>Sign</Text> you in.
-      </Text>
-      {generalError && (
-        <View style={{ marginBottom: 4, marginTop: -8 }}>
-          <HelperText type="error" visible={generalError}>
-            {generalError}
-          </HelperText>
-        </View>
-      )}
-      <CustomTextInput
-        control={control}
-        name="email"
-        label="Email"
-        rules={{ required: "Email is required" }}
-        autoCapitalize="none"
-        mode="outlined"
-        // style={styles.input}
-      />
-      <CustomTextInput
-        control={control}
-        name="password"
-        label="Password"
-        secureTextEntry={!showPassword}
-        rules={{ required: "Password is required" }}
-        mode="outlined"
-        // style={styles.input}
-        error={errors.password}
-        right={
-          <TextInput.Icon
-            name={showPassword ? "eye-off" : "eye"}
-            onPress={() => setShowPassword(!showPassword)}
+    <>
+      <View style={styles.container}>
+        <Spinner visible={loading} color={colors.primary} />
+        <View
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "flex-start",
+            marginTop: 50,
+          }}
+        >
+          <IconButton
+            icon="arrow-left"
+            onPress={() => navigation.navigate("Feeds")}
+            // style={{ width: 200 }}
           />
-        }
-      />
-      <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-        <Text style={styles.linkText}>Forgot Password?</Text>
-      </TouchableOpacity>
-      <Button
-        mode="contained"
-        onPress={handleSubmit(onSubmit)}
-        loading={isLoading || isSubmitting}
-        style={styles.button}
-      >
-        LOGIN
-      </Button>
-      {/* Include other buttons like 'SIGN IN WITH GOOGLE', etc., here */}
-      <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-        <Text style={styles.signUpText}>
-          You don't have an account yet?{" "}
-          <Text style={styles.linkText}>Sign up</Text>
-        </Text>
-      </TouchableOpacity>
-    </View>
+        </View>
+        <View style={{ flex: 3 }}>
+          <Text style={[styles.title, { color: colors.primary }]}>
+            Let's <Text style={styles.highlight}>Sign</Text> you in.
+          </Text>
+          {generalError && (
+            <View style={{ marginBottom: 4, marginTop: -8 }}>
+              <HelperText type="error" visible={generalError}>
+                {generalError}
+              </HelperText>
+            </View>
+          )}
+          <CustomTextInput
+            control={control}
+            name="email"
+            label="Email"
+            rules={{ required: "Email is required" }}
+            autoCapitalize="none"
+            mode="outlined"
+            // style={styles.input}
+          />
+          <CustomTextInput
+            control={control}
+            name="password"
+            label="Password"
+            secureTextEntry={!showPassword}
+            rules={{ required: "Password is required" }}
+            mode="outlined"
+            // style={styles.input}
+            error={errors.password}
+            right={
+              <TextInput.Icon
+                name={showPassword ? "eye-off" : "eye"}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            }
+          />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ForgotPassword")}
+          >
+            <Text style={styles.linkText}>Forgot Password?</Text>
+          </TouchableOpacity>
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            loading={isLoading || isSubmitting}
+            style={styles.button}
+          >
+            LOGIN
+          </Button>
+          {/* Include other buttons like 'SIGN IN WITH GOOGLE', etc., here */}
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+            <Text style={styles.signUpText}>
+              You don't have an account yet?{" "}
+              <Text style={styles.linkText}>Sign up</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 4,
     padding: 20,
-    justifyContent: "center",
   },
   title: {
     fontSize: 30,

@@ -31,6 +31,7 @@ import MessageList from "../screens/Messaging/MessageList";
 import ChatConversation from "../screens/Messaging/ChatConversation";
 import NotificationsList from "../screens/Notifications/NotificationsList";
 import JobApplicationQuestionnaire from "../screens/Jobs/JobApplicationQuestionnaire ";
+import GuestFeeds from "../screens/Guest/Feeds";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,6 +56,7 @@ function LandingNavigation() {
               <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="SignUp" component={SignUp} />
               <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Feeds" component={GuestFeeds} />
               <Stack.Screen
                 name="ForgotPassword"
                 component={ForgotPasswordScreen}
@@ -98,10 +100,7 @@ function LandingNavigation() {
                 name="AddEducationScreen"
                 component={AddEducationScreen}
               />
-              <Stack.Screen
-                name="EditEducation"
-                component={EditEducation}
-              />
+              <Stack.Screen name="EditEducation" component={EditEducation} />
               <Stack.Screen
                 name="UpdateEducation"
                 component={UpdateEducation}
