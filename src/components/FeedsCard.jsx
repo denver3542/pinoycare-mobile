@@ -9,9 +9,8 @@ import {
   Modal,
 } from "react-native";
 import { Divider, IconButton } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useReactToPost } from "./useFeeds.js";
+import { useReactToPost } from "../screens/User/Feeds/hooks/useFeeds";
 
 const MAX_LENGTH = 300;
 
@@ -59,7 +58,7 @@ const FeedsCard = ({ feed }) => {
       <View style={styles.header}>
         <View style={styles.creatorInfo}>
           <Image
-            source={require("../../../../../assets/icon.png")}
+            source={require("../../assets/icon.png")}
             style={styles.userImage}
           />
           <View style={{ flexDirection: "column" }}>
