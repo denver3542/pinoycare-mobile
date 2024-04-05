@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Button, Appbar, RadioButton, IconButton, Portal, Modal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
@@ -140,13 +140,14 @@ const EditUserProfileScreen = () => {
     }, [gender, setValue]);
 
     return (
-        <AuthenticatedLayout>
-            <View style={styles.container}>
-                <Appbar.Header>
-                    <Appbar.BackAction onPress={() => navigation.goBack()} />
-                    <Appbar.Content title="Profile" />
-                    <Appbar.Action icon="content-save" color="#0A3480" onPress={handleSubmit(onSubmit)} />
-                </Appbar.Header>
+
+        <View style={styles.container}>
+            <Appbar.Header>
+                <Appbar.BackAction onPress={() => navigation.goBack()} />
+                <Appbar.Content title="Profile" />
+                <Appbar.Action icon="content-save" color="#0A3480" onPress={handleSubmit(onSubmit)} />
+            </Appbar.Header>
+            <ScrollView>
                 <View style={styles.header}>
                     <View style={styles.headerContainer}>
                         <View style={styles.imageUpdate}>
@@ -167,6 +168,7 @@ const EditUserProfileScreen = () => {
                                 onPress={handleProfilePictureUpload}
                             />
                         </View>
+
 
                     </View>
                 </View>
@@ -250,7 +252,7 @@ const EditUserProfileScreen = () => {
                         mode="outlined"
                     />
 
-                    <Button mode="contained" onPress={showDeleteModal}>
+                    <Button mode="outlined" onPress={showDeleteModal} labelStyle={{ color: 'red' }}>
                         Delete Account
                     </Button>
                 </View>
@@ -268,8 +270,9 @@ const EditUserProfileScreen = () => {
                 </Portal>
 
                 <Spinner visible={isLoading} />
-            </View>
-        </AuthenticatedLayout>
+            </ScrollView>
+        </View>
+
     );
 };
 
