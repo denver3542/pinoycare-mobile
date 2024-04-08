@@ -15,7 +15,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.upcare.mobile",
-      "buildNumber": "3"
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you."
+      },
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {
