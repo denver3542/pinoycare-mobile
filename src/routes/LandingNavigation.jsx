@@ -34,6 +34,8 @@ import ChatConversation from "../screens/Messaging/ChatConversation";
 import NotificationsList from "../screens/Notifications/NotificationsList";
 import JobApplicationQuestionnaire from "../screens/Jobs/JobApplicationQuestionnaire ";
 import GuestFeeds from "../screens/Guest/Feeds";
+import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
+import Index from "../screens/Guest";
 
 const Stack = createNativeStackNavigator();
 
@@ -56,9 +58,11 @@ function LandingNavigation() {
           {!user ? (
             <>
               <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="GuestTabs" component={Index} />
               <Stack.Screen name="SignUp" component={SignUp} />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />
+              <Stack.Screen name="Job" component={Job} />
               <Stack.Screen
                 name="ForgotPassword"
                 component={ForgotPasswordScreen}
@@ -115,12 +119,15 @@ function LandingNavigation() {
                 name="SeminarsAndTrainingsEdit"
                 component={SeminarsAndTrainingsEdit}
               />
-              <Stack.Screen name="SettingsScreen"
-                component={SettingsScreen} />
-              <Stack.Screen name="VerificationScreen"
-                component={VerificationScreen} />
-              <Stack.Screen name="WalkThroughVerificationScreen"
-                component={WalkThroughVerificationScreen} />
+              <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+              <Stack.Screen
+                name="VerificationScreen"
+                component={VerificationScreen}
+              />
+              <Stack.Screen
+                name="WalkThroughVerificationScreen"
+                component={WalkThroughVerificationScreen}
+              />
               <Stack.Screen
                 name="NotificationsList"
                 component={NotificationsList}

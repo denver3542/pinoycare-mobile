@@ -78,7 +78,7 @@ const Login = ({ navigation }) => {
         >
           <IconButton
             icon="arrow-left"
-            onPress={() => navigation.navigate("Feeds")}
+            onPress={() => navigation.goBack()}
             // style={{ width: 200 }}
           />
         </View>

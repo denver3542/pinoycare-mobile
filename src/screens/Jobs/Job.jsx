@@ -7,6 +7,7 @@ import {
   Card,
   Chip,
   Divider,
+  Modal,
   Text,
   Title,
 } from "react-native-paper";
@@ -26,6 +27,10 @@ export default function Job() {
   const [questions, setQuestions] = useState([]);
   const job = params.job;
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   useEffect(() => {
     // Check if the current job ID is in the list of applied jobs
@@ -49,11 +54,22 @@ export default function Job() {
   }, [jobData, isFetching]);
 
   const handleSave = () => {
-    console.log("save job");
+    showModal(true);
   };
 
   const handleApply = () => {
-    navigation.navigate("Questionnaire", { jobData });
+    if (user) {
+      navigation.navigate("Questionnaire", { jobData });
+    } else {
+      showModal(true);
+    }
+  };
+
+  const containerStyle = {
+    padding: 25,
+    height: 150,
+    marginHorizontal: 15,
+    borderRadius: 15,
   };
   return (
     <View style={{ flex: 1 }}>
@@ -128,6 +144,26 @@ export default function Job() {
           </Card.Content>
         </Card>
       </ScrollView>
+      <Modal
+        visible={visible}
+        onDismiss={hideModal}
+        contentContainerStyle={containerStyle}
+      >
+        <Card>
+          <Card.Content>
+            <Text variant="headlineSmall">
+              Would you like to apply for this job? Please sign in.
+            </Text>
+            <Divider style={{ marginTop: 10 }} />
+          </Card.Content>
+          <Card.Actions style={{ display: "flex", justifyContent: "center" }}>
+            <Button onPress={hideModal}>Cancel</Button>
+            <Button onPress={() => navigation.navigate("Login")}>
+              Sign in
+            </Button>
+          </Card.Actions>
+        </Card>
+      </Modal>
     </View>
   );
 }

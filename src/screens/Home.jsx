@@ -76,7 +76,7 @@ function Home({ navigation }) {
                 paddingVertical: 6, // Increase padding for taller button
               }}
               mode="contained"
-              onPress={() => navigation.navigate("Feeds")}
+              onPress={() => navigation.navigate("GuestTabs")}
             >
               GET STARTED
             </Button>

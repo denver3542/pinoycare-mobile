@@ -7,29 +7,11 @@ import useFeeds from "../../hooks/useFeeds";
 
 function GuestFeeds() {
   const { colors } = useTheme();
-  const navigation = useNavigation();
   const { data: feeds, isRefetching, refetch } = useFeeds();
-  console.log(feeds);
-
-  const loginBtn = () => {
-    navigation.navigate("Login");
-  };
-  const registerBtn = () => {
-    navigation.navigate("SignUp");
-  };
+  // console.log(feeds);
 
   return (
     <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.Content title="Feeds" mode="medium" />
-        <Appbar.Action icon="login" onPress={loginBtn} color={colors.primary} />
-        <Appbar.Action
-          icon="account-plus-outline"
-          onPress={registerBtn}
-          color={colors.primary}
-          style={{}}
-        />
-      </Appbar.Header>
       <FlatList
         data={feeds}
         renderItem={({ item }) => <FeedsCard feed={item} />}
