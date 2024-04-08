@@ -75,15 +75,23 @@ const Account = ({ activeNav }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
                       <Text style={{ color: 'white', marginHorizontal: 5 }}>|</Text>
-                      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate("WalkThroughVerificationScreen")}>
-                        <MaterialIcons name="check-circle" size={14} color="white" style={{ marginRight: 3 }} />
+                      <TouchableOpacity
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        onPress={() => {
+                          if (user?.status !== 'approved') {
+                            navigation.navigate("WalkThroughVerificationScreen");
+                          }
+                        }}
+                      >
+                        <MaterialIcons name="check-circle-outline" size={14} color="white" style={{ marginRight: 3 }} />
                         <Text style={{ color: 'white' }}>
                           {user?.status === 'approved' ? 'Verified' :
-                            user?.status === 'pending' ? 'Pending' :
+                            user?.status === 'pending' ? 'Verify Now' :
                               user?.status === 'created' ? 'Verify Now' :
                                 user?.status === 'rejected' ? 'Rejected' : user?.status || ""}
                         </Text>
                       </TouchableOpacity>
+
                     </View>
 
                   </View>

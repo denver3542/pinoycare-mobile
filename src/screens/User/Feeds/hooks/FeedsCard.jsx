@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import { Divider, IconButton } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,13 +11,7 @@ const MAX_LENGTH = 300;
 const FeedsCard = ({ feed }) => {
   const [showFullContent, setShowFullContent] = useState(false);
   const [selectedReaction, setSelectedReaction] = useState(null); // Default reaction
-  const [modalVisible, setModalVisible] = useState(false);
   const reactToPostMutation = useReactToPost(); // Initialize the mutation hook
-
-  // useEffect(() => {
-  //   // Set the initial selected reaction based on the user's reaction in the feed
-  //   setSelectedReaction(feed.reactions.find((reaction) => reaction.user_id === feed.user.id)?.reaction || null);
-  // }, [feed]);
 
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
@@ -34,25 +21,26 @@ const FeedsCard = ({ feed }) => {
 
   const handleReact = async (reaction) => {
     try {
-      await reactToPostMutation.mutateAsync({
-        postId: feed.id,
-        reaction,
-      });
-      setSelectedReaction(reaction);
+      if (selectedReaction === reaction) {
+        // If the selected reaction is the same as the new reaction, unreact
+        await reactToPostMutation.mutateAsync({
+          postId: feed.id,
+          reaction: null, // Set reaction to null to unreact
+        });
+        setSelectedReaction(null);
+      } else {
+        // React with the new reaction
+        await reactToPostMutation.mutateAsync({
+          postId: feed.id,
+          reaction,
+        });
+        setSelectedReaction(reaction);
+      }
     } catch (error) {
       console.error("Error reacting to post:", error);
     }
   };
 
-  const handleLongPress = () => {
-    setModalVisible(true);
-  };
-
-  const selectReaction = (reaction) => {
-    setSelectedReaction(reaction);
-    setModalVisible(false);
-    handleReact(reaction);
-  };
 
   return (
     <View style={styles.feedContainer}>
@@ -86,52 +74,12 @@ const FeedsCard = ({ feed }) => {
       )}
 
       <Divider style={{ marginVertical: 10 }} />
-      <MaterialCommunityIcons
-        name={
-          selectedReaction === "like"
-            ? "thumb-up"
-            : selectedReaction === "dislike"
-              ? "thumb-down"
-              : selectedReaction === "love"
-                ? "heart"
-                : "thumb-up-outline"
-        }
+      <IconButton
+        icon={selectedReaction === "love" ? "heart" : "heart-outline"}
         size={24}
-        color={
-          selectedReaction
-            ? selectedReaction === "love"
-              ? "red"
-              : "black"
-            : "black"
-        }
-        onPress={() => handleReact(selectedReaction ? null : "love")}
-        onLongPress={handleLongPress}
+        color={selectedReaction === "love" ? "red" : "black"}
+        onPress={() => handleReact("love")}
       />
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <IconButton
-              icon="thumb-up"
-              color={selectedReaction === "like" ? "blue" : "black"}
-              onPress={() => selectReaction("like")}
-            />
-            <IconButton
-              icon="thumb-down"
-              color={selectedReaction === "dislike" ? "blue" : "black"}
-              onPress={() => selectReaction("dislike")}
-            />
-            <IconButton
-              icon="heart"
-              color={selectedReaction === "love" ? "red" : "black"}
-              onPress={() => selectReaction("love")}
-            />
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -182,20 +130,6 @@ const styles = StyleSheet.create({
     color: "#0A3480",
     marginTop: 10,
     fontWeight: "bold",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
   },
 });
 

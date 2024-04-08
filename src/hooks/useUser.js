@@ -71,6 +71,36 @@ export const useUser = () => {
     return data;
   }
 
+  async function verifyUser(signal, userToVerify) {
+    // Retrieve the stored user from AsyncStorage
+    const storedUser = await AsyncStorage.getItem("upcare_user");
+
+    if (!storedUser) {
+      return null;
+    }
+
+    // Parse the stored user JSON
+    const user = JSON.parse(storedUser);
+
+    // Get JWT headers
+    const headers = getJWTHeader(user);
+
+    try {
+      // Make a POST request to the submit verification endpoint
+      const { data } = await axiosInstance.post("/user/profile/submit-verification", userToVerify, {
+        signal,
+        headers,
+      });
+
+      return data.user;
+    } catch (error) {
+      console.error("Error verifying user:", error);
+      return null; // Return null in case of an error
+    }
+  }
+
+
+
   return {
     user,
     isLoading,
@@ -80,5 +110,6 @@ export const useUser = () => {
     updateUser,
     clearUser,
     addPushToken,
+    verifyUser
   };
 };

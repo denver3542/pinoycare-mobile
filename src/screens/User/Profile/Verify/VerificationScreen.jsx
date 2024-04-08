@@ -1,52 +1,66 @@
 import * as React from 'react';
-import { View, StyleSheet, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { Button, Title, Appbar } from 'react-native-paper';
+import { View, StyleSheet, Text, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
+import { Button, Title, Appbar, TouchableRipple } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
+import { useForm, Controller } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import { useVerifyUser } from './hooks/useVerifyUser';
 
 const VerificationScreen = () => {
     const navigation = useNavigation();
-    const [id1FrontImage, setId1FrontImage] = React.useState(null);
-    const [id1BackImage, setId1BackImage] = React.useState(null);
-    const [id2FrontImage, setId2FrontImage] = React.useState(null);
-    const [id2BackImage, setId2BackImage] = React.useState(null);
-    const [id3FrontImage, setId3FrontImage] = React.useState(null);
-    const [id3BackImage, setId3BackImage] = React.useState(null);
+    const { control, handleSubmit, setValue } = useForm({
+        defaultValues: {
+            verification: {
+                id1FrontImage: '',
+                id1BackImage: '',
+                id2FrontImage: '',
+                id2BackImage: '',
+                id3FrontImage: '',
+                id3BackImage: '',
+            }
+        }
+    });
+    const verifyUserMutation = useVerifyUser();
 
     const pickImage = async (imageType, idNumber) => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
 
-        if (!result.cancelled) {
-            switch (idNumber) {
-                case 1:
-                    if (imageType === 'front') {
-                        setId1FrontImage(result.uri);
-                    } else {
-                        setId1BackImage(result.uri);
-                    }
-                    break;
-                case 2:
-                    if (imageType === 'front') {
-                        setId2FrontImage(result.uri);
-                    } else {
-                        setId2BackImage(result.uri);
-                    }
-                    break;
-                case 3:
-                    if (imageType === 'front') {
-                        setId3FrontImage(result.uri);
-                    } else {
-                        setId3BackImage(result.uri);
-                    }
-                    break;
-                default:
-                    break;
+            if (result && !result.cancelled && result.assets && result.assets.length > 0) {
+                const selectedImageUri = result.assets[0].uri;
+
+                setValue(`verification.id${idNumber}${imageType.charAt(0).toUpperCase() + imageType.slice(1)}Image`, selectedImageUri);
             }
+        } catch (error) {
+            console.error('Image picker error:', error);
+            Alert.alert('Error', 'Failed to pick image. Please try again.');
+        }
+    };
+
+    const onSubmit = async (data) => {
+        try {
+            // Ensure that all required fields are included in the data object
+            const formData = {
+                verification: {
+                    id1FrontImage: data.verification.id1FrontImage,
+                    id1BackImage: data.verification.id1BackImage,
+                    id2FrontImage: data.verification.id2FrontImage,
+                    id2BackImage: data.verification.id2BackImage,
+                    id3FrontImage: data.verification.id3FrontImage,
+                    id3BackImage: data.verification.id3BackImage,
+                }
+                // Add other fields if required by the backend
+            };
+
+            await verifyUserMutation.mutateAsync(formData);
+        } catch (error) {
+            console.error('Failed to submit verification:', error);
+            Alert.alert('Error', 'Failed to submit verification. Please try again.');
         }
     };
 
@@ -54,85 +68,120 @@ const VerificationScreen = () => {
         <View style={{ flex: 1 }}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
-                {/* <Appbar.Content title="ID Verification" /> */}
             </Appbar.Header>
             <ScrollView contentContainerStyle={styles.container}>
                 {/* ID 1 */}
                 <View>
                     <Title>ID 1</Title>
                     {/* ID 1 Front */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.imagePicker} onPress={() => pickImage('front', 1)}>
-                            {id1FrontImage ? (
-                                <Image source={{ uri: id1FrontImage }} style={styles.image} />
-                            ) : (
-                                <Text style={styles.text}>Tap to upload front image</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <Controller
+                        control={control}
+                        render={({ field: { value } }) => (
+                            <View style={styles.imageContainer}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('front', 1)}>
+                                    {value ? (
+                                        <Image source={{ uri: value }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.text}>Tap to upload front image</Text>
+                                    )}
+                                </TouchableRipple>
+                            </View>
+                        )}
+                        name="verification.id1FrontImage"
+                    />
                     {/* ID 1 Back */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.imagePicker} onPress={() => pickImage('back', 1)}>
-                            {id1BackImage ? (
-                                <Image source={{ uri: id1BackImage }} style={styles.image} />
-                            ) : (
-                                <Text style={styles.text}>Tap to upload back image</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <Controller
+                        control={control}
+                        render={({ field: { value } }) => (
+                            <View style={styles.imageContainer}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('back', 1)}>
+                                    {value ? (
+                                        <Image source={{ uri: value }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.text}>Tap to upload back image</Text>
+                                    )}
+                                </TouchableRipple>
+                            </View>
+                        )}
+                        name="verification.id1BackImage"
+                    />
                 </View>
 
                 {/* ID 2 */}
                 <View>
                     <Title>ID 2</Title>
                     {/* ID 2 Front */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.imagePicker} onPress={() => pickImage('front', 2)}>
-                            {id2FrontImage ? (
-                                <Image source={{ uri: id2FrontImage }} style={styles.image} />
-                            ) : (
-                                <Text style={styles.text}> Tap to upload front image</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <Controller
+                        control={control}
+                        render={({ field: { value } }) => (
+                            <View style={styles.imageContainer}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('front', 2)}>
+                                    {value ? (
+                                        <Image source={{ uri: value }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.text}>Tap to upload front image</Text>
+                                    )}
+                                </TouchableRipple>
+                            </View>
+                        )}
+                        name="verification.id2FrontImage"
+                    />
                     {/* ID 2 Back */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.imagePicker} onPress={() => pickImage('back', 2)}>
-                            {id2BackImage ? (
-                                <Image source={{ uri: id2BackImage }} style={styles.image} />
-                            ) : (
-                                <Text style={styles.text}>Tap to upload back image</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <Controller
+                        control={control}
+                        render={({ field: { value } }) => (
+                            <View style={styles.imageContainer}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('back', 2)}>
+                                    {value ? (
+                                        <Image source={{ uri: value }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.text}>Tap to upload back image</Text>
+                                    )}
+                                </TouchableRipple>
+                            </View>
+                        )}
+                        name="verification.id2BackImage"
+                    />
                 </View>
 
                 {/* ID 3 */}
                 <View>
                     <Title>ID 3</Title>
                     {/* ID 3 Front */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.imagePicker} onPress={() => pickImage('front', 3)}>
-                            {id3FrontImage ? (
-                                <Image source={{ uri: id3FrontImage }} style={styles.image} />
-                            ) : (
-                                <Text style={styles.text}>Tap to upload front image</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <Controller
+                        control={control}
+                        render={({ field: { value } }) => (
+                            <View style={styles.imageContainer}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('front', 3)}>
+                                    {value ? (
+                                        <Image source={{ uri: value }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.text}>Tap to upload front image</Text>
+                                    )}
+                                </TouchableRipple>
+                            </View>
+                        )}
+                        name="verification.id3FrontImage"
+                    />
                     {/* ID 3 Back */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.imagePicker} onPress={() => pickImage('back', 3)}>
-                            {id3BackImage ? (
-                                <Image source={{ uri: id3BackImage }} style={styles.image} />
-                            ) : (
-                                <Text style={styles.text}>Tap to upload back image</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <Controller
+                        control={control}
+                        render={({ field: { value } }) => (
+                            <View style={styles.imageContainer}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('back', 3)}>
+                                    {value ? (
+                                        <Image source={{ uri: value }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.text}>Tap to upload back image</Text>
+                                    )}
+                                </TouchableRipple>
+                            </View>
+                        )}
+                        name="verification.id3BackImage"
+                    />
                 </View>
 
-                <Button mode="outlined" onPress={() => console.log('Skip For Now')}>Submit</Button>
+                <Button mode="outlined" onPress={handleSubmit(onSubmit)}>Submit</Button>
             </ScrollView>
         </View>
     );
