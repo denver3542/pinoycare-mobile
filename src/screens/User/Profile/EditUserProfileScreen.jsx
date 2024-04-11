@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import { Button, Appbar, RadioButton, IconButton, Portal, Modal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
