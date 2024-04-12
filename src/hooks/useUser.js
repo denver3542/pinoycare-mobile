@@ -41,15 +41,11 @@ export const useUser = () => {
     },
   });
 
-  // meant to be called from useAuth
   function updateUser(newUser) {
-    // update the user
     queryClient.setQueryData(["user"], newUser);
   }
 
-  // meant to be called from useAuth
   function clearUser() {
-    // reset user to null
     queryClient.setQueryData(["user"], null);
     queryClient.clear();
     clearStoredUser();
@@ -58,7 +54,6 @@ export const useUser = () => {
   async function addPushToken(token) {
     let user = await AsyncStorage.getItem("upcare_user");
     if (!user) {
-      // Logout the user
       return null;
     }
     const body = {
@@ -71,35 +66,37 @@ export const useUser = () => {
     return data;
   }
 
-  async function verifyUser(signal, userToVerify) {
-    // Retrieve the stored user from AsyncStorage
+  async function verifyUser(images) {
     const storedUser = await AsyncStorage.getItem("upcare_user");
-
     if (!storedUser) {
       return null;
     }
 
-    // Parse the stored user JSON
     const user = JSON.parse(storedUser);
-
-    // Get JWT headers
     const headers = getJWTHeader(user);
 
     try {
-      // Make a POST request to the submit verification endpoint
-      const { data } = await axiosInstance.post("/user/profile/submit-verification", userToVerify, {
-        signal,
-        headers,
+      const formData = new FormData();
+      images.forEach((image, index) => {
+        if (image.uri) {
+          formData.append(`image[${index}]`, {
+            uri: image.uri,
+            type: 'image/jpeg',
+            name: `image_${index}.jpg`,
+          });
+        }
       });
 
+      const { data } = await axiosInstance.post("/user/profile/submit-verification", images, {
+        headers,
+        formData,
+      });
       return data.user;
     } catch (error) {
       console.error("Error verifying user:", error);
-      return null; // Return null in case of an error
+      return null;
     }
   }
-
-
 
   return {
     user,

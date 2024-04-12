@@ -79,7 +79,7 @@ const Login = ({ navigation }) => {
           <IconButton
             icon="arrow-left"
             onPress={() => navigation.goBack()}
-            // style={{ width: 200 }}
+          // style={{ width: 200 }}
           />
         </View>
         <View style={{ flex: 3 }}>
@@ -100,7 +100,7 @@ const Login = ({ navigation }) => {
             rules={{ required: "Email is required" }}
             autoCapitalize="none"
             mode="outlined"
-            // style={styles.input}
+          // style={styles.input}
           />
           <CustomTextInput
             control={control}

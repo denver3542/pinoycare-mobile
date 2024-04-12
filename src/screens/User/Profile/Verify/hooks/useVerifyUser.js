@@ -10,23 +10,41 @@ async function submitVerification(verificationData, user) {
 
     try {
         const headers = getJWTHeader(user);
+
         const formData = new FormData();
 
-        // Append each file to the formData object
-        verificationData.forEach((item, index) => {
-            formData.append(`verification[${index}][frontImage]`, { uri: item.frontImage, name: `frontImage_${index}.jpg`, type: 'image/jpeg' });
-            formData.append(`verification[${index}][backImage]`, { uri: item.backImage, name: `backImage_${index}.jpg`, type: 'image/jpeg' });
+        verificationData.forEach((verification, index) => {
+            formData.append(`verification[${index}][frontImage]`, {
+                uri: verification.frontImage,
+                type: 'image/jpeg', // Make sure to set the correct MIME type
+                name: `frontImage_${index}.jpg`,
+            });
+
+            formData.append(`verification[${index}][backImage]`, {
+                uri: verification.backImage,
+                type: 'image/jpeg', // Make sure to set the correct MIME type
+                name: `backImage_${index}.jpg`,
+            });
         });
 
-        // Send the formData to the server
-        const { data } = await axiosInstance.post("/user/profile/submit-verification", formData, { headers });
+        console.log('FormData:', formData);
 
-        // Update the user data in AsyncStorage
+        const { data } = await axiosInstance.post("/user/profile/submit-verification", formData, {
+            headers: {
+                ...headers,
+                'Content-Type': 'multipart/form-data',
+            }
+        });
+
+        console.log('Response data:', data);
+
         const updatedUser = { ...user, ...data.user };
         await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
 
         return data.user;
     } catch (error) {
+        console.error('Error submitting verification:', error);
+
         if (error.response && error.response.status === 400) {
             throw new Error("Failed to submit verification: " + JSON.stringify(error.response.data));
         } else {
@@ -34,6 +52,7 @@ async function submitVerification(verificationData, user) {
         }
     }
 }
+
 
 export const useVerifyUser = () => {
     const queryClient = useQueryClient();

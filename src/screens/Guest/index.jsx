@@ -18,10 +18,10 @@ export default function Index() {
       <View style={{ flex: 1 }}>
         <Appbar.Header>
           <Appbar.Content title="Upcare" mode="medium" />
-          <Appbar.Action icon="login" onPress={() => {}} />
+          <Appbar.Action icon="login" onPress={loginBtn} />
           <Appbar.Action
             icon="account-plus-outline"
-            //   onPress={registerBtn}
+            onPress={registerBtn}
             style={{}}
           />
         </Appbar.Header>
