@@ -17,6 +17,7 @@ import EditEducation from "../screens/User/Profile/Education/EditEducations";
 import UpdateEducation from "../screens/User/Profile/Education/UpdateEducation";
 import AddEducationScreen from "../screens/User/Profile/AddEducationScreen";
 import SeminarsAndTrainingsEdit from "../screens/User/Profile/SeminarsAndTrainings/SeminarsAndTrainingsEdit";
+import AddSeminarsAndTrainings from "../screens/User/Profile/SeminarsAndTrainings/AddSeminarsAndTrainings";
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTroughVerificationScreen";
 import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
@@ -114,6 +115,10 @@ function LandingNavigation() {
               <Stack.Screen
                 name="EditUserProfileScreen"
                 component={EditUserProfileScreen}
+              />
+              <Stack.Screen
+                name="AddSeminarsAndTrainings"
+                component={AddSeminarsAndTrainings}
               />
               <Stack.Screen
                 name="SeminarsAndTrainingsEdit"

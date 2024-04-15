@@ -17,7 +17,7 @@ async function addEducation(dataToUpdate, user) {
         return data.user;
     } catch (error) {
         if (error.response && error.response.status === 422) {
-            // Handle validation errors
+
             throw new Error("Failed to add education: " + JSON.stringify(error.response.data));
         } else {
             throw new Error("Failed to add education: " + error.message);

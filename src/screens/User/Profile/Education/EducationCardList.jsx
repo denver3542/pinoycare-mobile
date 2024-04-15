@@ -153,16 +153,14 @@ const styles = StyleSheet.create({
     educationTitle: {
         fontWeight: 'bold',
         fontSize: 15,
-        color: '#333',
+        color: '#0A3480',
     },
     educationDescription: {
         fontSize: 14,
-        color: '#555',
     },
     certificateImage: {
         width: 90,
         height: "100%",
-        // marginRight: 10,
     },
     showMoreLessButton: {
         alignItems: 'center',
