@@ -13,9 +13,9 @@ import { useUpdateEducations } from './hooks/useEducationActions';
 const UpdateEducation = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { educationItem } = route.params; // Destructure the passed parameter
+    const { educationItem } = route.params;
 
-    // Initialize the form with the education item data
+
     const { control, handleSubmit, setValue, watch } = useForm({
         defaultValues: {
             level: educationItem.level || '',
