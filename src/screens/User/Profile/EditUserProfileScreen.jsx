@@ -97,16 +97,13 @@ const EditUserProfileScreen = () => {
             };
             const { data } = await axiosInstance.post(`/user/profile/change-profile`, formData, { headers });
 
-            // Update profile image state first
             setProfileImage(data.profile_picture);
 
-            // Then update AsyncStorage and query data
             const updatedUser = { ...user, profile_picture: data.profile_picture };
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
             queryClient.setQueryData(['user'], updatedUser);
             queryClient.invalidateQueries(['user']);
 
-            console.log('Profile picture updated successfully:', data);
             return data;
         } catch (error) {
             console.error('Error updating profile picture:', error.message);

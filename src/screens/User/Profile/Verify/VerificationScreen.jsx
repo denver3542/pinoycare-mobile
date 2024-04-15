@@ -58,14 +58,14 @@ const VerificationScreen = () => {
                 }
             });
 
-            // Alert.alert('Success', 'Verification submitted successfully');
+
             navigation.navigate('Account');
             console.log(response.data);
         } catch (error) {
             console.error('Failed to submit verification:', error);
             Alert.alert('Error', 'Failed to submit verification. Please try again later.');
         } finally {
-            setLoading(false); // Ensure loading state is set to false regardless of success or failure
+            setLoading(false);
         }
     };
 

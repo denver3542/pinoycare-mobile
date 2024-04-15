@@ -3,32 +3,31 @@ import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Button, Appbar } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
-import { useUser } from '../../../../hooks/useUser'; // Import useUser hook
 import CustomTextInput from '../../../../components/CustomTextInput';
 import CustomSelectBox from '../../../../components/CustomSelectBox';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance, { getJWTHeader } from "../../../../../utils/axiosConfig";
 import { useUpdateEducations } from './hooks/useEducationActions';
 
 const UpdateEducation = () => {
     const navigation = useNavigation();
     const route = useRoute();
+    const { educationItem } = route.params; // Destructure the passed parameter
+
+    // Initialize the form with the education item data
     const { control, handleSubmit, setValue, watch } = useForm({
         defaultValues: {
-            "level": route.params.educationItem?.level || '',
-            "school_name": route.params.educationItem?.school_name || '',
-            "course": route.params.educationItem?.course || '',
-            "from": route.params.educationItem?.from || '',
-            "to": route.params.educationItem?.to || '',
+            level: educationItem.level || '',
+            school_name: educationItem.school_name || '',
+            course: educationItem.course || '',
+            from: educationItem.from || '',
+            to: educationItem.to || '',
         },
     });
 
-    const [fromValue, setFromValue] = useState(new Date(watch('from') || new Date()));
-    const [toValue, setToValue] = useState(new Date(watch('to') || new Date()));
+    const [fromValue, setFromValue] = useState(new Date(watch('from')));
+    const [toValue, setToValue] = useState(new Date(watch('to')));
 
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState(null);
@@ -36,7 +35,7 @@ const UpdateEducation = () => {
     const handleDateChange = (event, selectedDate) => {
         setShowDatePicker(false);
         if (selectedDateField && selectedDate) {
-            setValue(selectedDateField, selectedDate);
+            setValue(selectedDateField, moment(selectedDate).format('YYYY-MM-DD'));
             if (selectedDateField === 'from') {
                 setFromValue(selectedDate);
             } else {
@@ -50,13 +49,32 @@ const UpdateEducation = () => {
         setShowDatePicker(true);
     };
 
+    // Use the `useUpdateEducations` hook to handle updating the education entry
     const { mutate, isLoading } = useUpdateEducations();
 
-    const onSave = handleSubmit(async (data) => {
-        mutate(data);
+    // Handle form submission
+    const onSave = handleSubmit((data) => {
+        // Create the payload according to the provided structure
+        const payload = {
+            [data.level]: [{
+                id: educationItem.id,
+                school_name: data.school_name,
+                course: data.course,
+                from: data.from,
+                to: data.to
+            }]
+        };
+
+        // Pass the payload to the `mutate` function to update the education entry
+        mutate(payload, {
+            onSuccess: () => {
+                // Navigate back upon success
+                navigation.goBack();
+            },
+        });
     });
 
-
+    // Watch the selected level
     const selectedLevel = watch('level');
 
     return (
@@ -81,7 +99,7 @@ const UpdateEducation = () => {
                             { label: 'Elementary Education', value: 'elementary' },
                             { label: 'Junior High School', value: 'secondary' },
                             { label: 'Senior High School', value: 'secondary_k12' },
-                            { label: 'Bacalaureate', value: 'bacalaureate' },
+                            { label: 'Baccalaureate', value: 'baccalaureate' },
                             { label: "Master's Degree", value: 'master' },
                             { label: "Doctorate Degree", value: 'doctorate' },
                         ]}
@@ -94,13 +112,13 @@ const UpdateEducation = () => {
                         mode="outlined"
                         rules={{ required: 'School Name is required' }}
                     />
-                    {((selectedLevel === 'secondary_k12') || (selectedLevel === 'bacalaureate') || (selectedLevel === 'master') || (selectedLevel === 'doctorate')) && (
+                    {(selectedLevel === 'secondary_k12' || selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') && (
                         <CustomTextInput
                             control={control}
                             name="course"
                             mode="outlined"
-                            label={(selectedLevel === 'bacalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') ? 'Course' : 'Track'}
-                            rules={{ required: (selectedLevel === 'secondary_k12') ? 'Track is required' : 'Course is required' }}
+                            label={selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate' ? 'Course' : 'Track'}
+                            rules={{ required: selectedLevel === 'secondary_k12' ? 'Track is required' : 'Course is required' }}
                         />
                     )}
 
@@ -109,7 +127,6 @@ const UpdateEducation = () => {
                         onPress={() => showDatePickerForField('from')}
                     >
                         <CustomTextInput
-                            placeholder="Start date"
                             control={control}
                             mode="outlined"
                             name="from"
@@ -125,7 +142,6 @@ const UpdateEducation = () => {
                         onPress={() => showDatePickerForField('to')}
                     >
                         <CustomTextInput
-                            placeholder="End date"
                             control={control}
                             mode="outlined"
                             name="to"
