@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Divider, IconButton } from 'react-native-paper';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 const getEducationLevelName = (level) => {
     switch (level) {
@@ -15,7 +16,7 @@ const getEducationLevelName = (level) => {
         case 'baccalaureate':
             return 'Baccalaureate';
         case 'master':
-            return 'Masters Degree';
+            return 'Master\'s Degree';
         case 'doctorate':
             return 'Doctorate';
         default:
@@ -25,69 +26,76 @@ const getEducationLevelName = (level) => {
 
 const EducationItem = ({ educations }) => {
     const [showAllEducations, setShowAllEducations] = useState(false);
-    const limitedEducations = Array.isArray(educations) ? (showAllEducations ? educations : educations.slice(0, 1)) : [];
+    const limitedEducations = showAllEducations ? educations : educations.slice(0, 3);
     const navigation = useNavigation();
 
     return (
         <View style={styles.card}>
             <View style={styles.cardContent}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={styles.sectionContent}>
-                        <FontAwesome5
-                            name="graduation-cap"
-                            size={20}
-                            color="#0A3480"
-                            style={styles.cardIcon}
-                        />
+                        <FontAwesome5 name="graduation-cap" size={20} color="#0A3480" style={styles.cardIcon} />
                         <Text style={styles.cardTitle}>Education</Text>
                     </View>
                     <View style={styles.iconContainer}>
                         <IconButton
                             icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
                             size={20}
-                            selected
                             onPress={() => navigation.navigate("AddEducationScreen")}
                         />
                         <IconButton
                             icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
                             size={25}
-                            selected
                             onPress={() => navigation.navigate("EditEducation")}
                         />
                     </View>
                 </View>
-                <Divider style={styles.divider} />
+                {/* <Divider style={styles.divider} /> */}
                 <View style={styles.educationContainer}>
                     {limitedEducations.map((education, index) => (
-                        <View key={index} style={styles.education}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Text style={styles.educationTitle}>
-                                    {getEducationLevelName(education.level)}
-                                </Text>
+                        <React.Fragment key={index}>
+                            <View style={styles.education}>
+                                {education.media && education.media.length > 0 ? (
+                                    <Image
+                                        source={{ uri: education.media[0].original_url }}
+                                        style={styles.certificateImage}
+                                        resizeMode="contain"
+                                    />
+                                ) : (
+                                    <Image
+                                        source={require("../../../../../assets/images/about.jpg")}
+                                        style={styles.certificateImage}
+                                        resizeMode="contain"
+                                    />
+                                )}
+
+                                <View style={styles.educationDetails}>
+                                    <Text style={styles.educationTitle}>{getEducationLevelName(education.level)}</Text>
+                                    <Text style={styles.educationDescription}>{education.school_name}</Text>
+                                    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                                        <Text style={styles.educationDescription}>
+                                            {moment(education.from).format('MMM YYYY')} - {moment(education.to).format('MMM YYYY')}
+                                        </Text>
+                                    </View>
+                                </View>
                             </View>
-                            <Text style={styles.educationDescription}>{education.school_name}</Text>
-                            {education.course && (
-                                <Text style={styles.educationDescription}>Course: {education.course}</Text>
+
+                            {/* Add a Divider between each education item */}
+                            {index < limitedEducations.length - 1 && (
+                                <Divider style={styles.divider} />
                             )}
-                            <Text style={styles.educationDescription}>From: {education.from}</Text>
-                            <Text style={styles.educationDescription}>To: {education.to}</Text>
-                        </View>
+                        </React.Fragment>
                     ))}
                 </View>
-                {!showAllEducations && educations?.length > 3 && (
-                    <TouchableOpacity
-                        onPress={() => setShowAllEducations(true)}
-                        style={{ alignItems: 'center', marginTop: 10 }}
-                    >
-                        <Text style={{ color: '#0A3480', fontWeight: 'bold' }}>Show More</Text>
+                <Divider style={styles.divider} />
+                {educations?.length > 1 && !showAllEducations && (
+                    <TouchableOpacity onPress={() => setShowAllEducations(true)} style={styles.showMoreLessButton}>
+                        <Text style={styles.showMoreLessText}>Show More</Text>
                     </TouchableOpacity>
                 )}
                 {showAllEducations && (
-                    <TouchableOpacity
-                        onPress={() => setShowAllEducations(false)}
-                        style={{ alignItems: 'center', marginTop: 10 }}
-                    >
-                        <Text style={{ color: '#0A3480', fontWeight: 'bold' }}>Show Less</Text>
+                    <TouchableOpacity onPress={() => setShowAllEducations(false)} style={styles.showMoreLessButton}>
+                        <Text style={styles.showMoreLessText}>Show Less</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -95,60 +103,7 @@ const EducationItem = ({ educations }) => {
     );
 };
 
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-
-    },
-    sectionContainer: {
-        marginBottom: 20
-    },
-    header: {
-        flexDirection: "row",
-        backgroundColor: "#0A3480",
-        paddingVertical: 30,
-        paddingHorizontal: 15,
-        height: 200,
-    },
-    userInfoContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    headerName: {
-        color: "white",
-        fontSize: 25,
-        fontWeight: "bold",
-    },
-    headerProfession: {
-        color: "white",
-        fontSize: 16,
-    },
-    profileImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 100,
-        marginRight: 20,
-    },
-    button: {
-        marginLeft: 10
-    },
-    flexReverse: {
-        flexDirection: 'row-reverse',
-        justifyContent: 'center',
-    },
-    contentStyle: {
-        paddingHorizontal: 20,
-        paddingVertical: 30,
-        backgroundColor: "#F4F7FB",
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        marginTop: -20,
-    },
-    sectionContent: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
     card: {
         backgroundColor: "#fff",
         borderRadius: 20,
@@ -158,61 +113,64 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 2,
         elevation: 1,
+        marginBottom: 20,
     },
-
     cardContent: {
         justifyContent: 'center',
     },
-
-    education: { margin: 10 },
-    cardTitle: {
-        fontWeight: 'bold',
-        fontSize: 16,
-        color: '#0A3480'
-    },
-
-    educationDescription: {
-        fontSize: 16,
-        marginBottom: 3,
-        color: "#555",
-    },
-
-    educationTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 5,
-        color: "#333",
-    },
-    educationItem: {
-        padding: 20
+    sectionContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     cardIcon: {
         marginRight: 10,
     },
-    chip: {
-        margin: 4,
-        borderRadius: 20,
-    },
-    divider: {
-        height: 0.5,
-        marginBottom: 10,
-    },
-    educationItem: {
-        marginBottom: 10,
-    },
-    educationTitle: {
+    cardTitle: {
         fontWeight: 'bold',
-        marginBottom: 5,
-        color: "#0A3480",
-    },
-    educationDescription: {
-        marginBottom: 5,
+        fontSize: 16,
+        color: '#0A3480',
     },
     iconContainer: {
         flexDirection: 'row',
     },
-
+    divider: {
+        height: 1,
+        backgroundColor: '#DDD',
+        marginVertical: 10,
+    },
+    educationContainer: {
+        paddingVertical: 5
+    },
+    education: {
+        // marginBottom: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    educationDetails: {
+        flexDirection: 'column',
+        marginLeft: 10
+    },
+    educationTitle: {
+        fontWeight: 'bold',
+        fontSize: 15,
+        color: '#333',
+    },
+    educationDescription: {
+        fontSize: 14,
+        color: '#555',
+    },
+    certificateImage: {
+        width: 90,
+        height: "100%",
+        // marginRight: 10,
+    },
+    showMoreLessButton: {
+        alignItems: 'center',
+    },
+    showMoreLessText: {
+        color: '#0A3480',
+        fontWeight: 'bold',
+    },
 });
 
 export default EducationItem;
-

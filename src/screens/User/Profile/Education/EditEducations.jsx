@@ -1,58 +1,57 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { IconButton, Appbar, Divider } from 'react-native-paper';
+import React, { useMemo } from 'react';
+import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { IconButton, Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useUser } from '../../../../hooks/useUser';
+import moment from 'moment';
 
 const ChangeEducationScreen = () => {
     const navigation = useNavigation();
     const { user } = useUser();
 
     const getEducationLevelName = (level) => {
-        switch (level) {
-            case 'elementary':
-                return 'Elementary Education';
-            case 'secondary':
-                return 'Junior High School';
-            case 'secondary_k12':
-                return 'Senior High School';
-            case 'baccalaureate':
-                return 'Baccalaureate';
-            case 'master':
-                return 'Masters Degree';
-            case 'doctorate':
-                return 'Doctorate';
-            default:
-                return '';
-        }
+        const educationLevels = {
+            'elementary': 'Elementary Education',
+            'secondary': 'Junior High School',
+            'secondary_k12': 'Senior High School',
+            'baccalaureate': 'Baccalaureate',
+            'master': 'Masters Degree',
+            'doctorate': 'Doctorate'
+        };
+        return educationLevels[level] || '';
     };
 
-    const renderItem = ({ item }) => (
+    const renderItem = useMemo(() => ({ item }) => (
         <View style={styles.educationContainer}>
-            <View style={styles.levelContainer}>
-                <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
-                <IconButton
-                    icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
-                    size={25}
-                    selected
-                    onPress={() => {
-                        console.log("Navigating to UpdateEducation with educationItem:", item);
-                        navigation.navigate("UpdateEducation", { educationItem: item });
-                    }}
-
+            <View style={styles.row}>
+                <Image
+                    source={item.media && item.media.length > 0 ? { uri: item.media[0].original_url } : require("../../../../../assets/images/about.jpg")}
+                    style={styles.certificateImage}
+                    resizeMode="contain"
                 />
+                <View style={styles.educationContent}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
+                        <IconButton
+                            icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                            size={20} // Change size if needed
+                            onPress={() => navigation.navigate("UpdateEducation", { educationItem: item })}
+                            style={styles.iconButton} // Apply the new style
+                        />
+                    </View>
+                    <Text style={styles.educationDetail}>
+                        {item.school_name.length > 25 ? `${item.school_name.slice(0, 25)}...` : item.school_name}
+                    </Text>
 
+                    <Text style={styles.educationDetail}>{moment(item.from).format('MMM YYYY')} - {moment(item.to).format('MMM YYYY')}</Text>
+                </View>
             </View>
-            <Text style={styles.educationDetail}>School: {item.school_name}</Text>
-            {item.course && <Text style={styles.educationDetail}>Course: {item.course}</Text>}
-            <Text style={styles.educationDetail}>From: {item.from}</Text>
-            <Text style={styles.educationDetail}>To: {item.to}</Text>
         </View>
-    );
+    ), [navigation]);
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.flexContainer}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
                 <Appbar.Content title="Edit Education" />
@@ -69,35 +68,31 @@ const ChangeEducationScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    flexContainer: {
+        flex: 1,
+    },
     container: {
         flex: 1,
     },
-
-    levelContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white',
-        marginLeft: 10,
-    },
-    content: {
-        flex: 1,
-        backgroundColor: '#F4F7FB',
-        padding: 20,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#0A3480',
-    },
     educationContainer: {
         backgroundColor: 'white',
-        padding: 15,
+        padding: 14,
         marginVertical: 4,
         borderRadius: 10,
-        paddingVertical: 8,
-        elevation: 1
+        elevation: 1,
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    educationContent: {
+        marginLeft: 20,
+        flex: 1,
+    },
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     educationTitle: {
         fontSize: 16,
@@ -107,6 +102,16 @@ const styles = StyleSheet.create({
     educationDetail: {
         fontSize: 14,
         color: '#555',
+    },
+    certificateImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+    },
+    iconButton: {
+        padding: 0,
+        margin: 0,
+        marginLeft: 10,
     },
 });
 

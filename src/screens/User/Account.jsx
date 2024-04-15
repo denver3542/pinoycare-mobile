@@ -64,9 +64,7 @@ const Account = ({ activeNav }) => {
                   <Image
                     source={
                       user && user.media[0]
-                        ? { uri: user.media[0].original_url }
-                        : require("../../../assets/images/sample-profile.jpg")
-                    }
+                        ? { uri: user.media[0].original_url } : require("../../../assets/images/sample-profile.jpg")}
                     style={styles.profileImage}
                   />
 

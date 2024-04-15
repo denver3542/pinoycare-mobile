@@ -42,7 +42,6 @@ const VerificationScreen = () => {
             }
         });
 
-        // Check if the minimum number of images is met
         if (imageCount < 2) {
             setLoading(false);
             Alert.alert('Insufficient Images', 'Please submit at least 2 IDs Front and Back.');
