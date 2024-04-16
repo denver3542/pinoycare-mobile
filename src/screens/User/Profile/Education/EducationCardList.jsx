@@ -59,13 +59,11 @@ const EducationItem = ({ educations }) => {
                                     <Image
                                         source={{ uri: education.media[0].original_url }}
                                         style={styles.certificateImage}
-                                        resizeMode="contain"
                                     />
                                 ) : (
                                     <Image
                                         source={require("../../../../../assets/images/about.jpg")}
                                         style={styles.certificateImage}
-                                        resizeMode="contain"
                                     />
                                 )}
 
@@ -144,11 +142,11 @@ const styles = StyleSheet.create({
     education: {
         // marginBottom: 20,
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'center',
     },
     educationDetails: {
         flexDirection: 'column',
-        marginLeft: 10
+        marginLeft: 15
     },
     educationTitle: {
         fontWeight: 'bold',
@@ -159,8 +157,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     certificateImage: {
-        width: 90,
-        height: "100%",
+        width: 80,
+        height: 80,
+        borderRadius: 10
     },
     showMoreLessButton: {
         alignItems: 'center',

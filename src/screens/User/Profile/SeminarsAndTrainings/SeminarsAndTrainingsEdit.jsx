@@ -4,44 +4,39 @@ import { Appbar, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../../../hooks/useUser';
+import moment from 'moment';
 
 const SeminarsAndTrainingsEdit = () => {
     const navigation = useNavigation();
     const { user } = useUser();
 
-
     const renderItem = ({ item }) => {
         let description = item.description;
-        if (description.length > 100) {
-            description = description.substring(0, 100) + '...';
+        if (description.length > 25) {
+            description = description.substring(0, 25) + '...';
         }
 
         return (
             <View style={styles.itemContainer}>
-                {/* <View style={styles.imageContainer}>
+                <View style={styles.imageContainer}>
                     <Image
                         source={item.media.length > 0 ? { uri: item.media[0].original_url } : require('../../../../../assets/images/sample-profile.jpg')}
                         style={styles.mediaImage}
                     />
-                </View> */}
+                </View>
                 <View style={styles.textContainer}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.textTitle}>{item.facilitated_by}</Text>
-                        <IconButton selected icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={25} onPress={() => handleEdit(item)} />
+                        <IconButton style={styles.iconButton} icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={20} onPress={() => handleEdit(item)} />
                     </View>
                     <Text style={styles.descriptionText}>{description}</Text>
-                    <View style={{ flexDirection: 'column', }}>
-                        <Text style={styles.contentText}>Start: {item.date_started}</Text>
-                        <Text style={styles.contentText}>End: {item.date_completed}</Text>
-                    </View>
+                    <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_completed).format('MMM YYYY')}</Text>
                 </View>
             </View>
         );
     };
 
-
-    const handleEdit = (item) => {
-    };
+    const handleEdit = (item) => { };
 
     return (
         <View style={styles.container}>
@@ -66,24 +61,22 @@ const styles = StyleSheet.create({
     itemContainer: {
         flexDirection: 'row',
         backgroundColor: 'white',
-        padding: 10,
+        padding: 5,
         marginVertical: 4,
-        marginHorizontal: 0,
+        marginHorizontal: 8,
         borderRadius: 10,
         elevation: 1,
-        alignItems: 'center'
+        // alignItems: 'center',
     },
-    imageContainer: {
-        marginRight: 10,
-    },
+    imageContainer: {},
     mediaImage: {
-        width: 100,
-        height: 100,
+        width: 80,
+        height: 80,
         borderRadius: 10,
     },
     textContainer: {
         flex: 1,
-        margin: 8
+        marginHorizontal: 8,
     },
     titleContainer: {
         flexDirection: 'row',
@@ -98,12 +91,18 @@ const styles = StyleSheet.create({
     descriptionText: {
         fontSize: 14,
         textAlign: 'justify',
-
     },
     contentText: {
         fontSize: 13,
         color: '#666',
+        marginTop: 4,
+    },
+    iconButton: {
+        padding: 0,
+        margin: 0,
+        marginLeft: 10,
     },
 });
+
 
 export default SeminarsAndTrainingsEdit;

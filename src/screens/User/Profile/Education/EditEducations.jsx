@@ -28,16 +28,15 @@ const ChangeEducationScreen = () => {
                 <Image
                     source={item.media && item.media.length > 0 ? { uri: item.media[0].original_url } : require("../../../../../assets/images/about.jpg")}
                     style={styles.certificateImage}
-                    resizeMode="contain"
                 />
                 <View style={styles.educationContent}>
                     <View style={styles.headerRow}>
                         <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
                         <IconButton
                             icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
-                            size={20} // Change size if needed
+                            size={20}
                             onPress={() => navigation.navigate("UpdateEducation", { educationItem: item })}
-                            style={styles.iconButton} // Apply the new style
+                            style={styles.iconButton}
                         />
                     </View>
                     <Text style={styles.educationDetail}>
@@ -51,42 +50,37 @@ const ChangeEducationScreen = () => {
     ), [navigation]);
 
     return (
-        <View style={styles.flexContainer}>
+        <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
                 <Appbar.Content title="Edit Education" />
             </Appbar.Header>
-            <View style={styles.container}>
-                <FlatList
-                    data={user.educations}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            </View>
+            <FlatList
+                data={user.educations}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}
+            />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    flexContainer: {
-        flex: 1,
-    },
     container: {
         flex: 1,
     },
     educationContainer: {
         backgroundColor: 'white',
-        padding: 14,
+        padding: 5,
         marginVertical: 4,
+        marginHorizontal: 8,
         borderRadius: 10,
         elevation: 1,
     },
     row: {
         flexDirection: 'row',
-        alignItems: 'center',
     },
     educationContent: {
-        marginLeft: 20,
+        marginLeft: 15,
         flex: 1,
     },
     headerRow: {
@@ -104,10 +98,12 @@ const styles = StyleSheet.create({
         color: '#555',
     },
     certificateImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 8,
+        width: 80,
+        height: 80,
+        borderRadius: 10,
     },
+
+
     iconButton: {
         padding: 0,
         margin: 0,

@@ -34,21 +34,26 @@ const SeminarsTrainings = ({ trainings }) => {
                     />
                 </View>
             </View>
-            <Divider style={styles.divider} />
-            <View>
+            <View style={styles.container}>
                 {limitedTrainings.map((training, index) => (
                     <React.Fragment key={index}>
                         <View style={styles.trainingItem}>
                             <View style={styles.imageContainer}>
-                                <Image
-                                    source={training.certificate ? { uri: training.media[0].original_url } : require("../../../../../assets/images/about.jpg")}
-                                    style={styles.certificateImage}
-                                    resizeMode="contain"
-                                />
+                                {training.media && training.media.length > 0 ? (
+                                    <Image
+                                        source={{ uri: training.media[0].original_url }}
+                                        style={styles.certificateImage}
+                                    />
+                                ) : (
+                                    <Image
+                                        source={require("../../../../../assets/images/about.jpg")}
+                                        style={styles.certificateImage}
+                                    />
+                                )}
                             </View>
                             <View style={styles.textContainer}>
                                 <Text style={styles.trainingTitle}>{training.facilitated_by}</Text>
-                                <Text style={styles.trainingDescription}> {training.description.length > 50 ? `${training.description.slice(0, 50)}...` : training.description}</Text>
+                                <Text style={styles.trainingDescription}>{training.description.length > 50 ? `${training.description.slice(0, 50)}...` : training.description}</Text>
                                 <Text style={styles.trainingDuration}>
                                     {moment(training.date_started).format('MMM YYYY')} - {moment(training.date_completed).format('MMM YYYY')}
                                 </Text>
@@ -59,7 +64,7 @@ const SeminarsTrainings = ({ trainings }) => {
                         )}
                     </React.Fragment>
                 ))}
-
+                <Divider style={styles.divider} />
                 {trainings.length > 3 && (
                     <TouchableOpacity
                         onPress={() => setShowAllSeminarsAndTrainings(!showAllSeminarsAndTrainings)}
@@ -111,27 +116,24 @@ const styles = StyleSheet.create({
     divider: {
         height: 1,
         backgroundColor: "#ddd",
-        marginBottom: 15,
+        marginBottom: 10,
     },
     trainingItem: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 15,
+        marginBottom: 10
     },
     imageContainer: {
-        width: 90,
-        height: 90,
-        marginRight: 10,
-        borderRadius: 8,
-        overflow: 'hidden',
+
     },
     certificateImage: {
-        width: '100%',
-        height: '100%',
+        width: 80,
+        height: 80,
+        borderRadius: 10
     },
     textContainer: {
         flex: 1,
-        justifyContent: 'center',
+        marginHorizontal: 8,
+        marginLeft: 15
     },
     trainingTitle: {
         fontWeight: "bold",
@@ -147,7 +149,6 @@ const styles = StyleSheet.create({
     },
     showMoreButton: {
         alignItems: 'center',
-        marginTop: 10,
     },
     showMoreText: {
         color: '#0A3480',

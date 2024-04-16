@@ -8,7 +8,10 @@ async function addSeminarsAndTrainings(dataToUpdate, user) {
         throw new Error("User not found");
     }
 
-    const headers = getJWTHeader(user);
+    const headers = {
+        ...getJWTHeader(user),
+        'Content-Type': 'multipart/form-data',
+    };
 
     try {
         const { data } = await axiosInstance.post("/user/profile/store-trainings", dataToUpdate, { headers });
@@ -17,24 +20,12 @@ async function addSeminarsAndTrainings(dataToUpdate, user) {
             ...user,
             ...data.user,
         };
-
         await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
-        return data.user;
+        return updatedUser;
     } catch (error) {
-        const status = error.response?.status;
-        if (status === 422) {
-            console.error(`Failed to add seminars and trainings: ${JSON.stringify(error.response.data)}`);
-            throw new Error(`Failed to add seminars and trainings: ${JSON.stringify(error.response.data)}`);
-        } else if (status === 500) {
-            console.error(`Internal Server Error: ${error.message}`);
-            throw new Error(`Internal Server Error: ${error.message}`);
-        } else {
-            console.error(`Unexpected error: ${error.message}`);
-            throw new Error(`Unexpected error: ${error.message}`);
-        }
+        throw error;
     }
 }
-
 
 export const useSeminarsAndTrainings = () => {
     const queryClient = useQueryClient();
