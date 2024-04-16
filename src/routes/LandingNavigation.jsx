@@ -17,7 +17,9 @@ import EditEducation from "../screens/User/Profile/Education/EditEducations";
 import UpdateEducation from "../screens/User/Profile/Education/UpdateEducation";
 import AddEducationScreen from "../screens/User/Profile/AddEducationScreen";
 import SeminarsAndTrainingsEdit from "../screens/User/Profile/SeminarsAndTrainings/SeminarsAndTrainingsEdit";
+import SeminarsAndTrainingsUpdate from "../screens/User/Profile/SeminarsAndTrainings/SeminarsAndTrainingsUpdate";
 import AddSeminarsAndTrainings from "../screens/User/Profile/SeminarsAndTrainings/AddSeminarsAndTrainings";
+import AddWorkExperience from "../screens/User/Profile/WorkExperience/AddWorkExperience";
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTroughVerificationScreen";
 import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
@@ -64,19 +66,10 @@ function LandingNavigation() {
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />
               <Stack.Screen name="Job" component={Job} />
-              <Stack.Screen
-                name="ForgotPassword"
-                component={ForgotPasswordScreen}
-              />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
               <Stack.Screen name="Professional" component={Professional} />
-              <Stack.Screen
-                name="IndividualEmployer"
-                component={IndividualEmployer}
-              />
-              <Stack.Screen
-                name="OrganizationEmployer"
-                component={OrganizationEmployer}
-              />
+              <Stack.Screen name="IndividualEmployer" component={IndividualEmployer} />
+              <Stack.Screen name="OrganizationEmployer" component={OrganizationEmployer} />
             </>
           ) : user.role === "admin" ? (
             <></>
@@ -99,48 +92,20 @@ function LandingNavigation() {
               <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
               <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
               <Stack.Screen name="MessageList" component={MessageList} />
-              <Stack.Screen
-                name="ChatConversation"
-                component={ChatConversation}
-              />
-              <Stack.Screen
-                name="AddEducationScreen"
-                component={AddEducationScreen}
-              />
+              <Stack.Screen name="ChatConversation" component={ChatConversation} />
+              <Stack.Screen name="AddEducationScreen" component={AddEducationScreen} />
               <Stack.Screen name="EditEducation" component={EditEducation} />
-              <Stack.Screen
-                name="UpdateEducation"
-                component={UpdateEducation}
-              />
-              <Stack.Screen
-                name="EditUserProfileScreen"
-                component={EditUserProfileScreen}
-              />
-              <Stack.Screen
-                name="AddSeminarsAndTrainings"
-                component={AddSeminarsAndTrainings}
-              />
-              <Stack.Screen
-                name="SeminarsAndTrainingsEdit"
-                component={SeminarsAndTrainingsEdit}
-              />
+              <Stack.Screen name="UpdateEducation" component={UpdateEducation} />
+              <Stack.Screen name="EditUserProfileScreen" component={EditUserProfileScreen} />
+              <Stack.Screen name="AddSeminarsAndTrainings" component={AddSeminarsAndTrainings} />
+              <Stack.Screen name="SeminarsAndTrainingsEdit" component={SeminarsAndTrainingsEdit} />
+              <Stack.Screen name="SeminarsAndTrainingsUpdate" component={SeminarsAndTrainingsUpdate} />
+              <Stack.Screen name="AddWorkExperience" component={AddWorkExperience} />
               <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-              <Stack.Screen
-                name="VerificationScreen"
-                component={VerificationScreen}
-              />
-              <Stack.Screen
-                name="WalkThroughVerificationScreen"
-                component={WalkThroughVerificationScreen}
-              />
-              <Stack.Screen
-                name="NotificationsList"
-                component={NotificationsList}
-              />
-              <Stack.Screen
-                name="Questionnaire"
-                component={JobApplicationQuestionnaire}
-              />
+              <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
+              <Stack.Screen name="WalkThroughVerificationScreen" component={WalkThroughVerificationScreen} />
+              <Stack.Screen name="NotificationsList" component={NotificationsList} />
+              <Stack.Screen name="Questionnaire" component={JobApplicationQuestionnaire} />
             </>
           )}
         </Stack.Navigator>

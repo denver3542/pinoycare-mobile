@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { IconButton, Divider } from "react-native-paper";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
 const WorkExperience = ({ work_experiences }) => {
@@ -22,14 +22,17 @@ const WorkExperience = ({ work_experiences }) => {
                     />
                     <Text style={styles.cardTitle}>Work Experience</Text>
                 </View>
-                <IconButton
-                    icon="plus-box"
-                    size={20}
-                    selected
-                    onPress={() => { }}
-                />
+                <View style={styles.iconContainer}>
+                    <IconButton
+                        icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
+                        onPress={() => navigation.navigate("AddWorkExperience")}
+                    />
+                    <IconButton
+                        icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                        onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
+                    />
+                </View>
             </View>
-            <Divider style={styles.divider} />
             <View>
                 {experience.map((experience, index) => (
                     <View key={index} style={styles.experience}>
@@ -188,6 +191,9 @@ const styles = StyleSheet.create({
     },
     educationDescription: {
         marginBottom: 5,
+    },
+    iconContainer: {
+        flexDirection: 'row',
     },
 
 });

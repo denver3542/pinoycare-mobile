@@ -49,12 +49,10 @@ const UpdateEducation = () => {
         setShowDatePicker(true);
     };
 
-    // Use the `useUpdateEducations` hook to handle updating the education entry
+
     const { mutate, isLoading } = useUpdateEducations();
 
-    // Handle form submission
     const onSave = handleSubmit((data) => {
-        // Create the payload according to the provided structure
         const payload = {
             [data.level]: [{
                 id: educationItem.id,
@@ -64,17 +62,14 @@ const UpdateEducation = () => {
                 to: data.to
             }]
         };
-
-        // Pass the payload to the `mutate` function to update the education entry
         mutate(payload, {
             onSuccess: () => {
-                // Navigate back upon success
+
                 navigation.goBack();
             },
         });
     });
 
-    // Watch the selected level
     const selectedLevel = watch('level');
 
     return (

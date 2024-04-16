@@ -52,3 +52,58 @@ export const useSeminarsAndTrainings = () => {
         }
     );
 };
+
+
+
+async function updateSeminarsAndTrainings(dataToEdit, user) {
+    if (!user) {
+        throw new Error("User Not Found")
+    }
+    const headers = {
+        ...getJWTHeader(user),
+        'Content-Type': 'multipart/form-data',
+    };
+
+    try {
+        const { data } = await axiosInstance.post("/user/profile/update-trainings", dataToEdit, { headers });
+
+        const updatedUser = {
+            ...user,
+            ...data.user,
+        };
+        await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
+        return updatedUser;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+
+export const useUpdateTrainingsAndSeminars = () => {
+    const queryClient = useQueryClient();
+    const navigation = useNavigation();
+
+    return useMutation(
+        async (dataToEdit) => {
+            const userStr = await AsyncStorage.getItem("upcare_user");
+            const user = userStr ? JSON.parse(userStr) : null;
+            if (!user) throw new Error("User session not found.");
+            return await updateSeminarsAndTrainings(dataToEdit, user);
+        },
+        {
+            onSuccess: (updatedUser) => {
+                queryClient.setQueryData(['user'], updatedUser);
+                navigation.goBack();
+            },
+            onError: (error) => {
+                console.error("Failed to update education:", error);
+            },
+            onSettled: () => {
+                queryClient.invalidateQueries(['user']);
+            },
+        }
+    );
+}
+
+

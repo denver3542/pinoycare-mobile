@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, StyleSheet, View, FlatList, Image } from 'react-native';
 import { Appbar, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -10,33 +10,33 @@ const SeminarsAndTrainingsEdit = () => {
     const navigation = useNavigation();
     const { user } = useUser();
 
-    const renderItem = ({ item }) => {
-        let description = item.description;
-        if (description.length > 25) {
-            description = description.substring(0, 25) + '...';
-        }
+    const renderItem = useMemo(() => {
+        return ({ item }) => {
+            let description = item.description;
+            if (description.length > 25) {
+                description = description.substring(0, 25) + '...';
+            }
 
-        return (
-            <View style={styles.itemContainer}>
-                <View style={styles.imageContainer}>
-                    <Image
-                        source={item.media.length > 0 ? { uri: item.media[0].original_url } : require('../../../../../assets/images/sample-profile.jpg')}
-                        style={styles.mediaImage}
-                    />
-                </View>
-                <View style={styles.textContainer}>
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.textTitle}>{item.facilitated_by}</Text>
-                        <IconButton style={styles.iconButton} icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={20} onPress={() => handleEdit(item)} />
+            return (
+                <View style={styles.itemContainer}>
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={item.media.length > 0 ? { uri: item.media[0].original_url } : require('../../../../../assets/images/sample-profile.jpg')}
+                            style={styles.mediaImage}
+                        />
                     </View>
-                    <Text style={styles.descriptionText}>{description}</Text>
-                    <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_completed).format('MMM YYYY')}</Text>
+                    <View style={styles.textContainer}>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.textTitle}>{item.facilitated_by}</Text>
+                            <IconButton style={styles.iconButton} icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={20} onPress={() => navigation.navigate("SeminarsAndTrainingsUpdate", { seminarsItem: item })} />
+                        </View>
+                        <Text style={styles.descriptionText}>{description}</Text>
+                        <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_completed).format('MMM YYYY')}</Text>
+                    </View>
                 </View>
-            </View>
-        );
-    };
-
-    const handleEdit = (item) => { };
+            );
+        };
+    }, [navigation]);
 
     return (
         <View style={styles.container}>
@@ -103,6 +103,5 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
 });
-
 
 export default SeminarsAndTrainingsEdit;
