@@ -10,14 +10,13 @@ import { useNavigation } from '@react-navigation/native';
 import { useSeminarsAndTrainings } from './hooks/useSeminarsActions';
 
 const SeminarsAndTrainingsForm = () => {
-    const { user } = useUser(); // Accessing user data
+    const { user } = useUser();
     const navigation = useNavigation();
     const { mutate, isLoading, isError, error } = useSeminarsAndTrainings();
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [dateFieldName, setDateFieldName] = useState(null);
     const [certificateUri, setCertificateUri] = useState(null);
 
-    // Initialize form with default values from user data
     const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
         defaultValues: {
             facilitated_by: user?.training?.facilitated_by || '',
@@ -28,7 +27,6 @@ const SeminarsAndTrainingsForm = () => {
         },
     });
 
-    // Handle date changes
     const handleDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || new Date();
         setShowDatePicker(false);

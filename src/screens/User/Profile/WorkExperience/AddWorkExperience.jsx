@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar, Button, Divider } from 'react-native-paper';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useWorkExperience } from './hooks/useWorkExperience';
@@ -13,26 +13,23 @@ const AddWorkExperience = () => {
     const { user } = useUser();
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
-            company_name: '',
-            position: '',
-            date_started: '',
-            date_ended: '',
-            salary: '',
-            contact_person: '',
-            contact_phone: '',
-            contact_position: '',
+            experiences: [{
+                company_name: user?.company_name || '',
+                position: user?.position || '',
+                date_started: user?.date_started || '',
+                date_ended: user?.date_ended || '',
+                salary: user?.salary || '',
+                contact_person: user?.contact_person || '',
+                contact_phone: user?.contact_phone || '',
+                contact_position: user?.contact_position || '',
+            }],
         },
     });
 
     const { mutate, isLoading } = useWorkExperience();
 
-    const onSubmit = handleSubmit((data) => {
-        mutate(data, {
-            onError: (error) => {
-                console.error('Failed to save work experience:', error);
-                // Handle error (e.g., show a notification to the user)
-            },
-        });
+    const onSave = handleSubmit((data) => {
+        mutate(data);
     });
 
     return (
@@ -45,73 +42,83 @@ const AddWorkExperience = () => {
             <View style={styles.container}>
                 <CustomTextInput
                     control={control}
-                    label="Company"
+                    label="Company Name"
                     mode="outlined"
-                    name="company_name"
-                    error={errors.company_name}
+                    name="experiences[0].company_name"
+                    rules={{ required: 'Company Name is required' }}
+                    error={errors.experiences && errors.experiences[0]?.company_name}
                 />
 
                 <CustomTextInput
                     control={control}
                     label="Position"
                     mode="outlined"
-                    name="position"
-                    error={errors.position}
-                />
-
-                <CustomTextInput
-                    control={control}
-                    label="Salary"
-                    mode="outlined"
-                    name="salary"
-                    error={errors.salary}
+                    name="experiences[0].position"
+                    rules={{ required: 'Position is required' }}
+                    error={errors.experiences && errors.experiences[0]?.position}
                 />
 
                 <CustomTextInput
                     control={control}
                     label="Date Started"
                     mode="outlined"
-                    name="date_started"
-                    error={errors.date_started}
+                    name="experiences[0].date_started"
+                    rules={{ required: 'Start Date is required' }}
+                    error={errors.experiences && errors.experiences[0]?.date_started}
                 />
 
                 <CustomTextInput
                     control={control}
-                    label="End Date"
+                    label="Date Ended"
                     mode="outlined"
-                    name="date_ended"
-                    error={errors.date_ended}
+                    name="experiences[0].date_ended"
+                    rules={{ required: 'End Date is required' }}
+                    error={errors.experiences && errors.experiences[0]?.date_ended}
                 />
 
-                <Divider />
+                <CustomTextInput
+                    control={control}
+                    label="Salary"
+                    mode="outlined"
+                    name="experiences[0].salary"
+                    rules={{ required: 'Salary is required' }}
+                    error={errors.experiences && errors.experiences[0]?.salary}
+                />
+
+                <Divider style={styles.divider} />
+
+                <Text style={styles.text}>Contact Person Details</Text>
 
                 <CustomTextInput
                     control={control}
                     label="Contact Person"
                     mode="outlined"
-                    name="contact_person"
-                    error={errors.contact_person}
+                    name="experiences[0].contact_person"
+                    rules={{ required: 'Contact Person is required' }}
+                    error={errors.experiences && errors.experiences[0]?.contact_person}
                 />
 
                 <CustomTextInput
                     control={control}
                     label="Contact Phone"
                     mode="outlined"
-                    name="contact_phone"
-                    error={errors.contact_phone}
+                    name="experiences[0].contact_phone"
+                    rules={{ required: 'Contact Phone is required' }}
+                    error={errors.experiences && errors.experiences[0]?.contact_phone}
                 />
 
                 <CustomTextInput
                     control={control}
                     label="Contact Position"
                     mode="outlined"
-                    name="contact_position"
-                    error={errors.contact_position}
+                    name="experiences[0].contact_position"
+                    rules={{ required: 'Contact Position is required' }}
+                    error={errors.experiences && errors.experiences[0]?.contact_position}
                 />
 
                 <Button
                     mode="contained"
-                    onPress={onSubmit}
+                    onPress={onSave}
                     loading={isLoading}
                     disabled={isLoading}
                     style={styles.saveButton}
@@ -131,6 +138,14 @@ const styles = StyleSheet.create({
     saveButton: {
         marginTop: 20,
     },
+    divider: {
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    text: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    }
 });
 
 export default AddWorkExperience;

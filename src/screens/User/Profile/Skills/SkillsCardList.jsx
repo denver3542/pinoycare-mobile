@@ -17,13 +17,13 @@ const SkillsChip = ({ skills }) => {
         <View style={styles.card}>
             <View style={styles.header}>
                 <View style={styles.sectionHeader}>
-                    <FontAwesome5
+                    {/* <FontAwesome5
                         name="star"
                         size={18}
                         color="#0A3480"
                         style={styles.cardIcon}
                         solid
-                    />
+                    /> */}
                     <Text style={styles.cardTitle}>Skills</Text>
                 </View>
                 <View style={styles.iconContainer}>
@@ -36,7 +36,7 @@ const SkillsChip = ({ skills }) => {
 
                 </View>
             </View>
-            <Divider style={styles.divider} />
+            {/* <Divider style={styles.divider} /> */}
             <View style={styles.skillsContainer}>
                 {displayedSkills.map((skillItem, index) => (
                     <Chip key={index} onPress={() => { }} style={styles.chip}>
@@ -62,7 +62,7 @@ const SkillsChip = ({ skills }) => {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: "#fff",
-        borderRadius: 20,
+        borderRadius: 10,
         marginVertical: 8,
         padding: 15,
         elevation: 1,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 20,
         color: '#0A3480'
     },
     cardIcon: {

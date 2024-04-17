@@ -133,13 +133,13 @@ const Account = ({ activeNav }) => {
             <View style={styles.card}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View style={styles.sectionContent}>
-                  <FontAwesome5
+                  {/* <FontAwesome5
                     name="user-circle"
                     size={20}
                     color="#0A3480"
                     style={styles.cardIcon}
                     solid
-                  />
+                  /> */}
                   <Text style={styles.cardTitle}>About Me</Text>
                 </View>
                 <IconButton
@@ -149,9 +149,9 @@ const Account = ({ activeNav }) => {
                   onPress={() => navigation.navigate("AboutMeScreen")}
                 />
               </View>
-              <Divider
+              {/* <Divider
                 style={styles.divider}
-              />
+              /> */}
               <View style={styles.contentContainer}>
                 <Text style={styles.cardDescription}>{user?.about_me}</Text>
               </View>
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 10,
     elevation: 1,
   },
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   contentContainer: { margin: 10 },
   cardTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 20,
     color: '#0A3480'
   },
 

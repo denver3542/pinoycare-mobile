@@ -20,6 +20,8 @@ import SeminarsAndTrainingsEdit from "../screens/User/Profile/SeminarsAndTrainin
 import SeminarsAndTrainingsUpdate from "../screens/User/Profile/SeminarsAndTrainings/SeminarsAndTrainingsUpdate";
 import AddSeminarsAndTrainings from "../screens/User/Profile/SeminarsAndTrainings/AddSeminarsAndTrainings";
 import AddWorkExperience from "../screens/User/Profile/WorkExperience/AddWorkExperience";
+import EditWorkExperience from "../screens/User/Profile/WorkExperience/EditWorkExperience";
+import UpdateWorkExperience from "../screens/User/Profile/WorkExperience/UpdateWorkExperience";
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTroughVerificationScreen";
 import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
@@ -101,6 +103,8 @@ function LandingNavigation() {
               <Stack.Screen name="SeminarsAndTrainingsEdit" component={SeminarsAndTrainingsEdit} />
               <Stack.Screen name="SeminarsAndTrainingsUpdate" component={SeminarsAndTrainingsUpdate} />
               <Stack.Screen name="AddWorkExperience" component={AddWorkExperience} />
+              <Stack.Screen name="EditWorkExperience" component={EditWorkExperience} />
+              <Stack.Screen name="UpdateWorkExperience" component={UpdateWorkExperience} />
               <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
               <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
               <Stack.Screen name="WalkThroughVerificationScreen" component={WalkThroughVerificationScreen} />

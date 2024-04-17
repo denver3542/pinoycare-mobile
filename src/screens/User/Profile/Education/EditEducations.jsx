@@ -25,10 +25,10 @@ const ChangeEducationScreen = () => {
     const renderItem = useMemo(() => ({ item }) => (
         <View style={styles.educationContainer}>
             <View style={styles.row}>
-                <Image
+                {/* <Image
                     source={item.media && item.media.length > 0 ? { uri: item.media[0].original_url } : require("../../../../../assets/images/about.jpg")}
                     style={styles.certificateImage}
-                />
+                /> */}
                 <View style={styles.educationContent}>
                     <View style={styles.headerRow}>
                         <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
@@ -39,11 +39,13 @@ const ChangeEducationScreen = () => {
                             style={styles.iconButton}
                         />
                     </View>
-                    <Text style={styles.educationDetail}>
-                        {item.school_name.length > 25 ? `${item.school_name.slice(0, 25)}...` : item.school_name}
-                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+                        <Text style={styles.educationDetail}>
+                            {item.school_name.length > 25 ? `${item.school_name.slice(0, 25)}...` : item.school_name}
+                        </Text>
 
-                    <Text style={styles.educationDetail}>{moment(item.from).format('MMM YYYY')} - {moment(item.to).format('MMM YYYY')}</Text>
+                        <Text style={styles.educationDetail}>{moment(item.from).format('MMM YYYY')} - {moment(item.to).format('MMM YYYY')}</Text>
+                    </View>
                 </View>
             </View>
         </View>
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     },
     educationContainer: {
         backgroundColor: 'white',
-        padding: 5,
+        padding: 10,
         marginVertical: 4,
         marginHorizontal: 8,
         borderRadius: 10,
@@ -80,7 +82,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     educationContent: {
-        marginLeft: 15,
         flex: 1,
     },
     headerRow: {
