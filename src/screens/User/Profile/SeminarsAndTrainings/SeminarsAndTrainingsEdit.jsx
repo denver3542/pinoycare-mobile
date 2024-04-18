@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Text, StyleSheet, View, FlatList, Image } from 'react-native';
+import { Text, StyleSheet, View, FlatList } from 'react-native';
 import { Appbar, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -10,33 +10,42 @@ const SeminarsAndTrainingsEdit = () => {
     const navigation = useNavigation();
     const { user } = useUser();
 
-    const renderItem = useMemo(() => {
-        return ({ item }) => {
-            let description = item.description;
-            if (description.length > 25) {
-                description = description.substring(0, 25) + '...';
-            }
+    const renderItem = useMemo(
+        () => ({ item }) => {
+            const truncatedDescription =
+                item.description.length > 25
+                    ? `${item.description.substring(0, 25)}...`
+                    : item.description;
 
             return (
                 <View style={styles.itemContainer}>
-                    <View style={styles.imageContainer}>
-                        <Image
-                            source={item.media.length > 0 ? { uri: item.media[0].original_url } : require('../../../../../assets/images/sample-profile.jpg')}
-                            style={styles.mediaImage}
-                        />
-                    </View>
                     <View style={styles.textContainer}>
-                        <View style={styles.titleContainer}>
-                            <Text style={styles.textTitle}>{item.facilitated_by}</Text>
-                            <IconButton style={styles.iconButton} icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={20} onPress={() => navigation.navigate("SeminarsAndTrainingsUpdate", { seminarsItem: item })} />
+                        <View style={styles.headerContainer}>
+                            <Text style={styles.titleText}>{item.facilitated_by}</Text>
+                            <IconButton
+                                icon={() => (
+                                    <MaterialIcons name="edit" size={20} color="#0A3480" />
+                                )}
+                                onPress={() =>
+                                    navigation.navigate('SeminarsAndTrainingsUpdate', {
+                                        seminarsItem: item,
+                                    })
+                                }
+                                size={20}
+                                style={styles.editButton}
+                            />
                         </View>
-                        <Text style={styles.descriptionText}>{description}</Text>
-                        <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_completed).format('MMM YYYY')}</Text>
+                        <Text style={styles.descriptionText}>{truncatedDescription}</Text>
+                        <Text style={styles.dateText}>
+                            {moment(item.date_started).format('MMM YYYY')} -{' '}
+                            {moment(item.date_completed).format('MMM YYYY')}
+                        </Text>
                     </View>
                 </View>
             );
-        };
-    }, [navigation]);
+        },
+        [navigation]
+    );
 
     return (
         <View style={styles.container}>
@@ -48,6 +57,7 @@ const SeminarsAndTrainingsEdit = () => {
                 data={user.trainings}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
+                contentContainerStyle={styles.listContainer}
             />
         </View>
     );
@@ -58,49 +68,42 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
-    itemContainer: {
-        flexDirection: 'row',
-        backgroundColor: 'white',
-        padding: 5,
-        marginVertical: 4,
-        marginHorizontal: 8,
-        borderRadius: 10,
-        elevation: 1,
-        // alignItems: 'center',
+    listContainer: {
+        padding: 15,
     },
-    imageContainer: {},
-    mediaImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 10,
+    itemContainer: {
+        backgroundColor: '#FFF',
+        padding: 8,
+        marginBottom: 12,
+        elevation: 1,
     },
     textContainer: {
         flex: 1,
-        marginHorizontal: 8,
+        paddingLeft: 12,
     },
-    titleContainer: {
+    headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        // marginBottom: 8,
     },
-    textTitle: {
+    titleText: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#0A3480',
     },
     descriptionText: {
         fontSize: 14,
-        textAlign: 'justify',
+        color: '#333',
+        // marginBottom: 4,
     },
-    contentText: {
-        fontSize: 13,
+    dateText: {
+        fontSize: 14,
         color: '#666',
-        marginTop: 4,
     },
-    iconButton: {
+    editButton: {
         padding: 0,
         margin: 0,
-        marginLeft: 10,
     },
 });
 
