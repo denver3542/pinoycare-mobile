@@ -39,6 +39,7 @@
       }
     },
     "plugins": [
+      "expo-updates",
       [
         "expo-build-properties",
         {
