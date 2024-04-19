@@ -16,8 +16,8 @@ function Feeds({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.Content title="Feeds" titleStyle={styles.title} />
+      <Appbar.Header style={{ elevation: 1 }}>
+        <Appbar.Content title="Feeds" />
       </Appbar.Header>
       <FlatList
         data={feeds}
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     color: "#0A3480",
     alignSelf: "center",
   },
+
 });
 
 export default Feeds;

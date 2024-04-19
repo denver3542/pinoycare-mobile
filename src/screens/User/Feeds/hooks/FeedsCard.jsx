@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 import moment from "moment";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { Divider, IconButton, Modal, Portal, Button } from "react-native-paper";
 import { useReactToPost } from "./useFeeds";
 
 const MAX_LENGTH = 300;
+const { width: screenWidth } = Dimensions.get("window");
+const modalImageWidth = screenWidth * 0.9; // 90% of screen width
+const modalImageHeight = modalImageWidth; // Assuming a square image
 
 const FeedsCard = ({ feed }) => {
   const [showFullContent, setShowFullContent] = useState(false);
@@ -83,7 +93,10 @@ const FeedsCard = ({ feed }) => {
 
       <Portal>
         <Modal visible={isImageModalVisible} onDismiss={hideFeedImageModal} contentContainerStyle={styles.modal}>
-          <Image source={{ uri: feed.image }} style={styles.modalImage} />
+          <Image
+            source={{ uri: feed.image }}
+            style={{ width: modalImageWidth, height: modalImageHeight, borderRadius: 10 }}
+          />
           <Button mode="contained" onPress={hideFeedImageModal} style={styles.modalButton}>
             Close
           </Button>
@@ -144,12 +157,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
-  },
-  modalImage: {
-    width: "100%",
-    height: 350,
-    borderRadius: 10,
-    marginBottom: 10,
   },
   modalButton: {
     marginTop: 10,

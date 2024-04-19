@@ -104,14 +104,14 @@ const JobListings = () => {
   };
   return (
     <View style={styles.container}>
-      <Appbar.Header style={{ elevation: 1, flexDirection: 'column', height: 120, backgroundColor: '#0A3480' }}>
+      <Appbar.Header style={{ elevation: 1, flexDirection: 'column', height: 120 }}>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           {/* <Appbar.Action icon="" onPress={() => { }} /> */}
-          <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'white' }} />
+          <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'black' }} />
           <View style={{ flexDirection: 'row' }}>
-            <Appbar.Action icon="bell-outline" color="white" onPress={() => { }} />
-            <Appbar.Action icon="dots-vertical" color="white" onPress={() => navigation.navigate("SettingsScreen")} />
+            <Appbar.Action icon="bell-outline" color="#0A3480" onPress={() => { }} />
+            <Appbar.Action icon="dots-vertical" color="#0A3480" onPress={() => navigation.navigate("SettingsScreen")} />
           </View>
         </View>
         <Searchbar
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     borderRadius: 8,
-    backgroundColor: 'white',
+    backgroundColor: '#E4EAF6',
     paddingHorizontal: 0,
     marginVertical: 8,
     marginHorizontal: 8,
