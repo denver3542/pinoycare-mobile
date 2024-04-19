@@ -1,24 +1,45 @@
-import React, { useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import useJobs from "./hook/useJobs";
-import Spinner from "react-native-loading-spinner-overlay";
-import Job from "./Job";
-import { Appbar, Searchbar, useTheme } from "react-native-paper";
-import moment from "moment";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useLayoutEffect } from 'react';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput } from 'react-native';
+import useJobs from './hook/useJobs';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { Appbar, Card, Paragraph, IconButton, useTheme, TouchableRipple, Searchbar } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import moment from 'moment';
+import HTMLView from 'react-native-htmlview';
+import { FontAwesome5 } from "@expo/vector-icons";
+import { color } from '@rneui/base';
 
-const Jobs = () => {
+
+const JobListings = () => {
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
+  const [savedJobs, setSavedJobs] = useState({});
+  const handleSave = (jobId) => {
+    setSavedJobs((prevSavedJobs) => ({
+      ...prevSavedJobs,
+      [jobId]: !prevSavedJobs[jobId],
+    }));
+    console.log("save job");
+  };
+
+  const [descriptionVisibility, setDescriptionVisibility] = useState({});
+
+  const toggleDescriptionVisibility = (jobId) => {
+    setDescriptionVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [jobId]: !prevVisibility[jobId],
+    }));
+  };
+
+  const truncateDescription = (description, jobId, limit = 150) => {
+    if (description.length <= limit || descriptionVisibility[jobId]) {
+      return description;
+    }
+    return description.slice(0, limit) + '...';
+  };
 
   const onChangeSearch = (query) => setSearchQuery(query);
 
@@ -27,106 +48,185 @@ const Jobs = () => {
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) || [];
+
+  const navigateToJobDetails = (job) => {
+    navigation.navigate('Job', { job });
+  };
 
   const renderJob = ({ item }) => {
-    const postedDate = moment(item.date_posted).format("LL");
-    const navigateToJobDetails = () =>
-      navigation.navigate("Job", { job: item });
+    const descriptionLimit = 150;
+
+    const isTruncated = item.description.length > descriptionLimit;
 
     return (
-      <TouchableOpacity onPress={navigateToJobDetails}>
-        <Job job={item} />
-      </TouchableOpacity>
+      <TouchableRipple onPress={() => navigateToJobDetails(item)} style={styles.card}>
+        <Card.Content style={styles.cardContentRow}>
+          {
+            item.media && item.media.length > 0 && item.media[0].original_url ? (
+              <Image source={{ uri: item.media[0].original_url }} style={styles.jobImage} />
+            ) : (
+              <View style={styles.placeholderCard} />
+            )
+          }
+
+          <View style={styles.cardContentText}>
+            <View style={styles.titleRow}>
+              <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.company}>{item.company}</Text>
+              </View>
+              <IconButton
+                icon={savedJobs[item.id] ? "heart" : "heart-outline"}
+                onPress={() => handleSave(item.id)}
+                selected
+              />
+            </View>
+            {/* <Paragraph style={styles.company}>{item.company}</Paragraph> */}
+            <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
+            <Paragraph style={styles.location}>
+              <MaterialIcons name="location-on" size={14} color="#0A3480" />
+              {` ${item.location}`}
+            </Paragraph>
+            <HTMLView
+              value={truncateDescription(item.description, item.id, descriptionLimit)}
+              style={styles.description}
+            />
+            {isTruncated && (
+              <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
+                {descriptionVisibility[item.id] ? 'Read less' : 'Read more'}
+              </Text>
+            )}
+          </View>
+        </Card.Content>
+      </TouchableRipple>
     );
   };
   return (
-    <View style={{ flex: 1 }}>
-      {isLoading && <Spinner isLoading={isLoading} />}
+    <View style={styles.container}>
+      <Appbar.Header style={{ elevation: 1, flexDirection: 'column', height: 120, backgroundColor: '#0A3480' }}>
 
-      <Appbar.Header>
-        <Appbar.Content title="Find Jobs" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          {/* <Appbar.Action icon="" onPress={() => { }} /> */}
+          <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'white' }} />
+          <View style={{ flexDirection: 'row' }}>
+            <Appbar.Action icon="bell-outline" color="white" onPress={() => { }} />
+            <Appbar.Action icon="dots-vertical" color="white" onPress={() => navigation.navigate("SettingsScreen")} />
+          </View>
+        </View>
+        <Searchbar
+          placeholder="Search for jobs"
+          onChangeText={onChangeSearch}
+          value={searchQuery}
+          style={styles.searchBar}
+        />
+
       </Appbar.Header>
 
-      <Searchbar
-        placeholder="Search jobs"
-        onChangeText={onChangeSearch}
-        value={searchQuery}
-        style={styles.searchBar}
-      />
-      <FlatList
-        data={filteredJobs}
-        renderItem={renderJob}
-        keyExtractor={(item) => item.uuid}
-        contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            tintColor={colors.primary}
-          />
-        }
-      />
-      {/* {data &&
-          data.map((job, i) => {
-            return (
-              <View key={i}>
-                
-              </View>
-            );
-          })} */}
+      {isLoading ? (
+        <Spinner visible={isLoading} />
+      ) : (
+        <FlatList
+          data={filteredJobs}
+          renderItem={renderJob}
+          keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              colors={[colors.primary]}
+            />
+          }
+          contentContainerStyle={styles.listContentContainer}
+        />
+      )}
     </View>
   );
 };
-
+// style={{ backgroundColor: colors.primary }}
 const styles = StyleSheet.create({
-  searchBar: {
-    margin: 10,
-    borderRadius: 8,
-  },
-  listContainer: {
-    padding: 10,
-    paddingTop: 0,
-  },
+  container: { flex: 1, backgroundColor: "#F4F7FB" },
   card: {
-    backgroundColor: "white",
-    borderRadius: 8,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    height: "auto",
-    marginVertical: 10,
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-    elevation: 7,
-    position: "relative",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    // flex: 1,
+    marginTop: 8,
+    backgroundColor: 'white',
     paddingVertical: 15,
+    borderRadius: 8,
+    elevation: 1,
   },
-  activeCard: {
-    // Active styles
-    scale: 1,
-    opacity: 1,
+  cardContentRow: {
+    flexDirection: 'row',
   },
-  textContainer: {
-    flexDirection: "row",
-    gap: 10,
-    backgroundColor: "#fff",
-    borderRadius: 10,
+  cardContentText: {
+    flex: 1,
+    paddingLeft: 10,
   },
 
+  listContentContainer: {
+    paddingVertical: 10,
+    marginVertical: 0,
+    paddingHorizontal: 8
+    // backgroundColor: 'white'
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 20,
+
+  },
+  postedDate: {
+    marginBottom: 4,
+    color: '#888',
+    fontSize: 12,
+  },
+  location: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    fontSize: 12,
+  },
+  description: {
+    marginTop: 5,
+  },
   company: {
-    flexDirection: "row",
-    margin: "0 auto",
-    gap: 20,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
-  JobContent: {
-    flexDirection: "column",
-    marginTop: 20,
+  readMore: {
+    color: '#0A3480',
+    marginTop: 5,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    fontSize: 14,
   },
+  jobImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 6,
+  },
+  placeholderCard: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: 'gray',
+  },
+  searchBar: {
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    paddingHorizontal: 0,
+    marginVertical: 8,
+    marginHorizontal: 8,
+    bottom: 5
+
+  },
+
+  titleStyle: {
+    fontWeight: 'bold'
+  }
 });
-export default Jobs;
+
+export default JobListings;

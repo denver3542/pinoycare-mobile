@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#0A3480'
+    // color: '#0A3480'
   },
 
   educationDescription: {

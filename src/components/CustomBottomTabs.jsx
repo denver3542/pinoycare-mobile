@@ -11,11 +11,12 @@ const Tab = createBottomTabNavigator();
 
 const tabScreens = [
   { name: "Feeds", component: Feeds, iconName: "list" },
-  { name: "Find Jobs", component: Jobs, iconName: "search" },
+  { name: "Find Jobs", component: Jobs, iconName: "search", },
   { name: "Dashboard", component: Dashboard, iconName: "dashboard" },
   { name: "Application", component: Applications, iconName: "assignment" },
   { name: "Account", component: Account, iconName: "account-circle" },
 ];
+
 function CustomBottomTabs() {
   return (
     <Tab.Navigator
@@ -31,12 +32,12 @@ function CustomBottomTabs() {
             tabBarIcon: ({ color, size }) => (
               <MaterialIcons name={screen.iconName} color={color} size={size} />
             ),
+            ...(screen.headerSearchBarOptions && { headerSearchBarOptions: screen.headerSearchBarOptions }),
           }}
         />
       ))}
     </Tab.Navigator>
   );
 }
-
 
 export default CustomBottomTabs;
