@@ -110,8 +110,8 @@ const JobListings = () => {
           {/* <Appbar.Action icon="" onPress={() => { }} /> */}
           <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'black' }} />
           <View style={{ flexDirection: 'row' }}>
-            <Appbar.Action icon="bell-outline" color="#0A3480" onPress={() => { }} />
-            <Appbar.Action icon="dots-vertical" color="#0A3480" onPress={() => navigation.navigate("SettingsScreen")} />
+            <Appbar.Action icon="bell-outline" color="black" onPress={() => { }} />
+            <Appbar.Action icon="dots-vertical" color="black" onPress={() => navigation.navigate("SettingsScreen")} />
           </View>
         </View>
         <Searchbar
