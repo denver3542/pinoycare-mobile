@@ -1,7 +1,7 @@
 import React, { useState, useRef, ref } from "react";
 import Modal from "react-native-modal";
 import ImageView from "react-native-image-viewing";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, NetInfo } from "react-native";
 import { Divider, IconButton, useTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useReactToPost } from "./useFeeds";
@@ -9,7 +9,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import moment from "moment";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
-import Toast from 'react-native-toast-message';
+
 
 
 
@@ -20,11 +20,8 @@ const FeedsCard = ({ feed }) => {
   const [selectedReaction, setSelectedReaction] = useState(null);
   const [showFullContent, setShowFullContent] = useState(false);
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
   const reactToPostMutation = useReactToPost();
   const formattedDate = moment(feed.published_at).fromNow();
-  const bottomSheetModalRef = useRef(null);
-  const snapPoints = ['25%', '48%', '100%'];
 
   const handleReact = async (reaction) => {
     try {
@@ -41,7 +38,7 @@ const FeedsCard = ({ feed }) => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") throw new Error("Permission to access media library denied");
 
-      const filename = FileSystem.cacheDirectory + "download.jpg";
+      const filename = FileSystem.documentDirectory + "${feed.name}.jpg";
       const downloadResult = await FileSystem.downloadAsync(feed.image, filename);
       if (downloadResult.status === 200) {
         await MediaLibrary.saveToLibraryAsync(downloadResult.uri);
@@ -62,9 +59,6 @@ const FeedsCard = ({ feed }) => {
     setModalVisible(!isModalVisible);
   };
 
-  const handlePresentModal = () => {
-    setIsMoreModalVisible(true);
-  };
 
   return (
     <View style={styles.container}>
@@ -92,7 +86,7 @@ const FeedsCard = ({ feed }) => {
             <Text style={styles.toggleButton}>{showFullContent ? "Show Less" : "Show More"}</Text>
           </TouchableOpacity>
         )}
-        <Divider style={styles.divider} />
+        <Divider style={{ marginVertical: 10 }} />
         <IconButton
           icon={selectedReaction === "love" ? "heart" : "heart-outline"}
           size={24}
