@@ -19,11 +19,11 @@ const SeminarsTrainings = ({ trainings }) => {
                 </View>
                 <View style={styles.iconContainer}>
                     <IconButton
-                        icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="add" size={25} color="#334567" />}
                         onPress={() => navigation.navigate("AddSeminarsAndTrainings")}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="edit" size={20} color="#334567" />}
                         onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
                     />
                 </View>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: "bold",
         fontSize: 20,
-        color: "#0A3480",
+        color: "#334567",
     },
     iconContainer: {
         flexDirection: 'row',

@@ -7,7 +7,7 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 const SkillsChip = ({ skills }) => {
     const navigation = useNavigation();
     const [showAllSkills, setShowAllSkills] = useState(false);
-    const displayedSkills = Array.isArray(skills) ? (showAllSkills ? skills : skills.slice(0, 8)) : [];
+    const displayedSkills = Array.isArray(skills) ? (showAllSkills ? skills : skills.slice(0, 10)) : [];
 
     const handlePress = () => {
         setShowAllSkills(!showAllSkills);
@@ -39,7 +39,7 @@ const SkillsChip = ({ skills }) => {
             {/* <Divider style={styles.divider} /> */}
             <View style={styles.skillsContainer}>
                 {displayedSkills.map((skillItem, index) => (
-                    <Chip key={index} onPress={() => { }} style={styles.chip}>
+                    <Chip mode='outlined' key={index} onPress={() => { }} style={styles.chip}>
                         <Text style={styles.skillText}>{skillItem.skill_name}</Text>
                     </Chip>
                 ))}
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
+        color: '#334567'
     },
     cardIcon: {
         marginRight: 10,
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
     },
     skillText: {
         fontSize: 10,
+        color: '#556789'
     },
     iconContainer: {
         flexDirection: 'row',

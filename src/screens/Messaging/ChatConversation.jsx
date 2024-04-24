@@ -11,7 +11,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { Appbar, Avatar, Card, Title, Paragraph } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { fDate, fTimestamp } from "../../../utils/formatTime";
 import moment from "moment";
 import useMessaging, { useConvo } from "./hook/useMessaging";
@@ -181,7 +181,7 @@ const ChatConversation = () => {
           onChangeText={setText}
         />
         <TouchableOpacity onPress={sendMessage}>
-          <Icon name="send" size={24} />
+          <MaterialCommunityIcons name="send" size={24} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

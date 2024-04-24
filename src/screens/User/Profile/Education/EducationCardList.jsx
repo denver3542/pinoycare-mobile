@@ -46,12 +46,12 @@ const EducationItem = ({ educations }) => {
                 </View>
                 <View style={styles.iconContainer}>
                     <IconButton
-                        icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="add" size={25} color='#334567' />}
                         size={20}
                         onPress={navigateToAddEducation}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="edit" size={20} color='#334567' />}
                         size={25}
                         onPress={navigateToEditEducation}
                     />
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        color: '#0A3480',
+        color: '#334567',
     },
     iconContainer: {
         flexDirection: 'row',
@@ -137,14 +137,15 @@ const styles = StyleSheet.create({
     educationTitle: {
         fontWeight: 'bold',
         fontSize: 15,
-        color: '#0A3480',
+        color: '#556789',
         marginBottom: 4,
     },
     educationDescription: {
         fontSize: 14,
+        color: '#556789'
     },
     educationDuration: {
-        color: '#555',
+        color: '#556789',
     },
     showMoreLessButton: {
         alignItems: 'center',

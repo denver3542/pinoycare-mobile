@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // import { ThemeProvider, createTheme } from "@rneui/themed";
 import {
   PaperProvider,
@@ -14,11 +14,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/queryClient";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import * as SplashScreen from "expo-splash-screen";
-
+import 'react-native-gesture-handler';
 import "expo-dev-client";
 import { useEffect } from "react";
 import { UserApplicationsProvider } from "./src/components/useUserApplications";
-
 SplashScreen.preventAutoHideAsync();
 
 registerTranslation("en-GB", enGB);
@@ -101,13 +100,16 @@ export default function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <PaperProvider theme={theme}>
-        <UserApplicationsProvider>
-          <LandingNavigation />
-        </UserApplicationsProvider>
-      </PaperProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <PaperProvider theme={theme}>
+          <UserApplicationsProvider>
+            <LandingNavigation />
+          </UserApplicationsProvider>
+        </PaperProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
+
   );
 }
 
