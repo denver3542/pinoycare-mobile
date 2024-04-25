@@ -22,7 +22,7 @@ const WorkExperience = ({ work_experiences }) => {
                         onPress={() => navigation.navigate("AddWorkExperience")}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="border-color" size={18} color="#0A3480" />}
                         onPress={() => navigation.navigate("EditWorkExperience")}
                     />
                 </View>
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        color: '#0A3480',
+        // color: '#0A3480',
     },
     iconContainer: {
         flexDirection: 'row',
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     educationTitle: {
         fontWeight: 'bold',
         fontSize: 16,
-        color: '#0A3480',
+        // color: '#0A3480',
     },
     row: {
         flexDirection: 'row',

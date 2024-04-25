@@ -1,14 +1,36 @@
-import React, { useMemo } from 'react';
-import { Text, StyleSheet, View, FlatList, Image } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Appbar, Divider, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../../../hooks/useUser';
 import moment from 'moment';
 
+const LoadMoreButton = ({ onPress, loading }) => {
+    return (
+        <TouchableOpacity style={styles.loadMoreButton} onPress={onPress} disabled={loading}>
+            {loading ? (
+                <ActivityIndicator size="small" color="black" />
+            ) : (
+                <Text style={styles.loadMoreButtonText}>Load More</Text>
+            )}
+        </TouchableOpacity>
+    );
+};
+
 const EditWorkExperience = () => {
     const navigation = useNavigation();
     const { user } = useUser();
+    const [visibleItems, setVisibleItems] = useState(5);
+    const [loading, setLoading] = useState(false);
+
+    const loadMore = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setVisibleItems(prevVisibleItems => prevVisibleItems + 5);
+            setLoading(false);
+        }, 1000);
+    };
 
     const renderItem = useMemo(() => {
         return ({ item }) => {
@@ -26,7 +48,7 @@ const EditWorkExperience = () => {
                             <Text style={styles.textTitle}>{item.position}</Text>
                             <IconButton style={styles.iconButton} icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={20} onPress={() => navigation.navigate("UpdateWorkExperience", { experienceItem: item })} />
                         </View>
-                        <View style={styles.row}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
                             <Text style={styles.descriptionText}>{item.company_name}</Text>
                             <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_ended).format('MMM YYYY')}</Text>
                         </View>
@@ -51,9 +73,14 @@ const EditWorkExperience = () => {
                 <Appbar.Content title="Edit Work Experience" />
             </Appbar.Header>
             <FlatList
-                data={user.work_experiences}
+                data={user.work_experiences.slice(0, visibleItems)}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={
+                    user.work_experiences.length > visibleItems ? (
+                        <LoadMoreButton onPress={loadMore} loading={loading} />
+                    ) : null
+                }
             />
         </View>
     );
@@ -111,7 +138,16 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-    }
+    },
+    loadMoreButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+    },
+    loadMoreButtonText: {
+        color: '#556789',
+        fontWeight: 'bold',
+    },
 });
 
 export default EditWorkExperience;

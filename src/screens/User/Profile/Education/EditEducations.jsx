@@ -1,14 +1,36 @@
-import React, { useMemo } from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { IconButton, Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useUser } from '../../../../hooks/useUser';
 import moment from 'moment';
 
+const LoadMoreButton = ({ onPress, loading }) => {
+    return (
+        <TouchableOpacity style={styles.loadMoreButton} onPress={onPress} disabled={loading}>
+            {loading ? (
+                <ActivityIndicator size="small" color="black" />
+            ) : (
+                <Text style={styles.loadMoreButtonText}>Load More</Text>
+            )}
+        </TouchableOpacity>
+    );
+};
+
 const ChangeEducationScreen = () => {
     const navigation = useNavigation();
     const { user } = useUser();
+    const [visibleItems, setVisibleItems] = useState(5);
+    const [loading, setLoading] = useState(false);
+
+    const loadMore = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setVisibleItems(prevVisibleItems => prevVisibleItems + 5);
+            setLoading(false);
+        }, 1000);
+    };
 
     const getEducationLevelName = (level) => {
         const educationLevels = {
@@ -25,10 +47,6 @@ const ChangeEducationScreen = () => {
     const renderItem = useMemo(() => ({ item }) => (
         <View style={styles.educationContainer}>
             <View style={styles.row}>
-                {/* <Image
-                    source={item.media && item.media.length > 0 ? { uri: item.media[0].original_url } : require("../../../../../assets/images/about.jpg")}
-                    style={styles.certificateImage}
-                /> */}
                 <View style={styles.educationContent}>
                     <View style={styles.headerRow}>
                         <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
@@ -58,9 +76,14 @@ const ChangeEducationScreen = () => {
                 <Appbar.Content title="Edit Education" />
             </Appbar.Header>
             <FlatList
-                data={user.educations}
+                data={user.educations.slice(0, visibleItems)}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={
+                    user.educations.length > visibleItems ? (
+                        <LoadMoreButton onPress={loadMore} loading={loading} />
+                    ) : null
+                }
             />
         </View>
     );
@@ -109,6 +132,15 @@ const styles = StyleSheet.create({
         padding: 0,
         margin: 0,
         marginLeft: 10,
+    },
+    loadMoreButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+    },
+    loadMoreButtonText: {
+        color: '#556789',
+        fontWeight: 'bold',
     },
 });
 

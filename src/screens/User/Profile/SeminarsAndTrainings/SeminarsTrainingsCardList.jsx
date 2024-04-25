@@ -23,7 +23,7 @@ const SeminarsTrainings = ({ trainings }) => {
                         onPress={() => navigation.navigate("AddSeminarsAndTrainings")}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="edit" size={20} color="#334567" />}
+                        icon={() => <MaterialIcons name="border-color" size={18} color="#334567" />}
                         onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
                     />
                 </View>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: "bold",
         fontSize: 20,
-        color: "#334567",
+        // color: "#334567",
     },
     iconContainer: {
         flexDirection: 'row',
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     trainingTitle: {
         fontWeight: "bold",
         fontSize: 16,
-        color: '#0A3480',
+        // color: '#0A3480',
         marginBottom: 4,
     },
     trainingDescription: {
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     trainingDuration: {
-        color: "#555",
+        // color: "#555",
     },
     showMoreButton: {
         alignItems: 'center',

@@ -1,14 +1,39 @@
-import React, { useMemo } from 'react';
-import { Text, StyleSheet, View, FlatList } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Text, StyleSheet, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Appbar, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../../../hooks/useUser';
 import moment from 'moment';
 
+const LoadMoreButton = ({ onPress, loading }) => {
+    return (
+        <TouchableOpacity style={styles.loadMoreButton} onPress={onPress} disabled={loading}>
+            {loading ? (
+                <ActivityIndicator size="small" color="black" />
+            ) : (
+                <Text style={styles.loadMoreButtonText}>Show More</Text>
+            )}
+        </TouchableOpacity>
+    );
+};
+
 const SeminarsAndTrainingsEdit = () => {
     const navigation = useNavigation();
     const { user } = useUser();
+    const [visibleItems, setVisibleItems] = useState(5);
+    const [loading, setLoading] = useState(false);
+
+    const loadMore = () => {
+
+        setLoading(true);
+        setTimeout(() => {
+            setVisibleItems(prevVisibleItems => prevVisibleItems + 5);
+            setLoading(false);
+        }, 1000);
+    };
+
+    const hasMoreItems = user.trainings.length > visibleItems;
 
     const renderItem = useMemo(
         () => ({ item }) => {
@@ -54,10 +79,15 @@ const SeminarsAndTrainingsEdit = () => {
                 <Appbar.Content title="Edit Seminars" />
             </Appbar.Header>
             <FlatList
-                data={user.trainings}
+                data={user.trainings.slice(0, visibleItems)}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
                 contentContainerStyle={styles.listContainer}
+                ListFooterComponent={
+                    hasMoreItems ? (
+                        <LoadMoreButton onPress={loadMore} loading={loading} />
+                    ) : null
+                }
             />
         </View>
     );
@@ -69,13 +99,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F5F5',
     },
     listContainer: {
-        padding: 15,
+        padding: 8,
     },
     itemContainer: {
         backgroundColor: '#FFF',
         padding: 8,
-        marginBottom: 12,
+        marginBottom: 8,
         elevation: 1,
+        borderRadius: 14
     },
     textContainer: {
         flex: 1,
@@ -104,6 +135,16 @@ const styles = StyleSheet.create({
     editButton: {
         padding: 0,
         margin: 0,
+    },
+    loadMoreButton: {
+        // backgroundColor: '#0A3480',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+    },
+    loadMoreButtonText: {
+        color: '#556789',
+        fontWeight: 'bold',
     },
 });
 

@@ -7,13 +7,7 @@ import useFeeds from "./hooks/useFeeds";
 function Feeds({ navigation }) {
   const { colors } = useTheme();
   const { data: feeds, isRefetching, refetch } = useFeeds();
-  const [snackbar, setSnackbar] = useState({ visible: false, message: "" });
 
-  const showSnackbar = (message) => {
-    setSnackbar({ visible: true, message });
-  };
-
-  const { visible, message } = snackbar;
 
   return (
     <View style={styles.container}>
@@ -22,7 +16,7 @@ function Feeds({ navigation }) {
       </Appbar.Header>
       <FlatList
         data={feeds}
-        renderItem={({ item }) => <FeedsCard feed={item} showSnackbar={showSnackbar} />}
+        renderItem={({ item }) => <FeedsCard feed={item} />}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContainer}
         refreshControl={
@@ -30,13 +24,6 @@ function Feeds({ navigation }) {
         }
       />
 
-      <Snackbar
-        visible={visible}
-        onDismiss={() => setSnackbar({ ...snackbar, visible: false })}
-        duration={3000} // Adjust duration as needed
-      >
-        {message}
-      </Snackbar>
     </View>
   );
 }

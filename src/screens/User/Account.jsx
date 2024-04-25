@@ -143,7 +143,7 @@ const Account = ({ activeNav }) => {
                   <Text style={styles.cardTitle}>About Me</Text>
                 </View>
                 <IconButton
-                  icon={() => <MaterialIcons name="edit" size={20} color="#334567" />}
+                  icon={() => <MaterialIcons name="border-color" size={18} color="#0A3480" />}
                   size={20}
                   selected
                   onPress={() => navigation.navigate("AboutMeScreen")}
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#334567'
+    // color: '#334567'
   },
 
   educationDescription: {
@@ -297,11 +297,8 @@ const styles = StyleSheet.create({
     color: "#556789",
   },
 
-  educationTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 5,
-    color: "#333",
+  cardDescription: {
+
   },
   educationItem: {
     padding: 20

@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform } from 'react-native';
 import useJobs from './hook/useJobs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Appbar, Card, Paragraph, IconButton, useTheme, TouchableRipple, Searchbar } from 'react-native-paper';
@@ -9,7 +9,6 @@ import moment from 'moment';
 import HTMLView from 'react-native-htmlview';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { color } from '@rneui/base';
-
 
 const JobListings = () => {
   const { colors } = useTheme();
@@ -114,12 +113,14 @@ const JobListings = () => {
             <Appbar.Action icon="dots-vertical" color="black" onPress={() => navigation.navigate("SettingsScreen")} />
           </View>
         </View>
+
         <Searchbar
           placeholder="Search for jobs"
           onChangeText={onChangeSearch}
           value={searchQuery}
-          style={styles.searchBar}
+          style={Platform.OS === 'ios' ? styles.iosSearchBar : styles.searchBar}
         />
+
 
       </Appbar.Header>
 
@@ -222,6 +223,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     bottom: 5
 
+  },
+  iosSearchBar: {
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: '#E5E5EA',
+    paddingHorizontal: 0,
+    marginVertical: 8,
+    marginHorizontal: 8,
+    bottom: 5
   },
 
   titleStyle: {

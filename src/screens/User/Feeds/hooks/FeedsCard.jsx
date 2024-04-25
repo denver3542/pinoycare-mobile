@@ -2,7 +2,7 @@ import React, { useState, useRef, ref } from "react";
 import Modal from "react-native-modal";
 import ImageView from "react-native-image-viewing";
 import { Image, StyleSheet, Text, TouchableOpacity, View, NetInfo } from "react-native";
-import { Divider, IconButton, useTheme } from "react-native-paper";
+import { Divider, IconButton, useTheme, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useReactToPost } from "./useFeeds";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
@@ -79,13 +79,15 @@ const FeedsCard = ({ feed }) => {
 
         <Text style={styles.content}>
           {showFullContent || feed.content.length <= MAX_LENGTH ? feed.content : `${feed.content.substring(0, MAX_LENGTH)}...`}
+          {feed.content.length > MAX_LENGTH && (
+            <TouchableOpacity onPress={() => setShowFullContent(!showFullContent)}>
+              <Text style={styles.toggleButton}>{showFullContent ? "" : "Show More"}</Text>
+            </TouchableOpacity>
+          )}
         </Text>
 
-        {feed.content.length > MAX_LENGTH && (
-          <TouchableOpacity onPress={() => setShowFullContent(!showFullContent)}>
-            <Text style={styles.toggleButton}>{showFullContent ? "Show Less" : "Show More"}</Text>
-          </TouchableOpacity>
-        )}
+
+
         <Divider style={{ marginVertical: 10 }} />
         <IconButton
           icon={selectedReaction === "love" ? "heart" : "heart-outline"}
@@ -94,60 +96,64 @@ const FeedsCard = ({ feed }) => {
           onPress={() => handleReact("love")}
         />
 
-        <ImageView
-          images={[
-            {
-              uri: feed.image,
-            },
-          ]}
-          imageIndex={0}
-          animationType="fade"
-          onRequestClose={() => setIsImageModalVisible(false)}
-          swipeToCloseEnabled={true}
-          visible={isImageModalVisible}
-          HeaderComponent={() => (
+        <Portal>
+          <ImageView
+            images={[
+              {
+                uri: feed.image,
+              },
+            ]}
+            presentationStyle="pageSheet"
+            imageIndex={0}
+            animationType="fade"
+            onRequestClose={() => setIsImageModalVisible(false)}
+            swipeToCloseEnabled={true}
 
-            <View>
-              <View style={styles.containerImageView}>
-                <TouchableOpacity onPress={() => setIsImageModalVisible(false)}>
-                  <MaterialIcons name="close" size={24} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={toggleModal}>
-                  <MaterialIcons name="more-vert" size={24} color="white" style={{ marginLeft: 20 }} />
-                </TouchableOpacity>
-              </View>
-            </View>
+            visible={isImageModalVisible}
+            HeaderComponent={() => (
 
-          )}
-          FooterComponent={() => (
-            <View style={styles.footerContainer}>
-              <Modal
-                animationType="slide"
-                transparent={true}
-                isVisible={isModalVisible}
-                avoidKeyboard={true}
-                hasBackdrop={true}
-                backdropColor="transparent"
-                coverScreen={true}
-                animationIn="slideInUp"
-                animationInTiming={300}
-                animationOut="slideOutDown"
-                animationOutTiming={300}
-                onBackdropPress={toggleModal}
-                style={styles.modal}
-              >
-                <View style={{ justifyContent: 'flex-end' }}>
-                  <View style={styles.modalContent}>
-                    <TouchableOpacity onPress={handleDownload} style={{ flexDirection: 'row' }}>
-                      <MaterialIcons name="file-download" size={25} color="black" style={{ marginRight: 10 }} />
-                      <Text style={{ fontSize: 16 }}>Save Image to Phone</Text>
-                    </TouchableOpacity>
-                  </View>
+              <View>
+                <View style={styles.containerImageView}>
+                  <TouchableOpacity onPress={() => setIsImageModalVisible(false)}>
+                    <MaterialIcons name="close" size={24} color="white" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={toggleModal}>
+                    <MaterialIcons name="more-vert" size={24} color="white" style={{ marginLeft: 20 }} />
+                  </TouchableOpacity>
                 </View>
-              </Modal>
-            </View>
-          )}
-        />
+              </View>
+
+            )}
+            FooterComponent={() => (
+              <View style={styles.footerContainer}>
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  isVisible={isModalVisible}
+                  avoidKeyboard={true}
+                  hasBackdrop={true}
+                  backdropColor="transparent"
+                  coverScreen={true}
+                  animationIn="slideInUp"
+                  animationInTiming={300}
+                  animationOut="slideOutDown"
+                  animationOutTiming={300}
+                  onBackdropPress={toggleModal}
+                  style={styles.modal}
+                >
+                  <View style={{ justifyContent: 'flex-end' }}>
+                    <View style={styles.modalContent}>
+                      <TouchableOpacity onPress={handleDownload} style={{ flexDirection: 'row' }}>
+                        <MaterialIcons name="file-download" size={25} color="black" style={{ marginRight: 10 }} />
+                        <Text style={{ fontSize: 16 }}>Save Image to Phone</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
+              </View>
+            )}
+          />
+        </Portal>
 
       </View>
     </View>

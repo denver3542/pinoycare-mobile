@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        color: '#334567'
+        // color: '#334567'
     },
     cardIcon: {
         marginRight: 10,
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     },
     skillText: {
         fontSize: 10,
-        color: '#556789'
+        // color: '#556789'
     },
     iconContainer: {
         flexDirection: 'row',
