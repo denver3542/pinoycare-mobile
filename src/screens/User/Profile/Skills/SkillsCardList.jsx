@@ -47,7 +47,7 @@ const SkillsChip = ({ skills }) => {
 
             {!showAllSkills && skills && skills.length > 5 && (
                 <TouchableOpacity onPress={handlePress}>
-                    <Text style={styles.showAllButton}>Show All</Text>
+                    <Text style={styles.showAllButton}>Show More</Text>
                 </TouchableOpacity>
             )}
             {showAllSkills && (
