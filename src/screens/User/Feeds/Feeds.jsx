@@ -11,8 +11,8 @@ function Feeds({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={{ elevation: 1 }}>
-        <Appbar.Content title="Feeds" />
+      <Appbar.Header style={{ elevation: 1, backgroundColor: '#0A3480' }}>
+        <Appbar.Content title="Feeds" titleStyle={{ color: 'white' }} />
       </Appbar.Header>
       <FlatList
         data={feeds}
@@ -31,6 +31,7 @@ function Feeds({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F4F7FB'
   },
   listContainer: { marginTop: 10 },
 });

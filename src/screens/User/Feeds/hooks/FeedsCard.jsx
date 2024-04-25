@@ -74,21 +74,20 @@ const FeedsCard = ({ feed }) => {
         </View>
 
         <TouchableWithoutFeedback onPress={() => setIsImageModalVisible(true)}>
-          <Image source={{ uri: feed.image }} style={styles.image} />
+          {feed.image && <Image source={{ uri: feed.image }} style={styles.image} />}
         </TouchableWithoutFeedback>
 
         <Text style={styles.content}>
           {showFullContent || feed.content.length <= MAX_LENGTH ? feed.content : `${feed.content.substring(0, MAX_LENGTH)}...`}
-          {feed.content.length > MAX_LENGTH && (
-            <TouchableOpacity onPress={() => setShowFullContent(!showFullContent)}>
-              <Text style={styles.toggleButton}>{showFullContent ? "" : "Show More"}</Text>
-            </TouchableOpacity>
-          )}
         </Text>
 
+        {feed.content.length > MAX_LENGTH && (
+          <TouchableOpacity onPress={() => setShowFullContent(!showFullContent)}>
+            <Text style={styles.toggleButton}>{showFullContent ? "Read Less" : "Read More"}</Text>
+          </TouchableOpacity>
+        )}
 
-
-        <Divider style={{ marginVertical: 10 }} />
+        <Divider style={{ marginTop: 10 }} />
         <IconButton
           icon={selectedReaction === "love" ? "heart" : "heart-outline"}
           size={24}
@@ -98,17 +97,12 @@ const FeedsCard = ({ feed }) => {
 
         <Portal>
           <ImageView
-            images={[
-              {
-                uri: feed.image,
-              },
-            ]}
-            presentationStyle="pageSheet"
+            images={[{ uri: feed.image, },]}
+            presentationStyle="formSheet"
             imageIndex={0}
             animationType="fade"
             onRequestClose={() => setIsImageModalVisible(false)}
             swipeToCloseEnabled={true}
-
             visible={isImageModalVisible}
             HeaderComponent={() => (
 
@@ -163,10 +157,11 @@ const FeedsCard = ({ feed }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 8
   },
   feedContainer: {
     marginBottom: 8,
-    padding: 15,
+    padding: 10,
     backgroundColor: "white",
     borderRadius: 10,
     elevation: 1,

@@ -60,7 +60,7 @@ const JobListings = () => {
 
     return (
       <TouchableRipple onPress={() => navigateToJobDetails(item)} style={styles.card}>
-        <Card.Content style={styles.cardContentRow}>
+        <View style={styles.cardContentRow}>
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
               <Image source={{ uri: item.media[0].original_url }} style={styles.jobImage} />
@@ -97,31 +97,16 @@ const JobListings = () => {
               </Text>
             )}
           </View>
-        </Card.Content>
+        </View>
       </TouchableRipple>
     );
   };
   return (
     <View style={styles.container}>
-      <Appbar.Header style={{ elevation: 1, flexDirection: 'column', height: 120 }}>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-          {/* <Appbar.Action icon="" onPress={() => { }} /> */}
-          <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'black' }} />
-          <View style={{ flexDirection: 'row' }}>
-            <Appbar.Action icon="bell-outline" color="black" onPress={() => { }} />
-            <Appbar.Action icon="dots-vertical" color="black" onPress={() => navigation.navigate("SettingsScreen")} />
-          </View>
-        </View>
-
-        <Searchbar
-          placeholder="Search for jobs"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-          style={Platform.OS === 'ios' ? styles.iosSearchBar : styles.searchBar}
-        />
-
-
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'white' }} />
+        <Appbar.Action icon="bell-outline" color="white" onPress={() => { }} />
+        <Appbar.Action icon="dots-vertical" color="white" onPress={() => navigation.navigate("SettingsScreen")} />
       </Appbar.Header>
 
       {isLoading ? (
@@ -138,6 +123,14 @@ const JobListings = () => {
               colors={[colors.primary]}
             />
           }
+          ListHeaderComponent={
+            <Searchbar
+              placeholder="Search for jobs"
+              onChangeText={onChangeSearch}
+              value={searchQuery}
+              style={Platform.OS === 'ios' ? styles.iosSearchBar : styles.searchBar}
+            />
+          }
           contentContainerStyle={styles.listContentContainer}
         />
       )}
@@ -146,17 +139,18 @@ const JobListings = () => {
 };
 // style={{ backgroundColor: colors.primary }}
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F4F7FB" },
+  container: { flex: 1, backgroundColor: '#F4F7FB' },
   card: {
     // flex: 1,
     marginTop: 8,
     backgroundColor: 'white',
-    paddingVertical: 15,
+    paddingVertical: 10,
     borderRadius: 8,
     elevation: 1,
   },
   cardContentRow: {
     flexDirection: 'row',
+    paddingHorizontal: 8
   },
   cardContentText: {
     flex: 1,
@@ -164,9 +158,7 @@ const styles = StyleSheet.create({
   },
 
   listContentContainer: {
-    paddingVertical: 10,
-    marginVertical: 0,
-    paddingHorizontal: 8
+    padding: 8
     // backgroundColor: 'white'
   },
   titleRow: {
@@ -195,6 +187,7 @@ const styles = StyleSheet.create({
   company: {
     fontSize: 14,
     fontWeight: 'bold',
+    color: 'gray'
   },
   readMore: {
     color: '#0A3480',
@@ -207,6 +200,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 6,
+    marginRight: 5
   },
   placeholderCard: {
     width: 80,
@@ -216,12 +210,12 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     flex: 1,
-    borderRadius: 8,
-    backgroundColor: '#E4EAF6',
+    borderRadius: 100,
+    backgroundColor: '#E5E5EA',
     paddingHorizontal: 0,
     marginVertical: 8,
-    marginHorizontal: 8,
-    bottom: 5
+    // marginHorizontal: 10,
+    // bottom: 5
 
   },
   iosSearchBar: {
@@ -231,7 +225,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     marginVertical: 8,
     marginHorizontal: 8,
-    bottom: 5
+    // bottom: 5
   },
 
   titleStyle: {

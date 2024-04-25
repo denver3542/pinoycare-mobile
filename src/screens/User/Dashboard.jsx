@@ -63,7 +63,7 @@ function Dashboard(activeNav) {
                 </View>
               </View>
               <Searchbar
-                placeholder="Search"
+                placeholder="secret"
                 onChangeText={setSearchQuery}
                 value={searchQuery}
                 style={styles.searchbar}
