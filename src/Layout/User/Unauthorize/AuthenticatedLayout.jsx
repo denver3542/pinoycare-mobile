@@ -21,7 +21,7 @@ function AuthenticatedLayout({ children, activeBottomNav }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F4F7FB"
+        backgroundColor: "#F4F7FB",
     },
 
     searchContainer: {

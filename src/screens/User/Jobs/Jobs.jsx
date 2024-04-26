@@ -9,8 +9,11 @@ import moment from 'moment';
 import HTMLView from 'react-native-htmlview';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { color } from '@rneui/base';
+import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
+import HeaderNotification from '../../../components/HeaderNotification';
+import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 
-const JobListings = () => {
+const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
   const [searchQuery, setSearchQuery] = useState('');
@@ -105,8 +108,8 @@ const JobListings = () => {
     <View style={styles.container}>
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'white' }} />
-        <Appbar.Action icon="bell-outline" color="white" onPress={() => { }} />
-        <Appbar.Action icon="dots-vertical" color="white" onPress={() => navigation.navigate("SettingsScreen")} />
+        <HeaderMessageNotification />
+        <HeaderNotification />
       </Appbar.Header>
 
       {isLoading ? (
@@ -128,6 +131,8 @@ const JobListings = () => {
               placeholder="Search for jobs"
               onChangeText={onChangeSearch}
               value={searchQuery}
+              inputStyle={{ paddingVertical: 8, bottom: 8, fontSize: 14 }}
+              placeholderTextColor="gray"
               style={Platform.OS === 'ios' ? styles.iosSearchBar : styles.searchBar}
             />
           }
@@ -135,6 +140,7 @@ const JobListings = () => {
         />
       )}
     </View>
+
   );
 };
 // style={{ backgroundColor: colors.primary }}
@@ -211,6 +217,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     borderRadius: 100,
+    height: 40,
     backgroundColor: '#E5E5EA',
     paddingHorizontal: 0,
     marginVertical: 8,
@@ -221,6 +228,7 @@ const styles = StyleSheet.create({
   iosSearchBar: {
     flex: 1,
     borderRadius: 8,
+    height: 40,
     backgroundColor: '#E5E5EA',
     paddingHorizontal: 0,
     marginVertical: 8,

@@ -51,8 +51,9 @@ const EditUserProfileScreen = () => {
                 gender: gender
             }, { headers });
             const updatedUser = { ...user, ...dataToUpdate };
-            queryClient.setQueryData(['user'], updatedUser);
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
+            queryClient.setQueryData(['user'], updatedUser);
+            queryClient.invalidateQueries(['user']);
             console.log('Profile update successful:', data);
             return data;
         } catch (error) {

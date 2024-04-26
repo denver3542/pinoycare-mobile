@@ -3,6 +3,8 @@ import { View, StyleSheet, FlatList, RefreshControl } from "react-native";
 import { Appbar, useTheme, Snackbar } from "react-native-paper";
 import FeedsCard from "./hooks/FeedsCard";
 import useFeeds from "./hooks/useFeeds";
+import HeaderMessageNotification from "../../../components/HeaderMessageNotification";
+import HeaderNotification from "../../../components/HeaderNotification";
 
 function Feeds({ navigation }) {
   const { colors } = useTheme();
@@ -13,6 +15,8 @@ function Feeds({ navigation }) {
     <View style={styles.container}>
       <Appbar.Header style={{ elevation: 1, backgroundColor: '#0A3480' }}>
         <Appbar.Content title="Feeds" titleStyle={{ color: 'white' }} />
+        <HeaderMessageNotification />
+        <HeaderNotification />
       </Appbar.Header>
       <FlatList
         data={feeds}

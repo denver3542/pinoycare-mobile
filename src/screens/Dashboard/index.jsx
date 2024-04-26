@@ -7,15 +7,16 @@ import {
   Button,
   useTheme,
   ActivityIndicator,
+  Appbar,
 } from "react-native-paper";
 import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
 import { useUser } from "../../hooks/useUser";
 import { useDashboard } from "./hooks/useDashboard";
 import ApplicationListCard from "../../components/ApplicationListCard";
-import HeaderNotification from "../../components/HeaderNotification";
-import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import { useNavigation } from "@react-navigation/native";
 import Spinner from "react-native-loading-spinner-overlay";
+import HeaderNotification from "../../components/HeaderNotification";
+import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 
 function Dashboard({ activeNav }) {
   const { colors } = useTheme();
@@ -28,11 +29,17 @@ function Dashboard({ activeNav }) {
   const [savedJobs, setSavedJobs] = useState([]);
 
   useEffect(() => {
-    setApplications(data?.applications);
-  }, [isFetched, data?.applications]);
+    if (isFetched) {
+      setApplications(data?.applications || []);
+    }
+  }, [isFetched, data]);
+
+
   useEffect(() => {
     setOfferedJobs(data?.job_offers);
   }, [isFetched, data?.job_offers]);
+
+
   useEffect(() => {
     setSavedJobs(data?.saved_jobs);
   }, [isFetched, data?.saved_jobs]);
@@ -46,135 +53,130 @@ function Dashboard({ activeNav }) {
       {isFetching ? (
         <Spinner visible={isLoading} />
       ) : (
-        <ScrollView style={styles.container}>
-          <View style={styles.headerContainer}>
-            <View style={styles.header}>
-              <View style={styles.userInfoContainer}>
-                <Image
-                  source={
-                    user && user.media[0]
-                      ? { uri: user.media[0].original_url }
-                      : require("../../../assets/images/sample-profile.jpg")
-                  }
-                  style={styles.profileImage}
-                />
-                <View>
-                  <Text style={styles.headerName}>
-                    {user?.firstname || "N/A"} {user?.lastname || "N/A"}
-                  </Text>
-                  <Text style={styles.headerProfession}>
-                    {user?.profession || "N/A"}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.iconsContainer}>
-                <HeaderMessageNotification />
-                <HeaderNotification />
+        <View style={{ flex: 1 }}>
+          <Appbar.Header style={styles.headerContainer}>
+            <View style={styles.userInfoContainer}>
+              <Image
+                source={
+                  user && user.media[0]
+                    ? { uri: user.media[0].original_url }
+                    : require("../../../assets/images/sample-profile.jpg")
+                }
+                style={styles.profileImage}
+              />
+              <View>
+                <Text style={styles.headerName}>
+                  {user?.name || "N/A"}
+                </Text>
+                <Text style={styles.headerProfession}>
+                  {user?.profession || "N/A"}
+                </Text>
               </View>
             </View>
+            <View style={styles.iconsContainer}>
+              <HeaderMessageNotification />
+              <HeaderNotification />
+            </View>
+          </Appbar.Header>
+          <View style={styles.container}>
             <Searchbar
-              placeholder="Search"
+              placeholder="Search applications / saved jobs / offers"
+              style={{ height: 40, backgroundColor: '#E5E5EA' }}
               onChangeText={setSearchQuery}
               value={searchQuery}
-              style={styles.searchbar}
+              inputStyle={{ paddingVertical: 8, bottom: 8, fontSize: 14 }}
+              placeholderTextColor="gray"
             />
-          </View>
-
-          <View style={styles.contentStyle}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Job Applications</Text>
-            </View>
-            <Divider style={styles.divider} />
-            <View style={styles.applicationList}>
-              {dashboardIsFetching && (
-                <ActivityIndicator animating={true} color={colors.primary} />
-              )}
-              {isFetched && applications ? (
-                applications?.map((app, key) => (
-                  <ApplicationListCard key={key} application={app} />
-                ))
-              ) : (
-                <Text style={styles.noJobsText}>No Jobs Available</Text>
-              )}
-            </View>
-            {isFetched && data.applications?.length > 0 ? (
-              <View style={{ flex: 1 }}>
-                <Button icon="redo" mode="contained" onPress={handleSeeMore}>
-                  See more
-                </Button>
+            <Text style={styles.sectionTitle}>Job Applications</Text>
+            <View style={styles.card}>
+              <View style={styles.cardContent}>
+                {isFetched && applications.length > 0 ? (
+                  applications.map((app, index) => (
+                    <ApplicationListCard key={index} application={app} />
+                  ))
+                ) : (
+                  <Text style={styles.noJobsText}>No Applications Available</Text>
+                )}
+                {isFetched && applications.length > 0 && (
+                  <Button icon="redo" mode="contained" onPress={handleSeeMore}>
+                    See more
+                  </Button>
+                )}
               </View>
-            ) : (
-              <></>
-            )}
-          </View>
+            </View>
 
-          <View style={[styles.contentStyle, { marginTop: 20 }]}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Job Offers</Text>
+            <Text style={styles.sectionTitle}>Job Offers</Text>
+            <View style={styles.card}>
+              <View style={styles.cardContent}>
+                {dashboardIsFetching && (
+                  <ActivityIndicator animating={true} color={colors.primary} />
+                )}
+                {isFetched && offeredJobs?.length > 0 ? (
+                  offeredJobs?.map((app, key) => (
+                    <ApplicationListCard key={key} application={app} />
+                  ))
+                ) : (
+                  <Text style={styles.noJobsText}>No Job Offers Available</Text>
+                )}
+              </View>
             </View>
-            <Divider style={styles.divider} />
-            <View style={styles.applicationList}>
-              {dashboardIsFetching && (
-                <ActivityIndicator animating={true} color={colors.primary} />
-              )}
-              {isFetched && offeredJobs?.length > 0 ? (
-                offeredJobs?.map((app, key) => (
-                  <ApplicationListCard key={key} application={app} />
-                ))
-              ) : (
-                <Text style={styles.noJobsText}>No Jobs Available</Text>
-              )}
-            </View>
-          </View>
 
-          <View style={[styles.contentStyle, { marginTop: 20 }]}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Saved Jobs</Text>
+            <Text style={styles.sectionTitle}>Saved Jobs</Text>
+            <View style={styles.card}>
+              <View style={styles.cardContent}>
+                {dashboardIsFetching && (
+                  <ActivityIndicator animating={true} color={colors.primary} />
+                )}
+                {isFetched && savedJobs && savedJobs.length > 0 ? (
+                  savedJobs.map((job, index) => (
+                    <ApplicationListCard key={index} application={job} />
+                  ))
+                ) : (
+                  <Text style={styles.noJobsText}>No Saved Jobs Available</Text>
+                )}
+              </View>
             </View>
-            <Divider style={styles.divider} />
-            <View style={styles.applicationList}>
-              {dashboardIsFetching && (
-                <ActivityIndicator animating={true} color={colors.primary} />
-              )}
-              {isFetched && savedJobs ? (
-                data.saved_jobs?.map((app, key) => (
-                  <ApplicationListCard key={key} application={app} />
-                ))
-              ) : (
-                <Text style={styles.noJobsText}>No Jobs Available</Text>
-              )}
-            </View>
+
           </View>
-        </ScrollView>
+        </View>
       )}
     </AuthenticatedLayout>
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: '#F4F7FB',
+    padding: 8,
+    marginTop: 8
+  },
+  card: {
+    // padding: 8,
+    // borderRadius: 8,
+    // elevation: 1,
+    // backgroundColor: "white",
+    marginTop: 15,
+    flex: 1
   },
   headerContainer: {
-    backgroundColor: "#0A3480",
-    paddingVertical: 20,
-    paddingHorizontal: 10,
+    backgroundColor: '#0A3480',
+    justifyContent: 'space-between'
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
   },
   userInfoContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    flex: 1
   },
   profileImage: {
-    width: 60,
-    height: 60,
+    width: 40,
+    height: 40,
     borderRadius: 30,
-    marginRight: 10,
+    marginLeft: 5,
+    marginRight: 10
   },
   headerName: {
     color: "white",
@@ -183,25 +185,25 @@ const styles = StyleSheet.create({
   },
   headerProfession: {
     color: "white",
+    fontSize: 12
   },
   iconsContainer: {
     flexDirection: "row",
-    alignItems: "center",
   },
   searchbar: {
-    borderRadius: 20,
-    backgroundColor: "white",
-    marginVertical: 15,
-    marginTop: 20,
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: '#E4EAF6',
+    paddingHorizontal: 0,
+    marginVertical: 10,
+    marginHorizontal: 8,
+    // bottom: 5
   },
-  contentStyle: {
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    backgroundColor: "white",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -20,
+  cardContent: {
+    marginTop: 8,
+
   },
+
   sectionContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
+    marginTop: 20,
     fontSize: 18,
     fontWeight: "bold",
   },
