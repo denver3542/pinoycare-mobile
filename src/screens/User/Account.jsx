@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Chip, Divider, IconButton, Snackbar, Button, Card } from "react-native-paper";
+import { Chip, Divider, IconButton, Snackbar, Button, Card, Appbar } from "react-native-paper";
 import {
   View,
   Image,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Spinner from 'react-native-loading-spinner-overlay';
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
 import SkillsChip from "./Profile/Skills/SkillsCardList";
 import SeminarsTrainings from "./Profile/SeminarsAndTrainings/SeminarsTrainingsCardList";
@@ -29,7 +29,6 @@ const Account = ({ activeNav }) => {
     text: "",
   });
 
-
   if (isLoading) {
     return <Spinner visible={true} textContent={'Loading...'} />;
   }
@@ -38,147 +37,142 @@ const Account = ({ activeNav }) => {
     return <Text>Error fetching user data.</Text>;
   }
 
-
   return (
     <AuthenticatedLayout activeBottomNav={activeNav?.route?.name}>
-      {isLoading ? (
-        <Spinner
-          visible={true}
-          textContent={'Loading...'}
-        />
-      ) : isFetched ? (
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <View style={styles.header}>
-              <View style={styles.iconButtonContainer}>
-                <IconButton
-                  icon={() => <MaterialIcons name="settings" size={20} color="white" />}
-                  size={25}
-                  selected
-                  onPress={() => navigation.navigate("SettingsScreen")}
-                />
-              </View>
+      <View style={styles.container}>
+        <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+          <Image source={require("../../../assets/pinoycare.png")} style={styles.imageStyle} />
+          <Appbar.Content title="Account" titleStyle={{ color: 'white' }} />
+          <Appbar.Action icon={() => <MaterialIcons name="settings" size={24} color="white" />} onPress={() => navigation.navigate("SettingsScreen")} />
+        </Appbar.Header>
 
-              <View style={styles.userInfoContainer}>
-                <View style={styles.profileImageContainer}>
-                  <Image
-                    source={
-                      user && user.media[0]
-                        ? { uri: user.media[0].original_url } : require("../../../assets/images/sample-profile.jpg")}
-                    style={styles.profileImage}
-                  />
+        <View style={styles.contentStyle}>
 
-                  <View style={styles.userInfo}>
-                    <Text style={styles.headerName}>{user?.name || ""}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
-                      <Text style={{ color: 'white', marginHorizontal: 5 }}>|</Text>
-                      {/* <TouchableOpacity
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                        onPress={() => {
-                          if (user?.status !== 'approved') {
-                            navigation.navigate("WalkThroughVerificationScreen");
-                          }
-                        }}
-                      >
-                        <MaterialIcons name="check-circle-outline" size={14} color="white" style={{ marginRight: 3 }} />
-                        <Text style={{ color: 'white' }}>
-                          {user?.status === 'approved' ? 'Verified' :
-                            user?.status === 'pending' ? 'Verify Now' :
-                              user?.status === 'created' ? 'Verify Now' :
-                                user?.status === 'rejected' ? 'Rejected' : user?.status || ""}
-                        </Text>
-                      </TouchableOpacity> */}
-                      <TouchableOpacity
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                        onPress={() => {
-                          if (user?.status !== 'approved' && user?.status !== 'pending') {
-                            navigation.navigate("WalkThroughVerificationScreen");
-                          }
-                        }}
-                      >
-                        <MaterialIcons name="check-circle-outline" size={14} color="white" style={{ marginRight: 3 }} />
-                        <Text style={{ color: 'white' }}>
-                          {user?.status === 'approved' ? 'Verified' :
-                            user?.status === 'pending' ? 'Pending' :
-                              user?.status === 'created' ? 'Verify Now' :
-                                user?.status === 'rejected' ? 'Rejected' : user?.status || ""}
-                        </Text>
-                      </TouchableOpacity>
-
-
-                    </View>
-
-                  </View>
-
-                </View>
-
-                <View>
-                  <Button
-                    icon="pencil"
-                    onPress={() => navigation.navigate("EditUserProfileScreen")}
-                    contentStyle={styles.buttonContent}
-                    labelStyle={styles.buttonLabel}
-                  >
-                    Edit
-                  </Button>
-                </View>
-              </View>
-
-            </View>
-
-          </View>
-
-          <View style={styles.contentStyle}>
-            <View style={styles.card}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <View style={styles.sectionContent}>
-                  {/* <FontAwesome5
-                    name="user-circle"
+          <View style={styles.userInfo}>
+            <View style={styles.profileImageContainer}>
+              <Image
+                source={
+                  user && user.media[0]
+                    ? { uri: user.media[0].original_url } : require("../../../assets/images/sample-profile.jpg")}
+                style={styles.profileImage}
+              />
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
+                  <Text style={styles.headerName}>{user?.name || ""}</Text>
+                  <IconButton
+                    icon={() => <MaterialIcons name="border-color" size={14} color="white" />}
                     size={20}
-                    color="#0A3480"
-                    style={styles.cardIcon}
-                    solid
-                  /> */}
-                  <Text style={styles.cardTitle}>About Me</Text>
+                    selected
+                    onPress={() => navigation.navigate("EditUserProfileScreen")}
+                  />
                 </View>
-                <IconButton
-                  icon={() => <MaterialIcons name="border-color" size={18} color="#0A3480" />}
-                  size={20}
-                  selected
-                  onPress={() => navigation.navigate("AboutMeScreen")}
-                />
-              </View>
-              {/* <Divider
-                style={styles.divider}
-              /> */}
-              <View style={styles.contentContainer}>
-                <Text style={styles.cardDescription}>{user?.about_me}</Text>
+                <View style={{ marginBottom: 5 }}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <MaterialIcons name="work" size={14} color="white" style={{ marginRight: 5 }} />
+                    <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', marginTop: 0 }}>
+                    <MaterialIcons name="location-on" size={14} color="white" style={{ marginRight: 5 }} />
+                    <Text style={styles.headerText}>{user?.permanent_address || ""} </Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', marginTop: 0, alignItems: 'center' }}>
+                    <MaterialIcons name="email" size={14} color="white" style={{ marginRight: 5 }} />
+                    <Text style={styles.headerText}>{user?.email || ""} </Text>
+                  </View>
+                </View>
+                {/* <TouchableOpacity
+                  style={{ flexDirection: 'row', alignItems: 'center' }}
+                  onPress={() => {
+                    if (user?.status !== 'approved') {
+                      navigation.navigate("WalkThroughVerificationScreen");
+                    }
+                  }}
+                >
+                  <MaterialIcons name="check-circle-outline" size={14} color="white" style={{ marginRight: 3 }} />
+                  <Text style={{ color: 'white' }}>
+                    {user?.status === 'approved' ? 'Verified' :
+                      user?.status === 'pending' ? 'Verify Now' :
+                        user?.status === 'created' ? 'Verify Now' :
+                          user?.status === 'rejected' ? 'Rejected' : user?.status || ""}
+                  </Text>
+                </TouchableOpacity> */}
+
+                <View style={{
+                  flexWrap: 'wrap',
+                  marginTop: 2
+                }}>
+                  <Chip
+                    onPress={() => {
+                      if (user?.verified?.status !== 'verified' && user?.verified?.status !== 'to be reviewed') {
+                        navigation.navigate("WalkThroughVerificationScreen");
+                      }
+                    }}
+                    icon={({ size, color }) => (
+                      user?.verified?.status === 'to be reviewed' ? (
+                        <MaterialIcons name="hourglass-top" size={12} color={color} />
+                      ) : (
+                        user?.verified?.status === 'verified' ? (
+                          <MaterialIcons name="verified-user" size={12} color={color} />
+                        ) : (
+                          <MaterialIcons name="shield" size={12} color={color} />
+                        )
+                      )
+                    )}
+                    compact
+                    style={{ backgroundColor: 'white', borderRadius: 8 }}
+                    textStyle={{
+                      color: 'black', fontSize: 10, fontWeight: 'bold',
+                      minHeight: 10,
+                      lineHeight: 12,
+                      alignItems: "center",
+                      marginVertical: 2
+                    }}
+                  >
+                    {user?.verified?.status === 'verified' ? 'Verified' :
+                      user?.verified?.status === 'failed' ? 'Verify' :
+                        user?.verified?.status === 'to be reviewed' ? 'Under review' : user?.verified?.status || "Verify"}
+                  </Chip>
+                </View>
+
+
+
               </View>
             </View>
 
-            {isFetched && (
-              <>
-                <SkillsChip skills={user.skills} />
-                <EducationItem educations={user.educations} />
-                <SeminarsTrainings trainings={user.trainings} />
-                <WorkExperience work_experiences={user.work_experiences} />
-              </>
-            )}
           </View>
-          <Snackbar
-            visible={snackbarProperties.visible}
-            onDismiss={() => setSnackbarProperties({ visible: false, text: "" })}
-            duration={Snackbar.DURATION_SHORT}
-          >
-            {snackbarProperties.text}
-          </Snackbar>
+
+          <Divider style={styles.divider} />
+
+          <View style={styles.card}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", bottom: 10 }}>
+              <Text style={styles.cardTitle}>About Me</Text>
+
+              <IconButton
+                icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
+                size={20}
+                selected
+                onPress={() => navigation.navigate("AboutMeScreen")}
+              />
+            </View>
+            <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
+            {/* <Divider style={styles.divider} /> */}
+            <View style={styles.contentContainer}>
+              <Text style={styles.cardDescription}>{user?.about_me}</Text>
+            </View>
+
+          </View>
+
+          {isFetched && (
+            <>
+              <SkillsChip skills={user.skills} />
+              <EducationItem educations={user.educations} />
+              <SeminarsTrainings trainings={user.trainings} />
+              <WorkExperience work_experiences={user.work_experiences} />
+            </>
+          )}
         </View>
-      ) : (
-        <View>
-          <Text>Error fetching user data.</Text>
-        </View>
-      )}
+
+      </View>
     </AuthenticatedLayout>
   );
 };
@@ -186,59 +180,61 @@ const Account = ({ activeNav }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-  },
-  chip: {
-    margin: 4,
   },
   header: {
-    // flexDirection: "row",
     backgroundColor: "#0A3480",
     paddingHorizontal: 20,
     justifyContent: "center",
     height: 150,
-    // position: 'relative',
   },
-
   iconButtonContainer: {
     position: 'absolute',
     top: 0,
     right: 0,
     marginTop: 20
   },
-  userInfoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: 'space-between'
-  },
-
+  // userInfoContainer: {
+  //   flexDirection: "row",
+  //   alignItems: 'flex-start',
+  //   justifyContent: 'space-between'
+  // },
   profileImageContainer: {
-    alignItems: 'center',
-    flexDirection: 'row'
+    flex: 1,
+    backgroundColor: "#0A3480",
+    borderRadius: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: 15
   },
-
   profileImage: {
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     borderRadius: 100,
+    borderWidth: 2,
+    borderColor: 'white',
     marginRight: 10,
+    top: 10
   },
-
+  // userInfo: {
+  //   flex: 1,
+  //   marginLeft: 5,
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'flex-start',
+  // },
   userInfo: {
-    marginLeft: 10,
+    flex: 1
   },
-
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
     marginLeft: 20
   },
-
   buttonContent: {
     flexDirection: 'row-reverse',
   },
-
   buttonLabel: {
     color: 'white',
     fontSize: 14,
@@ -249,56 +245,48 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   headerProfession: {
-    color: "white",
+    color: "#DFDFDF", fontSize: 12
   },
-
+  headerText: { color: "#DFDFDF", fontSize: 12 },
   button: {
     marginLeft: 10,
-    padding: 0, // Smaller padding for the button
+    padding: 0,
   },
   flexReverse: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
   contentStyle: {
-    // paddingHorizontal: 10,
-    // paddingVertical: 30,
     backgroundColor: "#F4F7FB",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    marginTop: -20,
+    marginTop: 10,
+    padding: 8,
   },
   sectionContent: {
     flexDirection: "row",
-    alignItems: "center",
   },
   card: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 10,
-    elevation: 1,
+    padding: 15,
+    elevation: 0.5,
   },
-
   cardContent: {
     justifyContent: 'center',
     flex: 1
   },
-
-  contentContainer: { margin: 10 },
+  contentContainer: {},
   cardTitle: {
     fontWeight: 'bold',
     fontSize: 20,
-    // color: '#334567'
   },
-
   educationDescription: {
     fontSize: 16,
-    marginBottom: 3,
     color: "#556789",
   },
-
   cardDescription: {
-
+    textAlign: 'justify'
   },
   educationItem: {
     padding: 20
@@ -311,8 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   divider: {
-    height: 0.5,
-    marginBottom: 10,
+    marginVertical: 15,
   },
   educationItem: {
     marginBottom: 10,
@@ -325,12 +312,16 @@ const styles = StyleSheet.create({
   educationDescription: {
     marginBottom: 5,
   },
-
   button: {
     padding: 0,
     width: 100,
   },
-
+  imageStyle: {
+    width: 30,
+    height: 30,
+    marginLeft: 10,
+    marginRight: 10,
+  },
 });
 
 export default Account;

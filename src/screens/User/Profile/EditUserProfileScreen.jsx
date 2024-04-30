@@ -140,10 +140,10 @@ const EditUserProfileScreen = () => {
     return (
 
         <View style={styles.container}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Profile" />
-                <Appbar.Action icon="content-save" color="#0A3480" onPress={handleSubmit(onSubmit)} />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Profile" titleStyle={{ color: 'white' }} />
+                <Appbar.Action icon="content-save" color="white" onPress={handleSubmit(onSubmit)} />
             </Appbar.Header>
             <ScrollView>
                 <View style={styles.header}>
@@ -250,7 +250,7 @@ const EditUserProfileScreen = () => {
                         mode="outlined"
                     />
 
-                    <Button mode="outlined" onPress={showDeleteModal} labelStyle={{ color: 'red' }}>
+                    <Button mode="contained" onPress={showDeleteModal} labelStyle={{ color: 'white' }}>
                         Delete Account
                     </Button>
                 </View>
@@ -277,6 +277,7 @@ const EditUserProfileScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#F4F7FB'
     },
     header: {
         padding: 8,
@@ -300,8 +301,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginTop: 10,
         margin: 5,
-        borderWidth: 1,
-        borderColor: 'gray'
+        borderWidth: 2,
+        borderColor: 'white'
     },
     cameraIcon: {
         position: 'absolute',

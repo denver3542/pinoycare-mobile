@@ -26,9 +26,10 @@ const SkillsChip = ({ skills }) => {
                     /> */}
                     <Text style={styles.cardTitle}>Skills</Text>
                 </View>
+
                 <View style={styles.iconContainer}>
                     <IconButton
-                        icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="add" size={22} color="#0A3480" />}
                         size={25}
                         selected
                         onPress={() => navigation.navigate("AddSkillScreen")}
@@ -36,10 +37,16 @@ const SkillsChip = ({ skills }) => {
 
                 </View>
             </View>
-            {/* <Divider style={styles.divider} /> */}
+            <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.skillsContainer}>
                 {displayedSkills.map((skillItem, index) => (
-                    <Chip mode='outlined' key={index} onPress={() => { }} style={styles.chip}>
+                    <Chip textStyle={{
+                        minHeight: 12,
+                        lineHeight: 12,
+                        marginRight: 10,
+                        marginLeft: 10,
+                        marginVertical: 5
+                    }} mode='outlined' key={index} onPress={() => { }} style={styles.chip}>
                         <Text style={styles.skillText}>{skillItem.skill_name}</Text>
                     </Chip>
                 ))}
@@ -65,12 +72,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 8,
         padding: 15,
-        elevation: 1,
+        elevation: 0.5,
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        bottom: 10
     },
     sectionHeader: {
         flexDirection: "row",
@@ -86,7 +94,7 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 0.5,
-        marginBottom: 10,
+        // marginBottom: 10,
     },
     skillsContainer: {
         flexDirection: 'row',

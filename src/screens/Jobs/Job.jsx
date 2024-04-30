@@ -10,6 +10,7 @@ import {
   Modal,
   Text,
   Title,
+  useTheme
 } from "react-native-paper";
 import HTMLView from "react-native-htmlview";
 import { fDate } from "../../../utils/formatTime";
@@ -19,6 +20,7 @@ import useJob from "./hook/useJob";
 import { useUserApplications } from "../../components/useUserApplications";
 
 export default function Job() {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const { params } = useRoute();
   const { user, isFetched } = useUser();
@@ -27,6 +29,17 @@ export default function Job() {
   const [questions, setQuestions] = useState([]);
   const job = params.job;
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = () => {
+    setRefreshing(true);
+    refetch()
+      .then(() => { })
+      .catch(() => { })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
+
   const [visible, setVisible] = useState(false);
 
   const showModal = () => setVisible(true);
@@ -76,11 +89,16 @@ export default function Job() {
       <Appbar.Header mode="small">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title={params.job.title} />
+        {/* <Appbar.Content title="Apply" /> */}
       </Appbar.Header>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+          />
         }
       >
         <Card style={styles.card}>

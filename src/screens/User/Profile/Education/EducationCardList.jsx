@@ -24,7 +24,7 @@ const getEducationLevelName = (level) => {
     }
 };
 
-const EducationItem = ({ educations }) => {
+const d = ({ educations }) => {
     const [showAllEducations, setShowAllEducations] = useState(false);
     const limitedEducations = showAllEducations ? educations : educations.slice(0, 3);
     const navigation = useNavigation();
@@ -40,23 +40,21 @@ const EducationItem = ({ educations }) => {
     return (
         <View style={styles.card}>
             <View style={styles.headerContainer}>
-                <View style={styles.sectionContent}>
-                    {/* <FontAwesome5 name="graduation-cap" size={20} color="#0A3480" style={styles.cardIcon} /> */}
-                    <Text style={styles.cardTitle}>Education</Text>
-                </View>
+                <Text style={styles.cardTitle}>Education</Text>
                 <View style={styles.iconContainer}>
                     <IconButton
-                        icon={() => <MaterialIcons name="add" size={25} color='#334567' />}
+                        icon={() => <MaterialIcons name="add" size={22} color='#334567' />}
                         size={20}
                         onPress={navigateToAddEducation}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="border-color" size={18} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
                         size={25}
                         onPress={navigateToEditEducation}
                     />
                 </View>
             </View>
+            <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.educationContainer}>
                 {limitedEducations.map((education, index) => (
                     <React.Fragment key={index}>
@@ -71,10 +69,10 @@ const EducationItem = ({ educations }) => {
                                 </View>
                             </View>
                         </View>
-                        {index < limitedEducations.length - 1 && <Divider style={styles.divider} />}
+                        {/* {index < limitedEducations.length - 1 && <Divider style={styles.divider} />} */}
                     </React.Fragment>
                 ))}
-                <Divider style={styles.divider} />
+                {/* <Divider style={styles.divider} /> */}
             </View>
             {educations?.length > 1 && (
                 <TouchableOpacity onPress={() => setShowAllEducations((prev) => !prev)} style={styles.showMoreLessButton}>
@@ -92,23 +90,16 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 1,
-        marginBottom: 10,
+        elevation: 0.5,
+        marginBottom: 8,
     },
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        bottom: 10
     },
-    sectionContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
+
     cardIcon: {
         marginRight: 10,
     },
@@ -120,13 +111,11 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
     },
+    educationItem: { marginVertical: 10, },
     educationContainer: {
-        paddingVertical: 10,
+        paddingVertical: 0,
     },
-    educationItem: {
-        flexDirection: 'row',
-        marginBottom: 10,
-    },
+
     educationDetails: {
         flex: 1,
     },
@@ -149,7 +138,7 @@ const styles = StyleSheet.create({
     },
     showMoreLessButton: {
         alignItems: 'center',
-        // marginVertical: 10,
+        // marginTop: 10,
     },
     showMoreLessText: {
         color: '#0A3480',
@@ -162,4 +151,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default EducationItem;
+export default d;

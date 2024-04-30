@@ -4,11 +4,14 @@ import { Button, Title, Appbar, TouchableRipple } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from '../../../../../utils/axiosConfig';
 import { useUser } from '../../../../hooks/useUser';
 
 const VerificationScreen = () => {
     const { user } = useUser();
+    const queryClient = useQueryClient();
     const navigation = useNavigation();
     const { control, handleSubmit, setValue, getValues } = useForm();
     const [loading, setLoading] = useState(false);
@@ -57,7 +60,8 @@ const VerificationScreen = () => {
                 }
             });
 
-
+            await AsyncStorage.setItem('verificationData', JSON.stringify(response.data));
+            queryClient.invalidateQueries('verificationData');
             navigation.navigate('Account');
             console.log(response.data);
         } catch (error) {

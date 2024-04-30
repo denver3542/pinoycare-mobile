@@ -12,12 +12,14 @@ import { color } from '@rneui/base';
 import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
 import HeaderNotification from '../../../components/HeaderNotification';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState('');
   const [savedJobs, setSavedJobs] = useState({});
   const handleSave = (jobId) => {
     setSavedJobs((prevSavedJobs) => ({
@@ -26,7 +28,15 @@ const JobListings = ({ activeNav }) => {
     }));
     console.log("save job");
   };
-
+  const onRefresh = () => {
+    setRefreshing(true);
+    refetch()
+      .then(() => { })
+      .catch(() => { })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
 
   const toggleDescriptionVisibility = (jobId) => {
@@ -104,10 +114,14 @@ const JobListings = ({ activeNav }) => {
       </TouchableRipple>
     );
   };
+
+
+
   return (
     <View style={styles.container}>
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-        <Appbar.Content title="Jobs" style={{ marginLeft: 10 }} titleStyle={{ color: 'white' }} />
+        <Image source={require("../../../../assets/pinoycare.png")} style={styles.imageStyle} />
+        <Appbar.Content title="Jobs" titleStyle={{ color: 'white' }} />
         <HeaderMessageNotification />
         <HeaderNotification />
       </Appbar.Header>
@@ -121,14 +135,14 @@ const JobListings = ({ activeNav }) => {
           keyExtractor={(item) => item.id.toString()}
           refreshControl={
             <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
               colors={[colors.primary]}
             />
           }
           ListHeaderComponent={
             <Searchbar
-              placeholder="Search for jobs"
+              placeholder="Search job"
               onChangeText={onChangeSearch}
               value={searchQuery}
               inputStyle={{ paddingVertical: 8, bottom: 8, fontSize: 14 }}
@@ -219,7 +233,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 40,
     backgroundColor: '#E5E5EA',
-    paddingHorizontal: 0,
     marginVertical: 8,
     // marginHorizontal: 10,
     // bottom: 5
@@ -238,7 +251,13 @@ const styles = StyleSheet.create({
 
   titleStyle: {
     fontWeight: 'bold'
-  }
+  },
+  imageStyle: {
+    width: 30, // Adjust width as needed
+    height: 30, // Adjust height as needed
+    marginLeft: 10, // Adjust margin as needed
+    marginRight: 10
+  },
 });
 
 export default JobListings;

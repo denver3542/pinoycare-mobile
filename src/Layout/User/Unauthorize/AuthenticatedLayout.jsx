@@ -8,13 +8,13 @@ function AuthenticatedLayout({ children, activeBottomNav }) {
     const route = useRoute();
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView style={styles.container}>
-                <View style={styles.contentContainer}>
-                    {children}
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+
+        <ScrollView style={styles.container}>
+            <View style={styles.contentContainer}>
+                {children}
+            </View>
+        </ScrollView>
+
     );
 }
 
@@ -24,20 +24,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#F4F7FB",
     },
 
-    searchContainer: {
-        marginHorizontal: 20,
-        marginVertical: 4,
-    },
-    searchBar: {
-        borderRadius: 50,
-        height: 50,
-        borderWidth: 0.1,
-        elevation: 10,
-        backgroundColor: '#FBFBFB',
-    },
-    searchBarInput: {
-        fontSize: 16,
-    },
 });
 
 export default AuthenticatedLayout;

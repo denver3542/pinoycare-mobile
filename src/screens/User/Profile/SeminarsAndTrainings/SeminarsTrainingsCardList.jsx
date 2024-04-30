@@ -4,12 +4,19 @@ import { IconButton, Divider } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import { color } from "@rneui/base";
 
 const SeminarsTrainings = ({ trainings }) => {
     const [showAllSeminarsAndTrainings, setShowAllSeminarsAndTrainings] = useState(false);
     const displayedTrainings = showAllSeminarsAndTrainings ? trainings : trainings.slice(0, 3);
     const navigation = useNavigation();
-
+    const [expandedTrainings, setExpandedTrainings] = useState({});
+    const toggleTrainingExpansion = (index) => {
+        setExpandedTrainings(prevState => ({
+            ...prevState,
+            [index]: !prevState[index]
+        }));
+    };
     return (
         <View style={styles.card}>
             <View style={styles.headerContainer}>
@@ -19,15 +26,16 @@ const SeminarsTrainings = ({ trainings }) => {
                 </View>
                 <View style={styles.iconContainer}>
                     <IconButton
-                        icon={() => <MaterialIcons name="add" size={25} color="#334567" />}
+                        icon={() => <MaterialIcons name="add" size={22} color="#334567" />}
                         onPress={() => navigation.navigate("AddSeminarsAndTrainings")}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="border-color" size={18} color="#334567" />}
+                        icon={() => <MaterialIcons name="border-color" size={14} color="#334567" />}
                         onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
                     />
                 </View>
             </View>
+            <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.contentContainer}>
                 {displayedTrainings.map((training, index) => (
                     <React.Fragment key={index}>
@@ -55,19 +63,25 @@ const SeminarsTrainings = ({ trainings }) => {
                                     </Text>
                                 </View>
                                 <Text style={styles.trainingDescription}>
-                                    {training.description.length > 200
-                                        ? `${training.description.slice(0, 200)}...`
-                                        : training.description}
+                                    {expandedTrainings[index] || training.description.length <= 100
+                                        ? training.description
+                                        : `${training.description.slice(0, 100)}...`}{training.description.length > 100 &&
+                                            <TouchableOpacity onPress={() => toggleTrainingExpansion(index)}>
+                                                <Text style={styles.showMoreText}>
+                                                    {expandedTrainings[index] ? " Read Less" : " Read More"}
+                                                </Text>
+                                            </TouchableOpacity>
+                                    }
                                 </Text>
 
                             </View>
                         </View>
-                        {index < displayedTrainings.length - 1 && (
+                        {/* {index < displayedTrainings.length - 1 && (
                             <Divider style={styles.divider} />
-                        )}
+                        )} */}
                     </React.Fragment>
                 ))}
-                <Divider style={styles.divider} />
+                {/* <Divider style={styles.divider} /> */}
                 {trainings.length > 3 && (
                     <TouchableOpacity
                         onPress={() => setShowAllSeminarsAndTrainings(!showAllSeminarsAndTrainings)}
@@ -88,18 +102,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 1,
-        marginBottom: 10,
+        elevation: 0.5,
+        marginBottom: 8,
     },
     headerContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 15,
+        bottom: 10
     },
     sectionContent: {
         flexDirection: "row",
@@ -135,13 +145,14 @@ const styles = StyleSheet.create({
     trainingDescription: {
         color: "#555",
         marginBottom: 4,
+        flex: 1,
+        textAlign: 'justify'
     },
     trainingDuration: {
         // color: "#555",
     },
     showMoreButton: {
         alignItems: 'center',
-        paddingVertical: 10,
     },
     showMoreText: {
         color: '#0A3480',

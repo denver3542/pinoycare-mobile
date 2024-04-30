@@ -18,15 +18,16 @@ const WorkExperience = ({ work_experiences }) => {
                 </View>
                 <View style={styles.iconContainer}>
                     <IconButton
-                        icon={() => <MaterialIcons name="add" size={25} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="add" size={22} color="#0A3480" />}
                         onPress={() => navigation.navigate("AddWorkExperience")}
                     />
                     <IconButton
-                        icon={() => <MaterialIcons name="border-color" size={18} color="#0A3480" />}
+                        icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
                         onPress={() => navigation.navigate("EditWorkExperience")}
                     />
                 </View>
             </View>
+            <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View>
                 {experiencesToShow.map((experience, index) => (
                     <React.Fragment key={index}>
@@ -41,12 +42,12 @@ const WorkExperience = ({ work_experiences }) => {
                             <Text style={styles.educationDescription}>Contact Position: {experience.contact_position}</Text>
                             <Text style={styles.educationDescription}>Contact Phone: {experience.contact_phone}</Text> */}
                         </View>
-                        {index < experiencesToShow.length - 1 && (
+                        {/* {index < experiencesToShow.length - 1 && (
                             <Divider style={styles.divider} />
-                        )}
+                        )} */}
                     </React.Fragment>
                 ))}
-                <Divider style={styles.divider} />
+                {/* <Divider style={styles.divider} /> */}
                 {work_experiences.length > 1 && (
                     <TouchableOpacity
                         onPress={() => setShowAllWorkExperience(!showAllWorkExperience)}
@@ -64,15 +65,15 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: "#fff",
         borderRadius: 10,
-        marginBottom: 8,
+        marginBottom: 15,
         padding: 15,
-        elevation: 1,
+        elevation: 0.5,
     },
     headerContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 15,
+        bottom: 10
     },
     sectionContent: {
         flexDirection: "row",
@@ -96,6 +97,7 @@ const styles = StyleSheet.create({
         // color: '#0A3480',
     },
     row: {
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
@@ -104,10 +106,10 @@ const styles = StyleSheet.create({
     },
     divider: {
         marginVertical: 10,
+        height: 1
     },
     showMoreButton: {
         alignItems: 'center',
-        marginTop: 10,
     },
     showMoreText: {
         color: '#0A3480',
