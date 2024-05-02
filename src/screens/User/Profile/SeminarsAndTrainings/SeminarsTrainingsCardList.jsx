@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
-        elevation: 0.5,
+        elevation: 0,
         marginBottom: 8,
     },
     headerContainer: {

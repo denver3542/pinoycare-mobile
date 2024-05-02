@@ -38,9 +38,9 @@ const AddSkillScreen = () => {
 
   return (
     <AuthenticatedLayout>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Add Skill" />
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+        <Appbar.Content title="Add Skill" titleStyle={{ color: 'white' }} />
       </Appbar.Header>
       <View style={styles.container}>
         <ScrollView>

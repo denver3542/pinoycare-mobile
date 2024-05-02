@@ -68,9 +68,9 @@ const EditWorkExperience = () => {
 
     return (
         <View style={styles.container}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Edit Work Experience" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Edit Work Experience" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
             <FlatList
                 data={user.work_experiences.slice(0, visibleItems)}

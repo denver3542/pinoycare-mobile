@@ -19,8 +19,8 @@ const MessageList = () => {
             item && item.user.media[0]
               ? { uri: item.user.media[0].original_url }
               : item.gender != "M"
-              ? require("../../../assets/images/default-women.png")
-              : require("../../../assets/images/default-men.png")
+                ? require("../../../assets/images/default-women.png")
+                : require("../../../assets/images/default-men.png")
           }
         />
       )}
@@ -34,9 +34,9 @@ const MessageList = () => {
   return (
     <View>
       {isFetching && <Spinner animation="fade" />}
-      <Appbar.Header mode="small">
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Messages" />
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Messages" titleStyle={{ color: 'white' }} />
       </Appbar.Header>
       <View style={{ padding: 5, height: "100%" }}>
         {isFetched && (

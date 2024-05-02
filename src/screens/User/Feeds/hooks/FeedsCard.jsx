@@ -58,7 +58,9 @@ const FeedsCard = ({ feed }) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
+  const toggleContent = () => {
+    setShowFullContent(!showFullContent);
+  };
 
   return (
     <View style={styles.container}>
@@ -78,14 +80,26 @@ const FeedsCard = ({ feed }) => {
         </TouchableWithoutFeedback>
 
         <Text style={styles.content}>
-          {showFullContent || feed.content.length <= MAX_LENGTH ? feed.content : `${feed.content.substring(0, MAX_LENGTH)}...`}
+          {showFullContent || feed.content.length <= MAX_LENGTH
+            ? feed.content
+            : `${feed.content.substring(0, MAX_LENGTH)}... `}
+          {feed.content.length > MAX_LENGTH && (
+            <Text style={styles.toggleButton} onPress={toggleContent}>
+              {showFullContent ? "" : "Show More"}
+            </Text>
+          )}
         </Text>
 
-        {feed.content.length > MAX_LENGTH && (
-          <TouchableOpacity onPress={() => setShowFullContent(!showFullContent)}>
-            <Text style={styles.toggleButton}>{showFullContent ? "Read Less" : "Read More"}</Text>
-          </TouchableOpacity>
-        )}
+        {/* <Text style={styles.content}>
+          {showFullContent || feed.content.length <= MAX_LENGTH
+            ? feed.content
+            : `${feed.content.substring(0, MAX_LENGTH)}... `}
+          {feed.content.length > MAX_LENGTH && (
+            <Text style={styles.toggleButton} onPress={toggleContent}>
+              {showFullContent ? "" : "Show More"}
+            </Text>
+          )}
+        </Text> */}
 
         <Divider style={{ marginTop: 10 }} />
         <IconButton
@@ -98,9 +112,9 @@ const FeedsCard = ({ feed }) => {
         <Portal>
           <ImageView
             images={[{ uri: feed.image, },]}
-            presentationStyle="formSheet"
+            presentationStyle="fullScreen"
             imageIndex={0}
-            animationType="fade"
+            animationType="none"
             onRequestClose={() => setIsImageModalVisible(false)}
             swipeToCloseEnabled={true}
             visible={isImageModalVisible}
@@ -133,6 +147,8 @@ const FeedsCard = ({ feed }) => {
                   animationOut="slideOutDown"
                   animationOutTiming={300}
                   onBackdropPress={toggleModal}
+                  swipeToCloseEnabled={true}
+
                   style={styles.modal}
                 >
                   <View style={{ justifyContent: 'flex-end' }}>
@@ -164,7 +180,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
     borderRadius: 10,
-    elevation: 1,
+    elevation: 0,
   },
   header: {
     flexDirection: "row",

@@ -74,9 +74,9 @@ const SeminarsAndTrainingsEdit = () => {
 
     return (
         <View style={styles.container}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Edit Seminars" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Edit Seminars" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
             <FlatList
                 data={user.trainings.slice(0, visibleItems)}

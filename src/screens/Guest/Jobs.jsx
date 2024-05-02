@@ -20,7 +20,16 @@ const GuestJobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
 
-  //   console.log(data);
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = () => {
+    setRefreshing(true);
+    refetch()
+      .then(() => { })
+      .catch(() => { })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
 
   const onChangeSearch = (query) => setSearchQuery(query);
 
@@ -61,9 +70,9 @@ const GuestJobs = () => {
         contentContainerStyle={styles.listContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            tintColor={colors.primary}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
           />
         }
       />

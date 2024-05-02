@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingVertical: 10,
     borderRadius: 8,
-    elevation: 1,
+    elevation: 0,
   },
   cardContentRow: {
     flexDirection: 'row',

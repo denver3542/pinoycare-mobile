@@ -6,25 +6,47 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  Modal,
 } from "react-native";
-import { Divider, IconButton } from "react-native-paper";
+import { Divider, IconButton, Portal } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useReactToPost } from "../screens/User/Feeds/hooks/useFeeds";
-
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import ImageView from "react-native-image-viewing";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import Modal from "react-native-modal";
 const MAX_LENGTH = 300;
 
 const FeedsCard = ({ feed }) => {
   const [showFullContent, setShowFullContent] = useState(false);
-  const [selectedReaction, setSelectedReaction] = useState(null); // Default reaction
-  const [modalVisible, setModalVisible] = useState(false);
-  const reactToPostMutation = useReactToPost(); // Initialize the mutation hook
+  const [selectedReaction, setSelectedReaction] = useState(null);
+  const reactToPostMutation = useReactToPost();
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
-  // useEffect(() => {
-  //   // Set the initial selected reaction based on the user's reaction in the feed
-  //   setSelectedReaction(feed.reactions.find((reaction) => reaction.user_id === feed.user.id)?.reaction || null);
-  // }, [feed]);
 
+  const handleDownload = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") throw new Error("Permission to access media library denied");
+
+      const filename = FileSystem.documentDirectory + "${feed.name}.jpg";
+      const downloadResult = await FileSystem.downloadAsync(feed.image, filename);
+      if (downloadResult.status === 200) {
+        await MediaLibrary.saveToLibraryAsync(downloadResult.uri);
+        toggleModal();
+      } else {
+        throw new Error("Failed to download image");
+      }
+    } catch (error) {
+      console.error("Error downloading image:", error);
+
+    }
+  };
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
   };
@@ -66,72 +88,80 @@ const FeedsCard = ({ feed }) => {
             <Text style={styles.publishedDate}>{formattedDate}</Text>
           </View>
         </View>
-        <MaterialCommunityIcons
-          name={
-            selectedReaction === "like"
-              ? "thumb-up"
-              : selectedReaction === "dislike"
-              ? "thumb-down"
-              : selectedReaction === "love"
-              ? "heart"
-              : "thumb-up-outline"
-          }
-          size={24}
-          color={
-            selectedReaction
-              ? selectedReaction === "love"
-                ? "red"
-                : "black"
-              : "black"
-          }
-          onPress={() => handleReact(selectedReaction ? null : "love")}
-          onLongPress={handleLongPress}
-        />
+
       </View>
-      {feed.image ? (
-        <Image source={{ uri: feed.image }} style={styles.image} />
-      ) : null}
+      <TouchableWithoutFeedback onPress={() => setIsImageModalVisible(true)}>
+        {feed.image && <Image source={{ uri: feed.image }} style={styles.image} />}
+      </TouchableWithoutFeedback>
       <Text style={styles.content}>
         {showFullContent || feed.content.length <= MAX_LENGTH
           ? feed.content
-          : `${feed.content.substring(0, MAX_LENGTH)}...`}
+          : `${feed.content.substring(0, MAX_LENGTH)}... `}
+        {feed.content.length > MAX_LENGTH && (
+          <Text style={styles.toggleButton} onPress={toggleContent}>
+            {showFullContent ? "" : "Show More"}
+          </Text>
+        )}
       </Text>
 
-      {feed.content.length > MAX_LENGTH && (
-        <TouchableOpacity onPress={toggleContent}>
-          <Text style={styles.toggleButton}>
-            {showFullContent ? "Show Less" : "Show More"}
-          </Text>
-        </TouchableOpacity>
-      )}
 
-      {/* <Divider style={{ marginVertical: 10 }} /> */}
 
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <IconButton
-              icon="thumb-up"
-              color={selectedReaction === "like" ? "blue" : "black"}
-              onPress={() => selectReaction("like")}
-            />
-            <IconButton
-              icon="thumb-down"
-              color={selectedReaction === "dislike" ? "blue" : "black"}
-              onPress={() => selectReaction("dislike")}
-            />
-            <IconButton
-              icon="heart"
-              color={selectedReaction === "love" ? "red" : "black"}
-              onPress={() => selectReaction("love")}
-            />
-          </View>
-        </View>
-      </Modal>
+
+      <Portal>
+        <ImageView
+          images={[{ uri: feed.image, },]}
+          presentationStyle="fullScreen"
+          imageIndex={0}
+          animationType="none"
+          onRequestClose={() => setIsImageModalVisible(false)}
+          swipeToCloseEnabled={true}
+          visible={isImageModalVisible}
+          HeaderComponent={() => (
+
+            <View>
+              <View style={styles.containerImageView}>
+                <TouchableOpacity onPress={() => setIsImageModalVisible(false)}>
+                  <MaterialIcons name="close" size={24} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={toggleModal}>
+                  <MaterialIcons name="more-vert" size={24} color="white" style={{ marginLeft: 20 }} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+          )}
+          FooterComponent={() => (
+            <View style={styles.footerContainer}>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                isVisible={isModalVisible}
+                avoidKeyboard={true}
+                hasBackdrop={true}
+                backdropColor="transparent"
+                coverScreen={true}
+                animationIn="slideInUp"
+                animationInTiming={300}
+                animationOut="slideOutDown"
+                animationOutTiming={400}
+                onBackdropPress={toggleModal}
+                swipeToCloseEnabled={true}
+
+                style={styles.modal}
+              >
+                <View style={{ justifyContent: 'flex-end' }}>
+                  <View style={styles.modalContent}>
+                    <TouchableOpacity onPress={handleDownload} style={{ flexDirection: 'row' }}>
+                      <MaterialIcons name="file-download" size={25} color="black" style={{ marginRight: 10 }} />
+                      <Text style={{ fontSize: 16 }}>Save Image to Phone</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+            </View>
+          )}
+        />
+      </Portal>
     </View>
   );
 };
@@ -142,7 +172,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: "white",
     borderRadius: 10,
-    elevation: 1,
+    elevation: 0,
   },
   header: {
     flexDirection: "row",
@@ -176,27 +206,43 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   content: {
+    flex: 1,
     textAlign: "justify",
   },
   toggleButton: {
     color: "#0A3480",
-    marginTop: 10,
+    // marginTop: 10,
     fontWeight: "bold",
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  containerImageView: {
+    marginTop: 20,
+    left: 310,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    backgroundColor: "transparent",
+    padding: 10,
+  },
+
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0,
   },
   modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 20
+  },
+  closeText: {
+    color: '#0A3480',
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  footerContainer: {
+    flex: 1,
+    // justifyContent: 'flex-end',
+    // alignItems: 'center',
   },
 });
+
 
 export default FeedsCard;

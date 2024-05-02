@@ -83,13 +83,12 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#ffffff",
     borderRadius: 8,
-    elevation: 0.5,
-    padding: 15,
+    // elevation: 0.5,
+    padding: 8,
     marginBottom: 8,
-    shadowColor: "#000",
-
-    shadowOpacity: 10,
-    shadowRadius: 50,
+    // shadowColor: "#000",
+    // shadowOpacity: 10,
+    // shadowRadius: 50,
   },
   chip: {
     margin: 4,

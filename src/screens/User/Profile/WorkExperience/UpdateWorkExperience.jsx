@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Appbar, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -27,10 +27,16 @@ const UpdateWorkExperience = () => {
         }
     });
 
-    const [dateStartedValue, setDateStartedValue] = useState(new Date(watch('date_started')));
-    const [dateEndedValue, setDateEndedValue] = useState(new Date(watch('date_ended')));
+    const [dateStartedValue, setDateStartedValue] = useState(new Date());
+    const [dateEndedValue, setDateEndedValue] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState(null);
+
+    useEffect(() => {
+        // Set initial date values when component mounts
+        setDateStartedValue(new Date(watch('date_started')));
+        setDateEndedValue(new Date(watch('date_ended')));
+    }, []);
 
     const handleDateChange = (event, selectedDate) => {
         setShowDatePicker(false);
@@ -80,9 +86,9 @@ const UpdateWorkExperience = () => {
 
     return (
         <AuthenticatedLayout>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Update Work Experience" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Update Work Experience" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
 
             <View style={styles.container}>
@@ -186,10 +192,11 @@ const UpdateWorkExperience = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 15,
+        paddingHorizontal: 8,
+        marginVertical: 20
     },
     dateContainer: {
-        marginBottom: 20,
+        // marginBottom: 20,
     },
 });
 

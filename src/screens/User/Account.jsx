@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Chip, Divider, IconButton, Snackbar, Button, Card, Appbar } from "react-native-paper";
+import React, { useState } from "react";
+import { Chip, Divider, IconButton, Snackbar, Button, useTheme, Appbar } from "react-native-paper";
 import {
   View,
   Image,
   Text,
   StyleSheet,
   TouchableOpacity,
+  ScrollView, RefreshControl
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -21,24 +22,36 @@ import useSkills from "./Profile/Skills/hooks/useSkills";
 import useAuth from "../../hooks/useAuth";
 
 const Account = ({ activeNav }) => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
-  const { user, isFetched, isLoading } = useUser();
+  const { user, isFetched, isLoading, refetchUser } = useUser();
   const { logout } = useAuth();
-  const [snackbarProperties, setSnackbarProperties] = useState({
-    visible: false,
-    text: "",
-  });
+  const [refreshing, setRefreshing] = useState(false);
 
-  if (isLoading) {
-    return <Spinner visible={true} textContent={'Loading...'} />;
-  }
+  const onRefresh = () => {
+    setRefreshing(true);
+    refetchUser()
+      .then(() => { })
+      .catch(() => { })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
 
-  if (!isFetched) {
-    return <Text>Error fetching user data.</Text>;
-  }
 
   return (
-    <AuthenticatedLayout activeBottomNav={activeNav?.route?.name}>
+
+    <ScrollView
+      style={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[colors.primary]}
+          progressViewOffset={100}
+        />
+      }
+    >
       <View style={styles.container}>
         <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
           <Image source={require("../../../assets/pinoycare.png")} style={styles.imageStyle} />
@@ -173,7 +186,8 @@ const Account = ({ activeNav }) => {
         </View>
 
       </View>
-    </AuthenticatedLayout>
+    </ScrollView>
+
   );
 };
 
@@ -270,7 +284,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 15,
-    elevation: 0.5,
+    elevation: 0,
   },
   cardContent: {
     justifyContent: 'center',
@@ -299,7 +313,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   divider: {
-    marginVertical: 15,
+    marginVertical: 8,
   },
   educationItem: {
     marginBottom: 10,

@@ -23,7 +23,7 @@ function Feeds({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={{ elevation: 1, backgroundColor: '#0A3480' }}>
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Image source={require("../../../../assets/pinoycare.png")} style={styles.imageStyle} />
         <Appbar.Content title="Feeds" titleStyle={{ color: 'white' }} />
         <HeaderMessageNotification />

@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { HelperText, TextInput, useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import PropTypes from "prop-types";
-const CustomTextInput = ({ control, name, rules, styleContainer, ...rest }) => {
+const CustomTextInput = ({ control, name, label, rules, styleContainer, ...rest }) => {
   const theme = useTheme();
 
   return (
@@ -17,6 +17,7 @@ const CustomTextInput = ({ control, name, rules, styleContainer, ...rest }) => {
       }) => (
         <View style={[styles.inputTextContainer, styleContainer]}>
           <TextInput
+            label={label}
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}

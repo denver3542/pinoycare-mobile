@@ -15,7 +15,6 @@ function CustomGuestTopTabs() {
     <Tab.Navigator
       screenOptions={{ animationEnabled: false, headerShown: false }}
       initialRouteName="Feeds"
-      style={{ flex: 1, height: 650 }}
     >
       {tabScreens.map((screen, index) => (
         <Tab.Screen

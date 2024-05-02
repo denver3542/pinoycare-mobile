@@ -63,13 +63,13 @@ const EducationForm = () => {
 
     return (
         <AuthenticatedLayout>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Add Education" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Add Education" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
             <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
-                <View style={{ paddingHorizontal: 15, marginTop: 60 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>Education</Text>
+                <View style={{ paddingHorizontal: 8, marginVertical: 20 }}>
+                    {/* <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>Education</Text> */}
 
                     <CustomSelectBox
                         selectedValue={selectedLevel}

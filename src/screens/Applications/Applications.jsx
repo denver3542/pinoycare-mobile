@@ -75,7 +75,7 @@ const Applications = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F4F7FB' },
+  container: { flex: 1, backgroundColor: '#F4F7FB', },
   listContainer: { padding: 8 },
   imageStyle: {
     width: 30,

@@ -20,7 +20,7 @@ const tabScreens = [
 function CustomBottomTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{ animationEnabled: false, headerShown: false }}
+      screenOptions={{ animationEnabled: true, headerShown: false }}
       initialRouteName="Dashboard"
     >
       {tabScreens.map((screen, index) => (

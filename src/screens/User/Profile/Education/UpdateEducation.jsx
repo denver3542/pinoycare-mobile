@@ -74,14 +74,12 @@ const UpdateEducation = () => {
 
     return (
         <AuthenticatedLayout>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Update Education" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Update Education" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
             <View style={styles.container}>
                 <View style={styles.formContainer}>
-                    <Text style={styles.heading}>Education</Text>
-
                     <CustomSelectBox
                         control={control}
                         name="level"
@@ -170,7 +168,7 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         paddingHorizontal: 15,
-        marginTop: 60,
+        marginTop: 25,
     },
     heading: {
         fontWeight: 'bold',
@@ -179,7 +177,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     dateContainer: {
-        marginBottom: 20,
+        // marginBottom: 20,
     },
 });
 

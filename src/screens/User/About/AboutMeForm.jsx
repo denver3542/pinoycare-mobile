@@ -10,6 +10,7 @@ import axiosInstance, { getJWTHeader } from '../../../../utils/axiosConfig';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomMultilineTextInput from '../../../components/CustomMultilineTextInput';
 import { useUser } from '../../../hooks/useUser';
+import CustomTextInput from '../../../components/CustomTextInput';
 
 
 const AboutMeScreen = () => {
@@ -50,15 +51,15 @@ const AboutMeScreen = () => {
 
     return (
         <AuthenticatedLayout>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Update About" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Update About" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
             <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
-                <View style={{ padding: 15, marginTop: 60 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#0A3480', marginBottom: 40 }}>About Me</Text>
-                    <CustomMultilineTextInput mode="outlined" control={control} name="about_me" placeholder="Tell me about yourself" />
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)} style={{ marginTop: 40 }}>
+                <View style={{ padding: 15, marginTop: 25 }}>
+                    <CustomTextInput mode="outlined" control={control} multiline={true}
+                        numberOfLines={15} name="about_me" placeholder="Tell me about yourself" />
+                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
                         Update
                     </Button>
                 </View>

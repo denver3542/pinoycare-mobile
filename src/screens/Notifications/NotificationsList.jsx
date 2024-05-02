@@ -35,7 +35,7 @@ const NotificationItem = ({ title, description, onPress, date }) => (
         </View>
       )}
       left={(props) => <List.Icon {...props} icon="bell" />}
-      //   right={() => onPress && <Button onPress={onPress}>View</Button>}
+    //   right={() => onPress && <Button onPress={onPress}>View</Button>}
     />
     <Divider />
   </View>
@@ -61,9 +61,9 @@ const NotificationsList = () => {
 
   return (
     <View>
-      <Appbar.Header mode="small">
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Notifications" />
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Notifications" color="white" />
       </Appbar.Header>
       <FlatList
         data={user.notifications}

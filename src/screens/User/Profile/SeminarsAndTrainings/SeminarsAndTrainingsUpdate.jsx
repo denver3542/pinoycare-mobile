@@ -80,9 +80,9 @@ const SeminarsAndTrainingsUpdate = () => {
     return (
         <AuthenticatedLayout>
             {/* Appbar with back action and title */}
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Update Seminars" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Update Seminars" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
 
             {/* Form for updating seminars and trainings */}
@@ -157,10 +157,12 @@ const SeminarsAndTrainingsUpdate = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 15,
+        paddingHorizontal: 8,
+        marginVertical: 20
+
     },
     dateContainer: {
-        marginBottom: 20,
+        // marginBottom: 20,
     },
 });
 

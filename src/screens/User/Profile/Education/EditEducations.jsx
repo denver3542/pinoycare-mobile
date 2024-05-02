@@ -71,9 +71,9 @@ const ChangeEducationScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Edit Education" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Edit Education" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
             <FlatList
                 data={user.educations.slice(0, visibleItems)}

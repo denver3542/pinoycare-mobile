@@ -79,9 +79,9 @@ const SeminarsAndTrainingsForm = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
-                <Appbar.Content title="Add Seminars And Trainings" />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                <Appbar.Content title="Add Seminars And Trainings" titleStyle={{ color: 'white' }} />
             </Appbar.Header>
 
             <ScrollView style={styles.container}>
@@ -91,7 +91,7 @@ const SeminarsAndTrainingsForm = () => {
                     label="Facilitated By"
                     mode="outlined"
                     style={styles.input}
-                    rules={{ required: true }}
+                    rules={{ required: 'Facilitator Name is required' }}
                     error={errors.facilitated_by}
                 />
 
@@ -101,18 +101,20 @@ const SeminarsAndTrainingsForm = () => {
                     label="Description"
                     mode="outlined"
                     style={styles.input}
-                    rules={{ required: true }}
+                    rules={{ required: 'Description is required' }}
                     error={errors.description}
                 />
 
                 {/* Date Started Picker */}
                 <View style={styles.datePickerContainer}>
                     <TouchableOpacity onPress={() => openDatePicker('date_started')}>
-                        <TextInput
+                        <CustomTextInput
+                            control={control}
                             label="Date Started"
                             mode="outlined"
+                            name="date_started"
                             value={watch('date_started').toLocaleDateString()}
-                            style={styles.input}
+                            rules={{ required: 'Date Started is required' }}
                             editable={false}
                         />
                     </TouchableOpacity>
@@ -129,11 +131,13 @@ const SeminarsAndTrainingsForm = () => {
                 {/* Date Completed Picker */}
                 <View style={styles.datePickerContainer}>
                     <TouchableOpacity onPress={() => openDatePicker('date_completed')}>
-                        <TextInput
+                        <CustomTextInput
+                            control={control}
                             label="Date Completed"
                             mode="outlined"
+                            name="date_completed"
                             value={watch('date_completed').toLocaleDateString()}
-                            style={styles.input}
+                            rules={{ required: 'Date Completed is required' }}
                             editable={false}
                         />
                     </TouchableOpacity>
@@ -142,6 +146,7 @@ const SeminarsAndTrainingsForm = () => {
                             value={watch('date_completed')}
                             mode="date"
                             display="default"
+                            rules={{ required: 'Date Completed is required' }}
                             onChange={handleDateChange}
                         />
                     )}
@@ -173,7 +178,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     input: {
-        marginBottom: 10,
+        // marginBottom: 10,
     },
     datePickerContainer: {
         marginBottom: 10,

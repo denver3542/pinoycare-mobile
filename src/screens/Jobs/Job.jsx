@@ -1,6 +1,6 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, RefreshControl } from "react-native";
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   Appbar,
   Button,
@@ -10,7 +10,8 @@ import {
   Modal,
   Text,
   Title,
-  useTheme
+  useTheme,
+  Portal
 } from "react-native-paper";
 import HTMLView from "react-native-htmlview";
 import { fDate } from "../../../utils/formatTime";
@@ -21,8 +22,8 @@ import { useUserApplications } from "../../components/useUserApplications";
 
 export default function Job() {
   const { colors } = useTheme();
-  const navigation = useNavigation();
   const { params } = useRoute();
+  const navigation = useNavigation();
   const { user, isFetched } = useUser();
   const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
@@ -30,6 +31,8 @@ export default function Job() {
   const job = params.job;
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
+  const [visible, setVisible] = useState(false);
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -40,13 +43,10 @@ export default function Job() {
       });
   };
 
-  const [visible, setVisible] = useState(false);
-
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   useEffect(() => {
-    // Check if the current job ID is in the list of applied jobs
     setIsApplied(appliedJobs.includes(job.id));
   }, [appliedJobs, job.id]);
 
@@ -61,7 +61,6 @@ export default function Job() {
 
   useEffect(() => {
     if (jobData && !isFetching) {
-      // console.log(jobData.question);
       setQuestions(jobData.question || []);
     }
   }, [jobData, isFetching]);
@@ -78,117 +77,123 @@ export default function Job() {
     }
   };
 
-  const containerStyle = {
-    padding: 25,
-    height: 150,
-    marginHorizontal: 15,
-    borderRadius: 15,
-  };
   return (
-    <View style={{ flex: 1 }}>
-      <Appbar.Header mode="small">
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title={params.job.title} />
-        {/* <Appbar.Content title="Apply" /> */}
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[colors.primary]}
+          progressViewOffset={100}
+        />
+      }
+    >
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title={params.job.title} titleStyle={{ color: 'white' }} />
+        {user && isFetched ? null : <Appbar.Content title="Apply" />}
       </Appbar.Header>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colors.primary]}
-          />
-        }
-      >
-        <Card style={styles.card}>
-          <Card.Cover source={{ uri: params.job.media[0].original_url }} />
-          <Card.Actions style={styles.cardActions}>
+      <Card style={styles.card}>
+        <Card.Cover source={{ uri: params.job.media[0].original_url }} />
+        <Card.Actions style={styles.cardActions}>
+          {!user && !isFetched && (
             <Button icon="" style={styles.saveButton} onPress={handleSave}>
               Save
             </Button>
-            <Button
-              style={[
-                // styles.applyButton,
-                { color: isApplied ? "#fff" : "primary" },
-              ]}
-              onPress={handleApply}
-              disabled={isApplied}
-            >
-              {isApplied ? "Applied" : "Apply"}
-            </Button>
-          </Card.Actions>
-          <Card.Content>
-            <Title style={styles.title}>{job.title}</Title>
-            <Text style={styles.company}>{job.company}</Text>
-            <View style={styles.metaContainer}>
-              <Text style={styles.metaText}>
-                <Text style={styles.metaIcon}>📅</Text> {fDate(job.created_at)}
-              </Text>
-            </View>
-            <Divider style={styles.divider} />
-            <Text style={styles.sectionTitle}>Description:</Text>
-            <HTMLView value={job.description} style={styles.description} />
-            <Divider style={styles.divider} />
-            <View style={[styles.infoContainer, { alignItems: "baseline" }]}>
-              <Text style={styles.sectionTitle}>Offered Salary:</Text>
-              <Text variant="bodyLarge" style={styles.infoText}>
-                {"₱" + addCommasToNumber(job.salary_from || 0)} -{" "}
-                {"₱" + addCommasToNumber(job.salary_to || 0)}
-              </Text>
-            </View>
-            <Divider style={styles.divider} />
-            <Text style={styles.sectionTitle}>Skills</Text>
-            <View style={styles.chipContainer}>
-              {job.skills &&
-                job.skills?.map((item) => (
-                  <Chip key={item.id} style={styles.skillChip}>
-                    {item.skill_name}
-                  </Chip>
-                ))}
-            </View>
-            <Text style={styles.sectionTitle}>Shift and Schedule</Text>
-            <View style={styles.chipContainer}>
-              {job.schedules.length > 0 ? (
-                job.schedules.map((item) => (
-                  <Chip key={item} style={styles.skillChip}>
-                    {item}
-                  </Chip>
-                ))
-              ) : (
-                <Text>N/A</Text>
-              )}
-            </View>
-          </Card.Content>
-        </Card>
-      </ScrollView>
-      <Modal
-        visible={visible}
-        onDismiss={hideModal}
-        contentContainerStyle={containerStyle}
-      >
-        <Card>
-          <Card.Content>
-            <Text variant="headlineSmall">
+          )}
+          <Button
+            style={[
+              // styles.applyButton,
+              { color: isApplied ? "#fff" : "primary" },
+            ]}
+            onPress={handleApply}
+            disabled={isApplied}
+          >
+            {isApplied ? "Applied" : "Apply"}
+          </Button>
+        </Card.Actions>
+        <Card.Content>
+          <Title style={styles.title}>{job.title}</Title>
+          <Text style={styles.company}>{job.company}</Text>
+          <View style={styles.metaContainer}>
+            <Text style={styles.metaText}>
+              <Text style={styles.metaIcon}>📅</Text> {fDate(job.created_at)}
+            </Text>
+          </View>
+          <Divider style={styles.divider} />
+          <Text style={styles.sectionTitle}>Description:</Text>
+          <HTMLView value={job.description} style={styles.description} />
+          <Divider style={styles.divider} />
+          <View style={[styles.infoContainer, { alignItems: "baseline" }]}>
+            <Text style={styles.sectionTitle}>Offered Salary:</Text>
+            <Text variant="bodyLarge" style={styles.infoText}>
+              {"₱" + addCommasToNumber(job.salary_from || 0)} -{" "}
+              {"₱" + addCommasToNumber(job.salary_to || 0)}
+            </Text>
+          </View>
+          <Divider style={styles.divider} />
+          <Text style={styles.sectionTitle}>Skills</Text>
+          <View style={styles.chipContainer}>
+            {job.skills &&
+              job.skills?.map((item) => (
+                <Chip key={item.id} style={styles.skillChip}>
+                  {item.skill_name}
+                </Chip>
+              ))}
+          </View>
+          <Text style={styles.sectionTitle}>Shift and Schedule</Text>
+          <View style={styles.chipContainer}>
+            {job.schedules.length > 0 ? (
+              job.schedules.map((item) => (
+                <Chip key={item} style={styles.skillChip}>
+                  {item}
+                </Chip>
+              ))
+            ) : (
+              <Text>N/A</Text>
+            )}
+          </View>
+        </Card.Content>
+      </Card>
+      {user && isFetched ? null : (
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={styles.modal}
+          >
+            <Text style={styles.modalText}>
               Would you like to apply for this job? Please sign in.
             </Text>
-            <Divider style={{ marginTop: 10 }} />
-          </Card.Content>
-          <Card.Actions style={{ display: "flex", justifyContent: "center" }}>
-            <Button onPress={hideModal}>Cancel</Button>
-            <Button onPress={() => navigation.navigate("Login")}>
+            <Button mode="contained" onPress={() => navigation.navigate("Login")}>
               Sign in
             </Button>
-          </Card.Actions>
-        </Card>
-      </Modal>
-    </View>
+            <Button style={styles.button} onPress={hideModal}>Cancel</Button>
+          </Modal>
+        </Portal>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  appbar: {
-    backgroundColor: "#0A3480",
+  container: {
+    flex: 1,
+    backgroundColor: '#F4F7FB'
+  },
+  modal: {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20
+  },
+  button: {
+    marginTop: 10,
   },
   scrollContainer: {
     flexGrow: 1,

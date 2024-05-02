@@ -30,9 +30,6 @@ import Job from "../screens/Jobs/Job";
 
 // Import hooks
 import { useUser } from "../hooks/useUser";
-import EmployerCustomBottomTabs from "../components/EmployerCustomBottomTabs";
-import CandidateDetailsScreen from "../screens/Employer/Candidates/CandidateDetailsScreen";
-import JobDetailsScreen from "../screens/Employer/Jobs/JobDetailsScreen";
 import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
 import MessageList from "../screens/Messaging/MessageList";
 import ChatConversation from "../screens/Messaging/ChatConversation";
@@ -54,16 +51,22 @@ function LandingNavigation() {
     }
   }, [isFetched]);
 
+  const screenOptions = {
+    headerShown: false,
+    animation: "slide_from_right",
+    animationTiming: 150,
+  };
+
   return (
     <NavigationContainer>
       {loading ? (
         <Spinner visible={loading} />
       ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={screenOptions}>
           {!user ? (
             <>
               <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="GuestTabs" component={Index} />
+              <Stack.Screen name="GuestTabs" component={Index} options={{ animation: 'fade', animationTiming: 3000, }} />
               <Stack.Screen name="SignUp" component={SignUp} />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />

@@ -62,11 +62,12 @@ function Dashboard({ activeNav }) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} refreshControl={
+    <ScrollView style={{ flex: 1, backgroundColor: '#F4F7FB' }} refreshControl={
       <RefreshControl
         refreshing={refreshing}
         onRefresh={onRefresh}
         colors={[colors.primary]}
+        progressViewOffset={100}
       />
     }>
 
@@ -100,7 +101,7 @@ function Dashboard({ activeNav }) {
 
         <Searchbar
           placeholder="Search"
-          style={{ height: 40, backgroundColor: '#E5E5EA' }}
+          style={{ height: 40, backgroundColor: '#E5E5EA', marginBottom: 8 }}
           onChangeText={setSearchQuery}
           value={searchQuery}
           inputStyle={{ paddingVertical: 8, bottom: 8, fontSize: 14 }}
@@ -109,7 +110,7 @@ function Dashboard({ activeNav }) {
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Applications</Text>
-            {isFetched && applications.length > 1 && (
+            {isFetched && applications.length > 0 && (
               <TouchableOpacity onPress={handleSeeMore}>
                 <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0A3480' }}>
                   See All
@@ -135,9 +136,9 @@ function Dashboard({ activeNav }) {
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {dashboardIsFetching && (
+            {/* {dashboardIsFetching && (
               <ActivityIndicator animating={true} color={colors.primary} />
-            )}
+            )} */}
             {isFetched && offeredJobs?.length > 0 ? (
               offeredJobs?.map((app, key) => (
                 <ApplicationListCard key={key} application={app} />
@@ -157,9 +158,9 @@ function Dashboard({ activeNav }) {
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {dashboardIsFetching && (
+            {/* {dashboardIsFetching && (
               <ActivityIndicator animating={true} color={colors.primary} />
-            )}
+            )} */}
             {isFetched && savedJobs && savedJobs.length > 0 ? (
               savedJobs.map((job, index) => (
                 <ApplicationListCard key={index} application={job} />
@@ -182,16 +183,15 @@ function Dashboard({ activeNav }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F4F7FB',
     padding: 8,
     marginTop: 8
   },
   card: {
     padding: 15,
     borderRadius: 15,
-    elevation: 1,
+    elevation: 0,
     backgroundColor: "white",
-    marginTop: 15,
+    marginTop: 8,
     flex: 1
   },
   headerContainer: {
@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     marginVertical: 10,
     marginHorizontal: 8,
+    marginBottom: 8
     // bottom: 5
   },
   cardContent: {
