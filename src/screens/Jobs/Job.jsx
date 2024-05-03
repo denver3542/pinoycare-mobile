@@ -72,10 +72,12 @@ export default function Job() {
   const handleApply = () => {
     if (user) {
       navigation.navigate("Questionnaire", { jobData });
+      console.log('user:', user)
     } else {
       showModal(true);
     }
   };
+
 
   return (
     <ScrollView
@@ -92,7 +94,6 @@ export default function Job() {
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title={params.job.title} titleStyle={{ color: 'white' }} />
-        {user && isFetched ? null : <Appbar.Content title="Apply" />}
       </Appbar.Header>
       <Card style={styles.card}>
         <Card.Cover source={{ uri: params.job.media[0].original_url }} />
@@ -122,7 +123,7 @@ export default function Job() {
             </Text>
           </View>
           <Divider style={styles.divider} />
-          <Text style={styles.sectionTitle}>Description:</Text>
+          <Text style={styles.actionTitle}>Description:</Text>
           <HTMLView value={job.description} style={styles.description} />
           <Divider style={styles.divider} />
           <View style={[styles.infoContainer, { alignItems: "baseline" }]}>
@@ -166,9 +167,16 @@ export default function Job() {
             <Text style={styles.modalText}>
               Would you like to apply for this job? Please sign in.
             </Text>
-            <Button mode="contained" onPress={() => navigation.navigate("Login")}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                navigation.navigate("Login");
+                hideModal();
+              }}
+            >
               Sign in
             </Button>
+
             <Button style={styles.button} onPress={hideModal}>Cancel</Button>
           </Modal>
         </Portal>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Animated } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -39,6 +40,8 @@ import GuestFeeds from "../screens/Guest/Feeds";
 import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
 
+
+
 const Stack = createNativeStackNavigator();
 
 function LandingNavigation() {
@@ -53,8 +56,8 @@ function LandingNavigation() {
 
   const screenOptions = {
     headerShown: false,
-    animation: "slide_from_right",
-    animationTiming: 150,
+    animation: 'slide_from_right',
+    animationTiming: 5000
   };
 
   return (

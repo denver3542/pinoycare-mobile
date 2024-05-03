@@ -16,7 +16,7 @@ export default function Index() {
   return (
     <>
       <View style={{ flex: 1 }}>
-        <Appbar.Header mode="small" style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
           <Image source={require("../../../assets/pinoycare.png")} style={styles.imageStyle} />
           <Appbar.Content title="Upcare" titleStyle={{ color: 'white' }} />
           <Appbar.Action icon="login" onPress={loginBtn} color="white" />

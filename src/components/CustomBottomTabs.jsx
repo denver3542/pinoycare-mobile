@@ -6,6 +6,7 @@ import Jobs from "../screens/User/Jobs/Jobs";
 import Feeds from "../screens/User/Feeds/Feeds";
 import Applications from "../screens/Applications/Applications";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 

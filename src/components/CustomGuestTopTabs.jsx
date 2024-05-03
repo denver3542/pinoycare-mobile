@@ -3,7 +3,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import GuestFeeds from "../screens/Guest/Feeds";
 import GuestJobs from "../screens/Guest/Jobs";
-
+import { useNavigation } from "@react-navigation/native";
 const Tab = createMaterialTopTabNavigator();
 
 const tabScreens = [
@@ -11,10 +11,12 @@ const tabScreens = [
   { name: "Find Jobs", component: GuestJobs, iconName: "search" },
 ];
 function CustomGuestTopTabs() {
+  const navigation = useNavigation();
   return (
     <Tab.Navigator
       screenOptions={{ animationEnabled: false, headerShown: false }}
       initialRouteName="Feeds"
+      navigation={navigation}
     >
       {tabScreens.map((screen, index) => (
         <Tab.Screen

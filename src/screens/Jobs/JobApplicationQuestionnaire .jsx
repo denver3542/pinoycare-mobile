@@ -53,9 +53,9 @@ const JobApplicationQuestionnaire = () => {
 
   return (
     <>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Job Application Questionnaire" />
+      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Job Application Questionnaire" color="white" />
       </Appbar.Header>
       <ScrollView style={{ flex: 1, padding: 16 }}>
         {questions.map((question) => (
