@@ -82,11 +82,14 @@ const GuestJobs = () => {
     setShowApplyModal(false);
     navigation.navigate("Login");
   };
+  const closeModal = () => {
+    setShowApplyModal(false);
+  };
 
   const renderJobItem = ({ item }) => {
     const postedDate = moment(item.date_posted).format("LL");
     const navigateToJobDetails = () =>
-      navigation.navigate("Job", { job: item });
+      navigation.navigate("GuestJob", { job: item });
 
     return (
       <TouchableWithoutFeedback onPress={navigateToJobDetails}>
@@ -181,12 +184,12 @@ const GuestJobs = () => {
         }
       />
       <Portal>
-        {/* Modal for showing apply or sign in */}
         <Modal visible={showApplyModal} onDismiss={() => setShowApplyModal(false)} contentContainerStyle={styles.modal}>
           <Text style={styles.modalText}>
             Would you like to save this job? Please sign in.
           </Text>
           <Button onPress={signIn} mode="contained">Sign In</Button>
+          <Button onPress={closeModal} mode="text" style={styles.button}>Cancel</Button>
         </Modal>
       </Portal>
     </View>
@@ -278,6 +281,9 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 20
+  },
+  button: {
+    marginTop: 10,
   },
 });
 

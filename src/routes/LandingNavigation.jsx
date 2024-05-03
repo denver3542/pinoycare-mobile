@@ -57,7 +57,7 @@ function LandingNavigation() {
   const screenOptions = {
     headerShown: false,
     animation: 'slide_from_right',
-    animationTiming: 5000
+    animationTiming: 5
   };
 
   return (
@@ -73,7 +73,7 @@ function LandingNavigation() {
               <Stack.Screen name="SignUp" component={SignUp} />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />
-              <Stack.Screen name="Job" component={Job} />
+              <Stack.Screen name="GuestJob" component={Job} />
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
               <Stack.Screen name="Professional" component={Professional} />
               <Stack.Screen name="IndividualEmployer" component={IndividualEmployer} />

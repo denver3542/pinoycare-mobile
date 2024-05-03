@@ -212,7 +212,6 @@ const styles = StyleSheet.create({
     color: '#0A3480',
     marginTop: 5,
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
     fontSize: 14,
   },
   jobImage: {

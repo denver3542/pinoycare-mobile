@@ -141,26 +141,26 @@ const Signup = () => {
         <CustomTextInput
           control={control}
           name="firstname"
-          placeholder="First Name"
+          label="First Name"
           mode="outlined"
           rules={{ required: "First Name is required" }}
         />
         <CustomTextInput
           control={control}
           name="middlename"
-          placeholder="Middle Name"
+          label="Middle Name"
           rules={{ required: "Middlename is required" }}
           mode="outlined"
         />
         <CustomTextInput
           control={control}
           name="lastname"
-          placeholder="Last Name"
+          label="Last Name"
           rules={{ required: "Last Name is required" }}
           mode="outlined"
         />
         {/* Here is the selection of gender */}
-        <View style={{ width: "100%", marginBottom: 15 }}>
+        <View style={{ width: "100%", marginBottom: 15, }}>
           <RNPickerSelect
             onValueChange={(value) => setValue("gender", value)}
             items={[
@@ -176,7 +176,7 @@ const Signup = () => {
                 borderWidth: 1,
                 borderColor: "gray",
                 borderRadius: 5,
-                paddingRight: 30, // to ensure the text is never behind the icon
+                paddingRight: 30,
                 backgroundColor: "#FFFFFF",
               },
               inputIOS: {
@@ -186,7 +186,7 @@ const Signup = () => {
                 borderWidth: 1,
                 borderColor: errors.gender ? "red" : "gray",
                 borderRadius: 5,
-                paddingRight: 30, // to ensure the text is never behind the icon
+                paddingRight: 30,
                 backgroundColor: "#FFFFFF",
               },
             }}
@@ -220,14 +220,13 @@ const Signup = () => {
         <CustomTextInput
           control={control}
           name="email"
-          placeholder="Email"
+          label="Email"
           mode="outlined"
           rules={{ required: "Email is required" }}
         />
         <CustomTextInput
           control={control}
           name="password"
-          placeholder="Password"
           label="Password"
           mode="outlined"
           rules={{ required: "Password is required" }}
@@ -242,7 +241,6 @@ const Signup = () => {
         <CustomTextInput
           control={control}
           name="confirmpassword"
-          placeholder="Confirm Password"
           label="Confirm Password"
           mode="outlined"
           rules={{ required: "Password is required" }}
