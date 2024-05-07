@@ -6,6 +6,7 @@ import useFeeds from "./hooks/useFeeds";
 import HeaderMessageNotification from "../../../components/HeaderMessageNotification";
 import HeaderNotification from "../../../components/HeaderNotification";
 
+
 function Feeds({ navigation }) {
   const { colors } = useTheme();
   const { data: feeds, isRefetching, refetch } = useFeeds();

@@ -67,7 +67,7 @@ async function updateEducation(dataToEdit, user) {
     const headers = getJWTHeader(user);
     try {
         const { data } = await axiosInstance.post("/user/profile/edit-educations", dataToEdit, { headers });
-        const updatedUser = { ...user, ...data }; // Ensure server response data is used
+        const updatedUser = { ...user, ...data };
         await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
         return updatedUser; // Return the updated user object
     } catch (error) {
@@ -86,12 +86,12 @@ export const useUpdateEducations = () => {
             const userStr = await AsyncStorage.getItem("upcare_user");
             const user = userStr ? JSON.parse(userStr) : null;
             if (!user) throw new Error("User session not found.");
-            return await updateEducation(dataToEdit, user); // Rely on updateEducation to throw errors
+            return await updateEducation(dataToEdit, user);
         },
         {
             onSuccess: (updatedUser) => {
                 // console.log("Education updated successfully.", updatedUser);
-                queryClient.setQueryData(['user'], updatedUser); // Use updatedUser from updateEducation
+                queryClient.setQueryData(['user'], updatedUser);
                 navigation.goBack();
             },
             onError: (error) => {

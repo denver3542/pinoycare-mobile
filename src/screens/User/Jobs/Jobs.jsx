@@ -72,7 +72,7 @@ const JobListings = ({ activeNav }) => {
     const isTruncated = item.description.length > descriptionLimit;
 
     return (
-      <TouchableRipple onPress={() => navigateToJobDetails(item)} style={styles.card}>
+      <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
         <View style={styles.cardContentRow}>
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
@@ -88,11 +88,13 @@ const JobListings = ({ activeNav }) => {
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.company}>{item.company}</Text>
               </View>
-              <IconButton
-                icon={savedJobs[item.id] ? "heart" : "heart-outline"}
-                onPress={() => handleSave(item.id)}
-                selected
-              />
+              <TouchableWithoutFeedback>
+                <IconButton
+                  icon={savedJobs[item.id] ? "bookmark" : "bookmark-outline"}
+                  onPress={() => handleSave(item.id)}
+                  selected
+                />
+              </TouchableWithoutFeedback>
             </View>
             {/* <Paragraph style={styles.company}>{item.company}</Paragraph> */}
             <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
@@ -111,7 +113,7 @@ const JobListings = ({ activeNav }) => {
             )}
           </View>
         </View>
-      </TouchableRipple>
+      </TouchableWithoutFeedback>
     );
   };
 

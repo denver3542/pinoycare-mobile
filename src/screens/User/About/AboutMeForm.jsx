@@ -58,7 +58,7 @@ const AboutMeScreen = () => {
             <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
                 <View style={{ padding: 15, marginTop: 25 }}>
                     <CustomTextInput mode="outlined" control={control} multiline={true}
-                        numberOfLines={15} name="about_me" placeholder="Tell me about yourself" />
+                        numberOfLines={15} name="about_me" placeholder="Tell me about yourself" label='About' />
                     <Button mode="contained" onPress={handleSubmit(onSubmit)}>
                         Update
                     </Button>

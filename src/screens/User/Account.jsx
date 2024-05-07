@@ -82,15 +82,15 @@ const Account = ({ activeNav }) => {
                 <View style={{ marginBottom: 5 }}>
                   <View style={{ flexDirection: 'row' }}>
                     <MaterialIcons name="work" size={14} color="white" style={{ marginRight: 5 }} />
-                    <Text style={styles.headerProfession}>{user?.profession || "No Profession"}</Text>
+                    <Text style={styles.headerProfession}>{user?.profession || "n/a"}</Text>
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 0 }}>
                     <MaterialIcons name="location-on" size={14} color="white" style={{ marginRight: 5 }} />
-                    <Text style={styles.headerText}>{user?.permanent_address || ""} </Text>
+                    <Text style={styles.headerText}>{user?.permanent_address || "n/a"} </Text>
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 0, alignItems: 'center' }}>
                     <MaterialIcons name="email" size={14} color="white" style={{ marginRight: 5 }} />
-                    <Text style={styles.headerText}>{user?.email || ""} </Text>
+                    <Text style={styles.headerText}>{user?.email || "n/a"} </Text>
                   </View>
                 </View>
                 {/* <TouchableOpacity

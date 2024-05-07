@@ -1,37 +1,24 @@
-import React, { useState, useRef, ref } from "react";
+import React, { useState, memo } from "react";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Divider, Portal, IconButton } from "react-native-paper";
 import Modal from "react-native-modal";
-import ImageView from "react-native-image-viewing";
-import { Image, StyleSheet, Text, TouchableOpacity, View, NetInfo } from "react-native";
-import { Divider, IconButton, useTheme, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import ImageView from "react-native-image-viewing";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
 import { useReactToPost } from "./useFeeds";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import moment from "moment";
-import * as MediaLibrary from "expo-media-library";
-import * as FileSystem from "expo-file-system";
-
-
-
+import { useUser } from "../../../../hooks/useUser";
 
 const MAX_LENGTH = 300;
 
 const FeedsCard = ({ feed }) => {
-  const theme = useTheme();
-  const [selectedReaction, setSelectedReaction] = useState(null);
   const [showFullContent, setShowFullContent] = useState(false);
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const reactToPostMutation = useReactToPost();
   const formattedDate = moment(feed.published_at).fromNow();
-
-  const handleReact = async (reaction) => {
-    try {
-      const newReaction = selectedReaction === reaction ? null : reaction;
-      await reactToPostMutation.mutateAsync({ postId: feed.id, reaction: newReaction });
-      setSelectedReaction(newReaction);
-    } catch (error) {
-      console.error("Error reacting to post:", error);
-    }
-  };
+  const { user } = useUser();
 
   const handleDownload = async () => {
     try {
@@ -48,19 +35,46 @@ const FeedsCard = ({ feed }) => {
       }
     } catch (error) {
       console.error("Error downloading image:", error);
-
     }
   };
 
-
   const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => setModalVisible(!isModalVisible);
+  const toggleContent = () => setShowFullContent(!showFullContent);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-  const toggleContent = () => {
-    setShowFullContent(!showFullContent);
-  };
+  const ReactionButton = memo(({ postId, userReactions }) => {
+    const { user } = useUser();
+    const reactToPostMutation = useReactToPost();
+    const reactionCount = userReactions.filter((react) => react.reaction === "love").length;
+    const selectedReaction = userReactions.some((react) => react.user_id === user.id && react.reaction === "love");
+
+    const handleReact = async () => {
+      try {
+        // Update selectedReaction immediately
+        const newSelectedReaction = !selectedReaction;
+        // Optimistic UI update
+        // You can directly update the state or trigger a refresh from a parent component
+        // For simplicity, I'm assuming you have a mechanism to handle optimistic updates
+        // setUserReactions(newReactions); // Assuming setUserReactions is a state updater function
+
+        // Make the actual API call
+        reactToPostMutation.mutate({ postId, reaction: newSelectedReaction ? "love" : null });
+      } catch (error) {
+        console.error("Error reacting to post:", error);
+      }
+    };
+
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 }}>
+        <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
+          <Text style={{ color: selectedReaction ? "red" : "black", fontSize: 20 }}>
+            {selectedReaction ? "❤️" : "🖤"}
+          </Text>
+        </TouchableOpacity>
+        {reactionCount > 0 && <Text style={{ marginLeft: 5 }}>{reactionCount}</Text>}
+      </View>
+    );
+  });
 
   return (
     <View style={styles.container}>
@@ -90,81 +104,49 @@ const FeedsCard = ({ feed }) => {
           )}
         </Text>
 
-        {/* <Text style={styles.content}>
-          {showFullContent || feed.content.length <= MAX_LENGTH
-            ? feed.content
-            : `${feed.content.substring(0, MAX_LENGTH)}... `}
-          {feed.content.length > MAX_LENGTH && (
-            <Text style={styles.toggleButton} onPress={toggleContent}>
-              {showFullContent ? "" : "Show More"}
-            </Text>
-          )}
-        </Text> */}
-
-        <Divider style={{ marginTop: 10 }} />
-        <IconButton
-          icon={selectedReaction === "love" ? "heart" : "heart-outline"}
-          size={24}
-          color={selectedReaction === "love" ? theme.colors.red : theme.colors.black}
-          onPress={() => handleReact("love")}
-        />
+        <Divider style={{ marginVertical: 10 }} />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <ReactionButton postId={feed.id} reaction="love" userReactions={feed.reactions || []} />
+        </View>
 
         <Portal>
           <ImageView
-            images={[{ uri: feed.image, },]}
+            images={[{ uri: feed.image }]}
             presentationStyle="fullScreen"
             imageIndex={0}
-            animationType="none"
+            animationType="fade"
             onRequestClose={() => setIsImageModalVisible(false)}
             swipeToCloseEnabled={true}
             visible={isImageModalVisible}
             HeaderComponent={() => (
-
-              <View>
-                <View style={styles.containerImageView}>
-                  <TouchableOpacity onPress={() => setIsImageModalVisible(false)}>
-                    <MaterialIcons name="close" size={24} color="white" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={toggleModal}>
-                    <MaterialIcons name="more-vert" size={24} color="white" style={{ marginLeft: 20 }} />
-                  </TouchableOpacity>
-                </View>
+              <View style={styles.containerImageView}>
+                <TouchableOpacity onPress={() => setIsImageModalVisible(false)}>
+                  <MaterialIcons name="close" size={24} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={toggleModal}>
+                  <MaterialIcons name="more-vert" size={24} color="white" style={{ marginLeft: 20 }} />
+                </TouchableOpacity>
               </View>
-
             )}
             FooterComponent={() => (
               <View style={styles.footerContainer}>
                 <Modal
-                  animationType="slide"
-                  transparent={true}
                   isVisible={isModalVisible}
-                  avoidKeyboard={true}
-                  hasBackdrop={true}
-                  backdropColor="transparent"
-                  coverScreen={true}
-                  animationIn="slideInUp"
-                  animationInTiming={300}
-                  animationOut="slideOutDown"
-                  animationOutTiming={300}
+                  backdropOpacity={0.5}
                   onBackdropPress={toggleModal}
-                  swipeToCloseEnabled={true}
-
                   style={styles.modal}
                 >
-                  <View style={{ justifyContent: 'flex-end' }}>
-                    <View style={styles.modalContent}>
-                      <TouchableOpacity onPress={handleDownload} style={{ flexDirection: 'row' }}>
-                        <MaterialIcons name="file-download" size={25} color="black" style={{ marginRight: 10 }} />
-                        <Text style={{ fontSize: 16 }}>Save Image to Phone</Text>
-                      </TouchableOpacity>
-                    </View>
+                  <View style={styles.modalContent}>
+                    <TouchableOpacity onPress={handleDownload} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <MaterialIcons name="file-download" size={25} color="black" style={{ marginRight: 10 }} />
+                      <Text style={{ fontSize: 16 }}>Save Image to Phone</Text>
+                    </TouchableOpacity>
                   </View>
                 </Modal>
               </View>
             )}
           />
         </Portal>
-
       </View>
     </View>
   );
@@ -229,7 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     padding: 10,
   },
-
   modal: {
     justifyContent: 'flex-end',
     margin: 0,
@@ -246,8 +227,6 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     flex: 1,
-    // justifyContent: 'flex-end',
-    // alignItems: 'center',
   },
 });
 
