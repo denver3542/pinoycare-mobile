@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
   Text,
-  Image
+  Image,
+  Platform
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import { Appbar, IconButton, Searchbar, Paragraph, useTheme, Button, Portal, Modal } from "react-native-paper";
@@ -25,6 +26,7 @@ const GuestJobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
+
   const [favoriteJobs, setFavoriteJobs] = useState([]);
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);

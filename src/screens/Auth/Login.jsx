@@ -113,12 +113,6 @@ const Login = ({ navigation }) => {
             mode="outlined"
             // style={styles.input}
             error={errors.password}
-            right={
-              <TextInput.Icon
-                name={showPassword ? "eye-off" : "eye"}
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            }
           />
           <TouchableOpacity
             onPress={() => navigation.navigate("ForgotPassword")}

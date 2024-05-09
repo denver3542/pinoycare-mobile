@@ -14,20 +14,17 @@ import HeaderNotification from '../../../components/HeaderNotification';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import { useSaveJob } from './hook/useJobs'; // Correct the import
+
 const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
+  const saveJob = useSaveJob();
   const [savedJobs, setSavedJobs] = useState({});
-  const handleSave = (jobId) => {
-    setSavedJobs((prevSavedJobs) => ({
-      ...prevSavedJobs,
-      [jobId]: !prevSavedJobs[jobId],
-    }));
-    console.log("save job");
-  };
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -66,6 +63,18 @@ const JobListings = ({ activeNav }) => {
     navigation.navigate('Job', { job });
   };
 
+  const handleSave = async (jobId) => {
+    try {
+      await saveJob.mutate(jobId); // Correct the function call
+      setSavedJobs((prevSavedJobs) => ({
+        ...prevSavedJobs,
+        [jobId]: !prevSavedJobs[jobId],
+      }));
+    } catch (error) {
+      console.error('Failed to save job:', error);
+    }
+  };
+
   const renderJob = ({ item }) => {
     const descriptionLimit = 150;
 
@@ -91,7 +100,7 @@ const JobListings = ({ activeNav }) => {
               <TouchableWithoutFeedback>
                 <IconButton
                   icon={savedJobs[item.id] ? "bookmark" : "bookmark-outline"}
-                  onPress={() => handleSave(item.id)}
+                  onPress={() => handleSave(item.id)} // Call handleSave with job ID
                   selected
                 />
               </TouchableWithoutFeedback>
@@ -107,9 +116,11 @@ const JobListings = ({ activeNav }) => {
               style={styles.description}
             />
             {isTruncated && (
-              <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
-                {descriptionVisibility[item.id] ? 'Read less' : 'Read more'}
-              </Text>
+              <TouchableWithoutFeedback>
+                <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
+                  {descriptionVisibility[item.id] ? 'Read less' : 'Read more'}
+                </Text>
+              </TouchableWithoutFeedback>
             )}
           </View>
         </View>

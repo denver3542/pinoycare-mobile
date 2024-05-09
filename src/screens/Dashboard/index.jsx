@@ -119,7 +119,11 @@ function Dashboard() {
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
             {isFetched && applications.length > 0 ? (
-              <ApplicationListCard application={applications[0]} />
+              <>
+                {applications[0] && ( // Add null check here
+                  <ApplicationListCard application={applications[0]} />
+                )}
+              </>
             ) : (
               <View style={styles.notAvailable}>
                 <MaterialIcons name="description" size={50} color="gray" />
@@ -144,7 +148,9 @@ function Dashboard() {
               <>
                 {offeredJobs.slice(0, showMoreOffers ? undefined : 1).map((job, index) => (
                   <View key={index}>
-                    <ApplicationListCard application={job} />
+                    {job && ( // Add null check here
+                      <ApplicationListCard application={job} />
+                    )}
                     {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />}
                   </View>
                 ))}
@@ -165,6 +171,7 @@ function Dashboard() {
         </View>
 
 
+
         {/* Saved Jobs Section */}
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
@@ -181,13 +188,17 @@ function Dashboard() {
                 {showMoreSavedJobs ? (
                   savedJobs.map((job, index) => (
                     <View key={index}>
-                      <ApplicationListCard application={job} />
+                      {job && ( // Add null check here
+                        <ApplicationListCard application={job} />
+                      )}
                       {index !== savedJobs.length - 1 && <Divider style={styles.divider} />}
                     </View>
                   ))
                 ) : (
                   <View key={0}>
-                    <ApplicationListCard application={savedJobs[0]} />
+                    {savedJobs[0] && ( // Add null check here
+                      <ApplicationListCard application={savedJobs[0]} />
+                    )}
                     {savedJobs.length > 1 && <Divider style={styles.divider} />}
                   </View>
                 )}
@@ -200,6 +211,7 @@ function Dashboard() {
             )}
           </View>
         </View>
+
 
       </View>
     </ScrollView>
