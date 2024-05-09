@@ -50,9 +50,8 @@ async function saveJob(jobId, user) {
   const headers = getJWTHeader(user);
   try {
     const { data } = await axiosInstance.post("/job/save", { job_id: jobId }, { headers });
-    return data; // Assuming API returns data of the saved job
+    return data;
   } catch (error) {
-    // Simplify error handling
     const errorMsg = error.response?.data?.error || error.message;
     throw new Error(`Failed to save job: ${errorMsg}`);
   }

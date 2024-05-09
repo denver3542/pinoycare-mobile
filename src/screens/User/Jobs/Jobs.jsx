@@ -13,16 +13,16 @@ import HeaderMessageNotification from '../../../components/HeaderMessageNotifica
 import HeaderNotification from '../../../components/HeaderNotification';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-
-import { useSaveJob } from './hook/useJobs'; // Correct the import
+import { useUser } from '../../../hooks/useUser';
+import { useSaveJob } from './hook/useJobs';
 
 const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
+  const { user } = useUser();
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
-  const saveJob = useSaveJob();
   const [savedJobs, setSavedJobs] = useState({});
 
   const onRefresh = () => {
@@ -63,13 +63,11 @@ const JobListings = ({ activeNav }) => {
     navigation.navigate('Job', { job });
   };
 
+  const saveJob = useSaveJob();
+
   const handleSave = async (jobId) => {
     try {
-      await saveJob.mutate(jobId); // Correct the function call
-      setSavedJobs((prevSavedJobs) => ({
-        ...prevSavedJobs,
-        [jobId]: !prevSavedJobs[jobId],
-      }));
+      saveJob.mutate(jobId);
     } catch (error) {
       console.error('Failed to save job:', error);
     }
@@ -79,6 +77,8 @@ const JobListings = ({ activeNav }) => {
     const descriptionLimit = 150;
 
     const isTruncated = item.description.length > descriptionLimit;
+
+    const isSaved = user && user.saved_jobs.some(savedJob => savedJob.job_id === item.id);
 
     return (
       <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
@@ -97,15 +97,17 @@ const JobListings = ({ activeNav }) => {
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.company}>{item.company}</Text>
               </View>
-              <TouchableWithoutFeedback>
+
+              <TouchableWithoutFeedback >
                 <IconButton
-                  icon={savedJobs[item.id] ? "bookmark" : "bookmark-outline"}
-                  onPress={() => handleSave(item.id)} // Call handleSave with job ID
+                  onPress={() => handleSave(item.id)}
+                  icon={isSaved ? "bookmark" : "bookmark-outline"}
+                  color={isSaved ? "#0A3480" : "#888"}
                   selected
+                  size={24}
                 />
               </TouchableWithoutFeedback>
             </View>
-            {/* <Paragraph style={styles.company}>{item.company}</Paragraph> */}
             <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
             <Paragraph style={styles.location}>
               <MaterialIcons name="location-on" size={14} color="#0A3480" />
@@ -127,8 +129,6 @@ const JobListings = ({ activeNav }) => {
       </TouchableWithoutFeedback>
     );
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -167,14 +167,12 @@ const JobListings = ({ activeNav }) => {
         />
       )}
     </View>
-
   );
 };
-// style={{ backgroundColor: colors.primary }}
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F4F7FB' },
   card: {
-    // flex: 1,
     marginTop: 8,
     backgroundColor: 'white',
     paddingVertical: 10,
@@ -192,7 +190,6 @@ const styles = StyleSheet.create({
 
   listContentContainer: {
     padding: 8
-    // backgroundColor: 'white'
   },
   titleRow: {
     flexDirection: 'row',
@@ -245,9 +242,6 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#E5E5EA',
     marginVertical: 8,
-    // marginHorizontal: 10,
-    // bottom: 5
-
   },
   iosSearchBar: {
     flex: 1,
@@ -257,16 +251,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     marginVertical: 8,
     marginHorizontal: 8,
-    // bottom: 5
   },
-
   titleStyle: {
     fontWeight: 'bold'
   },
   imageStyle: {
-    width: 30, // Adjust width as needed
-    height: 30, // Adjust height as needed
-    marginLeft: 10, // Adjust margin as needed
+    width: 30,
+    height: 30,
+    marginLeft: 10,
     marginRight: 10
   },
 });
