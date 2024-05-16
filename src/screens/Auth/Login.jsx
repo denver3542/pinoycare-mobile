@@ -35,14 +35,22 @@ const Login = ({ navigation }) => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [generalError, setGeneralError] = useState("");
-  const [googlePressed, setGooglePressed] = useState(false);
-  const [facebookPressed, setFacebookPressed] = useState(false);
-  const [applePressed, setApplePressed] = useState(false);
+  const handleGoogleSignIn = () => {
+    console.log('Google Pressed')
+  };
+
+  const handleFacebookSignIn = () => {
+    console.log('Facebook Pressed')
+  };
+
+  const handleAppleSignIn = () => {
+    console.log('Apple Pressed')
+  };
+
   const {
     control,
     handleSubmit,
     setError,
-
     formState: { errors, isLoading, isSubmitting },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -70,7 +78,10 @@ const Login = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
+  };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -87,10 +98,9 @@ const Login = ({ navigation }) => {
           <IconButton
             icon="arrow-left"
             onPress={() => navigation.goBack()}
-          // style={{ width: 200 }}
           />
         </View>
-        <View style={{ flex: 3 }}>
+        <View style={{ flex: 1, marginVertical: 100 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
             Let's <Text style={styles.highlight}>Sign</Text> you in.
           </Text>
@@ -108,16 +118,15 @@ const Login = ({ navigation }) => {
             rules={{ required: "Email is required" }}
             autoCapitalize="none"
             mode="outlined"
-          // style={styles.input}
           />
           <CustomTextInput
             control={control}
             name="password"
             label="Password"
             secureTextEntry={!showPassword}
+            toggleSecureTextEntry={togglePasswordVisibility}
             rules={{ required: "Password is required" }}
             mode="outlined"
-            // style={styles.input}
             error={errors.password}
           />
           <TouchableOpacity
@@ -136,36 +145,32 @@ const Login = ({ navigation }) => {
 
           {/* Additional sign-up options */}
           <View style={{ marginTop: 20 }}>
-            <Text style={{ textAlign: "center", marginBottom: 10 }}>Or Sign up with</Text>
+            <Text style={{ textAlign: "center", marginBottom: 10 }}>Or Login with</Text>
             <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
               <SocialIcon
                 light
                 type='google'
-                onPress={() => setGooglePressed(true)}
+                onPress={handleGoogleSignIn}
               />
               <SocialIcon
                 light
                 type='facebook'
-                onPress={() => setFacebookPressed(true)}
+                onPress={handleFacebookSignIn}
               />
               <SocialIcon
                 light
                 type='apple'
-                onPress={() => setApplePressed(true)}
+                onPress={handleAppleSignIn}
               />
-
             </View>
           </View>
 
-          {/* Include other buttons like 'SIGN IN WITH GOOGLE', etc., here */}
           <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
             <Text style={styles.signUpText}>
               You don't have an account yet?{" "}
               <Text style={styles.linkText}>Sign up</Text>
             </Text>
           </TouchableOpacity>
-
-
         </View>
       </ScrollView>
     </>
@@ -195,7 +200,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingVertical: 3,
     borderRadius: 50
-
   },
   linkText: {
     color: "blue",
@@ -227,10 +231,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
-
-
-
 });
 
 export default Login;
