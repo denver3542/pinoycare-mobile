@@ -1,6 +1,6 @@
 import React, { useState, memo } from "react";
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Divider, Portal, IconButton } from "react-native-paper";
+import { Image, StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
+import { Divider, Portal, IconButton, Snackbar } from "react-native-paper";
 import Modal from "react-native-modal";
 import { MaterialIcons } from "@expo/vector-icons";
 import ImageView from "react-native-image-viewing";
@@ -11,30 +11,38 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import moment from "moment";
 import { useUser } from "../../../../hooks/useUser";
 
-const MAX_LENGTH = 300;
+const MAX_LENGTH = 150;
 
 const FeedsCard = ({ feed }) => {
   const [showFullContent, setShowFullContent] = useState(false);
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  const reactToPostMutation = useReactToPost();
   const formattedDate = moment(feed.published_at).fromNow();
   const { user } = useUser();
 
   const handleDownload = async () => {
     try {
+      // Explanation to user for permission request
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== "granted") throw new Error("Permission to access media library denied");
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Denied",
+          "We need access to your photos to save the downloaded image. Please enable it in settings."
+        );
+        return;
+      }
 
-      const filename = FileSystem.documentDirectory + "${feed.name}.jpg";
+      const filename = FileSystem.documentDirectory + `upcare.jpg`;
       const downloadResult = await FileSystem.downloadAsync(feed.image, filename);
       if (downloadResult.status === 200) {
         await MediaLibrary.saveToLibraryAsync(downloadResult.uri);
         toggleModal();
+        Alert.alert("Download Success", "The image has been saved to your photo library.");
       } else {
         throw new Error("Failed to download image");
       }
     } catch (error) {
       console.error("Error downloading image:", error);
+      Alert.alert("Error", "There was an issue downloading or saving the image. Please try again.");
     }
   };
 
@@ -56,7 +64,6 @@ const FeedsCard = ({ feed }) => {
         // You can directly update the state or trigger a refresh from a parent component
         // For simplicity, I'm assuming you have a mechanism to handle optimistic updates
         // setUserReactions(newReactions); // Assuming setUserReactions is a state updater function
-
         // Make the actual API call
         reactToPostMutation.mutate({ postId, reaction: newSelectedReaction ? "love" : null });
       } catch (error) {

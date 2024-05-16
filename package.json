@@ -71,6 +71,10 @@
     "react-native-version-check": "^3.4.7",
     "yup": "^1.4.0"
   },
+
+  "resolutions": {
+    "wrap-ansi": "^6.2.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },

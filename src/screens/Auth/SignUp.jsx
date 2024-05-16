@@ -9,6 +9,7 @@ import {
   useTheme,
   Checkbox,
   List,
+  IconButton,
 } from "react-native-paper";
 import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -89,7 +90,7 @@ const Signup = () => {
         for (const key in errors) {
           setError(key, {
             type: "server",
-            message: errors[key][0], // Displaying the first error message for each field
+            message: errors[key][0],
           });
         }
       } else {
@@ -113,31 +114,38 @@ const Signup = () => {
   };
 
   const handleConfirm = (date) => {
-    // const selectedDate = new Date(date);
-    // const dateToStore = `${selectedDate.getFullYear()}/${
-    //   selectedDate.getMonth() + 1
-    // }/${selectedDate.getDate()}`;
     setValue("date_of_birth", date);
-    // setIsModalsDirty(true);
-    // setDatePickerVisibility(false);
-    // console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
 
   return (
     <UnathorizeLayout>
-      <View style={{ justifyContent: "center", gap: 5 }}>
-        <Text
-          style={{
-            fontWeight: "bold",
-            color: colors.primary,
-            fontSize: 18,
-            marginBottom: 30,
-            textAlign: "center",
-          }}
-        >
-          Professional Account
+      <IconButton
+        icon="arrow-left"
+        onPress={() => navigation.goBack()}
+      />
+      <View>
+        <Text style={{
+          fontSize: 30,
+          textAlign: "center",
+          marginBottom: 20,
+          fontWeight: "bold",
+          color: "red",
+        }}>
+          Create <Text
+            style={{
+              fontWeight: "bold",
+              color: colors.primary,
+              fontSize: 18,
+              textAlign: "center",
+              fontSize: 30,
+            }}
+          >
+            Your Account
+          </Text>
         </Text>
+      </View>
+      <View style={{ justifyContent: "center", gap: 5 }}>
         <CustomTextInput
           control={control}
           name="firstname"
@@ -160,7 +168,7 @@ const Signup = () => {
           mode="outlined"
         />
         {/* Here is the selection of gender */}
-        <View style={{ width: "100%", marginBottom: 15, }}>
+        <View style={{ width: "100%", marginBottom: 15 }}>
           <RNPickerSelect
             onValueChange={(value) => setValue("gender", value)}
             items={[

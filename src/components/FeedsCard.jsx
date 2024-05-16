@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, memo } from "react";
 import moment from "moment";
 import {
   View,
@@ -6,73 +6,105 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
-import { Divider, IconButton, Portal } from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Button,
+  Divider,
+  Portal,
+  Modal as PaperModal,
+} from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useReactToPost } from "../screens/User/Feeds/hooks/useFeeds";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import ImageView from "react-native-image-viewing";
-import { MaterialIcons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
-import Modal from "react-native-modal";
-const MAX_LENGTH = 300;
+import RNModal from "react-native-modal";
+import { useNavigation } from "@react-navigation/native";
+import { useUser } from "../hooks/useUser";
 
-const FeedsCard = ({ feed }) => {
-  const [showFullContent, setShowFullContent] = useState(false);
-  const [selectedReaction, setSelectedReaction] = useState(null);
-  const reactToPostMutation = useReactToPost();
-  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+const MAX_LENGTH = 150;
 
+const ReactionButton = memo(
+  ({ postId, userReactions, setShowSignInModal }) => {
+    const { user, isAuthenticated } = useUser();
+    const navigation = useNavigation();
+    const reactionCount = userReactions.filter(
+      (react) => react.reaction === "love"
+    ).length;
+    const selectedReaction = userReactions.some(
+      (react) =>
+        react.user_id === (user ? user.id : null) && react.reaction === "love"
+    );
 
-  const handleDownload = async () => {
-    try {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== "granted") throw new Error("Permission to access media library denied");
-
-      const filename = FileSystem.documentDirectory + "${feed.name}.jpg";
-      const downloadResult = await FileSystem.downloadAsync(feed.image, filename);
-      if (downloadResult.status === 200) {
-        await MediaLibrary.saveToLibraryAsync(downloadResult.uri);
-        toggleModal();
-      } else {
-        throw new Error("Failed to download image");
+    const handleReact = async () => {
+      if (!isAuthenticated) {
+        setShowSignInModal(true);
+        return;
       }
-    } catch (error) {
-      console.error("Error downloading image:", error);
+      try {
+        const newSelectedReaction = !selectedReaction;
+        reactToPostMutation.mutate({
+          postId,
+          reaction: newSelectedReaction ? "love" : null,
+        });
+      } catch (error) {
+        console.error("Error reacting to post:", error);
+      }
+    };
 
-    }
-  };
+    const handleSignIn = () => {
+      setShowSignInModal(false);
+      navigation.navigate("Login");
+    };
+
+    return (
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
+          <Text style={{ color: selectedReaction ? "red" : "black", fontSize: 20 }}>
+            {selectedReaction ? "❤️" : "❤️"}
+          </Text>
+        </TouchableOpacity>
+        {reactionCount > 0 && <Text style={{ marginLeft: 5 }}>{reactionCount}</Text>}
+      </View>
+    );
+  }
+);
+
+const FeedsCard = ({ feed, setShowSignInModal }) => {
+  const navigation = useNavigation();
+  const [showFullContent, setShowFullContent] = useState(false);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const reactToPostMutation = useReactToPost();
+  const windowWidth = Dimensions.get('window').width;
+  const imageHeight = windowWidth * 9 / 12; // Aspect ratio 16:9
+
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
   };
 
   const formattedDate = moment(feed.published_at).fromNow();
 
-  const handleReact = async (reaction) => {
+  const handleDownload = async () => {
     try {
-      await reactToPostMutation.mutateAsync({
-        postId: feed.id,
-        reaction,
-      });
-      setSelectedReaction(reaction);
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") throw new Error("Permission to access media library denied");
+
+      const filename = FileSystem.documentDirectory + `${feed.name}.jpg`;
+      const downloadResult = await FileSystem.downloadAsync(feed.image, filename);
+      if (downloadResult.status === 200) {
+        await MediaLibrary.saveToLibraryAsync(downloadResult.uri);
+      } else {
+        throw new Error("Failed to download image");
+      }
     } catch (error) {
-      console.error("Error reacting to post:", error);
+      console.error("Error downloading image:", error);
     }
   };
 
   const handleLongPress = () => {
-    setModalVisible(true);
-  };
-
-  const selectReaction = (reaction) => {
-    setSelectedReaction(reaction);
-    setModalVisible(false);
-    handleReact(reaction);
+    setIsImageModalVisible(true);
   };
 
   return (
@@ -88,10 +120,15 @@ const FeedsCard = ({ feed }) => {
             <Text style={styles.publishedDate}>{formattedDate}</Text>
           </View>
         </View>
-
       </View>
-      <TouchableWithoutFeedback onPress={() => setIsImageModalVisible(true)}>
-        {feed.image && <Image source={{ uri: feed.image }} style={styles.image} />}
+      <TouchableWithoutFeedback onPress={handleLongPress}>
+        {feed.image && (
+          <Image
+            source={{ uri: feed.image }}
+            style={[styles.image, { height: imageHeight }]}
+            resizeMode="stretch"
+          />
+        )}
       </TouchableWithoutFeedback>
       <Text style={styles.content}>
         {showFullContent || feed.content.length <= MAX_LENGTH
@@ -104,12 +141,16 @@ const FeedsCard = ({ feed }) => {
         )}
       </Text>
 
-
-
+      <Divider style={{ marginVertical: 10 }} />
+      <ReactionButton
+        postId={feed.id}
+        userReactions={feed.reactions || []}
+        setShowSignInModal={setShowSignInModal}
+      />
 
       <Portal>
         <ImageView
-          images={[{ uri: feed.image, },]}
+          images={[{ uri: feed.image }]}
           presentationStyle="fullScreen"
           imageIndex={0}
           animationType="none"
@@ -117,47 +158,15 @@ const FeedsCard = ({ feed }) => {
           swipeToCloseEnabled={true}
           visible={isImageModalVisible}
           HeaderComponent={() => (
-
             <View>
               <View style={styles.containerImageView}>
                 <TouchableOpacity onPress={() => setIsImageModalVisible(false)}>
                   <MaterialIcons name="close" size={24} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={toggleModal}>
-                  <MaterialIcons name="more-vert" size={24} color="white" style={{ marginLeft: 20 }} />
+                <TouchableOpacity onPress={handleDownload}>
+                  <MaterialIcons name="file-download" size={24} color="white" style={{ marginLeft: 20 }} />
                 </TouchableOpacity>
               </View>
-            </View>
-
-          )}
-          FooterComponent={() => (
-            <View style={styles.footerContainer}>
-              <Modal
-                animationType="slide"
-                transparent={true}
-                isVisible={isModalVisible}
-                avoidKeyboard={true}
-                hasBackdrop={true}
-                backdropColor="transparent"
-                coverScreen={true}
-                animationIn="slideInUp"
-                animationInTiming={300}
-                animationOut="slideOutDown"
-                animationOutTiming={400}
-                onBackdropPress={toggleModal}
-                swipeToCloseEnabled={true}
-
-                style={styles.modal}
-              >
-                <View style={{ justifyContent: 'flex-end' }}>
-                  <View style={styles.modalContent}>
-                    <TouchableOpacity onPress={handleDownload} style={{ flexDirection: 'row' }}>
-                      <MaterialIcons name="file-download" size={25} color="black" style={{ marginRight: 10 }} />
-                      <Text style={{ fontSize: 16 }}>Save Image to Phone</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </Modal>
             </View>
           )}
         />
@@ -201,7 +210,6 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -211,7 +219,6 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     color: "#0A3480",
-    // marginTop: 10,
     fontWeight: "bold",
   },
   containerImageView: {
@@ -222,27 +229,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     padding: 10,
   },
-
-  modal: {
-    justifyContent: 'flex-end',
-    margin: 0,
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 20
-  },
-  closeText: {
-    color: '#0A3480',
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  footerContainer: {
-    flex: 1,
-    // justifyContent: 'flex-end',
-    // alignItems: 'center',
-  },
 });
-
 
 export default FeedsCard;
