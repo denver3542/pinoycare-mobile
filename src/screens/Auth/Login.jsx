@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Platform } from "react-native";
+import { SocialIcon } from 'react-native-elements';
 import { useNavigation } from "@react-navigation/native";
 import {
   Text,
@@ -9,13 +10,16 @@ import {
   HelperText,
   Appbar,
   IconButton,
+  TouchableRipple,
 } from "react-native-paper";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useForm } from "react-hook-form";
 import Spinner from "react-native-loading-spinner-overlay";
 import useAuth from "../../hooks/useAuth";
 import CustomTextInput from "../../components/CustomTextInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import { ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 // Define your validation schema
 const validationSchema = Yup.object({
@@ -31,6 +35,9 @@ const Login = ({ navigation }) => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [generalError, setGeneralError] = useState("");
+  const [googlePressed, setGooglePressed] = useState(false);
+  const [facebookPressed, setFacebookPressed] = useState(false);
+  const [applePressed, setApplePressed] = useState(false);
   const {
     control,
     handleSubmit,
@@ -68,11 +75,10 @@ const Login = ({ navigation }) => {
 
   return (
     <>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Spinner visible={loading} color={colors.primary} />
         <View
           style={{
-            flex: 1,
             display: "flex",
             justifyContent: "flex-start",
             marginTop: 50,
@@ -127,6 +133,30 @@ const Login = ({ navigation }) => {
           >
             LOGIN
           </Button>
+
+          {/* Additional sign-up options */}
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ textAlign: "center", marginBottom: 10 }}>Or Sign up with</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+              <SocialIcon
+                light
+                type='google'
+                onPress={() => setGooglePressed(true)}
+              />
+              <SocialIcon
+                light
+                type='facebook'
+                onPress={() => setFacebookPressed(true)}
+              />
+              <SocialIcon
+                light
+                type='apple'
+                onPress={() => setApplePressed(true)}
+              />
+
+            </View>
+          </View>
+
           {/* Include other buttons like 'SIGN IN WITH GOOGLE', etc., here */}
           <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
             <Text style={styles.signUpText}>
@@ -134,8 +164,10 @@ const Login = ({ navigation }) => {
               <Text style={styles.linkText}>Sign up</Text>
             </Text>
           </TouchableOpacity>
+
+
         </View>
-      </View>
+      </ScrollView>
     </>
   );
 };
@@ -144,6 +176,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 4,
     padding: 20,
+    backgroundColor: "#F4F7FB",
   },
   title: {
     fontSize: 30,
@@ -160,7 +193,9 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
-    paddingVertical: 8,
+    paddingVertical: 3,
+    borderRadius: 50
+
   },
   linkText: {
     color: "blue",
@@ -172,6 +207,30 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: "center",
   },
+  icons: {
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    backgroundColor: 'white',
+    borderRadius: 14,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+      },
+      android: {
+        elevation: 0.2,
+      },
+    }),
+  },
+
+
+
+
 });
 
 export default Login;
