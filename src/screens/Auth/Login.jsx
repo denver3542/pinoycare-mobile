@@ -132,7 +132,7 @@ const Login = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => navigation.navigate("ForgotPassword")}
           >
-            <Text style={styles.linkText}>Forgot Password?</Text>
+            <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
           </TouchableOpacity>
           <Button
             mode="contained"
@@ -145,7 +145,7 @@ const Login = ({ navigation }) => {
 
           {/* Additional sign-up options */}
           <View style={{ marginTop: 20 }}>
-            <Text style={{ textAlign: "center", marginBottom: 10 }}>Or Login with</Text>
+            <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
             <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
               <SocialIcon
                 light
@@ -202,13 +202,14 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   linkText: {
-    color: "blue",
-    textDecorationLine: "underline",
+    color: "#0A3480",
+    // textDecorationLine: "underline",
     textAlign: "right",
-    marginBottom: 8,
+    fontWeight: 'bold'
+    // marginBottom: 8,
   },
   signUpText: {
-    marginTop: 16,
+    marginTop: 50,
     textAlign: "center",
   },
   icons: {
