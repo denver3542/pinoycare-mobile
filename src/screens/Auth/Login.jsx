@@ -85,14 +85,13 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         <Spinner visible={loading} color={colors.primary} />
         <View
           style={{
-            display: "flex",
-            justifyContent: "flex-start",
             marginTop: 50,
+            right: 20
           }}
         >
           <IconButton
@@ -173,13 +172,13 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 4,
+    flex: 1,
     padding: 20,
     backgroundColor: "#F4F7FB",
   },

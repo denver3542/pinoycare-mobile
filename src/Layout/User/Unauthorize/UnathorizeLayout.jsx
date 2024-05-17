@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 24,
+        backgroundColor: "#F4F7FB",
     },
 });
 export default UnathorizeLayout

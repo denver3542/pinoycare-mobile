@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, View, Linking } from "react-native";
+import { StyleSheet, View, Linking, ScrollView } from "react-native";
 import {
   Button,
   Text,
@@ -119,12 +119,16 @@ const Signup = () => {
   };
 
   return (
-    <UnathorizeLayout>
+    <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#F4F7FB", }}>
       <IconButton
         icon="arrow-left"
         onPress={() => navigation.goBack()}
+        style={{
+          marginTop: 50,
+          right: 20
+        }}
       />
-      <View style={{ marginTop: 50 }}>
+      <View style={{ marginBottom: 20, flex: 1 }}>
         <Text style={{
           fontSize: 30,
           textAlign: "center",
@@ -290,12 +294,10 @@ const Signup = () => {
           </View>
 
           <Text
-            style={{ textAlign: "center", marginBottom: 20, color: colors.text }}
+            style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
           >
             Already have an account?{" "}
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={{ color: "red" }}>Sign In</Text>
-            </TouchableOpacity>
+            <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
           </Text>
         </View>
       </View>
@@ -308,7 +310,7 @@ const Signup = () => {
           watcher.contact_bdate ? new Date(watcher.contact_bdate) : new Date()
         }
       />
-    </UnathorizeLayout>
+    </ScrollView>
   );
 };
 
