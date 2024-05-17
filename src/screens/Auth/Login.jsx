@@ -92,7 +92,8 @@ const Login = ({ navigation }) => {
           style={{
             display: "flex",
             justifyContent: "flex-start",
-            marginTop: 50,
+            bottom: 5,
+            top: 20
           }}
         >
           <IconButton
