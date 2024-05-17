@@ -1,5 +1,5 @@
 import React, { useState, memo } from "react";
-import { Image, StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity, Alert, Dimensions } from "react-native";
 import { Divider, Portal, IconButton, Snackbar } from "react-native-paper";
 import Modal from "react-native-modal";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,7 +18,8 @@ const FeedsCard = ({ feed }) => {
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const formattedDate = moment(feed.published_at).fromNow();
   const { user } = useUser();
-
+  const windowWidth = Dimensions.get('window').width;
+  const imageHeight = windowWidth * 9 / 12; // Aspect ratio 16:9
   const handleDownload = async () => {
     try {
       // Explanation to user for permission request
@@ -97,7 +98,7 @@ const FeedsCard = ({ feed }) => {
         </View>
 
         <TouchableWithoutFeedback onPress={() => setIsImageModalVisible(true)}>
-          {feed.image && <Image source={{ uri: feed.image }} style={styles.image} />}
+          {feed.image && <Image source={{ uri: feed.image }} resizeMode="stretch" style={[styles.image, { height: imageHeight }]} />}
         </TouchableWithoutFeedback>
 
         <Text style={styles.content}>
@@ -106,7 +107,7 @@ const FeedsCard = ({ feed }) => {
             : `${feed.content.substring(0, MAX_LENGTH)}... `}
           {feed.content.length > MAX_LENGTH && (
             <Text style={styles.toggleButton} onPress={toggleContent}>
-              {showFullContent ? "" : "Show More"}
+              {showFullContent ? " Show less" : "Show more"}
             </Text>
           )}
         </Text>
