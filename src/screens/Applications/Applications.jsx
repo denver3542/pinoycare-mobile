@@ -27,8 +27,14 @@ const Applications = () => {
 
 
   const renderJob = ({ item }) => {
+
+    if (!item || !item.job) {
+      return null;
+    }
+
     const { title, company, type } = item.job;
     const lowerCaseQuery = searchQuery.toLowerCase();
+
     if (
       title.toLowerCase().includes(lowerCaseQuery) ||
       company.toLowerCase().includes(lowerCaseQuery) ||
@@ -39,6 +45,7 @@ const Applications = () => {
       return null;
     }
   };
+
 
   return (
     <View style={styles.container}>

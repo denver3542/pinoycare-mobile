@@ -88,7 +88,7 @@ function Dashboard() {
               Welcome Back <MaterialIcons name="emoji-emotions" color="yellow" />
             </Text>
             <Text style={styles.headerName}>
-              {user?.name || "N/A"}
+              {user?.firstname || "N/A"}
             </Text>
           </View>
         </View>
@@ -144,29 +144,30 @@ function Dashboard() {
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {isFetched && offeredJobs.length > 0 ? (
-              <>
-                {offeredJobs.slice(0, showMoreOffers ? undefined : 1).map((job, index) => (
-                  <View key={index}>
-                    {job && ( // Add null check here
-                      <ApplicationListCard application={job} />
-                    )}
-                    {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />}
-                  </View>
-                ))}
-                {showMoreOffers && loadingJobOffers && (
-                  <View style={styles.loadingContainer}>
-                    <ActivityIndicator animating={true} color={colors.primary} size={"small"} />
-                    <Text style={styles.loadingText}>Loading...</Text>
-                  </View>
-                )}
-              </>
-            ) : (
-              <View style={styles.notAvailable}>
-                <MaterialIcons name="description" size={50} color="gray" />
-                <Text style={styles.notAvailableText}>Currently, No Job Offers</Text>
-              </View>
-            )}
+            {isFetched && offeredJobs.length > 0 ?
+              (
+                <>
+                  {offeredJobs.slice(0, showMoreOffers ? undefined : 1).map((job, index) => (
+                    <View key={index}>
+                      {job && ( // Add null check here
+                        <ApplicationListCard application={job} />
+                      )}
+                      {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />}
+                    </View>
+                  ))}
+                  {showMoreOffers && loadingJobOffers && (
+                    <View style={styles.loadingContainer}>
+                      <ActivityIndicator animating={true} color={colors.primary} size={"small"} />
+                      <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                  )}
+                </>
+              ) : (
+                <View style={styles.notAvailable}>
+                  <MaterialIcons name="description" size={50} color="gray" />
+                  <Text style={styles.notAvailableText}>Currently, No Job Offers</Text>
+                </View>
+              )}
           </View>
         </View>
 
@@ -196,7 +197,7 @@ function Dashboard() {
                   ))
                 ) : (
                   <View key={0}>
-                    {savedJobs[0] && ( // Add null check here
+                    {savedJobs[0] && (
                       <ApplicationListCard application={savedJobs[0]} />
                     )}
                     {savedJobs.length > 1 && <Divider style={styles.divider} />}
