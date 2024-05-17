@@ -136,7 +136,7 @@ const FeedsCard = ({ feed, setShowSignInModal }) => {
           : `${feed.content.substring(0, MAX_LENGTH)}... `}
         {feed.content.length > MAX_LENGTH && (
           <Text style={styles.toggleButton} onPress={toggleContent}>
-            {showFullContent ? "" : "Show More"}
+            {showFullContent ? " Show less" : "Show More"}
           </Text>
         )}
       </Text>
