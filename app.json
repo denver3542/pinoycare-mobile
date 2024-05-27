@@ -3,6 +3,7 @@
     "name": "Upcare",
     "slug": "pinoycare-mobile",
     "version": "1.0.2",
+    "owner": "supportih",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -25,6 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "com.upcare.mobile",
       "versionCode": 33
     },
@@ -44,19 +46,22 @@
           "android": {
             "compileSdkVersion": 33,
             "targetSdkVersion": 33,
-            "buildToolsVersion": "33.0.0"
+            "buildToolsVersion": "33.0.0",
+            "googleServicesFile": "./google-services.json"
           },
           "ios": {
-            "deploymentTarget": "13.0"
+            "deploymentTarget": "13.4"
           }
         }
       ]
     ],
+    "sdkVersion": "49.0.0",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/8acda25c-7755-4c8c-9b69-3e19b78b60e3"
-    }
+    },
+    "scheme": "com.upcare.mobile"
   }
 }
