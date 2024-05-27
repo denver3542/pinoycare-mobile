@@ -41,6 +41,9 @@ export const useUser = () => {
     },
   });
 
+  // Derive isAuthenticated from user state
+  const isAuthenticated = !!user;
+
   function updateUser(newUser) {
     queryClient.setQueryData(["user"], newUser);
   }
@@ -100,6 +103,7 @@ export const useUser = () => {
 
   return {
     user,
+    isAuthenticated,
     isLoading,
     isFetching,
     isFetched,

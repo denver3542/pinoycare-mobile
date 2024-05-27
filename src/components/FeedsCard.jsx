@@ -24,14 +24,13 @@ import { useUser } from "../hooks/useUser";
 
 const MAX_LENGTH = 150;
 
-const ReactionButton = memo(({ postId, userReactions, setShowSignInModal }) => {
-  const { user, isAuthenticated } = useUser();
-  const navigation = useNavigation();
+const ReactionButton = memo(({ userReactions, setShowSignInModal }) => {
+  const { isAuthenticated } = useUser();
   const reactToPostMutation = useReactToPost();
 
   const reactionCount = userReactions.filter(react => react.reaction === "love").length;
   const selectedReaction = userReactions.some(
-    react => react.user_id === (user ? user.id : null) && react.reaction === "love"
+    react => react.reaction === "love"
   );
 
   const handleReact = async () => {
@@ -42,7 +41,7 @@ const ReactionButton = memo(({ postId, userReactions, setShowSignInModal }) => {
     try {
       const newSelectedReaction = !selectedReaction;
       await reactToPostMutation.mutateAsync({
-        postId,
+        postId: null, // Replace with the correct postId
         reaction: newSelectedReaction ? "love" : null,
       });
     } catch (error) {
@@ -63,6 +62,8 @@ const ReactionButton = memo(({ postId, userReactions, setShowSignInModal }) => {
     </View>
   );
 });
+
+
 
 const FeedsCard = ({ feed, setShowSignInModal }) => {
   const navigation = useNavigation();
@@ -166,6 +167,7 @@ const FeedsCard = ({ feed, setShowSignInModal }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   feedContainer: {
