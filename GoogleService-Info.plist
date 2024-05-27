@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1052234263699-60th2744n696g8md6pid4ocoqj8irvgd</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyARnBm85xf1SO04b0ZW27JyP8vyM-7NNUg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1052234263699</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.upcare.mobile</string>
+	<key>PROJECT_ID</key>
+	<string>upcaremobile</string>
+	<key>STORAGE_BUCKET</key>
+	<string>upcaremobile.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1052234263699:ios:947c53905d39b0df617166</string>
+</dict>
+</plist>

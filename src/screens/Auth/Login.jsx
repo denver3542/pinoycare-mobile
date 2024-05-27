@@ -23,6 +23,9 @@ const validationSchema = Yup.object({
   password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 }).required();
 
+// const redirectURI = 'com.upcare.mobile://oauthredirect';
+
+
 const Login = ({ navigation }) => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
