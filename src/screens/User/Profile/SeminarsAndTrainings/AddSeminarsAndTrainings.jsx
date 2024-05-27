@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator, Text, Image } from 'react-native';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
+import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator, Text, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { TextInput, Button, Appbar, TouchableRipple } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
@@ -8,6 +8,7 @@ import { useUser } from '../../../../hooks/useUser';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useNavigation } from '@react-navigation/native';
 import { useSeminarsAndTrainings } from './hooks/useSeminarsActions';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 const SeminarsAndTrainingsForm = () => {
     const { user } = useUser();
@@ -77,98 +78,137 @@ const SeminarsAndTrainingsForm = () => {
         mutate(formData);
     });
 
+
+    const saveBottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
+    const handleOpenSaveBottomSheet = () => {
+        Keyboard.dismiss();
+        setTimeout(() => saveBottomSheetRef.current?.expand(), 50);
+    };
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+        []
+    );
+
+    const handleInputFocus = () => {
+        if (saveBottomSheetRef.current) {
+            saveBottomSheetRef.current.close();
+        }
+    };
+
     return (
-        <View style={{ flex: 1 }}>
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Add Seminars And Trainings" titleStyle={{ color: 'white' }} />
-            </Appbar.Header>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={{ flex: 1 }}>
+                <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                    <Appbar.Content title="Add Seminars And Trainings" titleStyle={{ color: 'white' }} />
+                </Appbar.Header>
 
-            <ScrollView style={styles.container}>
-                <CustomTextInput
-                    control={control}
-                    name="facilitated_by"
-                    label="Facilitated By"
-                    mode="outlined"
-                    style={styles.input}
-                    rules={{ required: 'Facilitator Name is required' }}
-                    error={errors.facilitated_by}
-                />
+                <ScrollView style={styles.container}>
+                    <CustomTextInput
+                        control={control}
+                        name="facilitated_by"
+                        label="Facilitated By"
+                        mode="outlined"
+                        style={styles.input}
+                        rules={{ required: 'Facilitator Name is required' }}
+                        error={errors.facilitated_by}
+                    />
 
-                <CustomTextInput
-                    control={control}
-                    name="description"
-                    label="Description"
-                    mode="outlined"
-                    style={styles.input}
-                    rules={{ required: 'Description is required' }}
-                    error={errors.description}
-                />
+                    <CustomTextInput
+                        control={control}
+                        name="description"
+                        label="Description"
+                        mode="outlined"
+                        style={styles.input}
+                        rules={{ required: 'Description is required' }}
+                        error={errors.description}
+                    />
 
-                {/* Date Started Picker */}
-                <View style={styles.datePickerContainer}>
-                    <TouchableOpacity onPress={() => openDatePicker('date_started')}>
-                        <CustomTextInput
-                            control={control}
-                            label="Date Started"
-                            mode="outlined"
-                            name="date_started"
-                            value={watch('date_started').toLocaleDateString()}
-                            rules={{ required: 'Date Started is required' }}
-                            editable={false}
-                        />
-                    </TouchableOpacity>
-                    {showDatePicker && dateFieldName === 'date_started' && (
-                        <DateTimePicker
-                            value={watch('date_started')}
-                            mode="date"
-                            display="default"
-                            onChange={handleDateChange}
-                        />
-                    )}
-                </View>
+                    {/* Date Started Picker */}
+                    <View style={styles.datePickerContainer}>
+                        <TouchableOpacity onPress={() => openDatePicker('date_started')}>
+                            <CustomTextInput
+                                control={control}
+                                label="Date Started"
+                                mode="outlined"
+                                name="date_started"
+                                value={watch('date_started').toLocaleDateString()}
+                                rules={{ required: 'Date Started is required' }}
+                                editable={false}
+                            />
+                        </TouchableOpacity>
+                        {showDatePicker && dateFieldName === 'date_started' && (
+                            <DateTimePicker
+                                value={watch('date_started')}
+                                mode="date"
+                                display="default"
+                                onChange={handleDateChange}
+                            />
+                        )}
+                    </View>
 
-                {/* Date Completed Picker */}
-                <View style={styles.datePickerContainer}>
-                    <TouchableOpacity onPress={() => openDatePicker('date_completed')}>
-                        <CustomTextInput
-                            control={control}
-                            label="Date Completed"
-                            mode="outlined"
-                            name="date_completed"
-                            value={watch('date_completed').toLocaleDateString()}
-                            rules={{ required: 'Date Completed is required' }}
-                            editable={false}
-                        />
-                    </TouchableOpacity>
-                    {showDatePicker && dateFieldName === 'date_completed' && (
-                        <DateTimePicker
-                            value={watch('date_completed')}
-                            mode="date"
-                            display="default"
-                            rules={{ required: 'Date Completed is required' }}
-                            onChange={handleDateChange}
-                        />
-                    )}
-                </View>
+                    {/* Date Completed Picker */}
+                    <View style={styles.datePickerContainer}>
+                        <TouchableOpacity onPress={() => openDatePicker('date_completed')}>
+                            <CustomTextInput
+                                control={control}
+                                label="Date Completed"
+                                mode="outlined"
+                                name="date_completed"
+                                value={watch('date_completed').toLocaleDateString()}
+                                rules={{ required: 'Date Completed is required' }}
+                                editable={false}
+                            />
+                        </TouchableOpacity>
+                        {showDatePicker && dateFieldName === 'date_completed' && (
+                            <DateTimePicker
+                                value={watch('date_completed')}
+                                mode="date"
+                                display="default"
+                                rules={{ required: 'Date Completed is required' }}
+                                onChange={handleDateChange}
+                            />
+                        )}
+                    </View>
 
-                {/* Certificate Picker */}
-                <TouchableRipple style={styles.touchable} onPress={pickImage}>
-                    {watch('certificate') ? (
-                        <Image source={{ uri: watch('certificate') }} style={styles.image} />
-                    ) : (
-                        <Text style={styles.text}>Tap to upload certificate image</Text>
-                    )}
-                </TouchableRipple>
+                    {/* Certificate Picker */}
+                    <TouchableRipple style={styles.touchable} onPress={pickImage}>
+                        {watch('certificate') ? (
+                            <Image source={{ uri: watch('certificate') }} style={styles.image} />
+                        ) : (
+                            <Text style={styles.text}>Tap to upload certificate image</Text>
+                        )}
+                    </TouchableRipple>
 
-                {/* Save Button */}
-                <Button mode="contained" onPress={onSubmit} style={styles.saveButton} disabled={isLoading}>
-                    {isLoading ? <ActivityIndicator color="#fff" /> : 'Save'}
-                </Button>
+                    {/* Save Button */}
+                    <Button mode="contained" onPress={handleOpenSaveBottomSheet} style={styles.saveButton} disabled={isLoading}>
+                        {isLoading ? <ActivityIndicator color="#fff" /> : 'Save'}
+                    </Button>
 
-                {isError && <Text>Error: {error.message}</Text>}
-            </ScrollView>
-        </View>
+                    {isError && <Text>Error: {error.message}</Text>}
+                </ScrollView>
+                <BottomSheet
+                    ref={saveBottomSheetRef}
+                    index={-1}
+                    snapPoints={snapPoints}
+                    backdropComponent={renderBackdrop}
+                    enablePanDownToClose={true}
+                >
+                    <View style={styles.bottomSheetContent}>
+                        <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
+                        <Text>Are you sure you want to save these changes?</Text>
+                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
+                            Save Changes
+                        </Button>
+                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
+                            Cancel
+                        </Button>
+                    </View>
+                </BottomSheet>
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -202,6 +242,15 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         marginBottom: 10,
+    },
+    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    bottomSheetTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    button: {
+        marginTop: 10,
     },
 });
 

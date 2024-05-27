@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Platform } from 'react-native';
-import { Chip, Button, Appbar, Text } from 'react-native-paper';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
+import { View, StyleSheet, Text, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Button, Appbar, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
-import { useUser } from '../../../hooks/useUser';
-import useSkills from './Skills/hooks/useSkills';
 import Spinner from 'react-native-loading-spinner-overlay';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../components/CustomTextInput';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import useSkills from './Skills/hooks/useSkills';
 
 const AddSkillScreen = () => {
-  const { user } = useUser();
   const navigation = useNavigation();
   const { control, handleSubmit, setValue, getValues, formState: { errors, isSubmitted } } = useForm({
     defaultValues: {
-      skill_name: user?.skill_name || '',
+      skill_name: '',
     },
   });
   const { mutate, isLoading } = useSkills();
@@ -36,39 +35,83 @@ const AddSkillScreen = () => {
     await mutate({ skills: tags });
   };
 
+  // Bottom Sheet
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ['25%', '30%'], []);
+
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.expand();
+  };
+
+  const closeBottomSheet = () => {
+    bottomSheetRef.current?.close();
+  };
+
+  const renderBackdrop = useCallback(
+    (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    []
+  );
+
   return (
-    <AuthenticatedLayout>
-      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-        <Appbar.Content title="Add Skill" titleStyle={{ color: 'white' }} />
-      </Appbar.Header>
-      <View style={styles.container}>
-        <ScrollView>
-          <Text style={styles.headerText}>Professional Skills</Text>
-          <CustomTextInput
-            placeholder="Add Skill"
-            control={control}
-            label="Skill Name"
-            mode="outlined"
-            name="skill_name"
-            onSubmitEditing={addTag}
-            error={(isSubmitted && tags.length === 0 && errors.skill_name) ? "Skill name is required" : undefined}
-          />
-          <View style={styles.chipContainer}>
-            {tags.map((tag, index) => (
-              <Chip key={`tag-${index}`} onClose={() => removeTag(index)} style={styles.chip}>
-                {tag}
-              </Chip>
-            ))}
-          </View>
-        </ScrollView>
-        <View style={styles.buttonContainer}>
-          <Button mode="outlined" onPress={addTag} style={styles.button}>Add</Button>
-          <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>Save</Button>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={{ flex: 1 }}>
+        <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+          <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+          <Appbar.Content title="Add Skill" titleStyle={{ color: 'white' }} />
+        </Appbar.Header>
+        <View style={styles.container}>
+          <ScrollView>
+            <Text style={styles.headerText}>Professional Skills</Text>
+            <CustomTextInput
+              placeholder="Add Skill"
+              control={control}
+              label="Skill Name"
+              mode="outlined"
+              name="skill_name"
+              onSubmitEditing={addTag}
+              error={(isSubmitted && tags.length === 0 && errors.skill_name) ? "Skill name is required" : undefined}
+            />
+            <View style={styles.chipContainer}>
+              {tags.map((tag, index) => (
+                <Chip key={`tag-${index}`} onClose={() => removeTag(index)} style={styles.chip}>
+                  {tag}
+                </Chip>
+              ))}
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button mode="outlined" onPress={addTag} style={styles.button}>Add</Button>
+              <Button
+                mode="contained"
+                onPress={openBottomSheet}
+                style={[styles.button, { opacity: tags.length === 0 ? 0.5 : 1 }]}
+                disabled={tags.length === 0}
+              >
+                Save
+              </Button>
+            </View>
+          </ScrollView>
         </View>
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          backdropComponent={renderBackdrop}
+          enablePanDownToClose={true}
+        >
+          <View style={styles.bottomSheetContent}>
+            <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
+            <Text>Are you sure you want to save these skills?</Text>
+            <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.buttonModal}>
+              Yes, Save
+            </Button>
+            <Button onPress={closeBottomSheet} style={styles.buttonModal}>
+              Cancel
+            </Button>
+          </View>
+        </BottomSheet>
+        <Spinner visible={isLoading} />
       </View>
-      <Spinner visible={isLoading} />
-    </AuthenticatedLayout>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -76,7 +119,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    backgroundColor: '#F4F7FB'
   },
   headerText: {
     fontWeight: 'bold',
@@ -102,6 +146,16 @@ const styles = StyleSheet.create({
   button: {
     flexGrow: 1,
     marginHorizontal: 4,
+    marginTop: 10,
+  },
+  buttonModal: {
+    marginTop: 10,
+  },
+  bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+  bottomSheetTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

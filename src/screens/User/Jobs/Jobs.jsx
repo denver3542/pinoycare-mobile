@@ -120,7 +120,7 @@ const JobListings = ({ activeNav }) => {
             {isTruncated && (
               <TouchableWithoutFeedback>
                 <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
-                  {descriptionVisibility[item.id] ? 'Read less' : 'Read more'}
+                  {descriptionVisibility[item.id] ? 'Show less' : 'Show more'}
                 </Text>
               </TouchableWithoutFeedback>
             )}
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   company: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'gray'
+    // color: 'gray'
   },
   readMore: {
     color: '#0A3480',

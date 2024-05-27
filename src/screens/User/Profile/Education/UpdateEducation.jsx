@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
+import { Text, StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Button, Appbar } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
@@ -9,6 +9,7 @@ import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { useUpdateEducations } from './hooks/useEducationActions';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 const UpdateEducation = () => {
     const navigation = useNavigation();
@@ -72,99 +73,140 @@ const UpdateEducation = () => {
 
     const selectedLevel = watch('level');
 
+
+    const saveBottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
+    const handleOpenSaveBottomSheet = () => {
+        Keyboard.dismiss();
+        setTimeout(() => saveBottomSheetRef.current?.expand(), 50);
+    };
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+        []
+    );
+
+    const handleInputFocus = () => {
+        if (saveBottomSheetRef.current) {
+            saveBottomSheetRef.current.close();
+        }
+    };
+
     return (
-        <AuthenticatedLayout>
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Update Education" titleStyle={{ color: 'white' }} />
-            </Appbar.Header>
-            <View style={styles.container}>
-                <View style={styles.formContainer}>
-                    <CustomSelectBox
-                        control={control}
-                        name="level"
-                        label="School Level"
-                        mode="outlined"
-                        value={selectedLevel}
-                        onChangeText={(text) => setValue('level', text)}
-                        items={[
-                            { label: 'Select a Level', value: '' },
-                            { label: 'Elementary Education', value: 'elementary' },
-                            { label: 'Junior High School', value: 'secondary' },
-                            { label: 'Senior High School', value: 'secondary_k12' },
-                            { label: 'Baccalaureate', value: 'baccalaureate' },
-                            { label: "Master's Degree", value: 'master' },
-                            { label: "Doctorate Degree", value: 'doctorate' },
-                        ]}
-                        rules={{ required: 'Please select a level' }}
-                    />
-                    <CustomTextInput
-                        control={control}
-                        name="school_name"
-                        label="School Name"
-                        mode="outlined"
-                        rules={{ required: 'School Name is required' }}
-                    />
-                    {(selectedLevel === 'secondary_k12' || selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') && (
+        <TouchableWithoutFeedback>
+            <View style={{ flex: 1 }}>
+                <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                    <Appbar.Content title="Update Education" titleStyle={{ color: 'white' }} />
+                </Appbar.Header>
+                <View style={styles.container}>
+                    <View style={styles.formContainer}>
+                        <CustomSelectBox
+                            control={control}
+                            name="level"
+                            label="School Level"
+                            mode="outlined"
+                            value={selectedLevel}
+                            onChangeText={(text) => setValue('level', text)}
+                            items={[
+                                { label: 'Select a Level', value: '' },
+                                { label: 'Elementary Education', value: 'elementary' },
+                                { label: 'Junior High School', value: 'secondary' },
+                                { label: 'Senior High School', value: 'secondary_k12' },
+                                { label: 'Baccalaureate', value: 'baccalaureate' },
+                                { label: "Master's Degree", value: 'master' },
+                                { label: "Doctorate Degree", value: 'doctorate' },
+                            ]}
+                            rules={{ required: 'Please select a level' }}
+                        />
                         <CustomTextInput
                             control={control}
-                            name="course"
+                            name="school_name"
+                            label="School Name"
                             mode="outlined"
-                            label={selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate' ? 'Course' : 'Track'}
-                            rules={{ required: selectedLevel === 'secondary_k12' ? 'Track is required' : 'Course is required' }}
+                            rules={{ required: 'School Name is required' }}
                         />
-                    )}
+                        {(selectedLevel === 'secondary_k12' || selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') && (
+                            <CustomTextInput
+                                control={control}
+                                name="course"
+                                mode="outlined"
+                                label={selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate' ? 'Course' : 'Track'}
+                                rules={{ required: selectedLevel === 'secondary_k12' ? 'Track is required' : 'Course is required' }}
+                            />
+                        )}
 
-                    <TouchableOpacity
-                        style={styles.dateContainer}
-                        onPress={() => showDatePickerForField('from')}
-                    >
-                        <CustomTextInput
-                            control={control}
-                            mode="outlined"
-                            name="from"
-                            label="Date Started"
-                            editable={false}
-                            value={moment(fromValue).format('YYYY-MM-DD')}
-                            rules={{ required: 'Start Date is required' }}
-                        />
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.dateContainer}
+                            onPress={() => showDatePickerForField('from')}
+                        >
+                            <CustomTextInput
+                                control={control}
+                                mode="outlined"
+                                name="from"
+                                label="Date Started"
+                                editable={false}
+                                value={moment(fromValue).format('YYYY-MM-DD')}
+                                rules={{ required: 'Start Date is required' }}
+                            />
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.dateContainer}
-                        onPress={() => showDatePickerForField('to')}
-                    >
-                        <CustomTextInput
-                            control={control}
-                            mode="outlined"
-                            name="to"
-                            label="Date Ended"
-                            editable={false}
-                            value={moment(toValue).format('YYYY-MM-DD')}
-                            rules={{ required: 'End Date is required' }}
-                        />
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.dateContainer}
+                            onPress={() => showDatePickerForField('to')}
+                        >
+                            <CustomTextInput
+                                control={control}
+                                mode="outlined"
+                                name="to"
+                                label="Date Ended"
+                                editable={false}
+                                value={moment(toValue).format('YYYY-MM-DD')}
+                                rules={{ required: 'End Date is required' }}
+                            />
+                        </TouchableOpacity>
 
-                    {showDatePicker && (
-                        <DateTimePicker
-                            value={selectedDateField === 'from' ? fromValue : toValue}
-                            mode="date"
-                            display="default"
-                            onChange={handleDateChange}
-                        />
-                    )}
-                    <Button mode="contained" onPress={onSave} disabled={isLoading}>
-                        Update
-                    </Button>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectedDateField === 'from' ? fromValue : toValue}
+                                mode="date"
+                                display="default"
+                                onChange={handleDateChange}
+                            />
+                        )}
+                        <Button mode="contained" onPress={handleOpenSaveBottomSheet} disabled={isLoading}>
+                            Update
+                        </Button>
+
+                    </View>
                 </View>
+                <BottomSheet
+                    ref={saveBottomSheetRef}
+                    index={-1}
+                    snapPoints={snapPoints}
+                    backdropComponent={renderBackdrop}
+                    enablePanDownToClose={true}
+                >
+                    <View style={styles.bottomSheetContent}>
+                        <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
+                        <Text>Are you sure you want to save these changes?</Text>
+                        <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button}>
+                            Save Changes
+                        </Button>
+                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
+                            Cancel
+                        </Button>
+                    </View>
+                </BottomSheet>
             </View>
-        </AuthenticatedLayout>
+        </TouchableWithoutFeedback>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#F4F7FB'
     },
     formContainer: {
         paddingHorizontal: 15,
@@ -176,9 +218,13 @@ const styles = StyleSheet.create({
         color: '#0A3480',
         marginBottom: 40,
     },
-    dateContainer: {
-        // marginBottom: 20,
+    bottomSheetTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
+    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    button: { marginTop: 10 }
 });
 
 export default UpdateEducation;

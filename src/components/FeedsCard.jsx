@@ -12,7 +12,6 @@ import {
   Button,
   Divider,
   Portal,
-  Modal as PaperModal,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useReactToPost } from "../screens/User/Feeds/hooks/useFeeds";
@@ -20,65 +19,58 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import ImageView from "react-native-image-viewing";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
-import RNModal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../hooks/useUser";
 
 const MAX_LENGTH = 150;
 
-const ReactionButton = memo(
-  ({ postId, userReactions, setShowSignInModal }) => {
-    const { user, isAuthenticated } = useUser();
-    const navigation = useNavigation();
-    const reactionCount = userReactions.filter(
-      (react) => react.reaction === "love"
-    ).length;
-    const selectedReaction = userReactions.some(
-      (react) =>
-        react.user_id === (user ? user.id : null) && react.reaction === "love"
-    );
+const ReactionButton = memo(({ postId, userReactions, setShowSignInModal }) => {
+  const { user, isAuthenticated } = useUser();
+  const navigation = useNavigation();
+  const reactToPostMutation = useReactToPost();
 
-    const handleReact = async () => {
-      if (!isAuthenticated) {
-        setShowSignInModal(true);
-        return;
-      }
-      try {
-        const newSelectedReaction = !selectedReaction;
-        reactToPostMutation.mutate({
-          postId,
-          reaction: newSelectedReaction ? "love" : null,
-        });
-      } catch (error) {
-        console.error("Error reacting to post:", error);
-      }
-    };
+  const reactionCount = userReactions.filter(react => react.reaction === "love").length;
+  const selectedReaction = userReactions.some(
+    react => react.user_id === (user ? user.id : null) && react.reaction === "love"
+  );
 
-    const handleSignIn = () => {
-      setShowSignInModal(false);
-      navigation.navigate("Login");
-    };
+  const handleReact = async () => {
+    if (!isAuthenticated) {
+      setShowSignInModal(true);
+      return;
+    }
+    try {
+      const newSelectedReaction = !selectedReaction;
+      await reactToPostMutation.mutateAsync({
+        postId,
+        reaction: newSelectedReaction ? "love" : null,
+      });
+    } catch (error) {
+      console.error("Error reacting to post:", error);
+    }
+  };
 
-    return (
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
-          <Text style={{ color: selectedReaction ? "red" : "black", fontSize: 20 }}>
-            {selectedReaction ? "❤️" : "❤️"}
-          </Text>
-        </TouchableOpacity>
-        {reactionCount > 0 && <Text style={{ marginLeft: 5 }}>{reactionCount}</Text>}
-      </View>
-    );
-  }
-);
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
+        {selectedReaction ? (
+          <MaterialIcons name="favorite" size={24} color="red" />
+        ) : (
+          <MaterialIcons name="favorite" size={24} color="red" />
+        )}
+      </TouchableOpacity>
+      {reactionCount > 0 && <Text style={{ marginLeft: 5 }}>{reactionCount}</Text>}
+    </View>
+  );
+});
 
 const FeedsCard = ({ feed, setShowSignInModal }) => {
   const navigation = useNavigation();
   const [showFullContent, setShowFullContent] = useState(false);
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  const reactToPostMutation = useReactToPost();
   const windowWidth = Dimensions.get('window').width;
-  const imageHeight = windowWidth * 9 / 12; // Aspect ratio 16:9
+  const maxWidth = Math.min(windowWidth, 768);
+  const imageHeight = maxWidth * 9 / 10;
 
   const toggleContent = () => {
     setShowFullContent(!showFullContent);
@@ -230,5 +222,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
 
 export default FeedsCard;

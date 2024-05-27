@@ -108,7 +108,7 @@ function Dashboard() {
           placeholderTextColor="gray"
         />
 
-        {/* Job Applications Section */}
+
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Applications</Text>
@@ -120,9 +120,16 @@ function Dashboard() {
           <View style={styles.cardContent}>
             {isFetched && applications.length > 0 ? (
               <>
-                {applications[0] && ( // Add null check here
-                  <ApplicationListCard application={applications[0]} />
-                )}
+                {applications.map((application, index) => (
+                  <View key={index}>
+                    {application && (
+                      <View>
+                        <ApplicationListCard application={application} />
+                        {index !== applications.length - 1 && <Divider style={styles.divider} />}
+                      </View>
+                    )}
+                  </View>
+                ))}
               </>
             ) : (
               <View style={styles.notAvailable}>
@@ -133,7 +140,7 @@ function Dashboard() {
           </View>
         </View>
 
-        {/* Job Offers Section */}
+
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Offers</Text>
@@ -149,10 +156,12 @@ function Dashboard() {
                 <>
                   {offeredJobs.slice(0, showMoreOffers ? undefined : 1).map((job, index) => (
                     <View key={index}>
-                      {job && ( // Add null check here
-                        <ApplicationListCard application={job} />
+                      {job && (
+                        <View>
+                          <ApplicationListCard application={job} />
+                          {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />}
+                        </View>
                       )}
-                      {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />}
                     </View>
                   ))}
                   {showMoreOffers && loadingJobOffers && (
@@ -173,7 +182,7 @@ function Dashboard() {
 
 
 
-        {/* Saved Jobs Section */}
+
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Saved Jobs</Text>
@@ -184,25 +193,16 @@ function Dashboard() {
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {isFetched && savedJobs.length > 0 ? (
+            {isFetched ? (
               <>
-                {showMoreSavedJobs ? (
-                  savedJobs.map((job, index) => (
-                    <View key={index}>
-                      {job && ( // Add null check here
-                        <ApplicationListCard application={job} />
-                      )}
-                      {index !== savedJobs.length - 1 && <Divider style={styles.divider} />}
-                    </View>
-                  ))
-                ) : (
-                  <View key={0}>
-                    {savedJobs[0] && (
-                      <ApplicationListCard application={savedJobs[0]} />
+                {savedJobs.map((job, index) => (
+                  <View key={index}>
+                    {job && (
+                      <ApplicationListCard application={job} />
                     )}
-                    {savedJobs.length > 1 && <Divider style={styles.divider} />}
+                    {/* {index !== savedJobs.length - 1 && <Divider style={styles.divider} />} */}
                   </View>
-                )}
+                ))}
               </>
             ) : (
               <View style={styles.notAvailable}>
@@ -212,6 +212,7 @@ function Dashboard() {
             )}
           </View>
         </View>
+
 
 
       </View>

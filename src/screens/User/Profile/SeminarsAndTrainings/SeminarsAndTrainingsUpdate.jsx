@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
 import { Appbar, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
@@ -8,11 +8,31 @@ import moment from 'moment';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useUpdateTrainingsAndSeminars } from './hooks/useSeminarsActions';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 const SeminarsAndTrainingsUpdate = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { seminarsItem } = route.params;
+
+
+    const saveBottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
+    const handleOpenSaveBottomSheet = () => {
+        Keyboard.dismiss();
+        setTimeout(() => saveBottomSheetRef.current?.expand(), 50);
+    };
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+        []
+    );
+
+    const handleInputFocus = () => {
+        if (saveBottomSheetRef.current) {
+            saveBottomSheetRef.current.close();
+        }
+    };
 
     // Initialize form with default values from seminarsItem
     const { control, handleSubmit, setValue, watch } = useForm({
@@ -78,91 +98,122 @@ const SeminarsAndTrainingsUpdate = () => {
     }
 
     return (
-        <AuthenticatedLayout>
-            {/* Appbar with back action and title */}
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Update Seminars" titleStyle={{ color: 'white' }} />
-            </Appbar.Header>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={{ flex: 1 }}>
+                {/* Appbar with back action and title */}
+                <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                    <Appbar.Content title="Update Seminars" titleStyle={{ color: 'white' }} />
+                </Appbar.Header>
 
-            {/* Form for updating seminars and trainings */}
-            <View style={styles.container}>
-                {/* Facilitator input */}
-                <CustomTextInput
-                    control={control}
-                    name="facilitated_by"
-                    label="Facilitator"
-                    mode="outlined"
-                />
+                <ScrollView>
+                    <View style={{ padding: 8 }}>
+                        {/* Form for updating seminars and trainings */}
+                        <View style={styles.container}>
+                            {/* Facilitator input */}
+                            <CustomTextInput
+                                control={control}
+                                name="facilitated_by"
+                                label="Facilitator"
+                                mode="outlined"
+                            />
 
-                {/* Date started input using TouchableOpacity */}
-                <TouchableOpacity
-                    style={styles.dateContainer}
-                    onPress={() => showDatePickerForField('date_started')}
+                            {/* Date started input using TouchableOpacity */}
+                            <TouchableOpacity
+                                style={styles.dateContainer}
+                                onPress={() => showDatePickerForField('date_started')}
+                            >
+                                <CustomTextInput
+                                    control={control}
+                                    mode="outlined"
+                                    name="date_started"
+                                    label="Date Started"
+                                    editable={false}
+                                    value={moment(dateStartedValue).format('YYYY-MM-DD')}
+                                />
+                            </TouchableOpacity>
+
+                            {/* Date completed input using TouchableOpacity */}
+                            <TouchableOpacity
+                                style={styles.dateContainer}
+                                onPress={() => showDatePickerForField('date_completed')}
+                            >
+                                <CustomTextInput
+                                    control={control}
+                                    mode="outlined"
+                                    name="date_completed"
+                                    label="Date Completed"
+                                    editable={false}
+                                    value={moment(dateCompletedValue).format('YYYY-MM-DD')}
+                                />
+                            </TouchableOpacity>
+
+                            {/* Description input */}
+                            <CustomTextInput
+                                control={control}
+                                name="description"
+                                label="Description"
+                                multiline={true}
+                                numberOfLines={4}
+                                mode="outlined"
+                            />
+
+                            {/* DateTimePicker */}
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={selectedDateField === 'date_started' ? dateStartedValue : dateCompletedValue}
+                                    mode="date"
+                                    display="default"
+                                    onChange={handleDateChange}
+                                />
+                            )}
+
+                            {/* Submit button */}
+                            <Button mode="contained" onPress={handleOpenSaveBottomSheet} disabled={isLoading}>
+                                <Text style={{ color: 'white' }}>Save</Text>
+                            </Button>
+                        </View>
+                    </View>
+                </ScrollView>
+                <BottomSheet
+                    ref={saveBottomSheetRef}
+                    index={-1}
+                    snapPoints={snapPoints}
+                    backdropComponent={renderBackdrop}
+                    enablePanDownToClose={true}
                 >
-                    <CustomTextInput
-                        control={control}
-                        mode="outlined"
-                        name="date_started"
-                        label="Date Started"
-                        editable={false}
-                        value={moment(dateStartedValue).format('YYYY-MM-DD')}
-                    />
-                </TouchableOpacity>
+                    <View style={styles.bottomSheetContent}>
+                        <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
+                        <Text>Are you sure you want to save these changes?</Text>
+                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
+                            Save Changes
+                        </Button>
+                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
+                            Cancel
+                        </Button>
+                    </View>
+                </BottomSheet>
 
-                {/* Date completed input using TouchableOpacity */}
-                <TouchableOpacity
-                    style={styles.dateContainer}
-                    onPress={() => showDatePickerForField('date_completed')}
-                >
-                    <CustomTextInput
-                        control={control}
-                        mode="outlined"
-                        name="date_completed"
-                        label="Date Completed"
-                        editable={false}
-                        value={moment(dateCompletedValue).format('YYYY-MM-DD')}
-                    />
-                </TouchableOpacity>
-
-                {/* Description input */}
-                <CustomTextInput
-                    control={control}
-                    name="description"
-                    label="Description"
-                    multiline={true}
-                    numberOfLines={4}
-                    mode="outlined"
-                />
-
-                {/* DateTimePicker */}
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={selectedDateField === 'date_started' ? dateStartedValue : dateCompletedValue}
-                        mode="date"
-                        display="default"
-                        onChange={handleDateChange}
-                    />
-                )}
-
-                {/* Submit button */}
-                <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={isLoading}>
-                    <Text style={{ color: 'white' }}>Save</Text>
-                </Button>
             </View>
-        </AuthenticatedLayout>
+        </TouchableWithoutFeedback>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 8,
-        marginVertical: 20
+        // paddingHorizontal: 8,
+        // marginVertical: 20
 
     },
-    dateContainer: {
-        // marginBottom: 20,
+    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    bottomSheetTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    button: {
+        marginTop: 10,
     },
 });
 

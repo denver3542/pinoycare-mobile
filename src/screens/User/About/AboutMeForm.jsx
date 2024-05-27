@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, Platform } from 'react-native';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
+import { View, StyleSheet, Text, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Button, Appbar } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from '../../../../utils/axiosConfig';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import CustomMultilineTextInput from '../../../components/CustomMultilineTextInput';
-import { useUser } from '../../../hooks/useUser';
 import CustomTextInput from '../../../components/CustomTextInput';
-
+import { useUser } from '../../../hooks/useUser';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 const AboutMeScreen = () => {
     const { user } = useUser();
@@ -24,6 +22,9 @@ const AboutMeScreen = () => {
     });
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const updateBottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%', '30%'], []);
 
     const updateAboutMe = async (dataToUpdate) => {
         try {
@@ -44,34 +45,85 @@ const AboutMeScreen = () => {
         }
     };
 
-    const onSubmit = async (data) => {
-        await updateAboutMe(data);
-        navigation.goBack();
+    const handleOpenUpdateBottomSheet = () => {
+        Keyboard.dismiss()
+        setTimeout(() => updateBottomSheetRef.current?.expand(), 50);
     };
 
+    const handleCloseUpdateBottomSheet = () => {
+        updateBottomSheetRef.current?.close();
+    };
+
+    const onSubmit = async (data) => {
+        await updateAboutMe(data);
+        handleCloseUpdateBottomSheet();
+    };
+
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+        []
+    );
+
     return (
-        <AuthenticatedLayout>
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Update About" titleStyle={{ color: 'white' }} />
-            </Appbar.Header>
-            <View style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : null} keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}>
-                <View style={{ padding: 15, marginTop: 25 }}>
-                    <CustomTextInput mode="outlined" control={control} multiline={true}
-                        numberOfLines={15} name="about_me" placeholder="Tell me about yourself" label='About' />
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-                        Update
-                    </Button>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.container}>
+                <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                    <Appbar.Content title="Update About" titleStyle={{ color: 'white' }} />
+                </Appbar.Header>
+                <View style={styles.container}>
+                    <View style={{ padding: 15, marginTop: 25 }}>
+                        <CustomTextInput
+                            mode="outlined"
+                            control={control}
+                            multiline={true}
+                            numberOfLines={15}
+                            name="about_me"
+                            placeholder="Tell me about yourself"
+                            label='About Me'
+                        />
+                        <Button mode="contained" onPress={handleOpenUpdateBottomSheet}>
+                            Update
+                        </Button>
+                    </View>
+                    <Spinner visible={isLoading} />
                 </View>
+                <BottomSheet
+                    ref={updateBottomSheetRef}
+                    index={-1}
+                    snapPoints={snapPoints}
+                    backdropComponent={renderBackdrop}
+                    enablePanDownToClose={true}
+                >
+                    <View style={styles.bottomSheetContent}>
+                        <Text style={styles.bottomSheetTitle}>Confirm Update</Text>
+                        <Text>Are you sure you want to update your information?</Text>
+                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
+                            Yes, Update
+                        </Button>
+                        <Button onPress={handleCloseUpdateBottomSheet} style={styles.button}>
+                            Cancel
+                        </Button>
+                    </View>
+                </BottomSheet>
             </View>
-            <Spinner visible={isLoading} />
-        </AuthenticatedLayout>
+        </TouchableWithoutFeedback>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#F4F7FB'
+    },
+    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    bottomSheetTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    button: {
+        marginTop: 10,
     },
 });
 

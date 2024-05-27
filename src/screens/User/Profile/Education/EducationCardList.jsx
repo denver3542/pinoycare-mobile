@@ -74,7 +74,7 @@ const d = ({ educations }) => {
                 ))}
                 {/* <Divider style={styles.divider} /> */}
             </View>
-            {educations?.length > 1 && (
+            {educations?.length > 3 && (
                 <TouchableOpacity onPress={() => setShowAllEducations((prev) => !prev)} style={styles.showMoreLessButton}>
                     <Text style={styles.showMoreLessText}>
                         {showAllEducations ? "Show Less" : "Show More"}

@@ -19,7 +19,8 @@ const FeedsCard = ({ feed }) => {
   const formattedDate = moment(feed.published_at).fromNow();
   const { user } = useUser();
   const windowWidth = Dimensions.get('window').width;
-  const imageHeight = windowWidth * 9 / 12; // Aspect ratio 16:9
+  const maxWidth = Math.min(windowWidth, 768);
+  const imageHeight = maxWidth * 9 / 10;
   const handleDownload = async () => {
     try {
       // Explanation to user for permission request

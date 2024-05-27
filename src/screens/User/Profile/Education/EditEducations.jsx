@@ -24,6 +24,7 @@ const ChangeEducationScreen = () => {
     const [visibleItems, setVisibleItems] = useState(5);
     const [loading, setLoading] = useState(false);
 
+
     const loadMore = () => {
         setLoading(true);
         setTimeout(() => {

@@ -126,7 +126,7 @@ const GuestJobs = () => {
               </View>
               <TouchableWithoutFeedback onPress={() => showModal(job.id)}>
                 <MaterialIcons
-                  name="favorite-border"
+                  name="bookmark-outline"
                   size={24}
                   color="#0A3480"
                 />
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   company: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'gray'
+    // color: 'gray'
   },
   JobContent: {
     flexDirection: "column",
