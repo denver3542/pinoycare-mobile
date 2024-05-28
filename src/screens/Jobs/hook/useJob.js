@@ -9,6 +9,7 @@ async function getJobData(job_id) {
     const headers = storedUser ? getJWTHeader(JSON.parse(storedUser)) : {};
     const { data } = await axiosInstance.get(`/job/${job_id}`, { headers });
 
+    console.log(data);
     return data.job;
   } catch (err) {
     console.log(err);
