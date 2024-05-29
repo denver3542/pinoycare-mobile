@@ -77,7 +77,7 @@ const FeedsCard = ({ feed }) => {
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 }}>
         <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
           <Text style={{ color: selectedReaction ? "red" : "black", fontSize: 20 }}>
-            {selectedReaction ? "❤️" : "🖤"}
+            {selectedReaction ? "❤️" : "❤️"}
           </Text>
         </TouchableOpacity>
         {reactionCount > 0 && <Text style={{ marginLeft: 5 }}>{reactionCount}</Text>}

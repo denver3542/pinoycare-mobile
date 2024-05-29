@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.upcare.mobile",
@@ -55,7 +57,6 @@
         }
       ]
     ],
-    "sdkVersion": "49.0.0",
     "runtimeVersion": {
       "policy": "appVersion"
     },
