@@ -2,7 +2,7 @@
   "expo": {
     "name": "Upcare",
     "slug": "pinoycare-mobile",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "owner": "supportih",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,7 +21,7 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you."
       },
-      "buildNumber": "9"
+      "buildNumber": "10"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +30,7 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "com.upcare.mobile",
-      "versionCode": 33
+      "versionCode": 34
     },
     "web": {
       "favicon": "./assets/favicon.png"
