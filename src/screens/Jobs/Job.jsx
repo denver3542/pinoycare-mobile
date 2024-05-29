@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, RefreshControl } from "react-native";
-import { useNavigation, useRoute } from '@react-navigation/native';
+import HTML from 'react-native-render-html'; // Importing HTML from 'react-native-render-html'
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  RefreshControl, useWindowDimensions
+} from "react-native";
+import {
+  useNavigation,
+  useRoute
+} from '@react-navigation/native';
 import {
   Appbar,
   Button,
@@ -13,26 +22,33 @@ import {
   useTheme,
   Portal
 } from "react-native-paper";
-import HTMLView from "react-native-htmlview";
-import { fDate } from "../../../utils/formatTime";
-import { addCommasToNumber } from "../../../utils/currencyFormat";
-import { useUser } from "../../hooks/useUser";
+import {
+  fDate
+} from "../../../utils/formatTime";
+import {
+  addCommasToNumber
+} from "../../../utils/currencyFormat";
+import {
+  useUser
+} from "../../hooks/useUser";
 import useJob from "./hook/useJob";
-import { useUserApplications } from "../../components/useUserApplications";
+import {
+  useUserApplications
+} from "../../components/useUserApplications";
 
 export default function Job() {
   const { colors } = useTheme();
   const { params } = useRoute();
+  const job = params?.job || {}; // Null check for params and job
   const navigation = useNavigation();
   const { user, isFetched } = useUser();
   const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const job = params.job;
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
   const [visible, setVisible] = useState(false);
-
+  const windowWidth = useWindowDimensions().width;
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -47,7 +63,9 @@ export default function Job() {
   const hideModal = () => setVisible(false);
 
   useEffect(() => {
-    setIsApplied(appliedJobs.includes(job.id));
+    if (appliedJobs && job.id) {
+      setIsApplied(appliedJobs.includes(job.id));
+    }
   }, [appliedJobs, job.id]);
 
   useEffect(() => {
@@ -72,12 +90,11 @@ export default function Job() {
   const handleApply = () => {
     if (user) {
       navigation.navigate("Questionnaire", { jobData });
-      console.log('user:', user)
+      console.log('user:', user);
     } else {
       showModal(true);
     }
   };
-
 
   return (
     <ScrollView
@@ -93,10 +110,12 @@ export default function Job() {
     >
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
-        <Appbar.Content title={params.job.title} titleStyle={{ color: 'white' }} />
+        <Appbar.Content title={job.title || "Job Details"} titleStyle={{ color: 'white' }} />
       </Appbar.Header>
       <Card style={styles.card}>
-        <Card.Cover source={{ uri: params.job.media[0].original_url }} />
+        {job.media && job.media[0] && job.media[0].original_url && (
+          <Card.Cover source={{ uri: job.media[0].original_url }} />
+        )}
         <Card.Actions style={styles.cardActions}>
           {!user && !isFetched && (
             <Button icon="" style={styles.saveButton} onPress={handleSave}>
@@ -105,7 +124,6 @@ export default function Job() {
           )}
           <Button
             style={[
-              // styles.applyButton,
               { color: isApplied ? "#fff" : "primary" },
             ]}
             onPress={handleApply}
@@ -115,16 +133,17 @@ export default function Job() {
           </Button>
         </Card.Actions>
         <Card.Content>
-          <Title style={styles.title}>{job.title}</Title>
-          <Text style={styles.company}>{job.company}</Text>
+          <Title style={styles.title}>{job.title || "No Title Available"}</Title>
+          <Text style={styles.company}>{job.company || "No Company Information"}</Text>
           <View style={styles.metaContainer}>
             <Text style={styles.metaText}>
-              <Text style={styles.metaIcon}>📅</Text> {fDate(job.created_at)}
+              <Text style={styles.metaIcon}>📅</Text> {job.created_at ? fDate(job.created_at) : "N/A"}
             </Text>
           </View>
           <Divider style={styles.divider} />
-          <Text style={styles.actionTitle}>Description:</Text>
-          <HTMLView value={job.description} style={styles.description} />
+          <Text style={styles.sectionTitle}>Description</Text>
+          {/* <HTMLView value={job.description || "<p>No description available.</p>"} /> */}
+          <HTML source={{ html: job.description }} contentWidth={windowWidth} tagsStyles={{ p: { textAlign: 'justify' } }} />
           <Divider style={styles.divider} />
           <View style={[styles.infoContainer, { alignItems: "baseline" }]}>
             <Text style={styles.sectionTitle}>Offered Salary:</Text>
@@ -136,16 +155,19 @@ export default function Job() {
           <Divider style={styles.divider} />
           <Text style={styles.sectionTitle}>Skills</Text>
           <View style={styles.chipContainer}>
-            {job.skills &&
-              job.skills?.map((item) => (
+            {job.skills && job.skills.length > 0 ? (
+              job.skills.map((item) => (
                 <Chip key={item.id} style={styles.skillChip}>
                   {item.skill_name}
                 </Chip>
-              ))}
+              ))
+            ) : (
+              <Text>N/A</Text>
+            )}
           </View>
           <Text style={styles.sectionTitle}>Shift and Schedule</Text>
           <View style={styles.chipContainer}>
-            {job.schedules.length > 0 ? (
+            {job.schedules && job.schedules.length > 0 ? (
               job.schedules.map((item) => (
                 <Chip key={item} style={styles.skillChip}>
                   {item}
@@ -184,7 +206,6 @@ export default function Job() {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -248,7 +269,9 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 5,
+    textAlign: 'justify',
   },
+
   infoContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -267,4 +290,9 @@ const styles = StyleSheet.create({
   skillChip: {
     margin: 2,
   },
+  a: {
+    fontWeight: '300',
+    color: 'red', // make links coloured pink
+  },
 });
+

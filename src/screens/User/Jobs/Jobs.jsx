@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, } from 'react-native';
 import useJobs from './hook/useJobs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Appbar, Card, Paragraph, IconButton, useTheme, TouchableRipple, Searchbar } from 'react-native-paper';
@@ -83,6 +83,7 @@ const JobListings = ({ activeNav }) => {
     return (
       <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
         <View style={styles.cardContentRow}>
+
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
               <Image source={{ uri: item.media[0].original_url }} style={styles.jobImage} />
