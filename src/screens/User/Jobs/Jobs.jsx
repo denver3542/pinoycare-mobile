@@ -1,5 +1,6 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, } from 'react-native';
+import HTML from 'react-native-render-html';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions } from 'react-native';
 import useJobs from './hook/useJobs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Appbar, Card, Paragraph, IconButton, useTheme, TouchableRipple, Searchbar } from 'react-native-paper';
@@ -24,7 +25,7 @@ const JobListings = ({ activeNav }) => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [savedJobs, setSavedJobs] = useState({});
-
+  const windowWidth = useWindowDimensions().width;
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -114,22 +115,22 @@ const JobListings = ({ activeNav }) => {
               <MaterialIcons name="location-on" size={14} color="#0A3480" />
               {` ${item.location}`}
             </Paragraph>
-            <HTMLView
-              value={truncateDescription(item.description, item.id, descriptionLimit)}
-              style={styles.description}
-            />
-            {isTruncated && (
-              <TouchableWithoutFeedback>
-                <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
-                  {descriptionVisibility[item.id] ? 'Show less' : 'Show more'}
-                </Text>
-              </TouchableWithoutFeedback>
-            )}
+            <View style={{ flexDirection: 'column' }}>
+              <HTML source={{ html: truncateDescription(item.description, item.id, descriptionLimit) }} contentWidth={windowWidth} tagsStyles={{ p: { textAlign: 'justify' } }} />
+              {isTruncated && (
+                <TouchableWithoutFeedback>
+                  <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
+                    {descriptionVisibility[item.id] ? 'Show less' : 'Show more'}
+                  </Text>
+                </TouchableWithoutFeedback>
+              )}
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
     );
   };
+
 
   return (
     <View style={styles.container}>

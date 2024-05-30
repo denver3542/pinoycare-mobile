@@ -124,9 +124,10 @@ const Login = ({ navigation }) => {
           </Button>
           <View style={{ marginTop: 20 }}>
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-              <SocialIcon light type='facebook' onPress={handleFacebookSignIn} />
-              <SocialIcon light type='apple' onPress={handleAppleSignIn} />
+            <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
+              <SocialIcon light title='Sign In With Google' button type='google' onPress={handleFacebookSignIn} />
+              <SocialIcon light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
+              <SocialIcon light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
             </View>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>

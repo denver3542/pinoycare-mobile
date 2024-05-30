@@ -47,8 +47,8 @@ const WorkExperience = ({ work_experiences }) => {
                         )} */}
                     </React.Fragment>
                 ))}
-                {/* <Divider style={styles.divider} /> */}
-                {work_experiences.length > 1 && (
+                <Divider style={styles.divider} />
+                {work_experiences.length > 3 && (
                     <TouchableOpacity
                         onPress={() => setShowAllWorkExperience(!showAllWorkExperience)}
                         style={styles.showMoreButton}
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     experience: {
-        // marginBottom: 10,
+        marginBottom: 10,
         // backgroundColor: '#CFDDE6', borderRadius: 14, padding: 15
     },
     educationTitle: {

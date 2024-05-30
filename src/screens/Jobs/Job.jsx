@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import HTML from 'react-native-render-html'; // Importing HTML from 'react-native-render-html'
+import RenderHtml from 'react-native-render-html';
 import {
   View,
   ScrollView,
@@ -39,7 +39,7 @@ import {
 export default function Job() {
   const { colors } = useTheme();
   const { params } = useRoute();
-  const job = params?.job || {}; // Null check for params and job
+  const job = params?.job || {};
   const navigation = useNavigation();
   const { user, isFetched } = useUser();
   const { appliedJobs } = useUserApplications();
@@ -48,7 +48,8 @@ export default function Job() {
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
   const [visible, setVisible] = useState(false);
-  const windowWidth = useWindowDimensions().width;
+  const { width: contentWidth } = useWindowDimensions();
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -142,8 +143,11 @@ export default function Job() {
           </View>
           <Divider style={styles.divider} />
           <Text style={styles.sectionTitle}>Description</Text>
-          {/* <HTMLView value={job.description || "<p>No description available.</p>"} /> */}
-          <HTML source={{ html: job.description }} contentWidth={windowWidth} tagsStyles={{ p: { textAlign: 'justify' } }} />
+          {/* <RenderHtml enableExperimentalBRCollapsing={true} source={{ html: job.description }} contentWidth={contentWidth} tagsStyles={{ p: { textAlign: 'justify' } }} /> */}
+          <RenderHtml
+            contentWidth={contentWidth}
+            source={{ html: `<div style="text-align: justify;">${job.description}</div>` }}
+          />
           <Divider style={styles.divider} />
           <View style={[styles.infoContainer, { alignItems: "baseline" }]}>
             <Text style={styles.sectionTitle}>Offered Salary:</Text>

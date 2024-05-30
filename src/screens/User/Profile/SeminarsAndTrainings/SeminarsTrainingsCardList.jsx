@@ -76,9 +76,9 @@ const SeminarsTrainings = ({ trainings }) => {
 
                             </View>
                         </View>
-                        {/* {index < displayedTrainings.length - 1 && (
+                        {index < displayedTrainings.length - 1 && (
                             <Divider style={styles.divider} />
-                        )} */}
+                        )}
                     </React.Fragment>
                 ))}
                 {/* <Divider style={styles.divider} /> */}

@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { View, StyleSheet, Text, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableWithoutFeedback, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar, Button, Divider } from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useWorkExperience } from './hooks/useWorkExperience';
 import { useUser } from '../../../../hooks/useUser';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 
 const AddWorkExperience = () => {
     const navigation = useNavigation();
     const { user } = useUser();
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
         defaultValues: {
             experiences: [{
                 company_name: user?.company_name || '',
@@ -28,15 +30,56 @@ const AddWorkExperience = () => {
     });
 
     const { mutate, isLoading } = useWorkExperience();
+    const [dateStartedValue, setDateStartedValue] = useState(new Date());
+    const [dateEndedValue, setDateEndedValue] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [selectedDateField, setSelectedDateField] = useState(null);
+
+    useEffect(() => {
+        const dateStarted = watch('experiences[0].date_started');
+        const dateEnded = watch('experiences[0].date_ended');
+        if (dateStarted) setDateStartedValue(new Date(dateStarted));
+        if (dateEnded) setDateEndedValue(new Date(dateEnded));
+    }, []);
+
+    const handleDateChange = (event, selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDateField && selectedDate) {
+            setValue(selectedDateField, moment(selectedDate).format('YYYY-MM-DD'));
+            if (selectedDateField === 'experiences[0].date_started') {
+                setDateStartedValue(selectedDate);
+            } else if (selectedDateField === 'experiences[0].date_ended') {
+                setDateEndedValue(selectedDate);
+            }
+        }
+    };
+
+    const showDatePickerForField = (fieldName) => {
+        setSelectedDateField(fieldName);
+        setShowDatePicker(true);
+    };
+
+    const validateDates = (data) => {
+        const dateStarted = new Date(data.experiences[0].date_started);
+        const dateEnded = new Date(data.experiences[0].date_ended);
+
+        if (dateStarted > dateEnded) {
+            return false;
+        }
+        return true;
+    };
 
     const onSave = handleSubmit((data) => {
-        mutate(data);
+        if (validateDates(data)) {
+            mutate(data);
+        } else {
+            // Show an error message
+            alert('The end date must be the same as or after the start date.');
+        }
     });
-
 
     const saveBottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '30%'], []);
-
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
@@ -53,7 +96,6 @@ const AddWorkExperience = () => {
             saveBottomSheetRef.current.close();
         }
     };
-
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -82,23 +124,37 @@ const AddWorkExperience = () => {
                             error={errors.experiences && errors.experiences[0]?.position}
                         />
 
-                        <CustomTextInput
-                            control={control}
-                            label="Date Started"
-                            mode="outlined"
-                            name="experiences[0].date_started"
-                            rules={{ required: 'Start Date is required' }}
-                            error={errors.experiences && errors.experiences[0]?.date_started}
-                        />
+                        <TouchableOpacity
+                            style={styles.dateContainer}
+                            onPress={() => showDatePickerForField('experiences[0].date_started')}
+                        >
+                            <CustomTextInput
+                                control={control}
+                                label="Date Started"
+                                mode="outlined"
+                                name="experiences[0].date_started"
+                                rules={{ required: 'Start Date is required' }}
+                                error={errors.experiences && errors.experiences[0]?.date_started}
+                                editable={false}
+                                value={moment(dateStartedValue).format('YYYY-MM-DD')}
+                            />
+                        </TouchableOpacity>
 
-                        <CustomTextInput
-                            control={control}
-                            label="Date Ended"
-                            mode="outlined"
-                            name="experiences[0].date_ended"
-                            rules={{ required: 'End Date is required' }}
-                            error={errors.experiences && errors.experiences[0]?.date_ended}
-                        />
+                        <TouchableOpacity
+                            style={styles.dateContainer}
+                            onPress={() => showDatePickerForField('experiences[0].date_ended')}
+                        >
+                            <CustomTextInput
+                                control={control}
+                                label="Date Ended"
+                                mode="outlined"
+                                name="experiences[0].date_ended"
+                                rules={{ required: 'End Date is required' }}
+                                error={errors.experiences && errors.experiences[0]?.date_ended}
+                                editable={false}
+                                value={moment(dateEndedValue).format('YYYY-MM-DD')}
+                            />
+                        </TouchableOpacity>
 
                         <CustomTextInput
                             control={control}
@@ -151,6 +207,14 @@ const AddWorkExperience = () => {
                         </Button>
                     </View>
                 </ScrollView>
+                {showDatePicker && (
+                    <DateTimePicker
+                        value={selectedDateField === 'experiences[0].date_started' ? dateStartedValue : dateEndedValue}
+                        mode="date"
+                        display="default"
+                        onChange={handleDateChange}
+                    />
+                )}
                 <BottomSheet
                     ref={saveBottomSheetRef}
                     index={-1}
@@ -178,7 +242,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F4F7FB'
-        // padding: 15,
     },
     saveButton: {
         marginTop: 20,
@@ -197,7 +260,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 }
+    button: { marginTop: 10 },
+    dateContainer: {
+        marginBottom: 10,
+    },
 });
 
 export default AddWorkExperience;
