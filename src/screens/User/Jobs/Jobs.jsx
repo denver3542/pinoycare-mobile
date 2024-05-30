@@ -115,16 +115,14 @@ const JobListings = ({ activeNav }) => {
               <MaterialIcons name="location-on" size={14} color="#0A3480" />
               {` ${item.location}`}
             </Paragraph>
-            <View style={{ flexDirection: 'column' }}>
-              <HTML source={{ html: truncateDescription(item.description, item.id, descriptionLimit) }} contentWidth={windowWidth} tagsStyles={{ p: { textAlign: 'justify' } }} />
-              {isTruncated && (
-                <TouchableWithoutFeedback>
-                  <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
-                    {descriptionVisibility[item.id] ? 'Show less' : 'Show more'}
-                  </Text>
-                </TouchableWithoutFeedback>
-              )}
-            </View>
+            <HTML source={{ html: truncateDescription(item.description, item.id, descriptionLimit) }} contentWidth={windowWidth} tagsStyles={{ p: { textAlign: 'justify' } }} />
+            {isTruncated && (
+              <TouchableWithoutFeedback>
+                <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
+                  {descriptionVisibility[item.id] ? 'Show less' : 'Show more'}
+                </Text>
+              </TouchableWithoutFeedback>
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -222,7 +220,6 @@ const styles = StyleSheet.create({
   },
   readMore: {
     color: '#0A3480',
-    marginTop: 5,
     fontWeight: 'bold',
     fontSize: 14,
   },

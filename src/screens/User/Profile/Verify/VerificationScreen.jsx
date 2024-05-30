@@ -104,8 +104,8 @@ const VerificationScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
             </Appbar.Header>
             <ScrollView contentContainerStyle={styles.container}>
                 {Array.from({ length: 3 }).map((_, index) => (

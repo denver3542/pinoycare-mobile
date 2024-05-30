@@ -36,6 +36,7 @@ const AboutMeScreen = () => {
             queryClient.setQueryData(['user'], updatedUser);
             AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
             console.log('About Me update successful:', data);
+            navigation.goBack();
             return data;
         } catch (error) {
             console.error('Error updating about me:', error);
