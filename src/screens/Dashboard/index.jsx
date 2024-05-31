@@ -16,6 +16,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import HeaderNotification from "../../components/HeaderNotification";
 
+
 function Dashboard() {
   const { colors } = useTheme();
   const { user } = useUser();
@@ -125,7 +126,7 @@ function Dashboard() {
                     {application && (
                       <View>
                         <ApplicationListCard application={application} />
-                        {index !== applications.length - 1 && <Divider style={styles.divider} />}
+                        {/* {index !== applications.length - 1 && <Divider style={styles.divider} />} */}
                       </View>
                     )}
                   </View>
@@ -159,7 +160,7 @@ function Dashboard() {
                       {job && (
                         <View>
                           <ApplicationListCard application={job} />
-                          {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />}
+                          {/* {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />} */}
                         </View>
                       )}
                     </View>

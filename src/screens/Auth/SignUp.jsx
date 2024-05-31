@@ -119,186 +119,188 @@ const Signup = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#F4F7FB", }}>
-      <IconButton
-        icon="arrow-left"
-        onPress={() => navigation.goBack()}
-        style={{
-          marginTop: 50,
-          right: 20
-        }}
-      />
-      <View style={{ marginBottom: 20, flex: 1 }}>
-        <Text style={{
-          fontSize: 30,
-          textAlign: "center",
-          marginBottom: 20,
-          fontWeight: "bold",
-          color: "red",
-        }}>
-          Create <Text
-            style={{
-              fontWeight: "bold",
-              color: colors.primary,
-              fontSize: 18,
-              textAlign: "center",
-              fontSize: 30,
-            }}
-          >
-            Your Account
-          </Text>
-        </Text>
-
-        <View style={{ justifyContent: "center", gap: 0 }}>
-          <CustomTextInput
-            control={control}
-            name="firstname"
-            label="First Name"
-            mode="outlined"
-            rules={{ required: "First Name is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="middlename"
-            label="Middle Name"
-            rules={{ required: "Middlename is required" }}
-            mode="outlined"
-          />
-          <CustomTextInput
-            control={control}
-            name="lastname"
-            label="Last Name"
-            rules={{ required: "Last Name is required" }}
-            mode="outlined"
-          />
-          {/* Here is the selection of gender */}
-          <View style={{ width: "100%", marginBottom: 15 }}>
-            <RNPickerSelect
-              onValueChange={(value) => setValue("gender", value)}
-              items={[
-                { label: "Male", value: "M" },
-                { label: "Female", value: "F" },
-                { label: "Other", value: "Other" },
-              ]}
+    <ScrollView style={{ flex: 1, backgroundColor: "#F4F7FB", }}>
+      <View style={{ padding: 20, }}>
+        <IconButton
+          icon="arrow-left"
+          onPress={() => navigation.goBack()}
+          style={{
+            marginTop: 50,
+            right: 20
+          }}
+        />
+        <View style={{ marginBottom: 20, flex: 1 }}>
+          <Text style={{
+            fontSize: 30,
+            textAlign: "center",
+            marginBottom: 20,
+            fontWeight: "bold",
+            color: "red",
+          }}>
+            Create <Text
               style={{
-                inputAndroid: {
-                  color: colors.text,
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 1,
-                  borderColor: "gray",
-                  borderRadius: 5,
-                  paddingRight: 30,
-                  backgroundColor: "#FFFFFF",
-                },
-                inputIOS: {
-                  color: colors.text,
-                  paddingHorizontal: 10,
-                  paddingVertical: 20,
-                  borderWidth: 1,
-                  borderColor: errors.gender ? "red" : "gray",
-                  borderRadius: 5,
-                  paddingRight: 30,
-                  backgroundColor: "#FFFFFF",
-                },
+                fontWeight: "bold",
+                color: colors.primary,
+                fontSize: 18,
+                textAlign: "center",
+                fontSize: 30,
               }}
-              placeholder={{ label: "Select your gender", value: null }}
-            />
-            {errors.gender && (
-              <Text style={{ color: "red" }}>{errors.gender.message}</Text>
-            )}
-          </View>
-          <List.Item
-            title="Birth date"
-            right={(props) => (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>
-                  {watcher?.date_of_birth
-                    ? moment(watcher.date_of_birth).format("YYYY-MM-DD")
-                    : ""}
-                </Text>
-                <List.Icon {...props} icon="chevron-right" />
-              </View>
-            )}
-            style={{
-              backgroundColor: "#fff",
-              borderWidth: 1,
-              borderColor: "gray",
-              borderRadius: 5,
-              marginBottom: 15,
-            }}
-            onPress={showDatePicker}
-          />
-          <CustomTextInput
-            control={control}
-            name="email"
-            label="Email"
-            mode="outlined"
-            rules={{ required: "Email is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="password"
-            label="Password"
-            mode="outlined"
-            rules={{ required: "Password is required" }}
-            secureTextEntry={!showPw}
-            right={
-              <TextInput.Icon
-                icon={showPw ? "eye-off" : "eye"}
-                onPress={() => setShowPw((pw) => !pw)}
-              />
-            }
-          />
-          <CustomTextInput
-            control={control}
-            name="confirmpassword"
-            label="Confirm Password"
-            mode="outlined"
-            rules={{ required: "Password is required" }}
-            secureTextEntry={!showPw}
-            right={
-              <TextInput.Icon
-                icon={showPw ? "eye-off" : "eye"}
-                onPress={() => setShowPw((pw) => !pw)}
-              />
-            }
-          />
-
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={isSubmitting || isLoading}
-          >
-            Sign Up
-          </Button>
-          <View style={{ display: "flex", justifyContent: "center" }}>
-            {errors.terms && (
-              <Text style={{ color: "red", textAlign: "center" }}>
-                * {errors.terms.message}
-              </Text>
-            )}
-          </View>
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={agreeToTerms ? "checked" : "unchecked"}
-              onPress={() => setAgreeToTerms(!agreeToTerms)}
-              color={colors.primary}
-            />
-            <Text
-              onPress={openTermsLink}
-              style={{ color: colors.text, marginLeft: 8 }}
             >
-              I agree to Terms & Conditions
+              Your Account
+            </Text>
+          </Text>
+
+          <View style={{ justifyContent: "center", gap: 0 }}>
+            <CustomTextInput
+              control={control}
+              name="firstname"
+              label="First Name"
+              mode="outlined"
+              rules={{ required: "First Name is required" }}
+            />
+            <CustomTextInput
+              control={control}
+              name="middlename"
+              label="Middle Name"
+              rules={{ required: "Middlename is required" }}
+              mode="outlined"
+            />
+            <CustomTextInput
+              control={control}
+              name="lastname"
+              label="Last Name"
+              rules={{ required: "Last Name is required" }}
+              mode="outlined"
+            />
+            {/* Here is the selection of gender */}
+            <View style={{ width: "100%", marginBottom: 15 }}>
+              <RNPickerSelect
+                onValueChange={(value) => setValue("gender", value)}
+                items={[
+                  { label: "Male", value: "M" },
+                  { label: "Female", value: "F" },
+                  { label: "Other", value: "Other" },
+                ]}
+                style={{
+                  inputAndroid: {
+                    color: colors.text,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 1,
+                    borderColor: "gray",
+                    borderRadius: 5,
+                    paddingRight: 30,
+                    backgroundColor: "#FFFFFF",
+                  },
+                  inputIOS: {
+                    color: colors.text,
+                    paddingHorizontal: 10,
+                    paddingVertical: 20,
+                    borderWidth: 1,
+                    borderColor: errors.gender ? "red" : "gray",
+                    borderRadius: 5,
+                    paddingRight: 30,
+                    backgroundColor: "#FFFFFF",
+                  },
+                }}
+                placeholder={{ label: "Select your gender", value: null }}
+              />
+              {errors.gender && (
+                <Text style={{ color: "red" }}>{errors.gender.message}</Text>
+              )}
+            </View>
+            <List.Item
+              title="Birth date"
+              right={(props) => (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text>
+                    {watcher?.date_of_birth
+                      ? moment(watcher.date_of_birth).format("YYYY-MM-DD")
+                      : ""}
+                  </Text>
+                  <List.Icon {...props} icon="chevron-right" />
+                </View>
+              )}
+              style={{
+                backgroundColor: "#fff",
+                borderWidth: 1,
+                borderColor: "gray",
+                borderRadius: 5,
+                marginBottom: 15,
+              }}
+              onPress={showDatePicker}
+            />
+            <CustomTextInput
+              control={control}
+              name="email"
+              label="Email"
+              mode="outlined"
+              rules={{ required: "Email is required" }}
+            />
+            <CustomTextInput
+              control={control}
+              name="password"
+              label="Password"
+              mode="outlined"
+              rules={{ required: "Password is required" }}
+              secureTextEntry={!showPw}
+              right={
+                <TextInput.Icon
+                  icon={showPw ? "eye-off" : "eye"}
+                  onPress={() => setShowPw((pw) => !pw)}
+                />
+              }
+            />
+            <CustomTextInput
+              control={control}
+              name="confirmpassword"
+              label="Confirm Password"
+              mode="outlined"
+              rules={{ required: "Password is required" }}
+              secureTextEntry={!showPw}
+              right={
+                <TextInput.Icon
+                  icon={showPw ? "eye-off" : "eye"}
+                  onPress={() => setShowPw((pw) => !pw)}
+                />
+              }
+            />
+
+            <Button
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+              loading={isSubmitting || isLoading}
+            >
+              Sign Up
+            </Button>
+            <View style={{ display: "flex", justifyContent: "center" }}>
+              {errors.terms && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  * {errors.terms.message}
+                </Text>
+              )}
+            </View>
+            <View style={styles.checkboxContainer}>
+              <Checkbox.Android
+                status={agreeToTerms ? "checked" : "unchecked"}
+                onPress={() => setAgreeToTerms(!agreeToTerms)}
+                color={colors.primary}
+              />
+              <Text
+                onPress={openTermsLink}
+                style={{ color: colors.text, marginLeft: 8 }}
+              >
+                I agree to Terms & Conditions
+              </Text>
+            </View>
+
+            <Text
+              style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
+            >
+              Already have an account?{" "}
+              <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
             </Text>
           </View>
-
-          <Text
-            style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
-          >
-            Already have an account?{" "}
-            <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
-          </Text>
         </View>
       </View>
       <DateTimePickerModal

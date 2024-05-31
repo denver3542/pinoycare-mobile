@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { SocialIcon } from 'react-native-elements';
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -16,6 +23,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
 import useAuth from "../../hooks/useAuth";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 // Define your validation schema
 const validationSchema = Yup.object({
@@ -23,15 +31,13 @@ const validationSchema = Yup.object({
   password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 }).required();
 
-// const redirectURI = 'com.upcare.mobile://oauthredirect';
-
-
-const Login = ({ navigation }) => {
+const Login = () => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
+  const navigation = useNavigation();
 
   const {
     control,
@@ -61,7 +67,7 @@ const Login = ({ navigation }) => {
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowPw(!showPw);
   };
 
   const handleFacebookSignIn = () => {
@@ -73,13 +79,17 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
-        <Spinner visible={loading} color={colors.primary} />
-        <View style={{ marginTop: 50, right: 20 }}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    // keyboardVerticalOffset={60}
+    >
+      <Spinner visible={loading} color={colors.primary} />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={{ top: 45, right: 20, marginBottom: 50 }}>
           <IconButton icon="arrow-left" onPress={() => navigation.goBack()} />
         </View>
-        <View style={{ flex: 1, marginVertical: 100 }}>
+        <View style={{ flex: 1, top: 0 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
             Let's <Text style={styles.highlight}>Sign</Text> you in.
           </Text>
@@ -122,30 +132,33 @@ const Login = ({ navigation }) => {
           >
             LOGIN
           </Button>
-          <View style={{ marginTop: 20 }}>
+          <View>
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
             <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
-              <SocialIcon light title='Sign In With Google' button type='google' onPress={handleFacebookSignIn} />
-              <SocialIcon light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
-              <SocialIcon light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
+              <SocialIcon raised={false} light title='Sign In With Google' button type='google' onPress={handleFacebookSignIn} />
+              <SocialIcon raised={false} light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
+              <SocialIcon raised={false} light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
             </View>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-            <Text style={styles.signUpText}>
-              You don't have an account yet? <Text style={styles.linkText}>Sign up</Text>
-            </Text>
-          </TouchableOpacity>
         </View>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate("SignUp")}>
+          <Text style={styles.signUpText}>
+            You don't have an account yet? <Text style={styles.linkText}>Sign up</Text>
+          </Text>
+        </TouchableWithoutFeedback>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#F4F7FB",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 20,
   },
   title: {
     fontSize: 30,
@@ -163,15 +176,15 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     paddingVertical: 3,
-    borderRadius: 50
+    borderRadius: 50,
   },
   linkText: {
     color: "#0A3480",
     textAlign: "right",
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   signUpText: {
-    marginTop: 50,
+    marginTop: 20,
     textAlign: "center",
   },
 });

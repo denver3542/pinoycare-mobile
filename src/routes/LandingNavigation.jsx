@@ -57,6 +57,7 @@ function LandingNavigation() {
   const screenOptions = {
     headerShown: false,
     animation: 'slide_from_right',
+
   };
 
   return (

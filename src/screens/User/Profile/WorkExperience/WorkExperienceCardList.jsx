@@ -47,7 +47,7 @@ const WorkExperience = ({ work_experiences }) => {
                         )} */}
                     </React.Fragment>
                 ))}
-                <Divider style={styles.divider} />
+                {/* <Divider style={styles.divider} /> */}
                 {work_experiences.length > 3 && (
                     <TouchableOpacity
                         onPress={() => setShowAllWorkExperience(!showAllWorkExperience)}

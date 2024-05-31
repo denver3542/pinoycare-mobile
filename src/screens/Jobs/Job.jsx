@@ -4,7 +4,7 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  RefreshControl, useWindowDimensions
+  RefreshControl, useWindowDimensions, Dimensions
 } from "react-native";
 import {
   useNavigation,
@@ -49,7 +49,9 @@ export default function Job() {
   const [refreshing, setRefreshing] = useState(false);
   const [visible, setVisible] = useState(false);
   const { width: contentWidth } = useWindowDimensions();
-
+  const windowWidth = Dimensions.get('window').width;
+  const maxWidth = Math.min(windowWidth, 768);
+  const imageHeight = maxWidth * 9 / 10;
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -115,7 +117,7 @@ export default function Job() {
       </Appbar.Header>
       <Card style={styles.card}>
         {job.media && job.media[0] && job.media[0].original_url && (
-          <Card.Cover source={{ uri: job.media[0].original_url }} />
+          <Card.Cover source={{ uri: job.media[0].original_url }} resizeMode="stretch" style={{ height: imageHeight }} />
         )}
         <Card.Actions style={styles.cardActions}>
           {!user && !isFetched && (
@@ -135,6 +137,14 @@ export default function Job() {
         </Card.Actions>
         <Card.Content>
           <Title style={styles.title}>{job.title || "No Title Available"}</Title>
+          <Text style={styles.sectionTitle}>Application Status:</Text>
+          {user && user.applications && user.applications.map(application => (
+            application.job_id === job.id && (
+              <Text key={application.id} style={styles.infoText}>
+                {application.status}
+              </Text>
+            )
+          ))}
           <Text style={styles.company}>{job.company || "No Company Information"}</Text>
           <View style={styles.metaContainer}>
             <Text style={styles.metaText}>

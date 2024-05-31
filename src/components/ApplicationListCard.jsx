@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   company: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'gray',
+    // color: 'gray',
   },
   salaryText: {
     fontSize: 12,
