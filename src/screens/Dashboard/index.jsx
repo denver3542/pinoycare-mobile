@@ -11,11 +11,11 @@ import {
 import { useUser } from "../../hooks/useUser";
 import { useDashboard } from "./hooks/useDashboard";
 import ApplicationListCard from "../../components/ApplicationListCard";
+import JobApplications from "./JobApplications";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import HeaderNotification from "../../components/HeaderNotification";
-
 
 function Dashboard() {
   const { colors } = useTheme();
@@ -109,8 +109,31 @@ function Dashboard() {
           placeholderTextColor="gray"
         />
 
-
         <View style={styles.card}>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Job Applications</Text>
+          </View>
+          <Divider style={styles.divider} />
+          <View style={styles.cardContent}>
+            {isFetched && applications.length > 0 ? (
+              <>
+                {applications.map((application, index) => (
+                  <View key={index}>
+                    {application && (
+                      <JobApplications application={application} />
+                    )}
+                  </View>
+                ))}
+              </>
+            ) : (
+              <View style={styles.notAvailable}>
+                <MaterialIcons name="description" size={50} color="gray" />
+                <Text style={styles.notAvailableText}>Currently, No Application</Text>
+              </View>
+            )}
+          </View>
+        </View>
+        {/* <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Applications</Text>
             <TouchableOpacity onPress={() => navigation.navigate("Application")}>
@@ -126,7 +149,6 @@ function Dashboard() {
                     {application && (
                       <View>
                         <ApplicationListCard application={application} />
-                        {/* {index !== applications.length - 1 && <Divider style={styles.divider} />} */}
                       </View>
                     )}
                   </View>
@@ -139,8 +161,7 @@ function Dashboard() {
               </View>
             )}
           </View>
-        </View>
-
+        </View> */}
 
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
@@ -160,7 +181,6 @@ function Dashboard() {
                       {job && (
                         <View>
                           <ApplicationListCard application={job} />
-                          {/* {index !== offeredJobs.length - 1 && <Divider style={styles.divider} />} */}
                         </View>
                       )}
                     </View>
@@ -181,9 +201,6 @@ function Dashboard() {
           </View>
         </View>
 
-
-
-
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Saved Jobs</Text>
@@ -201,7 +218,6 @@ function Dashboard() {
                     {job && (
                       <ApplicationListCard application={job} />
                     )}
-                    {/* {index !== savedJobs.length - 1 && <Divider style={styles.divider} />} */}
                   </View>
                 ))}
               </>
@@ -214,12 +230,35 @@ function Dashboard() {
           </View>
         </View>
 
-
-
+        {/* <View style={styles.card}>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Job Applications Section</Text>
+          </View>
+          <Divider style={styles.divider} />
+          <View style={styles.cardContent}>
+            {isFetched && applications.length > 0 ? (
+              <>
+                {applications.map((application, index) => (
+                  <View key={index}>
+                    {application && (
+                      <JobApplications application={application} />
+                    )}
+                  </View>
+                ))}
+              </>
+            ) : (
+              <View style={styles.notAvailable}>
+                <MaterialIcons name="description" size={50} color="gray" />
+                <Text style={styles.notAvailableText}>Currently, No Application</Text>
+              </View>
+            )}
+          </View>
+        </View> */}
       </View>
     </ScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

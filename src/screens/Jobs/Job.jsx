@@ -137,14 +137,14 @@ export default function Job() {
         </Card.Actions>
         <Card.Content>
           <Title style={styles.title}>{job.title || "No Title Available"}</Title>
-          <Text style={styles.sectionTitle}>Application Status:</Text>
+          {/* <Text style={styles.sectionTitle}>Application Status:</Text>
           {user && user.applications && user.applications.map(application => (
             application.job_id === job.id && (
               <Text key={application.id} style={styles.infoText}>
                 {application.status}
               </Text>
             )
-          ))}
+          ))} */}
           <Text style={styles.company}>{job.company || "No Company Information"}</Text>
           <View style={styles.metaContainer}>
             <Text style={styles.metaText}>
