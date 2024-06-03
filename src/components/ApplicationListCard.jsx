@@ -25,13 +25,39 @@ const ApplicationListCard = ({ application }) => {
     <TouchableWithoutFeedback onPress={() => navigation.navigate("Job", application)}>
       <View style={styles.card}>
         <View style={styles.cardContent}>
-          <Image
-            source={{
-              uri: media && media.length > 0 ? media[0].original_url : logo,
-            }}
-            style={styles.jobImage}
-          />
-          <View style={styles.jobDetails}>
+          <View style={{ flexDirection: 'row' }}>
+            <Image
+              source={{
+                uri: media && media.length > 0 ? media[0].original_url : logo,
+              }}
+              style={styles.jobImage}
+            />
+            <View style={{ marginBottom: 5 }}>
+              <Text style={styles.jobTitle}>{title || 'n/a'}</Text>
+              <Text style={styles.company}>{company || 'n/a'}</Text>
+            </View>
+          </View>
+          <Divider style={styles.divider} />
+          <View style={{ flexDirection: 'row', left: 65 }}>
+            <View style={{ rowGap: 5 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialIcons name="location-on" size={14} color="#0A3480" />
+                <Text style={styles.jobLocation}>{location || 'n/a'}</Text>
+              </View>
+              <Text style={styles.salaryText}>
+                {formatSalary(salary_from) || 'N/A'} - {formatSalary(salary_to) || 'N/A'} / month
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                <Chip style={styles.chip} mode="text" compact textStyle={styles.chipText}>
+                  {workplace || 'Workplace not available'}
+                </Chip>
+                <Chip style={styles.chip} mode="text" compact textStyle={styles.chipText}>
+                  {type || 'Type not available'}
+                </Chip>
+              </View>
+            </View>
+          </View>
+          {/* <View style={styles.jobDetails}>
             <Text style={styles.jobTitle}>{title || 'n/a'}</Text>
             <Text style={styles.company}>{company || 'n/a'}</Text>
             <Text style={styles.location}>
@@ -50,7 +76,7 @@ const ApplicationListCard = ({ application }) => {
             <Text style={styles.salaryText}>
               {formatSalary(salary_from) || 'N/A'} - {formatSalary(salary_to) || 'N/A'} / Monthly
             </Text>
-          </View>
+          </View> */}
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -59,32 +85,33 @@ const ApplicationListCard = ({ application }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    padding: 8,
+    backgroundColor: "#F5F5F5",
+    borderRadius: 14,
+    padding: 14,
     marginBottom: 8,
   },
   chip: {
-    margin: 4,
+    marginRight: 5,
     borderRadius: 5,
+    backgroundColor: '#0A3480',
   },
   chipText: {
-    color: 'black',
-    fontSize: 10,
-    fontWeight: 'bold',
-    minHeight: 10,
-    lineHeight: 10,
-    marginHorizontal: 10,
+    color: 'white',
+    fontSize: 12,
+    // fontWeight: 'bold',
+    minHeight: 12,
+    lineHeight: 12,
+    marginHorizontal: 12,
     alignItems: "center",
     marginVertical: 4,
   },
   cardContent: {
-    flexDirection: "row",
+    // flexDirection: "row",
   },
   jobImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 6,
+    width: 50,
+    height: 50,
+    borderRadius: 10,
     marginRight: 15,
   },
   jobDetails: {
@@ -92,15 +119,16 @@ const styles = StyleSheet.create({
   },
   jobTitle: {
     fontSize: 20,
+    marginBottom: 4,
     fontWeight: 'bold',
   },
   company: {
     fontSize: 14,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     // color: 'gray',
   },
   salaryText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   location: {
@@ -109,6 +137,7 @@ const styles = StyleSheet.create({
   divider: {
     marginVertical: 5,
   },
+  jobLocation: {}
 });
 
 export default ApplicationListCard;

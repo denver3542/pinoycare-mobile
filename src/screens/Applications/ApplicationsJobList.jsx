@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Image } from "react-native";
-import { Text, Icon, Divider } from "react-native-paper";
+import { Text, Icon } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import logo from "../../../assets/images/hero-bg.jpg";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
@@ -8,7 +8,7 @@ import { useDashboard } from "../Dashboard/hooks/useDashboard";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Badge } from 'react-native-elements';
 
-const JobApplications = ({ application }) => {
+const JobApplicationList = ({ application }) => {
     const navigation = useNavigation();
     const { data: dashboardData } = useDashboard();
 
@@ -48,7 +48,6 @@ const JobApplications = ({ application }) => {
                                         textStyle={[styles.chipText, { color: badgeTextColor }]}
                                     />
                                 </View>
-
                             </View>
                             <Icon source="chevron-right" size={25} />
                         </View>
@@ -100,12 +99,12 @@ const styles = StyleSheet.create({
     },
     card: {
         flexGrow: 1,
-        // backgroundColor: "#F5F5F5",
+        // backgroundColor: "#ffff",
         borderRadius: 12,
-        marginBottom: 10,
+        marginBottom: 0,
     },
     cardContent: {
-        padding: 8,
+        padding: 4,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
     jobImage: {
         width: 50,
         height: 50,
-        borderRadius: 10,
+        borderRadius: 8,
         marginRight: 15,
     },
     applicationDetails: {
@@ -146,4 +145,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default JobApplications;
+export default JobApplicationList;

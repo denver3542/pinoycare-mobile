@@ -1,16 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FlatList, Image, StyleSheet, View, RefreshControl } from "react-native";
 import { Appbar, Searchbar, useTheme } from "react-native-paper";
-import ApplicationListCard from "../../components/ApplicationListCard";
+import ApplicationsJobList from "./ApplicationsJobList";
 import useApplications from "./hook/useApplications";
 import Spinner from "react-native-loading-spinner-overlay";
-import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
-import { color } from "@rneui/base";
 
 const Applications = () => {
   const { colors } = useTheme();
-  const { data: allApplications, isRefetching, isFetching, refetch } = useApplications();
+  const { data: allApplications, isFetching, refetch } = useApplications();
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
@@ -25,9 +23,7 @@ const Applications = () => {
       });
   };
 
-
-  const renderJob = ({ item }) => {
-
+  const renderJob = ({ item, index }) => {
     if (!item || !item.job) {
       return null;
     }
@@ -40,12 +36,15 @@ const Applications = () => {
       company.toLowerCase().includes(lowerCaseQuery) ||
       type.toLowerCase().includes(lowerCaseQuery)
     ) {
-      return <ApplicationListCard application={item} />;
+      return (
+        <View style={styles.itemContainer}>
+          <ApplicationsJobList application={item} />
+        </View>
+      );
     } else {
       return null;
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -83,7 +82,7 @@ const Applications = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F4F7FB', },
-  listContainer: { padding: 8 },
+  listContainer: { padding: 8, },
   imageStyle: {
     width: 30,
     height: 30,
@@ -99,19 +98,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginBottom: 15
   },
-  card: {
+  itemContainer: {
     backgroundColor: "white",
+    padding: 8,
     borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginBottom: 8
+
   },
   title: {
     fontSize: 18,
