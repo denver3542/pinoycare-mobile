@@ -79,7 +79,7 @@ const JobListings = ({ activeNav }) => {
 
     const isTruncated = item.description.length > descriptionLimit;
 
-    const isSaved = user && user.saved_jobs.some(savedJob => savedJob.job_id === item.id);
+    const isSaved = user && user.saved_jobs && user.saved_jobs.some(savedJob => savedJob.job_id === item.id);
 
     return (
       <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
@@ -175,13 +175,13 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 8,
     backgroundColor: 'white',
-    paddingVertical: 10,
+    padding: 10,
     borderRadius: 8,
     elevation: 0,
   },
   cardContentRow: {
     flexDirection: 'row',
-    paddingHorizontal: 8
+    // paddingHorizontal: 8
   },
   cardContentText: {
     flex: 1,
@@ -224,8 +224,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   jobImage: {
-    width: 80,
-    height: 80,
+    width: 50,
+    height: 50,
     borderRadius: 6,
     marginRight: 5
   },

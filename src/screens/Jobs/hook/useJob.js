@@ -37,16 +37,9 @@ export async function submitApplication(inputData) {
     const res = await axiosInstance.post(`/application/store`, inputData, {
       headers,
     });
-
-    return res;
+    return { success: true, data: res.data };
   } catch (error) {
-    console.log(error);
-    let errorMessage = "Server error";
-    let errors = [];
-    if (axios.isAxiosError(error)) {
-      errorMessage = error.response.data.message || errorMessage;
-      errors = error.response.data.error;
-    }
-    return { success: 0, message: errorMessage, errors: errors };
+    console.error("Error submitting application:", error);
+    return { success: false, error };
   }
 }

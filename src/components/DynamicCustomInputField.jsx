@@ -1,20 +1,21 @@
-import { View } from "react-native";
-import { RadioButton, Text } from "react-native-paper";
+import React from "react";
+import { View, Text } from "react-native";
+import { RadioButton, TextInput } from "react-native-paper";
 
-const InputField = ({ question, value, onChange }) => {
-  switch (question.type) {
-    case "text":
-      return (
+const InputField = ({ question, value, onChange, error }) => {
+  return (
+    <View style={{ marginBottom: 20 }}>
+      {question.type === "text" && (
         <TextInput
           mode="outlined"
           label={question.question}
           value={value}
           onChangeText={onChange}
           placeholder="Type your answer here"
+          error={!!error}
         />
-      );
-    case "number":
-      return (
+      )}
+      {question.type === "numeric" && (
         <TextInput
           mode="outlined"
           label={question.question}
@@ -22,21 +23,23 @@ const InputField = ({ question, value, onChange }) => {
           onChangeText={onChange}
           keyboardType="numeric"
           placeholder="Enter a number"
+          error={!!error}
         />
-      );
-    case "boolean":
-      return (
-        <RadioButton.Group onValueChange={onChange} value={value}>
+      )}
+      {question.type === "boolean" && (
+        <View>
           <Text>{question.question}</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <RadioButton.Item label="Yes" value="true" position="leading" />
-            <RadioButton.Item label="No" value="false" position="leading" />
-          </View>
-        </RadioButton.Group>
-      );
-    default:
-      return null;
-  }
+          <RadioButton.Group onValueChange={onChange} value={value}>
+            <View style={{ flexDirection: "row" }}>
+              <RadioButton.Item label="Yes" value="true" position="leading" />
+              <RadioButton.Item label="No" value="false" position="leading" />
+            </View>
+          </RadioButton.Group>
+        </View>
+      )}
+      {error && <Text style={{ color: "red" }}>{error}</Text>}
+    </View>
+  );
 };
 
 export default InputField;

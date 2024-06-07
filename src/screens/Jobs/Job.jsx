@@ -1,40 +1,13 @@
 import React, { useEffect, useState } from "react";
 import RenderHtml from 'react-native-render-html';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  RefreshControl, useWindowDimensions, Dimensions
-} from "react-native";
-import {
-  useNavigation,
-  useRoute
-} from '@react-navigation/native';
-import {
-  Appbar,
-  Button,
-  Card,
-  Chip,
-  Divider,
-  Modal,
-  Text,
-  Title,
-  useTheme,
-  Portal
-} from "react-native-paper";
-import {
-  fDate
-} from "../../../utils/formatTime";
-import {
-  addCommasToNumber
-} from "../../../utils/currencyFormat";
-import {
-  useUser
-} from "../../hooks/useUser";
+import { View, ScrollView, StyleSheet, RefreshControl, useWindowDimensions, Dimensions } from "react-native";
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { Appbar, Button, Card, Chip, Divider, Modal, Text, Title, useTheme, Portal } from "react-native-paper";
+import { fDate } from "../../../utils/formatTime";
+import { addCommasToNumber } from "../../../utils/currencyFormat";
+import { useUser } from "../../hooks/useUser";
 import useJob from "./hook/useJob";
-import {
-  useUserApplications
-} from "../../components/useUserApplications";
+import { useUserApplications } from "../../components/useUserApplications";
 
 export default function Job() {
   const { colors } = useTheme();
@@ -44,6 +17,7 @@ export default function Job() {
   const { user, isFetched } = useUser();
   const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState(null);
   const [questions, setQuestions] = useState([]);
   const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
@@ -52,6 +26,7 @@ export default function Job() {
   const windowWidth = Dimensions.get('window').width;
   const maxWidth = Math.min(windowWidth, 768);
   const imageHeight = maxWidth * 9 / 10;
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -67,7 +42,8 @@ export default function Job() {
 
   useEffect(() => {
     if (appliedJobs && job.id) {
-      setIsApplied(appliedJobs.includes(job.id));
+      const applied = appliedJobs.includes(job.id);
+      setIsApplied(applied);
     }
   }, [appliedJobs, job.id]);
 
@@ -77,6 +53,11 @@ export default function Job() {
         (app) => app.job_id === job.id
       );
       setIsApplied(!!appliedJob);
+      setApplicationStatus(appliedJob ? appliedJob.status : null);
+      console.log(`User ${appliedJob ? "has" : "has not"} applied for the job (via user.applications).`);
+      if (appliedJob) {
+        console.log(`Application status: ${appliedJob.status}`);
+      }
     }
   }, [user, isFetched]);
 
@@ -93,7 +74,6 @@ export default function Job() {
   const handleApply = () => {
     if (user) {
       navigation.navigate("Questionnaire", { jobData });
-      console.log('user:', user);
     } else {
       showModal(true);
     }
@@ -129,22 +109,15 @@ export default function Job() {
             style={[
               { color: isApplied ? "#fff" : "primary" },
             ]}
-            onPress={handleApply}
+            onPress={() => handleApply(jobData)}
             disabled={isApplied}
           >
             {isApplied ? "Applied" : "Apply"}
           </Button>
+
         </Card.Actions>
         <Card.Content>
           <Title style={styles.title}>{job.title || "No Title Available"}</Title>
-          {/* <Text style={styles.sectionTitle}>Application Status:</Text>
-          {user && user.applications && user.applications.map(application => (
-            application.job_id === job.id && (
-              <Text key={application.id} style={styles.infoText}>
-                {application.status}
-              </Text>
-            )
-          ))} */}
           <Text style={styles.company}>{job.company || "No Company Information"}</Text>
           <View style={styles.metaContainer}>
             <Text style={styles.metaText}>
@@ -153,7 +126,6 @@ export default function Job() {
           </View>
           <Divider style={styles.divider} />
           <Text style={styles.sectionTitle}>Description</Text>
-          {/* <RenderHtml enableExperimentalBRCollapsing={true} source={{ html: job.description }} contentWidth={contentWidth} tagsStyles={{ p: { textAlign: 'justify' } }} /> */}
           <RenderHtml
             contentWidth={contentWidth}
             source={{ html: `<div style="text-align: justify;">${job.description}</div>` }}
@@ -191,6 +163,13 @@ export default function Job() {
               <Text>N/A</Text>
             )}
           </View>
+          <Divider style={styles.divider} />
+          {isApplied && applicationStatus && (
+            <>
+              <Text style={styles.sectionTitle}>Application Status:</Text>
+              <Text style={styles.infoText}>{applicationStatus}</Text>
+            </>
+          )}
         </Card.Content>
       </Card>
       {user && isFetched ? null : (
@@ -212,7 +191,6 @@ export default function Job() {
             >
               Sign in
             </Button>
-
             <Button style={styles.button} onPress={hideModal}>Cancel</Button>
           </Modal>
         </Portal>
@@ -220,6 +198,8 @@ export default function Job() {
     </ScrollView>
   );
 }
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -309,4 +289,3 @@ const styles = StyleSheet.create({
     color: 'red', // make links coloured pink
   },
 });
-

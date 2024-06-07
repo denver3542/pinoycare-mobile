@@ -28,6 +28,7 @@ import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTr
 import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
+import ApplicationStatus from "../screens/Applications/ApplicationStatus";
 
 // Import hooks
 import { useUser } from "../hooks/useUser";
@@ -97,6 +98,7 @@ function LandingNavigation() {
             <>
               <Stack.Screen name="BottomTabs" component={CustomBottomTabs} />
               <Stack.Screen name="Job" component={Job} />
+              <Stack.Screen name="ApplicationStatus" component={ApplicationStatus} />
               <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
               <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
               <Stack.Screen name="MessageList" component={MessageList} />

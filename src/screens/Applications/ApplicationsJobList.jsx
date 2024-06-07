@@ -23,7 +23,7 @@ const JobApplicationList = ({ application }) => {
     const badgeTextColor = getBadgeTextColor(applicationStatus);
 
     return (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate("Job", application)}>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate("ApplicationStatus", application)}>
             <View style={styles.container}>
                 <View style={styles.card}>
                     <View style={styles.cardContent}>
