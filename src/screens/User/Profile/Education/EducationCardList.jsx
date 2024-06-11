@@ -72,7 +72,7 @@ const d = ({ educations }) => {
                         {/* {index < limitedEducations.length - 1 && <Divider style={styles.divider} />} */}
                     </React.Fragment>
                 ))}
-                <Divider style={styles.divider} />
+                {/* <Divider style={styles.divider} /> */}
             </View>
             {educations?.length > 3 && (
                 <TouchableOpacity onPress={() => setShowAllEducations((prev) => !prev)} style={styles.showMoreLessButton}>

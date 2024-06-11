@@ -224,8 +224,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   jobImage: {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     borderRadius: 6,
     marginRight: 5
   },
