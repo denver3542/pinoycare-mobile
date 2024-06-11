@@ -39,6 +39,7 @@
     "expo-crypto": "~13.0.2",
     "expo-dev-client": "~4.0.15",
     "expo-doctor": "^1.5.0",
+    "expo-document-picker": "^12.0.1",
     "expo-file-system": "~17.0.1",
     "expo-image-picker": "~15.0.5",
     "expo-linear-gradient": "~13.0.2",
@@ -79,11 +80,6 @@
     "react-native-version-check": "^3.4.7",
     "react-native-web": "~0.19.10",
     "yup": "^1.4.0"
-  },
-  "resolutions": {
-    "wrap-ansi": "^6.2.0",
-    "@expo/config-plugins": "~8.0.0",
-    "@expo/prebuild-config": "~7.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"
