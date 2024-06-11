@@ -79,7 +79,7 @@ const JobListings = ({ activeNav }) => {
 
     const isTruncated = item.description.length > descriptionLimit;
 
-    const isSaved = user && user.saved_jobs && user.saved_jobs.some(savedJob => savedJob.job_id === item.id);
+    const isSaved = user && user.saved_jobs && user.saved_jobs.find(savedJob => savedJob.job_id === item.id);
 
     return (
       <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>

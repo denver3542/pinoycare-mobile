@@ -7,7 +7,6 @@ import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
 import useJob from "./hook/useJob";
-import { useUserApplications } from "../../components/useUserApplications";
 
 export default function Job() {
   const { colors } = useTheme();
@@ -15,11 +14,10 @@ export default function Job() {
   const job = params?.job || {};
   const navigation = useNavigation();
   const { user, isFetched } = useUser();
-  const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
+  const { data: jobData, isFetching, refetch } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
   const [visible, setVisible] = useState(false);
   const { width: contentWidth } = useWindowDimensions();
@@ -41,25 +39,22 @@ export default function Job() {
   const hideModal = () => setVisible(false);
 
   useEffect(() => {
-    if (appliedJobs && job.id) {
-      const applied = appliedJobs.includes(job.id);
-      setIsApplied(applied);
-    }
-  }, [appliedJobs, job.id]);
-
-  useEffect(() => {
     if (user && isFetched) {
       const appliedJob = user.applications?.find(
         (app) => app.job_id === job.id
       );
       setIsApplied(!!appliedJob);
       setApplicationStatus(appliedJob ? appliedJob.status : null);
-      console.log(`User ${appliedJob ? "has" : "has not"} applied for the job (via user.applications).`);
+
       if (appliedJob) {
+        console.log(`User has an application for the job with ID ${job.id}`);
         console.log(`Application status: ${appliedJob.status}`);
+      } else {
+        console.log(`User does not have an application for the job with ID ${job.id}`);
       }
     }
-  }, [user, isFetched]);
+  }, [user, isFetched, job]);
+
 
   useEffect(() => {
     if (jobData && !isFetching) {
@@ -78,6 +73,11 @@ export default function Job() {
       showModal(true);
     }
   };
+
+  const hasApplied = user && user.applications && user.applications.some(app => app.job_id === job.id);
+  console.log('User Has Applied', hasApplied);
+
+
 
   return (
     <ScrollView
@@ -107,14 +107,13 @@ export default function Job() {
           )}
           <Button
             style={[
-              { color: isApplied ? "#fff" : "primary" },
+              { color: hasApplied ? "#fff" : "primary" },
             ]}
             onPress={() => handleApply(jobData)}
-            disabled={isApplied}
+            disabled={hasApplied}
           >
-            {isApplied ? "Applied" : "Apply"}
+            {hasApplied ? "Applied" : "Apply"}
           </Button>
-
         </Card.Actions>
         <Card.Content>
           <Title style={styles.title}>{job.title || "No Title Available"}</Title>
@@ -198,7 +197,6 @@ export default function Job() {
     </ScrollView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -286,6 +284,6 @@ const styles = StyleSheet.create({
   },
   a: {
     fontWeight: '300',
-    color: 'red', // make links coloured pink
+    color: 'red',
   },
 });

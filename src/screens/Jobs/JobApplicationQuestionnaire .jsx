@@ -1,5 +1,5 @@
 import InputField from "../../components/DynamicCustomInputField";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ScrollView, View, Text } from "react-native";
 import { Button, Appbar } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -15,8 +15,10 @@ const JobApplicationQuestionnaire = () => {
   const { addAppliedJob } = useUserApplications();
   const queryClient = useQueryClient();
   const { params } = useRoute();
-  const jobID = params.jobData.id;
+  // const jobID = params.jobData.id;
   const questions = params.jobData.question || [];
+  const jobIDRef = useRef(params.jobData.id);
+  const jobID = jobIDRef.current;
 
   useEffect(() => {
     console.log("Number of Questions:", questions.length);
@@ -33,11 +35,12 @@ const JobApplicationQuestionnaire = () => {
   };
 
   const mutation = useMutation(submitApplication, {
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("Submission successful!", data);
       queryClient.invalidateQueries([`job_${jobID}`]);
       addAppliedJob(jobID);
       navigation.goBack();
+      console.log(`Successfully invalidated query for job_${jobID}`);
     },
     onError: (error) => {
       console.error("Submission error:", error);
