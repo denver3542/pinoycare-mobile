@@ -95,13 +95,20 @@ const ApplicationStatus = () => {
                     </View>
                 </View>
                 <View style={{ marginTop: 15 }}>
-                    <View>
-                        <Text variant="titleLarge" style={{ fontWeight: 'bold' }}>Skills</Text>
+                    <View style={{ paddingHorizontal: 10 }}>
+                        <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>Skills</Text>
                         <View style={styles.chipContainer}>
                             {job.skills && job.skills.length > 0 ? (
                                 job.skills.map((item) => (
-                                    <Chip key={item.id} style={styles.skillChip}>
-                                        {item.skill_name}
+                                    <Chip key={item.id} textStyle={{
+                                        minHeight: 14,
+                                        lineHeight: 14,
+                                        marginRight: 10,
+                                        marginLeft: 10,
+                                        marginVertical: 5,
+                                        fontSize: 12
+                                    }} style={styles.skillChip}>
+                                        <Text>{item.skill_name}</Text>
                                     </Chip>
                                 ))
                             ) : (
@@ -272,6 +279,8 @@ const styles = StyleSheet.create({
     },
     skillChip: {
         margin: 2,
+        fontSize: 12,
+        borderRadius: 5
     },
     centeredChip: {
         justifyContent: 'center',

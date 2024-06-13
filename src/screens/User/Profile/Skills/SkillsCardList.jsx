@@ -46,7 +46,7 @@ const SkillsChip = ({ skills }) => {
                         marginRight: 10,
                         marginLeft: 10,
                         marginVertical: 5
-                    }} mode='outlined' key={index} onPress={() => { }} style={styles.chip}>
+                    }} mode='outlined' key={index} style={styles.chip}>
                         <Text style={styles.skillText}>{skillItem.skill_name}</Text>
                     </Chip>
                 ))}
