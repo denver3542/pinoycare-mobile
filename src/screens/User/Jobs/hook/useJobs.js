@@ -60,25 +60,28 @@ async function saveJob(jobId, user) {
 export const useSaveJob = () => {
   const queryClient = useQueryClient();
 
-
   return useMutation(
     async (jobId) => {
       const userStr = await AsyncStorage.getItem("upcare_user");
       const user = userStr ? JSON.parse(userStr) : null;
-      if (!user) throw new Error("User session not found.");
+
+      if (!user) {
+        throw new Error("User session not found.");
+      }
 
       return await saveJob(jobId, user);
     },
     {
-      onSuccess: () => {
-
-        queryClient.invalidateQueries('savedJobs');
+      onSuccess: (data, jobId) => {
+        queryClient.invalidateQueries('jobs'); // Invalidate jobs list after saving a job
+        // Assuming 'savedJobs' is the correct key for the list of saved jobs
+        queryClient.invalidateQueries('savedJobs'); // Invalidate saved jobs list
       },
       onError: (error) => {
         console.error("Failed to save job:", error);
       },
-      onSettled: () => {
-        queryClient.invalidateQueries(['user']);
+      onSettled: (data, error, jobId) => {
+        queryClient.invalidateQueries(['user']); // Invalidate user query after any mutation
       },
     }
   );

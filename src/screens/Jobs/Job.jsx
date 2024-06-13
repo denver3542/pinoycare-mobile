@@ -6,7 +6,8 @@ import { Appbar, Button, Card, Chip, Divider, Modal, Text, Title, useTheme, Port
 import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
-import useJob from "./hook/useJob";
+import useJob from "../../screens/User/Jobs/hook/useJobs";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Job() {
   const { colors } = useTheme();
@@ -24,6 +25,7 @@ export default function Job() {
   const windowWidth = Dimensions.get('window').width;
   const maxWidth = Math.min(windowWidth, 768);
   const imageHeight = maxWidth * 9 / 10;
+  const queryClient = useQueryClient();
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -57,10 +59,10 @@ export default function Job() {
 
 
   useEffect(() => {
-    if (jobData && !isFetching) {
-      setQuestions(jobData.question || []);
+    if (job && !isFetching) {
+      setQuestions(job.question || []);
     }
-  }, [jobData, isFetching]);
+  }, [job, isFetching]);
 
   const handleSave = () => {
     showModal(true);
@@ -68,7 +70,7 @@ export default function Job() {
 
   const handleApply = () => {
     if (user) {
-      navigation.navigate("Questionnaire", { jobData });
+      navigation.navigate("Questionnaire", { job });
     } else {
       showModal(true);
     }
@@ -76,8 +78,6 @@ export default function Job() {
 
   const hasApplied = user && user.applications && user.applications.some(app => app.job_id === job.id);
   console.log('User Has Applied', hasApplied);
-
-
 
   return (
     <ScrollView
@@ -109,7 +109,7 @@ export default function Job() {
             style={[
               { color: hasApplied ? "#fff" : "primary" },
             ]}
-            onPress={() => handleApply(jobData)}
+            onPress={() => handleApply(job)}
             disabled={hasApplied}
           >
             {hasApplied ? "Applied" : "Apply"}

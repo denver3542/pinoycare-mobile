@@ -1,50 +1,47 @@
-import InputField from "../../components/DynamicCustomInputField";
-import React, { useState, useEffect, useRef } from "react";
-import { ScrollView, View, Text } from "react-native";
+import React, { useState, useEffect, useMemo } from "react";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { Button, Appbar } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { submitApplication } from "./hook/useJob";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { submitApplication } from "./hook/useJob";
 import { useUserApplications } from "../../components/useUserApplications";
+import InputField from "../../components/DynamicCustomInputField";
 
 const JobApplicationQuestionnaire = () => {
   const navigation = useNavigation();
+  const { params } = useRoute();
+  const questions = useMemo(() => params.job.question || [], [params.job.question]);
+  const jobID = params.job.id;
+
   const [isSending, setSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
+  const [answers, setAnswers] = useState({});
+
   const { addAppliedJob } = useUserApplications();
   const queryClient = useQueryClient();
-  const { params } = useRoute();
-  // const jobID = params.jobData.id;
-  const questions = params.jobData.question || [];
-  const jobIDRef = useRef(params.jobData.id);
-  const jobID = jobIDRef.current;
 
   useEffect(() => {
     console.log("Number of Questions:", questions.length);
-    console.log("Questions:", questions);
   }, [questions]);
 
-  const [answers, setAnswers] = useState({});
-
   const handleChange = (id, value) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [id]: value,
-    }));
+    setAnswers(prevAnswers => ({ ...prevAnswers, [id]: value }));
   };
 
   const mutation = useMutation(submitApplication, {
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       console.log("Submission successful!", data);
       queryClient.invalidateQueries([`job_${jobID}`]);
-      addAppliedJob(jobID);
+      queryClient.invalidateQueries('jobs');
+      queryClient.invalidateQueries('savedJobs');
       navigation.goBack();
-      console.log(`Successfully invalidated query for job_${jobID}`);
+      addAppliedJob(jobID);
     },
     onError: (error) => {
       console.error("Submission error:", error);
       setErrorMessage("An error occurred while submitting the application.");
+      setSending(false);
     },
   });
 
@@ -53,83 +50,62 @@ const JobApplicationQuestionnaire = () => {
     setErrorMessage("");
     setValidationErrors({});
 
+    const errors = questions
+      .filter(question => question.is_required && !answers[question.id])
+      .reduce((acc, question) => {
+        acc[question.id] = `The field "${question.question}" is required.`;
+        return acc;
+      }, {});
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setErrorMessage("Please correct the errors below.");
+      setSending(false);
+      return;
+    }
+
+    const formattedAnswers = questions.map(question => ({
+      id: question.id,
+      question_answer: answers[question.id],
+    }));
+    const payload = { id: jobID, questions: formattedAnswers };
+
     try {
-      const requiredQuestions = questions.filter((question) => question.is_required);
-      const errors = {};
-
-      requiredQuestions.forEach((question) => {
-        if (!answers[question.id]) {
-          errors[question.id] = `The field "${question.question}" is required.`;
-        }
-      });
-
-      if (Object.keys(errors).length > 0) {
-        console.log("Validation Errors:", errors);
-        setValidationErrors(errors);
-        setErrorMessage("Please correct the errors below.");
-        setSending(false);
-        return;
-      }
-
-      console.log("All required questions answered.");
-      console.log("Submitting application with the following data:");
-
-      const formattedAnswers = questions.map((question) => ({
-        id: question.id,
-        question_answer: answers[question.id],
-      }));
-
-      const payload = { id: jobID, questions: formattedAnswers };
-
-      console.log("Payload:", payload);
-
-      const res = await mutation.mutateAsync(payload);
-
-      if (res.success) {
-        console.log("Submission successful!");
-        queryClient.invalidateQueries([`job_${jobID}`]);
-        addAppliedJob(jobID);
-        // navigation.goBack();
-      } else {
-        console.error("Submission error:", res.error);
-        setErrorMessage("Failed to submit application.");
-      }
+      await mutation.mutateAsync(payload);
     } catch (error) {
       console.error("Error submitting application:", error);
       setErrorMessage("An error occurred while submitting the application.");
+    } finally {
+      setSending(false);
     }
-
-    setSending(false);
   };
-
-
 
   return (
     <>
-      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+      <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Job Application Questionnaire" color="white" />
       </Appbar.Header>
-      <ScrollView style={{ flex: 1, padding: 16 }}>
-        {questions.map((question) => (
+      <ScrollView style={styles.container}>
+        {Array.isArray(questions) && questions.map(question => (
           <InputField
             key={question.id}
             question={question}
             value={answers[question.id] || ""}
-            onChange={(value) => handleChange(question.id, value)}
+            onChange={value => handleChange(question.id, value)}
             error={validationErrors[question.id]}
           />
         ))}
-        {errorMessage ? (
-          <Text style={{ color: "red", }}>{errorMessage}</Text>
-        ) : null}
+
+        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
         <Button
           mode="contained"
           onPress={handleSubmit}
-          style={{ marginTop: 20 }}
-          loading={isSending || mutation.isLoading} // Consider mutation.isLoading
+          style={styles.submitButton}
+          loading={isSending || mutation.isLoading}
+          disabled={isSending || mutation.isLoading}
         >
-          Submit Answers
+          {isSending || mutation.isLoading ? "Submitting..." : "Submit Answers"}
         </Button>
       </ScrollView>
     </>
@@ -137,3 +113,10 @@ const JobApplicationQuestionnaire = () => {
 };
 
 export default JobApplicationQuestionnaire;
+
+const styles = StyleSheet.create({
+  header: { backgroundColor: '#0A3480' },
+  container: { flex: 1, padding: 16 },
+  errorText: { color: "red" },
+  submitButton: { marginTop: 20 }
+});
