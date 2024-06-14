@@ -8,27 +8,27 @@ const InputField = ({ question, value, onChange, error }) => {
       {question.type === "text" && (
         <TextInput
           mode="outlined"
-          label={question.question}
+          label="Type your answer here"
           value={value}
           onChangeText={onChange}
-          placeholder="Type your answer here"
+          placeholder=""
           error={!!error}
         />
       )}
       {question.type === "numeric" && (
         <TextInput
           mode="outlined"
-          label={question.question}
+          label='Enter a number'
           value={value}
           onChangeText={onChange}
           keyboardType="numeric"
-          placeholder="Enter a number"
+          placeholder=""
           error={!!error}
         />
       )}
       {question.type === "boolean" && (
         <View>
-          <Text>{question.question}</Text>
+          {/* <Text>{question.question}</Text> */}
           <RadioButton.Group onValueChange={onChange} value={value}>
             <View style={{ flexDirection: "row" }}>
               <RadioButton.Item label="Yes" value="true" position="leading" />

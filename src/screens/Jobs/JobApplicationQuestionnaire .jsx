@@ -17,12 +17,14 @@ const JobApplicationQuestionnaire = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
   const [answers, setAnswers] = useState({});
+  const [questionCount, setQuestionCount] = useState(0); // State to hold question count
 
   const { addAppliedJob } = useUserApplications();
   const queryClient = useQueryClient();
 
   useEffect(() => {
     console.log("Number of Questions:", questions.length);
+    setQuestionCount(questions.length); // Update question count state
   }, [questions]);
 
   const handleChange = (id, value) => {
@@ -87,15 +89,18 @@ const JobApplicationQuestionnaire = () => {
         <Appbar.Content title="Job Application Questionnaire" color="white" />
       </Appbar.Header>
       <ScrollView style={styles.container}>
-        {Array.isArray(questions) && questions.map(question => (
-          <InputField
-            key={question.id}
-            question={question}
-            value={answers[question.id] || ""}
-            onChange={value => handleChange(question.id, value)}
-            error={validationErrors[question.id]}
-          />
+        {Array.isArray(questions) && questions.map((question, index) => (
+          <View key={question.id}>
+            <Text style={styles.questionText}>{`${index + 1}. ${question.question}`}</Text>
+            <InputField
+              question={question}
+              value={answers[question.id] || ""}
+              onChange={value => handleChange(question.id, value)}
+              error={validationErrors[question.id]}
+            />
+          </View>
         ))}
+
 
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
         <Button
@@ -116,7 +121,9 @@ export default JobApplicationQuestionnaire;
 
 const styles = StyleSheet.create({
   header: { backgroundColor: '#0A3480' },
-  container: { flex: 1, padding: 16 },
-  errorText: { color: "red" },
-  submitButton: { marginTop: 20 }
+  container: { flex: 1, padding: 16, backgroundColor: "#F4F7FB", },
+  errorText: { color: "red", marginTop: 10 },
+  submitButton: { marginTop: 20 },
+  counterText: { alignSelf: 'center', marginVertical: 10 },
+  questionText: { fontSize: 16, fontWeight: 'bold', marginBottom: 5 }
 });

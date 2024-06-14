@@ -34,7 +34,7 @@ import ApplicationStatus from "../screens/Applications/ApplicationStatus";
 import { useUser } from "../hooks/useUser";
 import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
 import MessageList from "../screens/Messaging/MessageList";
-import ChatConversation from "../screens/Messaging/ChatConversation";
+// import ChatConversation from "../screens/Messaging/ChatConversation";
 import NotificationsList from "../screens/Notifications/NotificationsList";
 import JobApplicationQuestionnaire from "../screens/Jobs/JobApplicationQuestionnaire ";
 import GuestFeeds from "../screens/Guest/Feeds";
@@ -102,7 +102,7 @@ function LandingNavigation() {
               <Stack.Screen name="AboutMeScreen" component={AboutMeScreen} />
               <Stack.Screen name="AddSkillScreen" component={AddSkillScreen} />
               <Stack.Screen name="MessageList" component={MessageList} />
-              <Stack.Screen name="ChatConversation" component={ChatConversation} />
+              {/* <Stack.Screen name="ChatConversation" component={ChatConversation} /> */}
               <Stack.Screen name="AddEducationScreen" component={AddEducationScreen} />
               <Stack.Screen name="EditEducation" component={EditEducation} />
               <Stack.Screen name="UpdateEducation" component={UpdateEducation} />
