@@ -5153,10 +5153,10 @@ expo-doctor@^1.5.0:
   resolved "https://registry.npmjs.org/expo-doctor/-/expo-doctor-1.6.1.tgz#426ea9e759684b941f5b8b6d5a4137fc2aa3fbd0"
   integrity sha512-n80Bzs3iEnkOSIKrxJTNE2QwTpmWx2aJQpDVymlfK4Ur11ocuirUZy7IfsPbs9PGGXvxE4bIH3SGq3QghRNM4Q==
 
-expo-document-picker@^12.0.1:
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-12.0.1.tgz#1302df363552c348992f72522e109807e03b4bac"
-  integrity sha512-xkIzcQ8uHQ8QrSOM0jlemObQtxD0uE9QbLXo1mpGK5o+uh6Xp0JtYuB/6TqfoRX/q5pe2eyLYaSsCL3yWbZofw==
+expo-document-picker@^12.0.2:
+  version "12.0.2"
+  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-12.0.2.tgz#b5c55d8bfe28d0b824e19bc0881b83cf96df634d"
+  integrity sha512-tmwuRWoCPv6SmNDSMEWcttMBJ95k8/g5sMWnHdmvOx0UKp0pFXP8FI+55HKtQpo6k2+118MkdDDhQSwKqASVAw==
 
 expo-eas-client@~0.12.0:
   version "0.12.0"
@@ -5180,9 +5180,9 @@ expo-image-loader@~4.7.0:
   resolved "https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-4.7.0.tgz#d403106822de80bda12d644c82b7a3b7983c0f0b"
   integrity sha512-cx+MxxsAMGl9AiWnQUzrkJMJH4eNOGlu7XkLGnAXSJrRoIiciGaKqzeaD326IyCTV+Z1fXvIliSgNW+DscvD8g==
 
-expo-image-picker@~15.0.5:
+expo-image-picker@^15.0.5:
   version "15.0.5"
-  resolved "https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-15.0.5.tgz#8a3d4c3ecdb5bcf58f09e024597dd69edf7baa9c"
+  resolved "https://registry.yarnpkg.com/expo-image-picker/-/expo-image-picker-15.0.5.tgz#8a3d4c3ecdb5bcf58f09e024597dd69edf7baa9c"
   integrity sha512-Qqp16udsadx/YpNcNaWzfbmO0tbMxyX9bS1aFiDVC+Zffh8LY8S4HJJcnWqSC2TeuAl+9SxUwTloJagvPeMBBw==
   dependencies:
     expo-image-loader "~4.7.0"
@@ -8896,6 +8896,11 @@ react-native-htmlview@^0.17.0:
     deprecated-react-native-prop-types "^5.0.0"
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
+
+react-native-image-picker@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.1.2.tgz#383849d1953caf4578874a1f5e5dd11c737bd5cd"
+  integrity sha512-b5y5nP60RIPxlAXlptn2QwlIuZWCUDWa/YPUVjgHc0Ih60mRiOg1PSzf0IjHSLeOZShCpirpvSPGnDExIpTRUg==
 
 react-native-image-viewing@^0.2.2:
   version "0.2.2"
