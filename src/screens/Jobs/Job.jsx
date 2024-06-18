@@ -2,15 +2,13 @@ import React, { useEffect, useState } from "react";
 import HTMLView from "react-native-htmlview";
 import { View, ScrollView, StyleSheet, RefreshControl, useWindowDimensions, Dimensions } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Appbar, Button, Card, Chip, Divider, Modal, Text, Title, useTheme, Portal } from "react-native-paper";
+import { Appbar, Button, Card, Chip, Divider, Text, useTheme } from "react-native-paper";
 import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
 import useJob from "../../screens/User/Jobs/hook/useJobs";
 import { useQueryClient } from "@tanstack/react-query";
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { MaterialIcons } from "@expo/vector-icons";
-
 
 export default function Job() {
   const { colors } = useTheme();
@@ -23,19 +21,16 @@ export default function Job() {
   const [questions, setQuestions] = useState([]);
   const { data: jobData, isFetching, refetch } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
-  const [visible, setVisible] = useState(false);
   const { width: contentWidth } = useWindowDimensions();
   const windowWidth = Dimensions.get('window').width;
   const maxWidth = Math.min(windowWidth, 768);
   const imageHeight = maxWidth * 9 / 10;
   const queryClient = useQueryClient();
 
-
   const formatSalary = (salary) => {
     if (!salary) return 'n/a';
     return `₱${(salary / 1000).toFixed(0)}k`;
   };
-
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -47,13 +42,13 @@ export default function Job() {
       });
   };
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
   useEffect(() => {
     if (user && isFetched) {
-      const appliedJob = user.applications?.find(
-        (app) => app.job_id === job.id
+      console.log("User data:", user);
+      console.log("Job data:", job);
+
+      const appliedJob = job.application?.find(
+        (app) => app.user_id === user.id
       );
       setIsApplied(!!appliedJob);
       setApplicationStatus(appliedJob ? appliedJob.status : null);
@@ -64,9 +59,11 @@ export default function Job() {
       } else {
         console.log(`User does not have an application for the job with ID ${job.id}`);
       }
+
+
+      console.log(`Checking application for job with ID ${job.id}: ${appliedJob ? 'Application found' : 'No application found'}`);
     }
   }, [user, isFetched, job]);
-
 
   useEffect(() => {
     if (job && !isFetching) {
@@ -85,11 +82,6 @@ export default function Job() {
       showModal(true);
     }
   };
-
-  const hasApplied = user && user.applications && user.applications.some(app => app.job_id === job.id);
-  console.log('User Has Applied', hasApplied);
-
-
 
   return (
     <ScrollView
@@ -206,16 +198,7 @@ export default function Job() {
                     </Chip>
                   ))
                 ) : (
-                  <Chip textStyle={{
-                    minHeight: 14,
-                    lineHeight: 14,
-                    marginRight: 10,
-                    marginLeft: 10,
-                    marginVertical: 5,
-                    fontSize: 14
-                  }} style={styles.skillChip}>
-                    <Text>No available schedule</Text>
-                  </Chip>
+                  <Text>No Schedule Details</Text>
                 )}
               </View>
             </View>
@@ -250,12 +233,12 @@ export default function Job() {
         <Button
           mode="contained"
           style={[
-            { color: hasApplied ? "#fff" : "primary" },
+            { color: isApplied ? "#fff" : "primary" },
           ]}
-          onPress={() => handleApply(job)}
-          disabled={hasApplied}
+          onPress={handleApply}
+          disabled={isApplied}
         >
-          {hasApplied ? "Applied" : "Apply"}
+          {isApplied ? "Applied" : "Apply"}
         </Button>
       </View>
     </ScrollView>

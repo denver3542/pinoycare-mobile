@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -24,20 +24,78 @@ import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
 import useAuth from "../../hooks/useAuth";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Define your validation schema
+WebBrowser.maybeCompleteAuthSession();
+
+const config = {
+  androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
+  iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
+  expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
+  scopes: ['profile', 'email'],
+  redirectUri: 'com.upcare.mobile:/oauthredirect'
+};
+
+
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 }).required();
 
 const Login = () => {
+  const [setUserInfo, userinfo] = React.useState(null);
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: config.androidClientId,
+    iosClientId: config.iosClientId,
+    expoClientId: config.expoClientId,
+    scopes: config.scopes,
+    redirectUri: config.redirectUri
+  });
+
+  React.useEffect(() => {
+    handleSignWithGoogle();
+  }, [response]);
+
+  async function handleSignWithGoogle() {
+    const user = await AsyncStorage.getItem('upcare_user');
+    if (!user) {
+      if (response?.type === "success")
+        await getGoogleUser(response.authentication.accessToken);
+    } else {
+      setUserInfo(JSON.parse(user));
+    }
+  };
+
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      getGoogleUser(authentication?.accessToken);
+    }
+  }, [response]);
+
+  const getGoogleUser = async (accessToken) => {
+    if (!accessToken) return;
+    try {
+      const response = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      const user = await response.json();
+      await AsyncStorage.setItem('upcare_user', JSON.stringify(user));
+      setUserInfo(user);
+    } catch (error) {
+
+    }
+  };
 
   const {
     control,
@@ -82,7 +140,6 @@ const Login = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-    // keyboardVerticalOffset={60}
     >
       <Spinner visible={loading} color={colors.primary} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -135,7 +192,7 @@ const Login = () => {
           <View>
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
             <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
-              <SocialIcon raised={false} light title='Sign In With Google' button type='google' onPress={handleFacebookSignIn} />
+              <SocialIcon raised={false} light title='Sign In With Google' disabled={!request} button type='google' onPress={() => promptAsync({ useProxy: Platform.OS === 'ios' })} />
               <SocialIcon raised={false} light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
               <SocialIcon raised={false} light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
             </View>
