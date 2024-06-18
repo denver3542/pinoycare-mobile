@@ -6,6 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert // Import Alert from React Native
 } from "react-native";
 import { SocialIcon } from 'react-native-elements';
 import { useNavigation } from "@react-navigation/native";
@@ -25,19 +26,19 @@ import CustomTextInput from "../../components/CustomTextInput";
 import useAuth from "../../hooks/useAuth";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-WebBrowser.maybeCompleteAuthSession();
+// Remove this line as it's not needed in this context
+// import * as WebBrowser from 'expo-web-browser';
+
+// WebBrowser.maybeCompleteAuthSession(); // Remove this line as well
 
 const config = {
   androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
   iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
   expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
-  scopes: ['profile', 'email'],
   redirectUri: 'com.upcare.mobile:/oauthredirect'
 };
-
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -45,7 +46,7 @@ const validationSchema = Yup.object({
 }).required();
 
 const Login = () => {
-  const [setUserInfo, userinfo] = React.useState(null);
+  const [userinfo, setUserInfo] = useState(null); // Corrected useState declaration
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -56,24 +57,25 @@ const Login = () => {
     androidClientId: config.androidClientId,
     iosClientId: config.iosClientId,
     expoClientId: config.expoClientId,
-    scopes: config.scopes,
-    redirectUri: config.redirectUri
+    redirectUri: config.redirectUri,
+    selectAccount: true,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleSignWithGoogle();
   }, [response]);
 
   async function handleSignWithGoogle() {
     const user = await AsyncStorage.getItem('upcare_user');
     if (!user) {
-      if (response?.type === "success")
+      if (response?.type === "success") {
         await getGoogleUser(response.authentication.accessToken);
+        // Alert.alert('Google Sign-In', 'You have successfully signed in with Google.');
+      }
     } else {
       setUserInfo(JSON.parse(user));
     }
   };
-
 
   useEffect(() => {
     if (response?.type === 'success') {
@@ -93,7 +95,7 @@ const Login = () => {
       await AsyncStorage.setItem('upcare_user', JSON.stringify(user));
       setUserInfo(user);
     } catch (error) {
-
+      console.error('Error fetching Google user:', error);
     }
   };
 
@@ -118,7 +120,7 @@ const Login = () => {
         console.log("Login success");
       }
     } catch (err) {
-      console.error(err);
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -146,6 +148,12 @@ const Login = () => {
         <View style={{ top: 45, right: 20, marginBottom: 50 }}>
           <IconButton icon="arrow-left" onPress={() => navigation.goBack()} />
         </View>
+        {/* {userinfo && (
+          <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
+            <Text>User Information:</Text>
+            <Text>Email: {userinfo.email}</Text>
+          </View>
+        )} */}
         <View style={{ flex: 1, top: 0 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
             Let's <Text style={styles.highlight}>Sign</Text> you in.
@@ -198,6 +206,7 @@ const Login = () => {
             </View>
           </View>
         </View>
+
         <TouchableWithoutFeedback onPress={() => navigation.navigate("SignUp")}>
           <Text style={styles.signUpText}>
             You don't have an account yet? <Text style={styles.linkText}>Sign up</Text>
