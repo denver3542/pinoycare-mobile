@@ -1,25 +1,70 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
+import axiosInstance from "../../utils/axiosConfig";
 import { useUser } from "./useUser";
-import axios from "axios";
-import { setStoredUser } from "../user-storage";
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+import { useEffect } from "react";
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+
+WebBrowser.maybeCompleteAuthSession();
+
+const config = {
+  androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
+  iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
+  expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
+  redirectUri: 'com.upcare.mobile:/oauthredirect'
+};
 
 export default function useAuth() {
   const SERVER_ERROR = "There was an error contacting the server.";
   const { clearUser, updateUser } = useUser();
+  const navigation = useNavigation(); // Initialize navigation hook
 
-  // Utility function to handle responses
-  const handleResponse = (data) => {
-    if ("user" in data && "token" in data) {
-      setStoredUser(data.user);
-      updateUser(data.user);
-      return { success: true, user: data.user };
+  // Google Auth request
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: config.androidClientId,
+    iosClientId: config.iosClientId,
+    expoClientId: config.expoClientId,
+    redirectUri: config.redirectUri,
+    prompt: 'select_account'
+  });
+
+  // Handle Google auth response
+  useEffect(() => {
+    if (response?.type === 'success') {
+      handleGoogleResponse(response);
+    }
+  }, [response]);
+
+  // Handle sign-in or sign-up with Google
+  const handleGoogleResponse = async (response) => {
+    const { authentication } = response;
+
+    if (authentication?.accessToken) {
+      const loginResponse = await loginWithGoogle(authentication.accessToken);
+
+      if (loginResponse.success) {
+        updateUser(loginResponse.user);
+        // Navigate to Dashboard screen upon successful login
+        navigation.navigate('Dashboard');
+      } else {
+        console.error("Google Login failed", loginResponse.message);
+      }
     } else {
-      return { success: 0, message: data.message, errors: data.errors };
+      console.error('Access token not found in Google authentication response.');
     }
   };
 
-  // Centralize server calls
+  // Utility function to handle server responses
+  const handleResponse = (data) => {
+    if ("user" in data && "token" in data) {
+      return { success: true, user: data.user };
+    } else {
+      return { success: false, message: data.message || SERVER_ERROR, errors: data.errors || [] };
+    }
+  };
+
+  // Centralized function for server requests
   async function authServerCall(urlEndpoint, userDetails) {
     try {
       const response = await axiosInstance.post(urlEndpoint, userDetails);
@@ -28,10 +73,26 @@ export default function useAuth() {
       let errorMessage = SERVER_ERROR;
       let errors = [];
       if (axios.isAxiosError(error)) {
-        errorMessage = error.response.data.message || errorMessage;
-        errors = error.response.data.errors;
+        errorMessage = error.response?.data?.message || errorMessage;
+        errors = error.response?.data?.errors || [];
       }
-      return { success: 0, message: errorMessage, errors: errors };
+      return { success: false, message: errorMessage, errors: errors };
+    }
+  }
+
+  // Function to log in user with Google token
+  async function loginWithGoogle(googleToken) {
+    try {
+      const response = await authServerCall("/auth/login/google", { googleToken });
+      return response; // Assuming response structure matches handleResponse
+    } catch (error) {
+      let errorMessage = SERVER_ERROR;
+      let errors = [];
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || errorMessage;
+        errors = error.response?.data?.errors || [];
+      }
+      return { success: false, message: errorMessage, errors: errors };
     }
   }
 
@@ -45,67 +106,30 @@ export default function useAuth() {
     return authServerCall("/auth/signup", userDetails);
   }
 
-  // Function to log out user
-  async function logout() {
-    try {
-      await AsyncStorage.removeItem("upcare_user");
-      clearUser();
-    } catch (err) {
-      // Handle error if any during the logout process
-      clearUser(); // Ensuring user state is cleared even if there's an error
-      // Log error or handle it if needed
-    }
-  }
-
+  // Function to delete user account
   async function deleteUser() {
     try {
-      const user = await AsyncStorage.getItem("upcare_user");
-      if (!user) {
-        // Handle case where user is not authenticated
-        return { success: false, message: "User not authenticated" };
-      }
+      const response = await axiosInstance.delete("/user/delete-account", {
+        headers: getJWTHeader()
+      });
 
-      // Parse the user object
-      const parsedUser = JSON.parse(user);
-
-      // Get the JWT header containing the authentication token
-      const headers = getJWTHeader(parsedUser);
-
-      // Make a request to delete the user account with the token in the headers
-      const response = await axiosInstance.delete("/user/delete-account", { headers });
-
-      // Handle success response
       if (response.data.success) {
-        // Clear user data from storage and update user state
         clearUser();
         return { success: true, message: response.data.message };
       } else {
-        // Handle failure response
-        return { success: false, message: response.data.message };
+        return { success: false, message: response.data.message || SERVER_ERROR };
       }
     } catch (error) {
-      // Handle error
       console.error("Error deleting user account:", error);
       return { success: false, message: "Error deleting user account" };
     }
   }
 
-  // Function to initiate password reset
-  async function initiatePasswordReset(email) {
-    return authServerCall("/auth/forgot-password", { email });
-  }
-
-  // Function to complete password reset
-  async function resetPassword(token, newPassword) {
-    return authServerCall("/auth/reset-password", { token, newPassword });
-  }
-
   return {
     login,
     signup,
-    logout,
-    initiatePasswordReset,
-    resetPassword,
     deleteUser,
+    promptAsync,
+    request,
   };
 }

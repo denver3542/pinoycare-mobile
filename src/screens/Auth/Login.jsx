@@ -6,7 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert // Import Alert from React Native
+  Alert
 } from "react-native";
 import { SocialIcon } from 'react-native-elements';
 import { useNavigation } from "@react-navigation/native";
@@ -25,20 +25,7 @@ import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
 import useAuth from "../../hooks/useAuth";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import * as Google from 'expo-auth-session/providers/google';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// Remove this line as it's not needed in this context
-// import * as WebBrowser from 'expo-web-browser';
-
-// WebBrowser.maybeCompleteAuthSession(); // Remove this line as well
-
-const config = {
-  androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
-  iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
-  expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
-  redirectUri: 'com.upcare.mobile:/oauthredirect'
-};
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -46,58 +33,13 @@ const validationSchema = Yup.object({
 }).required();
 
 const Login = () => {
-  const [userinfo, setUserInfo] = useState(null); // Corrected useState declaration
+  const [userinfo, setUserInfo] = useState(null);
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, promptAsync } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: config.androidClientId,
-    iosClientId: config.iosClientId,
-    expoClientId: config.expoClientId,
-    redirectUri: config.redirectUri,
-    selectAccount: true,
-  });
-
-  useEffect(() => {
-    handleSignWithGoogle();
-  }, [response]);
-
-  async function handleSignWithGoogle() {
-    const user = await AsyncStorage.getItem('upcare_user');
-    if (!user) {
-      if (response?.type === "success") {
-        await getGoogleUser(response.authentication.accessToken);
-        // Alert.alert('Google Sign-In', 'You have successfully signed in with Google.');
-      }
-    } else {
-      setUserInfo(JSON.parse(user));
-    }
-  };
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication } = response;
-      getGoogleUser(authentication?.accessToken);
-    }
-  }, [response]);
-
-  const getGoogleUser = async (accessToken) => {
-    if (!accessToken) return;
-    try {
-      const response = await fetch('https://www.googleapis.com/userinfo/v2/me', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-
-      const user = await response.json();
-      await AsyncStorage.setItem('upcare_user', JSON.stringify(user));
-      setUserInfo(user);
-    } catch (error) {
-      console.error('Error fetching Google user:', error);
-    }
-  };
 
   const {
     control,
@@ -190,19 +132,27 @@ const Login = () => {
             <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
           </TouchableOpacity>
           <Button
-            mode="contained"
+            mode="elevated"
             onPress={handleSubmit(onSubmit)}
-            loading={isLoading || isSubmitting}
             style={styles.button}
+            contentStyle={{ backgroundColor: '#0A3480' }}
+            labelStyle={{
+              width: 250,
+              height: "auto",
+              fontSize: 14,
+              paddingVertical: 6,
+              color: 'white'
+            }}
+          // loading={isLoading || isSubmitting}
           >
             LOGIN
           </Button>
           <View>
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
             <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
-              <SocialIcon raised={false} light title='Sign In With Google' disabled={!request} button type='google' onPress={() => promptAsync({ useProxy: Platform.OS === 'ios' })} />
-              <SocialIcon raised={false} light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
-              <SocialIcon raised={false} light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
+              <SocialIcon raised={true} light title='Sign In With Google' button type='google' onPress={() => promptAsync({ useProxy: Platform.OS === 'ios' })} />
+              <SocialIcon raised={true} light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
+              <SocialIcon raised={true} light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
             </View>
           </View>
         </View>
@@ -241,7 +191,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
-    paddingVertical: 3,
+    // paddingVertical: 3,
     borderRadius: 50,
   },
   linkText: {

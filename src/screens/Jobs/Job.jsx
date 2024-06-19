@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import HTMLView from "react-native-htmlview";
 import { View, ScrollView, StyleSheet, RefreshControl, useWindowDimensions, Dimensions } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Appbar, Button, Card, Chip, Divider, Text, useTheme } from "react-native-paper";
+import { Appbar, Button, Card, Chip, Divider, Modal, Portal, Text, useTheme } from "react-native-paper";
 import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
@@ -26,6 +26,8 @@ export default function Job() {
   const maxWidth = Math.min(windowWidth, 768);
   const imageHeight = maxWidth * 9 / 10;
   const queryClient = useQueryClient();
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showApplyModal, setShowApplyModal] = useState(false);
 
   const formatSalary = (salary) => {
     if (!salary) return 'n/a';
@@ -76,11 +78,21 @@ export default function Job() {
   };
 
   const handleApply = () => {
-    if (user) {
-      navigation.navigate("Questionnaire", { job });
+    if (!user) {
+      setShowApplyModal(true);
     } else {
-      showModal(true);
+      navigation.navigate("Questionnaire", { job });
     }
+  };
+
+  const signIn = () => {
+    navigation.navigate("Login");
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setShowSaveModal(false);
+    setShowApplyModal(false);
   };
 
   return (
@@ -150,7 +162,7 @@ export default function Job() {
             </View>
           </View>
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 20 }}>Description</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Description</Text>
             <View style={{ paddingHorizontal: 10 }}>
               <HTMLView
                 value={job.description}
@@ -158,7 +170,7 @@ export default function Job() {
             </View>
           </View>
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 20 }}>Skills</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Skills</Text>
             <View style={{ paddingHorizontal: 10 }}>
               <View style={styles.chipContainer}>
                 {job.skills && job.skills.length > 0 ? (
@@ -181,7 +193,7 @@ export default function Job() {
             </View>
           </View>
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 20 }}>Shift and Schedule</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Shift and Schedule</Text>
             <View style={{ paddingHorizontal: 10 }}>
               <View style={styles.chipContainer}>
                 {job.schedules && job.schedules.length > 0 ? (
@@ -205,7 +217,7 @@ export default function Job() {
           </View>
 
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 20 }}>Vacancy</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Vacancy</Text>
             <View style={{ paddingHorizontal: 10 }}>
               <View style={styles.chipContainer}>
                 <Chip textStyle={{
@@ -241,6 +253,38 @@ export default function Job() {
           {isApplied ? "Applied" : "Apply"}
         </Button>
       </View>
+      <Portal>
+        <Modal
+          visible={showSaveModal}
+          onDismiss={() => setShowSaveModal(false)}
+          contentContainerStyle={styles.modal}
+        >
+          <Text style={styles.modalText}>
+            Would you like to save this job? Please sign in.
+          </Text>
+          <Button onPress={signIn} mode="contained">
+            Sign In
+          </Button>
+          <Button onPress={closeModal} mode="text" style={styles.button}>
+            Cancel
+          </Button>
+        </Modal>
+        <Modal
+          visible={showApplyModal}
+          onDismiss={() => setShowApplyModal(false)}
+          contentContainerStyle={styles.modal}
+        >
+          <Text style={styles.modalText}>
+            Would you like to apply for this job? Please sign in.
+          </Text>
+          <Button onPress={signIn} mode="contained">
+            Sign In
+          </Button>
+          <Button onPress={closeModal} mode="text" style={styles.button}>
+            Cancel
+          </Button>
+        </Modal>
+      </Portal>
     </ScrollView>
   );
 }

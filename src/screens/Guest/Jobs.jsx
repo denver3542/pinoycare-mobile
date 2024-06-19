@@ -24,7 +24,7 @@ import {
 import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 import useJobs from "./hooks/useJobs";
-import Job from "./Job";
+import Job from "../Guest/Job";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import HTMLView from "react-native-htmlview";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
