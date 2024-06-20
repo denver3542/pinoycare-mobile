@@ -6,7 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert
+  Alert // Import Alert from React Native
 } from "react-native";
 import { SocialIcon } from 'react-native-elements';
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,15 @@ import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
 import useAuth from "../../hooks/useAuth";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as Google from 'expo-auth-session/providers/google';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const config = {
+  androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
+  iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
+  expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
+  webClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
+};
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -36,10 +44,78 @@ const Login = () => {
   const [userinfo, setUserInfo] = useState(null);
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login, promptAsync } = useAuth();
+  const { login } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    androidClientId: config.androidClientId,
+    iosClientId: config.iosClientId,
+    expoClientId: config.expoClientId,
+    clientId: config.webClientId,
+    redirectUri: 'com.upcare.mobile:/oauthredirect',
+  });
+
+  useEffect(() => {
+    handleSignWithGoogle();
+  }, [response]);
+
+  async function handleSignWithGoogle() {
+    const user = await AsyncStorage.getItem('upcare_user');
+    if (!user) {
+      if (response?.type === "success") {
+        await getGoogleUser(response.authentication.idToken);
+      } else if (response?.type === "error") {
+        Alert.alert("Google Sign-In Error", "Failed to sign in with Google. Please try again.");
+      }
+    } else {
+      setUserInfo(JSON.parse(user));
+    }
+  };
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      getGoogleUser(authentication?.idToken);
+    }
+  }, [response]);
+
+  const getGoogleUser = async (idToken) => {
+    if (!idToken) {
+      // Alert if idToken is missing
+      Alert.alert("Token Error", "Failed to receive Google token. Please try again.");
+      return;
+    }
+
+    try {
+      const response = await fetch('https://phplaravel-719501-3973159.cloudwaysapps.com/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: idToken }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        // Display alert for API error
+        Alert.alert("API Error", `Failed to authenticate with Google API: ${errorMessage}`);
+        throw new Error(`Failed to authenticate with Google API: ${errorMessage}`);
+      }
+
+      const data = await response.json();
+      await AsyncStorage.setItem('upcare_user', JSON.stringify(data));
+      setUserInfo(data);
+
+      // Display token in alert upon successful authentication
+      Alert.alert("Token Received", `Token: ${idToken}`);
+    } catch (error) {
+      console.error('Error fetching Google user:', error);
+      setGeneralError('Failed to authenticate with Google');
+      Alert.alert("Google Authentication Error", `Failed to authenticate with Google: ${error.message}`);
+    }
+  };
+
 
   const {
     control,
@@ -90,12 +166,6 @@ const Login = () => {
         <View style={{ top: 45, right: 20, marginBottom: 50 }}>
           <IconButton icon="arrow-left" onPress={() => navigation.goBack()} />
         </View>
-        {/* {userinfo && (
-          <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
-            <Text>User Information:</Text>
-            <Text>Email: {userinfo.email}</Text>
-          </View>
-        )} */}
         <View style={{ flex: 1, top: 0 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
             Let's <Text style={styles.highlight}>Sign</Text> you in.
@@ -121,7 +191,7 @@ const Login = () => {
             right={
               <TextInput.Icon
                 icon={showPw ? "eye" : "eye-off"}
-                onPress={() => setShowPw((pw) => !pw)}
+                onPress={togglePasswordVisibility}
               />
             }
             rules={{ required: "Password is required" }}
@@ -132,27 +202,41 @@ const Login = () => {
             <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
           </TouchableOpacity>
           <Button
-            mode="elevated"
+            mode="contained"
             onPress={handleSubmit(onSubmit)}
+            loading={isLoading || isSubmitting}
             style={styles.button}
-            contentStyle={{ backgroundColor: '#0A3480' }}
-            labelStyle={{
-              width: 250,
-              height: "auto",
-              fontSize: 14,
-              paddingVertical: 6,
-              color: 'white'
-            }}
-          // loading={isLoading || isSubmitting}
           >
             LOGIN
           </Button>
           <View>
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
             <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
-              <SocialIcon raised={true} light title='Sign In With Google' button type='google' onPress={() => promptAsync({ useProxy: Platform.OS === 'ios' })} />
-              <SocialIcon raised={true} light title='Sign In With Facebook' button type='facebook' onPress={handleFacebookSignIn} />
-              <SocialIcon raised={true} light title='Sign In With Apple ID' button type='apple' onPress={handleAppleSignIn} />
+              <SocialIcon
+                raised={false}
+                light
+                title='Sign In With Google'
+                disabled={!request}
+                button
+                type='google'
+                onPress={() => promptAsync({ useProxy: Platform.OS === 'ios' })}
+              />
+              <SocialIcon
+                raised={false}
+                light
+                title='Sign In With Facebook'
+                button
+                type='facebook'
+                onPress={handleFacebookSignIn}
+              />
+              <SocialIcon
+                raised={false}
+                light
+                title='Sign In With Apple ID'
+                button
+                type='apple'
+                onPress={handleAppleSignIn}
+              />
             </View>
           </View>
         </View>
@@ -186,12 +270,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "red",
   },
-  input: {
-    marginBottom: 8,
-  },
   button: {
     marginTop: 8,
-    // paddingVertical: 3,
+    paddingVertical: 3,
     borderRadius: 50,
   },
   linkText: {
