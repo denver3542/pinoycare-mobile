@@ -66,7 +66,7 @@ const Login = () => {
       if (response?.type === "success") {
         await getGoogleUser(response.authentication.idToken);
       } else if (response?.type === "error") {
-        Alert.alert("Google Sign-In Error", "Failed to sign in with Google. Please try again.");
+        // Alert.alert("Google Sign-In Error", "Failed to sign in with Google. Please try again.");
       }
     } else {
       setUserInfo(JSON.parse(user));
@@ -83,7 +83,7 @@ const Login = () => {
   const getGoogleUser = async (idToken) => {
     if (!idToken) {
       // Alert if idToken is missing
-      Alert.alert("Token Error", "Failed to receive Google token. Please try again.");
+      // Alert.alert("Token Error", "Failed to receive Google token. Please try again.");
       return;
     }
 
@@ -98,9 +98,8 @@ const Login = () => {
 
       if (!response.ok) {
         const errorMessage = await response.text();
-        // Display alert for API error
-        Alert.alert("API Error", `Failed to authenticate with Google API: ${errorMessage}`);
-        throw new Error(`Failed to authenticate with Google API: ${errorMessage}`);
+        throw new Error(`Failed to authenticate with Google: ${errorMessage}`);
+        // Alert.alert("Google Authentication Error", `Failed to authenticate with Google: ${error.message}`);
       }
 
       const data = await response.json();
@@ -108,14 +107,13 @@ const Login = () => {
       setUserInfo(data);
 
       // Display token in alert upon successful authentication
-      Alert.alert("Token Received", `Token: ${idToken}`);
+      // Alert.alert("Token Received", `Token: ${idToken}`);
     } catch (error) {
       console.error('Error fetching Google user:', error);
       setGeneralError('Failed to authenticate with Google');
-      Alert.alert("Google Authentication Error", `Failed to authenticate with Google: ${error.message}`);
+      // Alert.alert("Google Authentication Error", `Failed to authenticate with Google: ${error.message}`);
     }
   };
-
 
   const {
     control,
