@@ -19,7 +19,7 @@ import EditEducation from "./Profile/Education/EditEducations";
 import WorkExperience from "./Profile/WorkExperience/WorkExperienceCardList";
 import { useUser } from "../../hooks/useUser";
 import useSkills from "./Profile/Skills/hooks/useSkills";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 const Account = ({ activeNav }) => {
   const { colors } = useTheme();

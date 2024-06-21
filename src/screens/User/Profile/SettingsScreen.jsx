@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Text, Button, Portal, Appbar, Card, List, Divider } from 'react-native-paper';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import useAuth from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 
 const SettingsScreen = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);

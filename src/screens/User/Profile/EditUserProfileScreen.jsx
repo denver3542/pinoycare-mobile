@@ -10,7 +10,7 @@ import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
 import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
 import * as ImagePicker from 'expo-image-picker';
-import useAuth from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');

@@ -6,7 +6,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert // Import Alert from React Native
+  Alert
 } from "react-native";
 import { SocialIcon } from 'react-native-elements';
 import { useNavigation } from "@react-navigation/native";
@@ -23,17 +23,10 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import * as Google from 'expo-auth-session/providers/google';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const config = {
-  androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
-  iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
-  expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
-  webClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
-};
+
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -41,80 +34,12 @@ const validationSchema = Yup.object({
 }).required();
 
 const Login = () => {
-  const [userinfo, setUserInfo] = useState(null);
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLoginOrSignup, request } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    androidClientId: config.androidClientId,
-    iosClientId: config.iosClientId,
-    expoClientId: config.expoClientId,
-    clientId: config.webClientId,
-    redirectUri: 'com.upcare.mobile:/oauthredirect',
-  });
-
-  useEffect(() => {
-    handleSignWithGoogle();
-  }, [response]);
-
-  async function handleSignWithGoogle() {
-    const user = await AsyncStorage.getItem('upcare_user');
-    if (!user) {
-      if (response?.type === "success") {
-        await getGoogleUser(response.authentication.idToken);
-      } else if (response?.type === "error") {
-        // Alert.alert("Google Sign-In Error", "Failed to sign in with Google. Please try again.");
-      }
-    } else {
-      setUserInfo(JSON.parse(user));
-    }
-  };
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication } = response;
-      getGoogleUser(authentication?.idToken);
-    }
-  }, [response]);
-
-  const getGoogleUser = async (idToken) => {
-    if (!idToken) {
-      // Alert if idToken is missing
-      // Alert.alert("Token Error", "Failed to receive Google token. Please try again.");
-      return;
-    }
-
-    try {
-      const response = await fetch('https://phplaravel-719501-3973159.cloudwaysapps.com/api/auth/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: idToken }),
-      });
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Failed to authenticate with Google: ${errorMessage}`);
-        // Alert.alert("Google Authentication Error", `Failed to authenticate with Google: ${error.message}`);
-      }
-
-      const data = await response.json();
-      await AsyncStorage.setItem('upcare_user', JSON.stringify(data));
-      setUserInfo(data);
-
-      // Display token in alert upon successful authentication
-      // Alert.alert("Token Received", `Token: ${idToken}`);
-    } catch (error) {
-      console.error('Error fetching Google user:', error);
-      setGeneralError('Failed to authenticate with Google');
-      // Alert.alert("Google Authentication Error", `Failed to authenticate with Google: ${error.message}`);
-    }
-  };
-
   const {
     control,
     handleSubmit,
@@ -136,7 +61,7 @@ const Login = () => {
         console.log("Login success");
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -144,6 +69,10 @@ const Login = () => {
 
   const togglePasswordVisibility = () => {
     setShowPw(!showPw);
+  };
+
+  const handleGoogleSignIn = async () => {
+    googleLoginOrSignup();
   };
 
   const handleFacebookSignIn = () => {
@@ -217,7 +146,7 @@ const Login = () => {
                 disabled={!request}
                 button
                 type='google'
-                onPress={() => promptAsync({ useProxy: Platform.OS === 'ios' })}
+                onPress={handleGoogleSignIn}
               />
               <SocialIcon
                 raised={false}

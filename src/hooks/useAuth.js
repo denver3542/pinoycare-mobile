@@ -2,25 +2,46 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { useUser } from "./useUser";
 import { Alert } from "react-native";
-import * as Google from 'expo-auth-session/providers/google';
-import { ResponseType } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { setStoredUser } from "../user-storage";
+import * as Google from 'expo-auth-session/providers/google';
+import * as AuthSession from 'expo-auth-session';
+import axios from "axios";
 
 WebBrowser.maybeCompleteAuthSession();
 
+// Google OAuth configuration
+const googleConfig = {
+  androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
+  iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
+  expoClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
+  webClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
 
+};
 
-export default function useAuth() {
+export function useAuth() {
   const SERVER_ERROR = "There was an error contacting the server.";
   const { clearUser, updateUser } = useUser();
   const navigation = useNavigation();
 
-  // Utility function to handle responses
+
+  // Centralized server call
+  const authServerCall = async (urlEndpoint, userDetails) => {
+    try {
+      const response = await axiosInstance.post(urlEndpoint, userDetails);
+      return handleResponse(response.data);
+    } catch (error) {
+      const errorMessage = axios.isAxiosError(error) ? (error.response?.data?.message || SERVER_ERROR) : SERVER_ERROR;
+      const errors = axios.isAxiosError(error) ? error.response?.data?.errors : [];
+      return { success: false, message: errorMessage, errors: errors };
+    }
+  };
+
+  // Handle responses from the server
   const handleResponse = (data) => {
-    if ("user" in data && "token" in data) {
+    if (data.user && data.token) {
       setStoredUser(data.user);
       updateUser(data.user);
       return { success: true, user: data.user };
@@ -29,89 +50,67 @@ export default function useAuth() {
     }
   };
 
+  // User authentication functions
+  const login = (userDetails) => authServerCall("/auth/login", userDetails);
+  const signup = (userDetails) => authServerCall("/auth/signup", userDetails);
 
-  // Centralize server calls
-  async function authServerCall(urlEndpoint, userDetails) {
-    try {
-      const response = await axiosInstance.post(urlEndpoint, userDetails);
-      return handleResponse(response.data);
-    } catch (error) {
-      let errorMessage = SERVER_ERROR;
-      let errors = [];
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response.data.message || errorMessage;
-        errors = error.response.data.errors;
-      }
-      return { success: false, message: errorMessage, errors: errors };
-    }
-  }
-
-  // Function to log in user
-  async function login(userDetails) {
-    return authServerCall("/auth/login", userDetails);
-  }
-
-
-
-  // Function to sign up user
-  async function signup(userDetails) {
-    return authServerCall("/auth/signup", userDetails);
-  }
-
-  // Function to log out user
-  async function logout() {
+  const logout = async () => {
     try {
       await AsyncStorage.removeItem("upcare_user");
-      clearUser();
     } catch (err) {
-      // Handle error if any during the logout process
-      clearUser(); // Ensuring user state is cleared even if there's an error
-      // Log error or handle it if needed
+      console.error("Error during logout:", err);
+    } finally {
+      clearUser();
     }
-  }
+  };
 
-  async function deleteUser() {
+  const deleteUser = async () => {
     try {
       const user = await AsyncStorage.getItem("upcare_user");
-      if (!user) {
-        // Handle case where user is not authenticated
-        return { success: false, message: "User not authenticated" };
-      }
+      if (!user) return { success: false, message: "User not authenticated" };
 
-      // Parse the user object
       const parsedUser = JSON.parse(user);
-
-      // Get the JWT header containing the authentication token
       const headers = getJWTHeader(parsedUser);
 
-      // Make a request to delete the user account with the token in the headers
       const response = await axiosInstance.delete("/user/delete-account", { headers });
-
-      // Handle success response
       if (response.data.success) {
-        // Clear user data from storage and update user state
         clearUser();
         return { success: true, message: response.data.message };
       } else {
-        // Handle failure response
         return { success: false, message: response.data.message };
       }
     } catch (error) {
-      // Handle error
       console.error("Error deleting user account:", error);
       return { success: false, message: "Error deleting user account" };
     }
-  }
+  };
 
-  // Function to initiate password reset
-  async function initiatePasswordReset(email) {
-    return authServerCall("/auth/forgot-password", { email });
-  }
+  const initiatePasswordReset = (email) => authServerCall("/auth/forgot-password", { email });
+  const resetPassword = (token, newPassword) => authServerCall("/auth/reset-password", { token, newPassword });
 
-  // Function to complete password reset
-  async function resetPassword(token, newPassword) {
-    return authServerCall("/auth/reset-password", { token, newPassword });
-  }
+  // const loginWithGoogle = async (accessToken, userDetails) => (
+  //   await authServerCall("/auth/google/callback", { googleToken: accessToken }, userDetails)
+  // );
+
+  const [request, googleResponse, googleLoginOrSignup] = Google.useAuthRequest({
+    androidClientId: googleConfig.androidClientId,
+    iosClientId: googleConfig.iosClientId,
+    expoClientId: googleConfig.expoClientId,
+    clientId: googleConfig.webClientId,
+    redirectUri: 'com.upcare.mobile:/oauthredirect',
+    scopes: ['openid', 'profile', 'email'],
+  });
+
+  useEffect(() => {
+    async function loginWithGoogle(accessToken) {
+      await authServerCall("/auth/google/callback", { googleToken: accessToken });
+    }
+
+    if (googleResponse?.type === "success") {
+      const { access_token } = googleResponse.params;
+      loginWithGoogle(access_token);
+    }
+  }, [googleResponse]);
 
   return {
     login,
@@ -120,5 +119,7 @@ export default function useAuth() {
     initiatePasswordReset,
     resetPassword,
     deleteUser,
+    googleLoginOrSignup,
+    request,
   };
 }
