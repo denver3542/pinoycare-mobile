@@ -15,7 +15,7 @@ import UnathorizeLayout from "../../../Layout/User/Unauthorize/UnathorizeLayout"
 import CustomTextInput from "../../../components/CustomTextInput";
 import { useForm } from "react-hook-form";
 import CustomSelectBox from "../../../components/CustomSelectBox";
-import useAuth from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import CustomSnackbar from "../../../components/CustomSnackbar";
 
 const Professional = () => {

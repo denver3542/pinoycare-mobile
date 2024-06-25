@@ -109,15 +109,33 @@ function Dashboard() {
           placeholderTextColor="gray"
         />
 
+        {/* <View style={styles.card}>
+          <View style={styles.sectionContainer}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+              <Text style={styles.sectionTitle}>Job Applications</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Application')}>
+                <Text style={styles.seeMoreText}>See All</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Divider style={styles.divider} />
+        </View> */}
+
+
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Job Applications</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+              <Text style={styles.sectionTitle}>Job Applications</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Application')}>
+                <Text style={styles.seeMoreText}>See All</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
             {isFetched && applications.length > 0 ? (
               <>
-                {applications.map((application, index) => (
+                {applications.slice(0, 3).map((application, index) => (
                   <View key={index}>
                     {application && (
                       <JobApplications application={application} />
@@ -133,35 +151,7 @@ function Dashboard() {
             )}
           </View>
         </View>
-        {/* <View style={styles.card}>
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Job Applications</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Application")}>
-              <Text style={styles.seeAllText}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          <Divider style={styles.divider} />
-          <View style={styles.cardContent}>
-            {isFetched && applications.length > 0 ? (
-              <>
-                {applications.map((application, index) => (
-                  <View key={index}>
-                    {application && (
-                      <View>
-                        <ApplicationListCard application={application} />
-                      </View>
-                    )}
-                  </View>
-                ))}
-              </>
-            ) : (
-              <View style={styles.notAvailable}>
-                <MaterialIcons name="description" size={50} color="gray" />
-                <Text style={styles.notAvailableText}>Currently, No Application</Text>
-              </View>
-            )}
-          </View>
-        </View> */}
+
 
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
@@ -230,30 +220,7 @@ function Dashboard() {
           </View>
         </View>
 
-        {/* <View style={styles.card}>
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Job Applications Section</Text>
-          </View>
-          <Divider style={styles.divider} />
-          <View style={styles.cardContent}>
-            {isFetched && applications.length > 0 ? (
-              <>
-                {applications.map((application, index) => (
-                  <View key={index}>
-                    {application && (
-                      <JobApplications application={application} />
-                    )}
-                  </View>
-                ))}
-              </>
-            ) : (
-              <View style={styles.notAvailable}>
-                <MaterialIcons name="description" size={50} color="gray" />
-                <Text style={styles.notAvailableText}>Currently, No Application</Text>
-              </View>
-            )}
-          </View>
-        </View> */}
+
       </View>
     </ScrollView>
   );

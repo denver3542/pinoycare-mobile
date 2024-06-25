@@ -12,7 +12,6 @@ import axios from "axios";
 
 WebBrowser.maybeCompleteAuthSession();
 
-// Google OAuth configuration
 const googleConfig = {
   androidClientId: '1052234263699-85n1ot28d05svoo6k9em0dm89ut2abi3.apps.googleusercontent.com',
   iosClientId: '1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com',
@@ -88,16 +87,15 @@ export function useAuth() {
   const initiatePasswordReset = (email) => authServerCall("/auth/forgot-password", { email });
   const resetPassword = (token, newPassword) => authServerCall("/auth/reset-password", { token, newPassword });
 
-  // const loginWithGoogle = async (accessToken, userDetails) => (
-  //   await authServerCall("/auth/google/callback", { googleToken: accessToken }, userDetails)
-  // );
 
   const [request, googleResponse, googleLoginOrSignup] = Google.useAuthRequest({
     androidClientId: googleConfig.androidClientId,
     iosClientId: googleConfig.iosClientId,
     expoClientId: googleConfig.expoClientId,
     clientId: googleConfig.webClientId,
-    redirectUri: 'com.upcare.mobile:/oauthredirect',
+    // redirectUri: 'com.upcare.mobile:/oauthredirect',
+    selectAccount: true,
+    redirectUri: AuthSession.makeRedirectUri({ useProxy: true }),
     scopes: ['openid', 'profile', 'email'],
   });
 
@@ -119,6 +117,7 @@ export function useAuth() {
     initiatePasswordReset,
     resetPassword,
     deleteUser,
+    googleResponse,
     googleLoginOrSignup,
     request,
   };

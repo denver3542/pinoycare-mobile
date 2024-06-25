@@ -15,13 +15,14 @@ import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useForm } from "react-hook-form";
 import CustomSelectBox from "../../components/CustomSelectBox";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import RNPickerSelect from "react-native-picker-select";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
+import { SocialIcon } from 'react-native-elements';
 
 // Define validation schema
 const schema = yup
@@ -47,7 +48,7 @@ const Signup = () => {
   const navigation = useNavigation();
   const [formErrors, setFormErrors] = useState({});
 
-  const { signup } = useAuth();
+  const { signup, googleLoginOrSignup, request } = useAuth();
   const {
     control,
     watch,
@@ -118,9 +119,13 @@ const Signup = () => {
     hideDatePicker();
   };
 
+  const handleGoogleSignIn = async () => {
+    googleLoginOrSignup();
+  };
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#F4F7FB", }}>
-      <View style={{ padding: 20, }}>
+      <View style={{ padding: 15, }}>
         <IconButton
           icon="arrow-left"
           onPress={() => navigation.goBack()}
@@ -129,7 +134,7 @@ const Signup = () => {
             right: 20
           }}
         />
-        <View style={{ marginBottom: 20, flex: 1 }}>
+        <View style={{ marginBottom: 0, flex: 1 }}>
           <Text style={{
             fontSize: 30,
             textAlign: "center",
@@ -267,9 +272,15 @@ const Signup = () => {
             />
 
             <Button
-              mode="contained"
+              mode="elevated"
               onPress={handleSubmit(onSubmit)}
               loading={isSubmitting || isLoading}
+              labelStyle={{
+                fontSize: 14,
+                color: 'white',
+                paddingVertical: 4,
+              }}
+              style={{ borderRadius: 50, backgroundColor: '#0A3480', }}
             >
               Sign Up
             </Button>
@@ -294,12 +305,43 @@ const Signup = () => {
               </Text>
             </View>
 
-            <Text
-              style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
-            >
-              Already have an account?{" "}
-              <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
-            </Text>
+            <Text style={{ textAlign: "center", marginVertical: 20 }}>or register with</Text>
+            <SocialIcon
+              raised={true}
+              // light
+              title='Sign Up With Google'
+              disabled={!request}
+              button
+              type='google'
+              height={50}
+              onPress={handleGoogleSignIn}
+            />
+
+            <SocialIcon
+              raised={true}
+              // light
+              title='Sign Up With Facebook'
+              labelStyle={{
+                fontSize: 14,
+                paddingVertical: 6,
+              }}
+              disabled={!request}
+              button
+              type='facebook'
+              height={50}
+            />
+
+            <SocialIcon
+              raised={true}
+              light
+              title='Sign Up With Apple ID'
+              disabled={!request}
+              button
+              type='apple'
+              height={50}
+
+            />
+
           </View>
         </View>
       </View>
@@ -312,6 +354,12 @@ const Signup = () => {
           watcher.contact_bdate ? new Date(watcher.contact_bdate) : new Date()
         }
       />
+      <Text
+        style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
+      >
+        Already have an account?{" "}
+        <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
+      </Text>
     </ScrollView>
   );
 };

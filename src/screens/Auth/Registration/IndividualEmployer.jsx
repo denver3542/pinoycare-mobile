@@ -7,7 +7,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { StyleSheet, View } from 'react-native';
 import CustomTextInput from '../../../components/CustomTextInput';
 import CustomSelectBox from '../../../components/CustomSelectBox';
-import useAuth from '../../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth';
 
 export default function IndividualEmployer() {
     const [loading, setLoading] = useState(false);

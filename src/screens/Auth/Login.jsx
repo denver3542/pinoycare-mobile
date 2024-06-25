@@ -128,11 +128,24 @@ const Login = () => {
           <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
             <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
           </TouchableOpacity>
-          <Button
+          {/* <Button
             mode="contained"
             onPress={handleSubmit(onSubmit)}
             loading={isLoading || isSubmitting}
             style={styles.button}
+          >
+            LOGIN
+          </Button> */}
+          <Button
+            style={styles.button}
+            labelStyle={{
+              fontSize: 14,
+              width: 250,
+              paddingVertical: 6,
+              color: 'white'
+            }}
+            mode="elevated"
+            onPress={handleSubmit(onSubmit)}
           >
             LOGIN
           </Button>
@@ -140,8 +153,8 @@ const Login = () => {
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
             <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
               <SocialIcon
-                raised={false}
-                light
+                raised={true}
+                // light
                 title='Sign In With Google'
                 disabled={!request}
                 button
@@ -149,15 +162,15 @@ const Login = () => {
                 onPress={handleGoogleSignIn}
               />
               <SocialIcon
-                raised={false}
-                light
+                raised={true}
+                // light
                 title='Sign In With Facebook'
                 button
                 type='facebook'
                 onPress={handleFacebookSignIn}
               />
               <SocialIcon
-                raised={false}
+                raised={true}
                 light
                 title='Sign In With Apple ID'
                 button
@@ -199,8 +212,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
-    paddingVertical: 3,
     borderRadius: 50,
+    backgroundColor: '#0A3480',
   },
   linkText: {
     color: "#0A3480",
