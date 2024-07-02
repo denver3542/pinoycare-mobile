@@ -14,9 +14,11 @@ const WorkExperience = ({ work_experiences }) => {
         <View style={styles.card}>
             <View style={styles.headerContainer}>
                 <View style={styles.sectionContent}>
-                    <Text style={styles.cardTitle}>Work Experience</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("EditWorkExperience")}>
+                        <Text style={styles.cardTitle}>Work Experience</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.iconContainer}>
+                {/* <View style={styles.iconContainer}>
                     <IconButton
                         icon={() => <MaterialIcons name="add" size={22} color="#0A3480" />}
                         onPress={() => navigation.navigate("AddWorkExperience")}
@@ -25,7 +27,7 @@ const WorkExperience = ({ work_experiences }) => {
                         icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
                         onPress={() => navigation.navigate("EditWorkExperience")}
                     />
-                </View>
+                </View> */}
             </View>
             <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View>

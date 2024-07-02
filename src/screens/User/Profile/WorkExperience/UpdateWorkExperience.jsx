@@ -9,6 +9,7 @@ import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/Authenticat
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useUpdateWorkExperience } from './hooks/useWorkExperience';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const UpdateWorkExperience = () => {
     const navigation = useNavigation();
@@ -112,7 +113,7 @@ const UpdateWorkExperience = () => {
                     <Appbar.Content title="Update Work Experience" titleStyle={{ color: 'white' }} />
                 </Appbar.Header>
 
-                <View style={styles.container}>
+                <ScrollView style={styles.container}>
                     <View style={styles.formContainer}>
                         {/* Company Name input */}
                         <CustomTextInput
@@ -207,7 +208,7 @@ const UpdateWorkExperience = () => {
                             <Text style={{ color: 'white' }}>Save</Text>
                         </Button>
                     </View>
-                </View>
+                </ScrollView>
                 <BottomSheet
                     ref={saveBottomSheetRef}
                     index={-1}

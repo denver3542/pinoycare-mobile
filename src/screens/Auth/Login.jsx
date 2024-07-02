@@ -36,7 +36,7 @@ const validationSchema = Yup.object({
 const Login = () => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login, googleLoginOrSignup, request } = useAuth();
+  const { login, googleLoginOrSignup, facebookLoginOrSignup, fbRequest, request } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
@@ -76,7 +76,7 @@ const Login = () => {
   };
 
   const handleFacebookSignIn = () => {
-    console.log('Facebook Pressed');
+    facebookLoginOrSignup();
   };
 
   const handleAppleSignIn = () => {
@@ -165,6 +165,7 @@ const Login = () => {
                 raised={true}
                 // light
                 title='Sign In With Facebook'
+                disabled={!fbRequest}
                 button
                 type='facebook'
                 onPress={handleFacebookSignIn}

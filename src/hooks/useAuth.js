@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { setStoredUser } from "../user-storage";
 import * as Google from 'expo-auth-session/providers/google';
+import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as AuthSession from 'expo-auth-session';
 import axios from "axios";
 
@@ -19,6 +20,13 @@ const googleConfig = {
   webClientId: '1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com',
 
 };
+
+const facebookConfig = {
+  androidClientId: '481189014291453',
+  iosClientId: '481189014291453',
+  expoClientId: '481189014291453',
+  webClientId: '481189014291453',
+}
 
 export function useAuth() {
   const SERVER_ERROR = "There was an error contacting the server.";
@@ -110,6 +118,25 @@ export function useAuth() {
     }
   }, [googleResponse]);
 
+  const [fbRequest, facebookResponse, facebookLoginOrSignup] = Facebook.useAuthRequest({
+    androidClientId: facebookConfig.androidClientId,
+    iosClientId: facebookConfig.iosClientId,
+    expoClientId: facebookConfig.expoClientId,
+    clientId: facebookConfig.webClientId,
+    selectAccount: true,
+    redirectUri: AuthSession.makeRedirectUri({ useProxy: true }),
+  });
+
+  useEffect(() => {
+    async function loginOrSignUpWithFacebook(accessToken) {
+      await authServerCall("/auth/facebook/callback", { facebookToken: accessToken })
+    }
+    if (facebookResponse?.type === "success") {
+      const { access_token } = facebookResponse.params;
+      loginOrSignUpWithFacebook(access_token);
+    }
+  })
+
   return {
     login,
     signup,
@@ -120,5 +147,8 @@ export function useAuth() {
     googleResponse,
     googleLoginOrSignup,
     request,
+    facebookResponse,
+    facebookLoginOrSignup,
+    fbRequest
   };
 }

@@ -272,9 +272,9 @@ const EditUserProfileScreen = () => {
                             onFocus={handleInputFocus}
                         />
 
-                        <Button mode="contained" onPress={handleOpenDeleteBottomSheet} labelStyle={{ color: 'white' }}>
+                        {/* <Button mode="contained" onPress={handleOpenDeleteBottomSheet} labelStyle={{ color: 'white' }}>
                             Delete Account
-                        </Button>
+                        </Button> */}
                     </View>
                 </ScrollView>
                 <Spinner visible={isLoading} />
@@ -297,7 +297,7 @@ const EditUserProfileScreen = () => {
                     </View>
                 </BottomSheet>
 
-                <BottomSheet
+                {/* <BottomSheet
                     ref={deleteBottomSheetRef}
                     index={-1}
                     snapPoints={snapPoints}
@@ -314,7 +314,7 @@ const EditUserProfileScreen = () => {
                             Cancel
                         </Button>
                     </View>
-                </BottomSheet>
+                </BottomSheet> */}
             </View>
         </TouchableWithoutFeedback>
     );

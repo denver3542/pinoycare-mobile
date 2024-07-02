@@ -20,6 +20,7 @@ import WorkExperience from "./Profile/WorkExperience/WorkExperienceCardList";
 import { useUser } from "../../hooks/useUser";
 import useSkills from "./Profile/Skills/hooks/useSkills";
 import { useAuth } from "../../hooks/useAuth";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const Account = ({ activeNav }) => {
   const { colors } = useTheme();
@@ -56,7 +57,7 @@ const Account = ({ activeNav }) => {
         <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
           <Image source={require("../../../assets/pinoycare.png")} style={styles.imageStyle} />
           <Appbar.Content title="Account" titleStyle={{ color: 'white' }} />
-          <Appbar.Action icon={() => <MaterialIcons name="settings" size={24} color="white" />} onPress={() => navigation.navigate("SettingsScreen")} />
+          <Appbar.Action icon={() => <MaterialIcons name="more-vert" size={24} color="white" />} onPress={() => navigation.navigate("SettingsScreen")} />
         </Appbar.Header>
 
         <View style={styles.contentStyle}>
@@ -72,12 +73,12 @@ const Account = ({ activeNav }) => {
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
                   <Text style={styles.headerName}>{user?.name || ""}</Text>
-                  <IconButton
+                  {/* <IconButton
                     icon={() => <MaterialIcons name="border-color" size={14} color="white" />}
                     size={20}
                     selected
                     onPress={() => navigation.navigate("EditUserProfileScreen")}
-                  />
+                  /> */}
                 </View>
                 <View style={{ marginBottom: 5 }}>
                   <View style={{ flexDirection: 'row' }}>
@@ -156,24 +157,26 @@ const Account = ({ activeNav }) => {
 
           <Divider style={styles.divider} />
 
-          <View style={styles.card}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", bottom: 10 }}>
-              <Text style={styles.cardTitle}>About Me</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("AboutMeScreen")}>
+            <View style={styles.card} >
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", bottom: 10 }}>
+                <Text style={styles.cardTitle}>About Me</Text>
 
-              <IconButton
+                {/* <IconButton
                 icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
                 size={20}
                 selected
                 onPress={() => navigation.navigate("AboutMeScreen")}
-              />
-            </View>
-            <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
-            {/* <Divider style={styles.divider} /> */}
-            <View style={styles.contentContainer}>
-              <Text style={styles.cardDescription}>{user?.about_me}</Text>
-            </View>
+              /> */}
+              </View>
+              <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
+              {/* <Divider style={styles.divider} /> */}
+              <View style={styles.contentContainer}>
+                <Text style={styles.cardDescription}>{user?.about_me}</Text>
+              </View>
 
-          </View>
+            </View>
+          </TouchableOpacity>
 
           {isFetched && (
             <>

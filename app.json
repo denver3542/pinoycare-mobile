@@ -3,6 +3,7 @@
     "name": "Upcare",
     "slug": "pinoycare-mobile",
     "version": "1.0.5",
+    "facebookAppId": "481189014291453",
     "owner": "supportih",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

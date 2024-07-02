@@ -71,6 +71,7 @@ const EditWorkExperience = () => {
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
                 <Appbar.Content title="Edit Work Experience" titleStyle={{ color: 'white' }} />
+                <Appbar.Action icon={() => <MaterialIcons name="add" size={24} color="white" />} onPress={() => navigation.navigate("AddWorkExperience")} />
             </Appbar.Header>
             <FlatList
                 data={user.work_experiences.slice(0, visibleItems)}

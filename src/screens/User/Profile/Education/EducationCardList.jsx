@@ -40,8 +40,10 @@ const d = ({ educations }) => {
     return (
         <View style={styles.card}>
             <View style={styles.headerContainer}>
-                <Text style={styles.cardTitle}>Education</Text>
-                <View style={styles.iconContainer}>
+                <TouchableOpacity onPress={navigateToEditEducation}>
+                    <Text style={styles.cardTitle}>Education</Text>
+                </TouchableOpacity>
+                {/* <View style={styles.iconContainer}>
                     <IconButton
                         icon={() => <MaterialIcons name="add" size={22} color='#334567' />}
                         size={20}
@@ -52,7 +54,7 @@ const d = ({ educations }) => {
                         size={25}
                         onPress={navigateToEditEducation}
                     />
-                </View>
+                </View> */}
             </View>
             <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.educationContainer}>

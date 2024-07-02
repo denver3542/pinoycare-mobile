@@ -80,6 +80,7 @@ const SeminarsAndTrainingsEdit = () => {
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
                 <Appbar.Content title="Edit Seminars" titleStyle={{ color: 'white' }} />
+                <Appbar.Action icon={() => <MaterialIcons name="add" size={24} color="white" />} onPress={() => navigation.navigate("AddSeminarsAndTrainings")} />
             </Appbar.Header>
             <FlatList
                 data={user.trainings.slice(0, visibleItems)}

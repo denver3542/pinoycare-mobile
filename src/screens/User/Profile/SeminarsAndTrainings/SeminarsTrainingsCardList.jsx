@@ -22,9 +22,11 @@ const SeminarsTrainings = ({ trainings }) => {
             <View style={styles.headerContainer}>
                 <View style={styles.sectionContent}>
                     {/* <MaterialIcons name="school" size={24} color="#0A3480" style={styles.cardIcon} /> */}
-                    <Text style={styles.cardTitle}>Seminars and Trainings</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}>
+                        <Text style={styles.cardTitle}>Seminars and Trainings</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.iconContainer}>
+                {/* <View style={styles.iconContainer}>
                     <IconButton
                         icon={() => <MaterialIcons name="add" size={22} color="#334567" />}
                         onPress={() => navigation.navigate("AddSeminarsAndTrainings")}
@@ -33,7 +35,7 @@ const SeminarsTrainings = ({ trainings }) => {
                         icon={() => <MaterialIcons name="border-color" size={14} color="#334567" />}
                         onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
                     />
-                </View>
+                </View> */}
             </View>
             <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.contentContainer}>

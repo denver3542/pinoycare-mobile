@@ -24,10 +24,12 @@ const SkillsChip = ({ skills }) => {
                         style={styles.cardIcon}
                         solid
                     /> */}
-                    <Text style={styles.cardTitle}>Skills</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("AddSkillScreen")}>
+                        <Text style={styles.cardTitle} >Skills</Text>
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.iconContainer}>
+                {/* <View style={styles.iconContainer}>
                     <IconButton
                         icon={() => <MaterialIcons name="add" size={22} color="#0A3480" />}
                         size={25}
@@ -35,7 +37,7 @@ const SkillsChip = ({ skills }) => {
                         onPress={() => navigation.navigate("AddSkillScreen")}
                     />
 
-                </View>
+                </View> */}
             </View>
             <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.skillsContainer}>
