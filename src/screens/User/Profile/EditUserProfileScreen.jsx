@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { Button, Appbar, RadioButton, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
@@ -209,22 +209,22 @@ const EditUserProfileScreen = () => {
 
                         <View style={styles.genderRadioButton}>
                             <View>
-                                <Text style={{ fontSize: 16 }}>Choose Gender</Text>
+                                <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Choose Gender</Text>
                             </View>
                             <View style={styles.radioGroup}>
-                                <RadioButton
+                                <RadioButton.Android
                                     value="M"
                                     status={gender === 'M' ? 'checked' : 'unchecked'}
                                     onPress={() => handleGenderChange('M')}
                                 />
-                                <Text>Male</Text>
+                                <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Male</Text>
 
-                                <RadioButton
+                                <RadioButton.Android
                                     value="F"
                                     status={gender === 'F' ? 'checked' : 'unchecked'}
                                     onPress={() => handleGenderChange('F')}
                                 />
-                                <Text>Female</Text>
+                                <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Female</Text>
                             </View>
                         </View>
 

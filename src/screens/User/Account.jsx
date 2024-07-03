@@ -43,7 +43,7 @@ const Account = ({ activeNav }) => {
   return (
 
     <ScrollView
-      style={{ flex: 1 }}
+      style={styles.container}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -53,7 +53,7 @@ const Account = ({ activeNav }) => {
         />
       }
     >
-      <View style={styles.container}>
+      <View>
         <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
           <Image source={require("../../../assets/pinoycare.png")} style={styles.imageStyle} />
           <Appbar.Content title="Account" titleStyle={{ color: 'white' }} />
@@ -157,26 +157,26 @@ const Account = ({ activeNav }) => {
 
           <Divider style={styles.divider} />
 
-          <TouchableOpacity onPress={() => navigation.navigate("AboutMeScreen")}>
-            <View style={styles.card} >
-              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", bottom: 10 }}>
+          <View style={styles.card} >
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", bottom: 10 }}>
+              <TouchableOpacity onPress={() => navigation.navigate("AboutMeScreen")}>
                 <Text style={styles.cardTitle}>About Me</Text>
+              </TouchableOpacity>
 
-                {/* <IconButton
+              {/* <IconButton
                 icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
                 size={20}
                 selected
                 onPress={() => navigation.navigate("AboutMeScreen")}
               /> */}
-              </View>
-              <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
-              {/* <Divider style={styles.divider} /> */}
-              <View style={styles.contentContainer}>
-                <Text style={styles.cardDescription}>{user?.about_me}</Text>
-              </View>
-
             </View>
-          </TouchableOpacity>
+            <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
+            {/* <Divider style={styles.divider} /> */}
+            <View style={styles.contentContainer}>
+              <Text style={styles.cardDescription}>{user?.about_me}</Text>
+            </View>
+
+          </View>
 
           {isFetched && (
             <>
@@ -197,6 +197,7 @@ const Account = ({ activeNav }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F4F7FB",
   },
   header: {
     backgroundColor: "#0A3480",
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contentStyle: {
-    backgroundColor: "#F4F7FB",
+    // backgroundColor: "#F4F7FB",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     marginTop: 10,
@@ -297,6 +298,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: 'bold',
     fontSize: 20,
+    color: '#0A3480'
   },
   educationDescription: {
     fontSize: 16,

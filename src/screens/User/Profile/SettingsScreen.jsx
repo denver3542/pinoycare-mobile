@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Modal, Text, Button, Portal, Appbar, Card, List, Divider } from 'react-native-paper';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { useAuth } from "../../../hooks/useAuth";
@@ -22,8 +22,8 @@ const SettingsScreen = ({ navigation }) => {
     const deleteSnapPoints = useMemo(() => ['25%', '35%'], []);
     const handleCloseDeleteBottomSheet = () => deleteBottomSheetRef.current?.close();
     const handleOpenDeleteBottomSheet = () => {
-        setDeleteConfirmation(false); // Reset confirmation state
-        setShowError(false); // Reset error state
+        setDeleteConfirmation(false);
+        setShowError(false);
         deleteBottomSheetRef.current?.expand();
     };
     const renderBackdrop = useCallback(
@@ -36,92 +36,90 @@ const SettingsScreen = ({ navigation }) => {
     };
 
     const handleSubmitDelete = () => {
+        Keyboard.dismiss();
         if (deleteInput.toLowerCase() === 'delete') {
             deleteUser();
             handleCloseDeleteBottomSheet();
         } else {
-            setShowError(true); // Show error message
+            setShowError(true);
         }
     };
 
     return (
-        <View style={styles.container}>
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Settings" titleStyle={{ color: 'white' }} />
-            </Appbar.Header>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.container}>
-                <Card style={styles.card}>
-
-                    <List.Item
-                        title="Edit Profile"
-                        left={props => <List.Icon {...props} icon="account" />}
-                        right={props => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => navigation.navigate("EditUserProfileScreen")}
-                    />
-                    <Divider />
-                    <List.Item
-                        title="Logout"
-                        left={props => <List.Icon {...props} icon="exit-to-app" />}
-                        right={props => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={showLogoutModal}
-                    />
-                    <Divider />
-                    <List.Item
-                        title="Delete Account"
-                        left={props => <List.Icon {...props} icon="delete" />}
-                        right={props => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={handleOpenDeleteBottomSheet}
-                    />
-
-                </Card>
-
-
-                <Portal>
-                    <Modal visible={logoutVisible} onDismiss={hideLogoutModal} contentContainerStyle={styles.modal}>
-                        <Text style={styles.modalTitle}>Log out</Text>
-                        <Text style={styles.modalText}>Are you sure you want to leave?</Text>
-                        <Button mode="contained" onPress={logout} style={styles.button}>
-                            Yes
+                <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                    <Appbar.Content title="Settings" titleStyle={{ color: 'white' }} />
+                </Appbar.Header>
+                <View style={styles.container}>
+                    <Card style={styles.card}>
+                        <List.Item
+                            title="Edit Profile"
+                            left={props => <List.Icon {...props} icon="account" />}
+                            right={props => <List.Icon {...props} icon="chevron-right" />}
+                            onPress={() => navigation.navigate("EditUserProfileScreen")}
+                        />
+                        <Divider />
+                        <List.Item
+                            title="Logout"
+                            left={props => <List.Icon {...props} icon="exit-to-app" />}
+                            right={props => <List.Icon {...props} icon="chevron-right" />}
+                            onPress={showLogoutModal}
+                        />
+                        <Divider />
+                        <List.Item
+                            title="Delete Account"
+                            left={props => <List.Icon {...props} icon="delete" />}
+                            right={props => <List.Icon {...props} icon="chevron-right" />}
+                            onPress={handleOpenDeleteBottomSheet}
+                        />
+                    </Card>
+                    <Portal>
+                        <Modal visible={logoutVisible} onDismiss={hideLogoutModal} contentContainerStyle={styles.modal}>
+                            <Text style={styles.modalTitle}>Log out</Text>
+                            <Text style={styles.modalText}>Are you sure you want to leave?</Text>
+                            <Button mode="contained" onPress={logout} style={styles.button}>
+                                Yes
+                            </Button>
+                            <Button onPress={hideLogoutModal} style={styles.button}>
+                                Cancel
+                            </Button>
+                        </Modal>
+                    </Portal>
+                </View>
+                <BottomSheet
+                    ref={deleteBottomSheetRef}
+                    index={-1}
+                    snapPoints={deleteSnapPoints}
+                    backdropComponent={renderBackdrop}
+                    enablePanDownToClose={true}
+                >
+                    <View style={styles.bottomSheetContent}>
+                        <Text style={styles.bottomSheetTitle}>Delete Account</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Type 'Delete' to confirm"
+                            placeholderTextColor="#999"
+                            onChangeText={handleDeleteInputChange}
+                            value={deleteInput}
+                            autoCapitalize="none"
+                            blurOnSubmit={true}
+                            onSubmitEditing={handleSubmitDelete}
+                        />
+                        {showError && (
+                            <Text style={styles.errorText}>Incorrect input. Please type 'Delete' to confirm.</Text>
+                        )}
+                        <Button mode="contained" onPress={handleSubmitDelete} style={styles.button}>
+                            Delete
                         </Button>
-                        <Button onPress={hideLogoutModal} style={styles.button}>
+                        <Button onPress={handleCloseDeleteBottomSheet} style={styles.button}>
                             Cancel
                         </Button>
-                    </Modal>
-                </Portal>
+                    </View>
+                </BottomSheet>
             </View>
-            <BottomSheet
-                ref={deleteBottomSheetRef}
-                index={-1}
-                snapPoints={deleteSnapPoints}
-                backdropComponent={renderBackdrop}
-                enablePanDownToClose={true}
-            >
-                <View style={styles.bottomSheetContent}>
-                    <Text style={styles.bottomSheetTitle}>Delete Account</Text>
-                    {/* <Text>Are you sure you want to delete your account?</Text> */}
-
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Type 'Delete' to confirm"
-                        onChangeText={handleDeleteInputChange}
-                        value={deleteInput}
-                        autoCapitalize="none"
-                    />
-
-                    {showError && (
-                        <Text style={styles.errorText}>Incorrect input. Please type 'Delete' to confirm.</Text>
-                    )}
-
-                    <Button mode="contained" onPress={handleSubmitDelete} style={styles.button}>
-                        Delete
-                    </Button>
-                    <Button onPress={handleCloseDeleteBottomSheet} style={styles.button}>
-                        Cancel
-                    </Button>
-                </View>
-            </BottomSheet>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 

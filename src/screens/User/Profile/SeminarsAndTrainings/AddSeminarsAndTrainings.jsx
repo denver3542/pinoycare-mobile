@@ -1,7 +1,6 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator, Text, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { TextInput, Button, Appbar, TouchableRipple } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { useForm } from 'react-hook-form';
 import { useUser } from '../../../../hooks/useUser';
@@ -9,12 +8,13 @@ import CustomTextInput from '../../../../components/CustomTextInput';
 import { useNavigation } from '@react-navigation/native';
 import { useSeminarsAndTrainings } from './hooks/useSeminarsActions';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const SeminarsAndTrainingsForm = () => {
     const { user } = useUser();
     const navigation = useNavigation();
     const { mutate, isLoading, isError, error } = useSeminarsAndTrainings();
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [dateFieldName, setDateFieldName] = useState(null);
     const [certificateUri, setCertificateUri] = useState(null);
 
@@ -28,15 +28,14 @@ const SeminarsAndTrainingsForm = () => {
         },
     });
 
-    const handleDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || new Date();
-        setShowDatePicker(false);
-        setValue(dateFieldName, currentDate);
+    const handleConfirm = (selectedDate) => {
+        setDatePickerVisibility(false);
+        setValue(dateFieldName, selectedDate);
     };
 
-    const openDatePicker = (fieldName) => {
+    const showDatePicker = (fieldName) => {
         setDateFieldName(fieldName);
-        setShowDatePicker(true);
+        setDatePickerVisibility(true);
     };
 
     const pickImage = async () => {
@@ -59,7 +58,6 @@ const SeminarsAndTrainingsForm = () => {
         }
     };
 
-
     const onSubmit = handleSubmit((data) => {
         const formData = new FormData();
         formData.append('trainings[0][facilitated_by]', data.facilitated_by);
@@ -77,7 +75,6 @@ const SeminarsAndTrainingsForm = () => {
 
         mutate(formData);
     });
-
 
     const saveBottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '30%'], []);
@@ -128,7 +125,7 @@ const SeminarsAndTrainingsForm = () => {
 
                     {/* Date Started Picker */}
                     <View style={styles.datePickerContainer}>
-                        <TouchableOpacity onPress={() => openDatePicker('date_started')}>
+                        <TouchableOpacity >
                             <CustomTextInput
                                 control={control}
                                 label="Date Started"
@@ -137,21 +134,14 @@ const SeminarsAndTrainingsForm = () => {
                                 value={watch('date_started').toLocaleDateString()}
                                 rules={{ required: 'Date Started is required' }}
                                 editable={false}
+                                onPress={() => showDatePicker('date_started')}
                             />
                         </TouchableOpacity>
-                        {showDatePicker && dateFieldName === 'date_started' && (
-                            <DateTimePicker
-                                value={watch('date_started')}
-                                mode="date"
-                                display="default"
-                                onChange={handleDateChange}
-                            />
-                        )}
                     </View>
 
                     {/* Date Completed Picker */}
                     <View style={styles.datePickerContainer}>
-                        <TouchableOpacity onPress={() => openDatePicker('date_completed')}>
+                        <TouchableOpacity>
                             <CustomTextInput
                                 control={control}
                                 label="Date Completed"
@@ -160,18 +150,18 @@ const SeminarsAndTrainingsForm = () => {
                                 value={watch('date_completed').toLocaleDateString()}
                                 rules={{ required: 'Date Completed is required' }}
                                 editable={false}
+                                onPress={() => showDatePicker('date_completed')}
                             />
                         </TouchableOpacity>
-                        {showDatePicker && dateFieldName === 'date_completed' && (
-                            <DateTimePicker
-                                value={watch('date_completed')}
-                                mode="date"
-                                display="default"
-                                rules={{ required: 'Date Completed is required' }}
-                                onChange={handleDateChange}
-                            />
-                        )}
                     </View>
+
+                    {/* Date Picker Modal */}
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        onConfirm={handleConfirm}
+                        onCancel={() => setDatePickerVisibility(false)}
+                    />
 
                     {/* Certificate Picker */}
                     <TouchableRipple style={styles.touchable} onPress={pickImage}>
@@ -218,7 +208,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     input: {
-        // marginBottom: 10,
+        marginBottom: 10,
     },
     datePickerContainer: {
         marginBottom: 10,
@@ -234,7 +224,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 0.8,
     },
-    image: { // Ensure correct style for displaying the image
+    image: {
         width: '100%',
         height: '100%',
         resizeMode: 'cover',
@@ -243,7 +233,10 @@ const styles = StyleSheet.create({
     saveButton: {
         marginBottom: 10,
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    bottomSheetContent: {
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+    },
     bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -253,6 +246,5 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
 });
-
 
 export default SeminarsAndTrainingsForm;

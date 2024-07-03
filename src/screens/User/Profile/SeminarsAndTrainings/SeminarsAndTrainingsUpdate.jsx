@@ -3,18 +3,17 @@ import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Key
 import { Appbar, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useUpdateTrainingsAndSeminars } from './hooks/useSeminarsActions';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const SeminarsAndTrainingsUpdate = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { seminarsItem } = route.params;
-
 
     const saveBottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '30%'], []);
@@ -51,7 +50,7 @@ const SeminarsAndTrainingsUpdate = () => {
     const [selectedDateField, setSelectedDateField] = useState(null);
 
     // Handle date change
-    const handleDateChange = (event, selectedDate) => {
+    const handleDateChange = (selectedDate) => {
         setShowDatePicker(false);
         if (selectedDateField && selectedDate) {
             setValue(selectedDateField, moment(selectedDate).format('YYYY-MM-DD'));
@@ -120,8 +119,7 @@ const SeminarsAndTrainingsUpdate = () => {
 
                             {/* Date started input using TouchableOpacity */}
                             <TouchableOpacity
-                                style={styles.dateContainer}
-                                onPress={() => showDatePickerForField('date_started')}
+
                             >
                                 <CustomTextInput
                                     control={control}
@@ -130,13 +128,12 @@ const SeminarsAndTrainingsUpdate = () => {
                                     label="Date Started"
                                     editable={false}
                                     value={moment(dateStartedValue).format('YYYY-MM-DD')}
+                                    onPress={() => showDatePickerForField('date_started')}
                                 />
                             </TouchableOpacity>
 
                             {/* Date completed input using TouchableOpacity */}
                             <TouchableOpacity
-                                style={styles.dateContainer}
-                                onPress={() => showDatePickerForField('date_completed')}
                             >
                                 <CustomTextInput
                                     control={control}
@@ -145,6 +142,7 @@ const SeminarsAndTrainingsUpdate = () => {
                                     label="Date Completed"
                                     editable={false}
                                     value={moment(dateCompletedValue).format('YYYY-MM-DD')}
+                                    onPress={() => showDatePickerForField('date_completed')}
                                 />
                             </TouchableOpacity>
 
@@ -160,11 +158,12 @@ const SeminarsAndTrainingsUpdate = () => {
 
                             {/* DateTimePicker */}
                             {showDatePicker && (
-                                <DateTimePicker
-                                    value={selectedDateField === 'date_started' ? dateStartedValue : dateCompletedValue}
+                                <DateTimePickerModal
+                                    isVisible={showDatePicker}
                                     mode="date"
-                                    display="default"
-                                    onChange={handleDateChange}
+                                    onConfirm={handleDateChange}
+                                    onCancel={() => setShowDatePicker(false)}
+                                    date={selectedDateField === 'date_started' ? dateStartedValue : dateCompletedValue}
                                 />
                             )}
 
@@ -203,9 +202,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F4F7FB'
-        // paddingHorizontal: 8,
-        // marginVertical: 20
-
+    },
+    dateContainer: {
+        marginBottom: 16,
     },
     bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
     bottomSheetTitle: {

@@ -8,8 +8,8 @@ import CustomTextInput from '../../../../components/CustomTextInput';
 import { useWorkExperience } from './hooks/useWorkExperience';
 import { useUser } from '../../../../hooks/useUser';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const AddWorkExperience = () => {
     const navigation = useNavigation();
@@ -42,7 +42,7 @@ const AddWorkExperience = () => {
         if (dateEnded) setDateEndedValue(new Date(dateEnded));
     }, []);
 
-    const handleDateChange = (event, selectedDate) => {
+    const handleDateChange = (selectedDate) => {
         setShowDatePicker(false);
         if (selectedDateField && selectedDate) {
             setValue(selectedDateField, moment(selectedDate).format('YYYY-MM-DD'));
@@ -126,7 +126,6 @@ const AddWorkExperience = () => {
 
                         <TouchableOpacity
                             style={styles.dateContainer}
-                            onPress={() => showDatePickerForField('experiences[0].date_started')}
                         >
                             <CustomTextInput
                                 control={control}
@@ -137,12 +136,11 @@ const AddWorkExperience = () => {
                                 error={errors.experiences && errors.experiences[0]?.date_started}
                                 editable={false}
                                 value={moment(dateStartedValue).format('YYYY-MM-DD')}
+                                onPress={() => showDatePickerForField('experiences[0].date_started')}
                             />
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={styles.dateContainer}
-                            onPress={() => showDatePickerForField('experiences[0].date_ended')}
                         >
                             <CustomTextInput
                                 control={control}
@@ -153,6 +151,7 @@ const AddWorkExperience = () => {
                                 error={errors.experiences && errors.experiences[0]?.date_ended}
                                 editable={false}
                                 value={moment(dateEndedValue).format('YYYY-MM-DD')}
+                                onPress={() => showDatePickerForField('experiences[0].date_ended')}
                             />
                         </TouchableOpacity>
 
@@ -208,11 +207,12 @@ const AddWorkExperience = () => {
                     </View>
                 </ScrollView>
                 {showDatePicker && (
-                    <DateTimePicker
-                        value={selectedDateField === 'experiences[0].date_started' ? dateStartedValue : dateEndedValue}
+                    <DateTimePickerModal
+                        isVisible={showDatePicker}
                         mode="date"
-                        display="default"
-                        onChange={handleDateChange}
+                        onConfirm={handleDateChange}
+                        onCancel={() => setShowDatePicker(false)}
+                        date={selectedDateField === 'experiences[0].date_started' ? dateStartedValue : dateEndedValue}
                     />
                 )}
                 <BottomSheet

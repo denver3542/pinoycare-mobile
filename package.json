@@ -76,6 +76,8 @@
     "react-native-screens": "3.31.1",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "15.2.0",
+    "react-native-swipe-list-view": "^3.2.9",
+    "react-native-swipeout": "^2.3.6",
     "react-native-tab-view": "^3.5.2",
     "react-native-toast-message": "^2.2.0",
     "react-native-version-check": "^3.4.7",

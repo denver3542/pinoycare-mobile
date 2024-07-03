@@ -37,16 +37,9 @@ const WorkExperience = ({ work_experiences }) => {
                             <Text style={styles.educationTitle}>{experience.position}</Text>
                             <View style={styles.row}>
                                 <Text style={styles.educationDescription}>{experience.company_name}</Text>
-                                <Text style={styles.educationDescription}>{moment(experience.date_started).format('MMM YYYY')} - {moment(experience.date_ended).format('MMM YYYY')}</Text>
                             </View>
-                            {/* <Text style={styles.educationDescription}>Salary: {experience.salary}</Text>
-                            <Text style={styles.educationDescription}>Contact Person: {experience.contact_person}</Text>
-                            <Text style={styles.educationDescription}>Contact Position: {experience.contact_position}</Text>
-                            <Text style={styles.educationDescription}>Contact Phone: {experience.contact_phone}</Text> */}
+                            <Text style={styles.educationDescription}>{moment(experience.date_started).format('MMM YYYY')} - {moment(experience.date_ended).format('MMM YYYY')}</Text>
                         </View>
-                        {/* {index < experiencesToShow.length - 1 && (
-                            <Divider style={styles.divider} />
-                        )} */}
                     </React.Fragment>
                 ))}
                 {/* <Divider style={styles.divider} /> */}
@@ -84,7 +77,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        // color: '#0A3480',
+        color: "#0A3480",
     },
     iconContainer: {
         flexDirection: 'row',

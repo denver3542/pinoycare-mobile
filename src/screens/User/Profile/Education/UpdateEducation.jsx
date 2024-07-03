@@ -6,8 +6,7 @@ import { useForm } from 'react-hook-form';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import CustomSelectBox from '../../../../components/CustomSelectBox';
 import moment from 'moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useUpdateEducations } from './hooks/useEducationActions';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
@@ -15,7 +14,6 @@ const UpdateEducation = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { educationItem } = route.params;
-
 
     const { control, handleSubmit, setValue, watch } = useForm({
         defaultValues: {
@@ -30,26 +28,27 @@ const UpdateEducation = () => {
     const [fromValue, setFromValue] = useState(new Date(watch('from')));
     const [toValue, setToValue] = useState(new Date(watch('to')));
 
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState(null);
-
-    const handleDateChange = (event, selectedDate) => {
-        setShowDatePicker(false);
-        if (selectedDateField && selectedDate) {
-            setValue(selectedDateField, moment(selectedDate).format('YYYY-MM-DD'));
-            if (selectedDateField === 'from') {
-                setFromValue(selectedDate);
-            } else {
-                setToValue(selectedDate);
-            }
-        }
-    };
 
     const showDatePickerForField = (fieldName) => {
         setSelectedDateField(fieldName);
-        setShowDatePicker(true);
+        setDatePickerVisibility(true);
     };
 
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const handleDateConfirm = (date) => {
+        setValue(selectedDateField, moment(date).format('YYYY-MM-DD'));
+        if (selectedDateField === 'from') {
+            setFromValue(date);
+        } else {
+            setToValue(date);
+        }
+        hideDatePicker();
+    };
 
     const { mutate, isLoading } = useUpdateEducations();
 
@@ -65,14 +64,12 @@ const UpdateEducation = () => {
         };
         mutate(payload, {
             onSuccess: () => {
-
                 navigation.goBack();
             },
         });
     });
 
     const selectedLevel = watch('level');
-
 
     const saveBottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '30%'], []);
@@ -148,6 +145,7 @@ const UpdateEducation = () => {
                                 editable={false}
                                 value={moment(fromValue).format('YYYY-MM-DD')}
                                 rules={{ required: 'Start Date is required' }}
+                                onPress={() => showDatePickerForField('from')}
                             />
                         </TouchableOpacity>
 
@@ -163,17 +161,10 @@ const UpdateEducation = () => {
                                 editable={false}
                                 value={moment(toValue).format('YYYY-MM-DD')}
                                 rules={{ required: 'End Date is required' }}
+                                onPress={() => showDatePickerForField('to')}
                             />
                         </TouchableOpacity>
 
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={selectedDateField === 'from' ? fromValue : toValue}
-                                mode="date"
-                                display="default"
-                                onChange={handleDateChange}
-                            />
-                        )}
                         <Button mode="contained" onPress={handleOpenSaveBottomSheet} disabled={isLoading}>
                             Update
                         </Button>
@@ -198,6 +189,13 @@ const UpdateEducation = () => {
                         </Button>
                     </View>
                 </BottomSheet>
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleDateConfirm}
+                    onCancel={hideDatePicker}
+                    date={selectedDateField === 'from' ? fromValue : toValue} // Pass the initial date here
+                />
             </View>
         </TouchableWithoutFeedback>
     );
@@ -224,7 +222,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 }
+    button: { marginTop: 10 },
+    dateContainer: {
+        marginBottom: 15,
+    },
 });
 
 export default UpdateEducation;

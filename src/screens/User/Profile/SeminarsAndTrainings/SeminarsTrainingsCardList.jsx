@@ -60,9 +60,6 @@ const SeminarsTrainings = ({ trainings }) => {
                             <View style={styles.textContainer}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={styles.trainingTitle}>{training.facilitated_by}</Text>
-                                    <Text style={styles.trainingDuration}>
-                                        {moment(training.date_started).format('MMM YYYY')} - {moment(training.date_completed).format('MMM YYYY')}
-                                    </Text>
                                 </View>
                                 <Text style={styles.trainingDescription}>
                                     {expandedTrainings[index] || training.description.length <= 100
@@ -75,12 +72,15 @@ const SeminarsTrainings = ({ trainings }) => {
                                             </TouchableOpacity>
                                     }
                                 </Text>
+                                <Text style={styles.trainingDuration}>
+                                    {moment(training.date_started).format('MMM YYYY')} - {moment(training.date_completed).format('MMM YYYY')}
+                                </Text>
 
                             </View>
                         </View>
-                        {index < displayedTrainings.length - 1 && (
+                        {/* {index < displayedTrainings.length - 1 && (
                             <Divider style={styles.divider} />
-                        )}
+                        )} */}
                     </React.Fragment>
                 ))}
                 {/* <Divider style={styles.divider} /> */}
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: "bold",
         fontSize: 20,
-        // color: "#334567",
+        color: "#0A3480",
     },
     iconContainer: {
         flexDirection: 'row',

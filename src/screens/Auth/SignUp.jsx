@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, View, Linking, ScrollView } from "react-native";
 import {
@@ -10,6 +10,7 @@ import {
   Checkbox,
   List,
   IconButton,
+  RadioButton
 } from "react-native-paper";
 import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -64,6 +65,7 @@ const Signup = () => {
   const [showPw, setShowPw] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const fontSize = Platform.OS === 'ios' ? 10 : 16;
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -122,6 +124,13 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     googleLoginOrSignup();
   };
+  const [gender, setGender] = useState(null); // State to hold selected gender
+  const [visible, setVisible] = useState(false); // State to manage dropdown visibility
+
+
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#F4F7FB", }}>
@@ -177,59 +186,43 @@ const Signup = () => {
               rules={{ required: "Last Name is required" }}
               mode="outlined"
             />
-            {/* Here is the selection of gender */}
-            <View style={{ width: "100%", marginBottom: 15 }}>
-              <RNPickerSelect
-                onValueChange={(value) => setValue("gender", value)}
-                items={[
-                  { label: "Male", value: "M" },
-                  { label: "Female", value: "F" },
-                  { label: "Other", value: "Other" },
-                ]}
-                style={{
-                  inputAndroid: {
-                    color: colors.text,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 1,
-                    borderColor: "gray",
-                    borderRadius: 5,
-                    paddingRight: 30,
-                    backgroundColor: "#FFFFFF",
-                  },
-                  inputIOS: {
-                    color: colors.text,
-                    paddingHorizontal: 10,
-                    paddingVertical: 20,
-                    borderWidth: 1,
-                    borderColor: errors.gender ? "red" : "gray",
-                    borderRadius: 5,
-                    paddingRight: 30,
-                    backgroundColor: "#FFFFFF",
-                  },
-                }}
-                placeholder={{ label: "Select your gender", value: null }}
-              />
-              {errors.gender && (
-                <Text style={{ color: "red" }}>{errors.gender.message}</Text>
-              )}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+              <RadioButton.Group
+                onValueChange={(value) => setValue('gender', value)}
+                value={watcher.gender}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Select Gender</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <RadioButton.Android value="M" color={colors.primary} />
+                    <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Male</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <RadioButton.Android value="F" color={colors.primary} />
+                    <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Female</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
             </View>
+
+
             <List.Item
               title="Birth date"
+              titleStyle={{ fontSize: fontSize }}
               right={(props) => (
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ fontSize: fontSize }}>
                     {watcher?.date_of_birth
-                      ? moment(watcher.date_of_birth).format("YYYY-MM-DD")
-                      : ""}
+                      ? moment(watcher.date_of_birth).format('YYYY-MM-DD')
+                      : ''}
                   </Text>
                   <List.Icon {...props} icon="chevron-right" />
                 </View>
               )}
               style={{
-                backgroundColor: "#fff",
+                backgroundColor: '#fff',
                 borderWidth: 1,
-                borderColor: "gray",
+                borderColor: 'gray',
                 borderRadius: 5,
                 marginBottom: 15,
               }}

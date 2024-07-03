@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { Button, Appbar } from 'react-native-paper';
+import { Button, Appbar, HelperText } from 'react-native-paper';
 import CustomTextInput from '../../../components/CustomTextInput';
 import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useUser } from '../../../hooks/useUser';
 import { useEducations } from './Education/hooks/useEducationActions';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CustomSelectBox from "../../../components/CustomSelectBox";
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const EducationForm = () => {
     const { user } = useUser();
@@ -25,15 +26,14 @@ const EducationForm = () => {
         },
     });
 
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [selectedDateField, setSelectedDateField] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [selectedDateField, setSelectedDateField] = useState(null);
 
     const fromValue = watch('from') || new Date();
     const toValue = watch('to') || new Date();
 
     const { mutate } = useEducations();
-
     useEffect(() => {
         if (user) {
             setValue('level', user.level);
@@ -51,7 +51,6 @@ const EducationForm = () => {
         bottomSheetRef.current?.close();
     });
 
-
     const saveBottomSheetRef = useRef(null);
 
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
@@ -68,28 +67,32 @@ const EducationForm = () => {
         []
     );
 
-    const handleInputFocus = () => {
-        if (saveBottomSheetRef.current) {
-            saveBottomSheetRef.current.close();
-        }
-    };
-
     const selectedLevel = watch('level');
 
     const showDatePickerForField = (fieldName) => {
         setSelectedDateField(fieldName);
-        setShowDatePicker(true);
+        setDatePickerVisibility(true);
     };
 
-    const handleDateChange = (event, selectedDate) => {
-        setShowDatePicker(false);
-        if (selectedDateField) {
-            setValue(selectedDateField, selectedDate || new Date());
-        }
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
     };
+
+    const handleDateConfirm = (date) => {
+        setValue(selectedDateField, date);
+        hideDatePicker();
+    };
+
+    const levelOptions = [
+        { label: 'Elementary Education', value: 'elementary' },
+        { label: 'Junior High School', value: 'secondary' },
+        { label: 'Senior High School', value: 'secondary_k12' },
+        { label: 'Baccalaureate', value: 'baccalaureate' },
+        { label: "Master's Degree", value: 'master' },
+        { label: "Doctorate Degree", value: 'doctorate' },
+    ];
 
     return (
-
         <View style={{ flex: 1 }}>
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
@@ -99,22 +102,11 @@ const EducationForm = () => {
                 <View style={styles.container}>
                     <View style={{ paddingHorizontal: 8, marginVertical: 20 }}>
                         <CustomSelectBox
-                            selectedValue={selectedLevel}
-                            onValueChange={(itemValue) => {
-                                setValue('level', itemValue);
-                            }}
                             control={control}
                             name="level"
-                            items={[
-                                { label: 'Select a Level', value: '' },
-                                { label: 'Elementary Education', value: 'elementary' },
-                                { label: 'Junior High School', value: 'secondary' },
-                                { label: 'Senior High School', value: 'secondary_k12' },
-                                { label: 'Baccalaureate', value: 'baccalaureate' },
-                                { label: "Master's Degree", value: 'master' },
-                                { label: "Doctorate Degree", value: 'doctorate' },
-                            ]}
-                            rules={{ required: "Please Select a Level" }}
+                            label="Education Level"
+                            items={levelOptions}
+                            rules={{ required: 'Please select a level' }}
                         />
                         <CustomTextInput
                             control={control}
@@ -126,7 +118,7 @@ const EducationForm = () => {
                         {((selectedLevel === 'secondary_k12') || (selectedLevel === 'baccalaureate') || (selectedLevel === 'master') || (selectedLevel === 'doctorate')) && (
                             <CustomTextInput
                                 control={control}
-                                name="course"
+                                name="track"
                                 mode="outlined"
                                 label={(selectedLevel === 'baccalaureate' || selectedLevel === 'master' || selectedLevel === 'doctorate') ? 'Course' : 'Track'}
                                 rules={{ required: (selectedLevel === 'secondary_k12') ? 'Track is required' : 'Course is required' }}
@@ -143,8 +135,9 @@ const EducationForm = () => {
                                 name="from"
                                 label="Date Started"
                                 editable={false}
-                                value={fromValue.toLocaleDateString()}
+                                value={moment(fromValue).format('YYYY-MM-DD')}
                                 rules={{ required: 'Start Date is required' }}
+                                onPress={() => showDatePickerForField('from')}
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -158,18 +151,11 @@ const EducationForm = () => {
                                 name="to"
                                 label="Date Ended"
                                 editable={false}
-                                value={toValue.toLocaleDateString()}
+                                value={moment(toValue).format('YYYY-MM-DD')}
                                 rules={{ required: 'End Date is required' }}
+                                onPress={() => showDatePickerForField('to')}
                             />
                         </TouchableOpacity>
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={selectedDateField === 'from' ? fromValue : toValue}
-                                mode="date"
-                                display="default"
-                                onChange={handleDateChange}
-                            />
-                        )}
                         <Button mode="contained" onPress={handleOpenSaveBottomSheet} disabled={isLoading}>
                             Save
                         </Button>
@@ -177,24 +163,13 @@ const EducationForm = () => {
                 </View>
             </TouchableWithoutFeedback>
             <Spinner visible={isLoading} />
-            {/* <BottomSheet
-                    ref={saveBottomSheetRef}
-                    index={-1}
-                    snapPoints={snapPoints}
-                    backdropComponent={renderBackdrop}
-                    enablePanDownToClose={true}
-                >
-                    <View style={styles.bottomSheetContainer}>
-                        <Text style={styles.bottomSheetTitle}>Confirm Update</Text>
-                        <Text>Are you sure you want to save this education?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button}>
-                            Yes, Save
-                        </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
-                    </View>
-                </BottomSheet> */}
+            <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleDateConfirm}
+                onCancel={hideDatePicker}
+                date={fromValue} // Pass the initial date here
+            />
             <BottomSheet
                 ref={saveBottomSheetRef}
                 index={-1}
@@ -214,9 +189,9 @@ const EducationForm = () => {
                 </View>
             </BottomSheet>
         </View>
-
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -228,7 +203,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 }
+    button: { marginTop: 10 },
+    dateContainer: {
+        marginBottom: 15,
+    },
 });
 
 export default EducationForm;
