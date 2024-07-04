@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Image, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import logo from "../../assets/images/hero-bg.jpg";
-import { Divider, Chip, Text } from "react-native-paper";
+import { Divider, Chip, Text, Icon } from "react-native-paper";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
 
@@ -32,12 +32,20 @@ const ApplicationListCard = ({ application }) => {
               }}
               style={styles.jobImage}
             />
-            <View style={{ marginBottom: 5 }}>
-              <Text style={styles.jobTitle}>{title || 'n/a'}</Text>
-              <Text style={styles.company}>{company || 'n/a'}</Text>
+            <View style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <View>
+                <Text style={styles.jobTitle}>{title || 'n/a'}</Text>
+                <Text style={styles.company}>{company || 'n/a'}</Text>
+              </View>
+              <Icon source="chevron-right" size={25} />
             </View>
           </View>
-          <Divider style={styles.divider} />
+          {/* <Divider style={styles.divider} />
           <View style={{ flexDirection: 'row', left: 65 }}>
             <View style={{ rowGap: 5 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -56,27 +64,8 @@ const ApplicationListCard = ({ application }) => {
                 </Chip>
               </View>
             </View>
-          </View>
-          {/* <View style={styles.jobDetails}>
-            <Text style={styles.jobTitle}>{title || 'n/a'}</Text>
-            <Text style={styles.company}>{company || 'n/a'}</Text>
-            <Text style={styles.location}>
-              <MaterialIcons name="location-on" size={14} color="#0A3480" />
-              {location || 'Location not available'}
-            </Text>
-            <Divider style={styles.divider} />
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              <Chip style={styles.chip} mode="outlined" compact textStyle={styles.chipText}>
-                {workplace || 'Workplace not available'}
-              </Chip>
-              <Chip style={styles.chip} mode="outlined" compact textStyle={styles.chipText}>
-                {type || 'Type not available'}
-              </Chip>
-            </View>
-            <Text style={styles.salaryText}>
-              {formatSalary(salary_from) || 'N/A'} - {formatSalary(salary_to) || 'N/A'} / Monthly
-            </Text>
           </View> */}
+
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -118,7 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   jobTitle: {
-    fontSize: 20,
+    fontSize: 16,
     marginBottom: 4,
     fontWeight: 'bold',
   },

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  Animated,
+  Modal,
+} from "react-native";
 import {
   Text,
   Searchbar,
@@ -8,21 +17,33 @@ import {
   Appbar,
   ActivityIndicator,
   Snackbar,
+  Button,
+  Portal,
+  Dialog,
+  Paragraph,
 } from "react-native-paper";
 import { useUser } from "../../hooks/useUser";
 import { useDashboard } from "./hooks/useDashboard";
 import ApplicationListCard from "../../components/ApplicationListCard";
 import JobApplications from "./JobApplications";
 import { useNavigation } from "@react-navigation/native";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import HeaderNotification from "../../components/HeaderNotification";
-import { Swipeable } from 'react-native-gesture-handler';
+import { Swipeable } from "react-native-gesture-handler";
 
 function Dashboard() {
   const { colors } = useTheme();
   const { user } = useUser();
-  const { data, isFetched, refetch } = useDashboard();
+  const {
+    data,
+    isFetched,
+    refetch,
+    deleteApplication,
+    deleteJobOffer,
+    deleteSavedJob,
+    deleteError,
+  } = useDashboard();
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
@@ -34,6 +55,8 @@ function Dashboard() {
   const [loadingSavedJobs, setLoadingSavedJobs] = useState(false);
   const [loadingJobOffers, setLoadingJobOffers] = useState(false);
   const [deletedItem, setDeletedItem] = useState(null);
+  const [confirmationVisible, setConfirmationVisible] = useState(false); // State for confirmation modal
+  const [itemToDelete, setItemToDelete] = useState(null); // State to store item to be deleted
 
   useEffect(() => {
     if (isFetched) {
@@ -51,12 +74,12 @@ function Dashboard() {
   const handleSeeMore = async (type) => {
     if (type === "offers") {
       setLoadingJobOffers(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setShowMoreOffers(true);
       setLoadingJobOffers(false);
     } else if (type === "savedJobs") {
       setLoadingSavedJobs(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setShowMoreSavedJobs(true);
       setLoadingSavedJobs(false);
     }
@@ -65,22 +88,31 @@ function Dashboard() {
   const handleDelete = (applicationId, type) => {
     let deletedItemData = null;
     if (type === "applications") {
-      deletedItemData = applications.find((application) => application.id === applicationId);
-      setApplications((prevApplications) =>
-        prevApplications.filter((application) => application.id !== applicationId)
+      deletedItemData = applications.find(
+        (application) => application.id === applicationId
       );
     } else if (type === "offers") {
       deletedItemData = offeredJobs.find((job) => job.id === applicationId);
-      setOfferedJobs((prevOfferedJobs) =>
-        prevOfferedJobs.filter((job) => job.id !== applicationId)
-      );
     } else if (type === "savedJobs") {
       deletedItemData = savedJobs.find((job) => job.id === applicationId);
-      setSavedJobs((prevSavedJobs) =>
-        prevSavedJobs.filter((job) => job.id !== applicationId)
-      );
     }
-    setDeletedItem({ id: applicationId, type, data: deletedItemData });
+    setItemToDelete({ id: applicationId, type, data: deletedItemData });
+    setConfirmationVisible(true); // Show confirmation modal
+  };
+
+  const confirmDelete = () => {
+    if (itemToDelete) {
+      if (itemToDelete.type === "applications") {
+        deleteApplication.mutate(itemToDelete.id);
+      } else if (itemToDelete.type === "offers") {
+        deleteJobOffer.mutate(itemToDelete.id);
+      } else if (itemToDelete.type === "savedJobs") {
+        deleteSavedJob.mutate(itemToDelete.id);
+      }
+      setDeletedItem(itemToDelete);
+      setConfirmationVisible(false); // Close confirmation modal
+      setItemToDelete(null); // Clear item to delete state
+    }
   };
 
   const undoDelete = () => {
@@ -96,14 +128,24 @@ function Dashboard() {
     }
   };
 
-  const renderRightActions = (progress, dragX, applicationId, type) => (
-    <TouchableOpacity
-      style={styles.deleteButton}
-      onPress={() => handleDelete(applicationId, type)}
-    >
-      <MaterialIcons name="delete" size={30} color="white" />
-    </TouchableOpacity>
-  );
+  const renderRightActions = (progress, dragX, applicationId, type) => {
+    const trans = dragX.interpolate({
+      inputRange: [-90, 0],
+      outputRange: [0, 100],
+      extrapolate: "clamp",
+    });
+
+    return (
+      <Animated.View style={styles.rightActionContainer}>
+        <TouchableOpacity
+          style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}
+          onPress={() => handleDelete(applicationId, type)}
+        >
+          <MaterialIcons name="delete" size={30} color="gray" />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   return (
     <ScrollView
@@ -129,7 +171,8 @@ function Dashboard() {
           />
           <View>
             <Text style={styles.headerProfession}>
-              Welcome Back <MaterialIcons name="emoji-emotions" color="yellow" />
+              Welcome Back{" "}
+              <MaterialIcons name="emoji-emotions" color="yellow" />
             </Text>
             <Text style={styles.headerName}>
               {user?.firstname || "N/A"}
@@ -152,112 +195,111 @@ function Dashboard() {
           placeholderTextColor="gray"
         />
 
-        {applications.length > 0 && (
-          <View style={styles.card}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Job Applications</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Application')}>
-                <Text style={styles.seeMoreText}>See All</Text>
-              </TouchableOpacity>
-            </View>
-            <Divider style={styles.divider} />
-            <View style={styles.cardContent}>
-              {isFetched && applications.length > 0 ? (
-                applications.slice(0, 3).map((application) => (
-                  <Swipeable
-                    key={application.id}
-                    renderRightActions={(progress, dragX) =>
-                      renderRightActions(progress, dragX, application.id, "applications")
-                    }
-                  >
-                    <JobApplications application={application} />
-                  </Swipeable>
-                ))
-              ) : (
-                <View style={styles.notAvailable}>
-                  <MaterialIcons name="description" size={50} color="gray" />
-                  <Text style={styles.notAvailableText}>Currently, No Application</Text>
-                </View>
-              )}
-            </View>
+        <View style={styles.card}>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Job Applications</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Application")}
+            >
+              <Text style={styles.seeMoreText}>({applications.length})</Text>
+            </TouchableOpacity>
           </View>
-        )}
-
-        {offeredJobs.length > 0 && (
-          <View style={styles.card}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Job Offers</Text>
-              <TouchableOpacity onPress={() => handleSeeMore("offers")} style={styles.seeMoreContainer}>
-                <Text style={styles.seeMoreText}>{loadingJobOffers ? "Loading..." : "See More"}</Text>
-                {loadingJobOffers && <ActivityIndicator animating={true} color={colors.primary} size={14} />}
-              </TouchableOpacity>
-            </View>
-            <Divider style={styles.divider} />
-            <View style={styles.cardContent}>
-              {isFetched && offeredJobs.length > 0 ? (
-                offeredJobs.slice(0, showMoreOffers ? undefined : 1).map((job) => (
-                  <Swipeable
-                    key={job.id}
-                    renderRightActions={(progress, dragX) =>
-                      renderRightActions(progress, dragX, job.id, "offers")
-                    }
-                  >
-                    <ApplicationListCard application={job} />
-                  </Swipeable>
-                ))
-              ) : (
-                <View style={styles.notAvailable}>
-                  <MaterialIcons name="description" size={50} color="gray" />
-                  <Text style={styles.notAvailableText}>Currently, No Job Offers</Text>
-                </View>
-              )}
-            </View>
+          <Divider style={styles.divider} />
+          <View style={styles.cardContent}>
+            {isFetched &&
+              applications.length > 0 &&
+              applications.slice(0, 3).map((application) => (
+                <Swipeable
+                  key={application.id}
+                  renderRightActions={(progress, dragX) =>
+                    renderRightActions(progress, dragX, application.id, "applications")
+                  }
+                >
+                  <JobApplications application={application} />
+                </Swipeable>
+              ))}
           </View>
-        )}
+        </View>
 
-        {savedJobs.length > 0 && (
-          <View style={styles.card}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Saved Jobs</Text>
-              <TouchableOpacity onPress={() => handleSeeMore("savedJobs")} style={styles.seeMoreContainer}>
-                <Text style={styles.seeMoreText}>{loadingSavedJobs ? "Loading..." : "See More"}</Text>
-                {loadingSavedJobs && <ActivityIndicator animating={true} color={colors.primary} size={14} />}
-              </TouchableOpacity>
-            </View>
-            <Divider style={styles.divider} />
-            <View style={styles.cardContent}>
-              {isFetched ? (
-                savedJobs.map((job) => (
-                  <Swipeable
-                    key={job.id}
-                    renderRightActions={(progress, dragX) =>
-                      renderRightActions(progress, dragX, job.id, "savedJobs")
-                    }
-                  >
-                    <ApplicationListCard application={job} />
-                  </Swipeable>
-                ))
-              ) : (
-                <View style={styles.notAvailable}>
-                  <MaterialIcons name="description" size={50} color="gray" />
-                  <Text style={styles.notAvailableText}>Currently, No Saved Job</Text>
-                </View>
-              )}
-            </View>
+        <View style={styles.card}>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Job Offers</Text>
+            <TouchableOpacity
+              onPress={() => handleSeeMore("offers")}
+              style={styles.seeMoreContainer}
+            >
+              <Text style={styles.seeMoreText}>({offeredJobs.length})</Text>
+            </TouchableOpacity>
           </View>
-        )}
+          <Divider style={styles.divider} />
+          <View style={styles.cardContent}>
+            {isFetched &&
+              offeredJobs.length > 0 &&
+              offeredJobs.map((job) => (
+                <Swipeable
+                  key={job.id}
+                  renderRightActions={(progress, dragX) =>
+                    renderRightActions(progress, dragX, job.id, "offers")
+                  }
+                >
+                  <ApplicationListCard application={job} />
+                </Swipeable>
+              ))}
+          </View>
+        </View>
 
-        <Snackbar
-          visible={!!deletedItem}
-          onDismiss={() => setDeletedItem(null)}
-          action={{
-            label: 'Undo',
-            onPress: undoDelete,
-          }}
-        >
-          Item deleted
-        </Snackbar>
+        <View style={styles.card}>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Saved Jobs </Text>
+            <TouchableOpacity
+              onPress={() => handleSeeMore("savedJobs")}
+              style={styles.seeMoreContainer}
+            >
+              <Text style={styles.seeMoreText}>({savedJobs.length})</Text>
+            </TouchableOpacity>
+          </View>
+          <Divider style={styles.divider} />
+          <View style={styles.cardContent}>
+            {isFetched &&
+              savedJobs.length > 0 &&
+              savedJobs.map((job) => (
+                <Swipeable
+                  key={job.id}
+                  renderRightActions={(progress, dragX) =>
+                    renderRightActions(progress, dragX, job.id, "savedJobs")
+                  }
+                >
+                  <ApplicationListCard application={job} />
+                </Swipeable>
+              ))}
+          </View>
+        </View>
       </View>
+
+      {/* Confirmation Modal */}
+      <Portal>
+        <Dialog visible={confirmationVisible} onDismiss={() => setConfirmationVisible(false)}>
+          <Dialog.Title>Delete Item</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Are you sure you want to delete this item?</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setConfirmationVisible(false)}>Cancel</Button>
+            <Button onPress={confirmDelete}>Delete</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      {/* <Snackbar
+        visible={!!deletedItem}
+        onDismiss={() => setDeletedItem(null)}
+        action={{
+          label: "Undo",
+          onPress: undoDelete,
+        }}
+      >
+        Item deleted
+      </Snackbar> */}
     </ScrollView>
   );
 }
@@ -265,10 +307,10 @@ function Dashboard() {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: '#F4F7FB',
+    backgroundColor: "#F4F7FB",
   },
   headerContainer: {
-    backgroundColor: '#0A3480',
+    backgroundColor: "#0A3480",
   },
   userInfoContainer: {
     flexDirection: "row",
@@ -299,7 +341,7 @@ const styles = StyleSheet.create({
   },
   searchbar: {
     height: 40,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: "#E5E5EA",
     marginBottom: 8,
     borderRadius: 100,
   },
@@ -332,41 +374,25 @@ const styles = StyleSheet.create({
   cardContent: {
     marginTop: 8,
   },
-  notAvailable: {
-    padding: 8,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  notAvailableText: {
-    fontWeight: 'bold',
-    color: 'gray',
-    textAlign: 'center',
-    marginTop: 8,
-  },
   seeMoreContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   seeMoreText: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#0A3480',
+    fontWeight: "bold",
+    color: "#0A3480",
+  },
+  rightActionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   deleteButton: {
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     width: 70,
     borderRadius: 8,
     margin: 8,
-  },
-  loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginLeft: 5,
   },
 });
 
