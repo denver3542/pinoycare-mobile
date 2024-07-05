@@ -51,15 +51,14 @@ const EducationForm = () => {
         bottomSheetRef.current?.close();
     });
 
-    const saveBottomSheetRef = useRef(null);
+    const bottomSheetRef = useRef(null);
 
-    const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
+    const handleCloseSaveBottomSheet = () => bottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
-        setTimeout(() => saveBottomSheetRef.current?.expand(), 50);
+        setTimeout(() => bottomSheetRef.current?.expand(), 100);
     };
 
-    const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '30%'], []);
 
     const renderBackdrop = useCallback(
@@ -171,7 +170,7 @@ const EducationForm = () => {
                 date={fromValue} // Pass the initial date here
             />
             <BottomSheet
-                ref={saveBottomSheetRef}
+                ref={bottomSheetRef}
                 index={-1}
                 snapPoints={snapPoints}
                 backdropComponent={renderBackdrop}

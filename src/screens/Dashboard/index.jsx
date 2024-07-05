@@ -55,8 +55,8 @@ function Dashboard() {
   const [loadingSavedJobs, setLoadingSavedJobs] = useState(false);
   const [loadingJobOffers, setLoadingJobOffers] = useState(false);
   const [deletedItem, setDeletedItem] = useState(null);
-  const [confirmationVisible, setConfirmationVisible] = useState(false); // State for confirmation modal
-  const [itemToDelete, setItemToDelete] = useState(null); // State to store item to be deleted
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   useEffect(() => {
     if (isFetched) {
@@ -71,17 +71,11 @@ function Dashboard() {
     refetch().finally(() => setRefreshing(false));
   };
 
-  const handleSeeMore = async (type) => {
+  const handleSeeMore = (type) => {
     if (type === "offers") {
-      setLoadingJobOffers(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setShowMoreOffers(true);
-      setLoadingJobOffers(false);
+      setShowMoreOffers(!showMoreOffers);
     } else if (type === "savedJobs") {
-      setLoadingSavedJobs(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setShowMoreSavedJobs(true);
-      setLoadingSavedJobs(false);
+      setShowMoreSavedJobs(!showMoreSavedJobs);
     }
   };
 
@@ -97,7 +91,7 @@ function Dashboard() {
       deletedItemData = savedJobs.find((job) => job.id === applicationId);
     }
     setItemToDelete({ id: applicationId, type, data: deletedItemData });
-    setConfirmationVisible(true); // Show confirmation modal
+    setConfirmationVisible(true);
   };
 
   const confirmDelete = () => {
@@ -110,8 +104,8 @@ function Dashboard() {
         deleteSavedJob.mutate(itemToDelete.id);
       }
       setDeletedItem(itemToDelete);
-      setConfirmationVisible(false); // Close confirmation modal
-      setItemToDelete(null); // Clear item to delete state
+      setConfirmationVisible(false);
+      setItemToDelete(null);
     }
   };
 
@@ -201,7 +195,7 @@ function Dashboard() {
             <TouchableOpacity
               onPress={() => navigation.navigate("Application")}
             >
-              <Text style={styles.seeMoreText}>({applications.length})</Text>
+              <Text style={styles.seeMoreText}>See All ({applications.length})</Text>
             </TouchableOpacity>
           </View>
           <Divider style={styles.divider} />
@@ -224,27 +218,24 @@ function Dashboard() {
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Offers</Text>
-            <TouchableOpacity
-              onPress={() => handleSeeMore("offers")}
-              style={styles.seeMoreContainer}
-            >
-              <Text style={styles.seeMoreText}>({offeredJobs.length})</Text>
+            <TouchableOpacity onPress={() => handleSeeMore("offers")} style={styles.seeMoreContainer}>
+              <Text style={styles.seeMoreText}>
+                {showMoreOffers ? "Show Less" : `Show More (${offeredJobs.length})`}
+              </Text>
             </TouchableOpacity>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {isFetched &&
-              offeredJobs.length > 0 &&
-              offeredJobs.map((job) => (
-                <Swipeable
-                  key={job.id}
-                  renderRightActions={(progress, dragX) =>
-                    renderRightActions(progress, dragX, job.id, "offers")
-                  }
-                >
-                  <ApplicationListCard application={job} />
-                </Swipeable>
-              ))}
+            {isFetched && offeredJobs.length > 0 && (showMoreOffers ? offeredJobs : offeredJobs.slice(0, 5)).map((job) => (
+              <Swipeable
+                key={job.id}
+                renderRightActions={(progress, dragX) =>
+                  renderRightActions(progress, dragX, job.id, "offers")
+                }
+              >
+                <ApplicationListCard application={job} />
+              </Swipeable>
+            ))}
           </View>
         </View>
 
@@ -255,25 +246,26 @@ function Dashboard() {
               onPress={() => handleSeeMore("savedJobs")}
               style={styles.seeMoreContainer}
             >
-              <Text style={styles.seeMoreText}>({savedJobs.length})</Text>
+              <Text style={styles.seeMoreText}>
+                {showMoreSavedJobs ? "Show Less" : `Show More (${savedJobs.length})`}
+              </Text>
             </TouchableOpacity>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {isFetched &&
-              savedJobs.length > 0 &&
-              savedJobs.map((job) => (
-                <Swipeable
-                  key={job.id}
-                  renderRightActions={(progress, dragX) =>
-                    renderRightActions(progress, dragX, job.id, "savedJobs")
-                  }
-                >
-                  <ApplicationListCard application={job} />
-                </Swipeable>
-              ))}
+            {isFetched && savedJobs.length > 0 && (showMoreSavedJobs ? savedJobs : savedJobs.slice(0, 5)).map((job) => (
+              <Swipeable
+                key={job.id}
+                renderRightActions={(progress, dragX) =>
+                  renderRightActions(progress, dragX, job.id, "savedJobs")
+                }
+              >
+                <ApplicationListCard application={job} />
+              </Swipeable>
+            ))}
           </View>
         </View>
+
       </View>
 
       {/* Confirmation Modal */}

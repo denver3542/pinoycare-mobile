@@ -125,7 +125,7 @@ const SeminarsAndTrainingsForm = () => {
 
                     {/* Date Started Picker */}
                     <View style={styles.datePickerContainer}>
-                        <TouchableOpacity >
+                        <TouchableOpacity onPress={() => showDatePicker('date_started')}>
                             <CustomTextInput
                                 control={control}
                                 label="Date Started"
@@ -141,7 +141,7 @@ const SeminarsAndTrainingsForm = () => {
 
                     {/* Date Completed Picker */}
                     <View style={styles.datePickerContainer}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => showDatePicker('date_started')}>
                             <CustomTextInput
                                 control={control}
                                 label="Date Completed"
@@ -189,12 +189,14 @@ const SeminarsAndTrainingsForm = () => {
                     <View style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
-                            Save Changes
-                        </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
+                        <View style={{ marginTop: 10, gap: 5 }}>
+                            <Button mode="contained" onPress={handleSubmit(onSubmit)} labelStyle={{ color: 'white' }}>
+                                Save Changes
+                            </Button>
+                            <Button onPress={handleCloseSaveBottomSheet} labelStyle={{ color: 'black' }}>
+                                Cancel
+                            </Button>
+                        </View>
                     </View>
                 </BottomSheet>
             </View>

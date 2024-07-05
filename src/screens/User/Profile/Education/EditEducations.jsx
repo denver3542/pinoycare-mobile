@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
 import { IconButton, Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useUser } from '../../../../hooks/useUser';
 import moment from 'moment';
+import { Swipeable } from 'react-native-gesture-handler'; // Import Swipeable component
+import { useUser } from '../../../../hooks/useUser';
 
 const LoadMoreButton = ({ onPress, loading }) => {
     return (
@@ -23,7 +24,6 @@ const ChangeEducationScreen = () => {
     const { user } = useUser();
     const [visibleItems, setVisibleItems] = useState(5);
     const [loading, setLoading] = useState(false);
-
 
     const loadMore = () => {
         setLoading(true);
@@ -45,29 +45,55 @@ const ChangeEducationScreen = () => {
         return educationLevels[level] || '';
     };
 
-    const renderItem = useMemo(() => ({ item }) => (
-        <View style={styles.educationContainer}>
-            <View style={styles.row}>
-                <View style={styles.educationContent}>
-                    <View style={styles.headerRow}>
-                        <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
-                        <IconButton
-                            icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
-                            size={20}
-                            onPress={() => navigation.navigate("UpdateEducation", { educationItem: item })}
-                            style={styles.iconButton}
-                        />
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-                        <Text style={styles.educationDetail}>
-                            {item.school_name.length > 25 ? `${item.school_name.slice(0, 25)}...` : item.school_name}
-                        </Text>
+    const handleDelete = (itemId) => {
+        console.log("Deleting item with ID:", itemId);
+    };
 
-                        <Text style={styles.educationDetail}>{moment(item.from).format('MMM YYYY')} - {moment(item.to).format('MMM YYYY')}</Text>
+    const renderRightActions = (progress, dragX, itemId) => {
+        const trans = dragX.interpolate({
+            inputRange: [-100, 0],
+            outputRange: [0, 100],
+            extrapolate: 'clamp',
+        });
+
+        return (
+            <TouchableOpacity
+                style={[styles.rightActionContainer]}
+                onPress={() => handleDelete(itemId)}
+            >
+                <Animated.View style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}>
+                    <MaterialIcons name="delete" size={30} color="gray" />
+                </Animated.View>
+            </TouchableOpacity>
+        );
+    };
+
+    const renderItem = useMemo(() => ({ item }) => (
+        <Swipeable
+            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.id)}
+        >
+            <View style={styles.educationContainer}>
+                <View style={styles.row}>
+                    <View style={styles.educationContent}>
+                        <View style={styles.headerRow}>
+                            <Text style={styles.educationTitle}>{getEducationLevelName(item.level)}</Text>
+                            <IconButton
+                                icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                                size={20}
+                                onPress={() => navigation.navigate("UpdateEducation", { educationItem: item })}
+                                style={styles.iconButton}
+                            />
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+                            <Text style={styles.educationDetail}>
+                                {item.school_name.length > 25 ? `${item.school_name.slice(0, 25)}...` : item.school_name}
+                            </Text>
+                            <Text style={styles.educationDetail}>{moment(item.from).format('MMM YYYY')} - {moment(item.to).format('MMM YYYY')}</Text>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
+        </Swipeable>
     ), [navigation]);
 
     return (
@@ -128,8 +154,6 @@ const styles = StyleSheet.create({
         height: 80,
         borderRadius: 10,
     },
-
-
     iconButton: {
         padding: 0,
         margin: 0,
@@ -143,6 +167,19 @@ const styles = StyleSheet.create({
     loadMoreButtonText: {
         color: '#556789',
         fontWeight: 'bold',
+    },
+    rightActionContainer: {
+        // flex: 1,
+        flexDirection: 'row',
+        // justifyContent: 'flex-end',
+    },
+    deleteButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 100,
+        borderRadius: 8,
+        margin: 8,
+        // backgroundColor: 'red',
     },
 });
 

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Appbar, Divider, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -33,44 +33,40 @@ const EditWorkExperience = () => {
     };
 
     const renderItem = useMemo(() => {
-        return ({ item }) => {
-
-            return (
-                <View style={styles.itemContainer}>
-                    {/* <View style={styles.imageContainer}>
-                        <Image
-                            source={item.media.length > 0 ? { uri: item.media[0].original_url } : require('../../../../../assets/images/sample-profile.jpg')}
-                            style={styles.mediaImage}
+        return ({ item }) => (
+            <View style={styles.itemContainer}>
+                <View style={styles.textContainer}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.textTitle}>{item.position}</Text>
+                        <IconButton
+                            style={styles.iconButton}
+                            icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />}
+                            size={20}
+                            onPress={() => navigation.navigate("UpdateWorkExperience", { experienceItem: item })}
                         />
-                    </View> */}
-                    <View style={styles.textContainer}>
-                        <View style={styles.titleContainer}>
-                            <Text style={styles.textTitle}>{item.position}</Text>
-                            <IconButton style={styles.iconButton} icon={() => <MaterialIcons name="edit" size={20} color="#0A3480" />} size={20} onPress={() => navigation.navigate("UpdateWorkExperience", { experienceItem: item })} />
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-                            <Text style={styles.descriptionText}>{item.company_name}</Text>
-                            <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_ended).format('MMM YYYY')}</Text>
-                        </View>
-                        <Text style={styles.descriptionText}>{item.salary}</Text>
-                        <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-                        <View>
-                            <Text style={{ fontWeight: 'bold', color: 'gray' }}>Contact Person Detail</Text>
-                            <Text style={styles.descriptionText}>{item.contact_person}</Text>
-                            <Text style={styles.descriptionText}>{item.contact_phone}</Text>
-                            <Text style={styles.descriptionText}>{item.contact_position}</Text>
-                        </View>
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.descriptionText}>{item.company_name}</Text>
+                        <Text style={styles.contentText}>{moment(item.date_started).format('MMM YYYY')} - {moment(item.date_ended).format('MMM YYYY')}</Text>
+                    </View>
+                    <Text style={styles.descriptionText}>{item.salary}</Text>
+                    <Divider style={styles.divider} />
+                    <View>
+                        <Text style={styles.sectionTitle}>Contact Person Detail</Text>
+                        <Text style={styles.descriptionText}>{item.contact_person}</Text>
+                        <Text style={styles.descriptionText}>{item.contact_phone}</Text>
+                        <Text style={styles.descriptionText}>{item.contact_position}</Text>
                     </View>
                 </View>
-            );
-        };
+            </View>
+        );
     }, [navigation]);
 
     return (
         <View style={styles.container}>
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Edit Work Experience" titleStyle={{ color: 'white' }} />
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.BackAction onPress={navigation.goBack} color='white' />
+                <Appbar.Content title="Edit Work Experience" titleStyle={styles.appbarTitle} />
                 <Appbar.Action icon={() => <MaterialIcons name="add" size={24} color="white" />} onPress={() => navigation.navigate("AddWorkExperience")} />
             </Appbar.Header>
             <FlatList
@@ -92,6 +88,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
+    appbar: {
+        backgroundColor: '#0A3480',
+    },
+    appbarTitle: {
+        color: 'white',
+    },
     itemContainer: {
         flexDirection: 'row',
         backgroundColor: 'white',
@@ -100,13 +102,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
         borderRadius: 10,
         elevation: 1,
-        // alignItems: 'center',
-    },
-    imageContainer: {},
-    mediaImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 10,
     },
     textContainer: {
         flex: 1,
@@ -139,6 +134,14 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    divider: {
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    sectionTitle: {
+        fontWeight: 'bold',
+        color: 'gray',
     },
     loadMoreButton: {
         alignItems: 'center',

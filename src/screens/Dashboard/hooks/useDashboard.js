@@ -66,8 +66,12 @@ export function useDashboard() {
         setDeleteError(err.message);
         queryClient.setQueryData(['dashboard'], context.previousData);
       },
-      onSettled: () => {
-        queryClient.invalidateQueries(['dashboard']);
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(['dashboard'])
+        // queryClient.invalidateQueries(['job', data.job_id]);
+        queryClient.invalidateQueries('jobs');
+        queryClient.invalidateQueries(['user']);
+        queryClient.invalidateQueries('savedJobs');
       }
     }
   );
@@ -103,10 +107,10 @@ export function useDashboard() {
     (savedJobId) => deleteResource('/delete/saved-jobs', 'savedjob_id', savedJobId),
     {
       onMutate: async (savedJobId) => {
-        await queryClient.cancelQueries(['dashboard']); // Cancel ongoing dashboard queries
-        const previousData = queryClient.getQueryData(['dashboard']); // Get previous dashboard data
+        await queryClient.cancelQueries(['dashboard']);
+        const previousData = queryClient.getQueryData(['dashboard']);
 
-        // Optimistically update the cache to remove the deleted saved job
+
         queryClient.setQueryData(['dashboard'], (old) => {
           if (!old) return old;
 
@@ -119,7 +123,7 @@ export function useDashboard() {
         return { previousData };
       },
       onError: (err, variables, context) => {
-        // Handle errors and revert back to previous dashboard data on error
+
         setDeleteError(err.message);
         queryClient.setQueryData(['dashboard'], context.previousData);
       },
@@ -127,10 +131,13 @@ export function useDashboard() {
         const { job_id: jobId } = data || {};
 
         if (jobId) {
-          queryClient.invalidateQueries(['job', jobId], { exact: true }); // Invalidate job query with exact match on job ID
+          queryClient.invalidateQueries(['job', jobId], { exact: true });
         }
 
-        queryClient.invalidateQueries(['dashboard']); // Invalidate dashboard query after mutation
+        queryClient.invalidateQueries(['dashboard']);
+        queryClient.invalidateQueries('jobs');
+        queryClient.invalidateQueries(['user']);
+        queryClient.invalidateQueries('savedJobs');
       }
     }
   );

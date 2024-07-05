@@ -113,6 +113,7 @@ const AddWorkExperience = () => {
                             name="experiences[0].company_name"
                             rules={{ required: 'Company Name is required' }}
                             error={errors.experiences && errors.experiences[0]?.company_name}
+                            onFocus={handleInputFocus}
                         />
 
                         <CustomTextInput
@@ -122,10 +123,12 @@ const AddWorkExperience = () => {
                             name="experiences[0].position"
                             rules={{ required: 'Position is required' }}
                             error={errors.experiences && errors.experiences[0]?.position}
+                            onFocus={handleInputFocus}
                         />
 
                         <TouchableOpacity
                             style={styles.dateContainer}
+                            onPress={() => showDatePickerForField('experiences[0].date_started')}
                         >
                             <CustomTextInput
                                 control={control}
@@ -137,10 +140,12 @@ const AddWorkExperience = () => {
                                 editable={false}
                                 value={moment(dateStartedValue).format('YYYY-MM-DD')}
                                 onPress={() => showDatePickerForField('experiences[0].date_started')}
+                                onFocus={handleInputFocus}
                             />
                         </TouchableOpacity>
 
                         <TouchableOpacity
+                            onPress={() => showDatePickerForField('experiences[0].date_ended')}
                         >
                             <CustomTextInput
                                 control={control}
@@ -152,6 +157,7 @@ const AddWorkExperience = () => {
                                 editable={false}
                                 value={moment(dateEndedValue).format('YYYY-MM-DD')}
                                 onPress={() => showDatePickerForField('experiences[0].date_ended')}
+                                onFocus={handleInputFocus}
                             />
                         </TouchableOpacity>
 
@@ -162,6 +168,7 @@ const AddWorkExperience = () => {
                             name="experiences[0].salary"
                             rules={{ required: 'Salary is required' }}
                             error={errors.experiences && errors.experiences[0]?.salary}
+                            onFocus={handleInputFocus}
                         />
 
                         <Divider style={styles.divider} />
@@ -175,6 +182,7 @@ const AddWorkExperience = () => {
                             name="experiences[0].contact_person"
                             rules={{ required: 'Contact Person is required' }}
                             error={errors.experiences && errors.experiences[0]?.contact_person}
+                            onFocus={handleInputFocus}
                         />
 
                         <CustomTextInput
@@ -184,6 +192,7 @@ const AddWorkExperience = () => {
                             name="experiences[0].contact_phone"
                             rules={{ required: 'Contact Phone is required' }}
                             error={errors.experiences && errors.experiences[0]?.contact_phone}
+                            onFocus={handleInputFocus}
                         />
 
                         <CustomTextInput
@@ -193,6 +202,7 @@ const AddWorkExperience = () => {
                             name="experiences[0].contact_position"
                             rules={{ required: 'Contact Position is required' }}
                             error={errors.experiences && errors.experiences[0]?.contact_position}
+                            onFocus={handleInputFocus}
                         />
 
                         <Button

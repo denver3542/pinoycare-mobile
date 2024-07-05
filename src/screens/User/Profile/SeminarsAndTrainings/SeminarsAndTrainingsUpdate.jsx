@@ -119,7 +119,7 @@ const SeminarsAndTrainingsUpdate = () => {
 
                             {/* Date started input using TouchableOpacity */}
                             <TouchableOpacity
-
+                                onPress={() => showDatePickerForField('date_started')}
                             >
                                 <CustomTextInput
                                     control={control}
@@ -133,7 +133,7 @@ const SeminarsAndTrainingsUpdate = () => {
                             </TouchableOpacity>
 
                             {/* Date completed input using TouchableOpacity */}
-                            <TouchableOpacity
+                            <TouchableOpacity onPress={() => showDatePickerForField('date_completed')}
                             >
                                 <CustomTextInput
                                     control={control}
@@ -168,7 +168,7 @@ const SeminarsAndTrainingsUpdate = () => {
                             )}
 
                             {/* Submit button */}
-                            <Button mode="contained" onPress={handleOpenSaveBottomSheet} disabled={isLoading}>
+                            <Button mode="contained" onPress={handleOpenSaveBottomSheet}>
                                 <Text style={{ color: 'white' }}>Save</Text>
                             </Button>
                         </View>
@@ -184,12 +184,14 @@ const SeminarsAndTrainingsUpdate = () => {
                     <View style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
-                            Save Changes
-                        </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
+                        <View style={{ marginTop: 10, gap: 5 }}>
+                            <Button mode="contained" onPress={handleSubmit(onSubmit)} labelStyle={{ color: 'white' }}>
+                                Save Changes
+                            </Button>
+                            <Button onPress={handleCloseSaveBottomSheet} labelStyle={{ color: 'black' }}>
+                                Cancel
+                            </Button>
+                        </View>
                     </View>
                 </BottomSheet>
 
@@ -212,9 +214,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    button: {
-        marginTop: 10,
-    },
+
 });
 
 export default SeminarsAndTrainingsUpdate;

@@ -106,7 +106,7 @@ const UpdateEducation = () => {
                             value={selectedLevel}
                             onChangeText={(text) => setValue('level', text)}
                             items={[
-                                { label: 'Select a Level', value: '' },
+                                // { label: 'Select a Level', value: '' },
                                 { label: 'Elementary Education', value: 'elementary' },
                                 { label: 'Junior High School', value: 'secondary' },
                                 { label: 'Senior High School', value: 'secondary_k12' },
@@ -181,10 +181,10 @@ const UpdateEducation = () => {
                     <View style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button}>
+                        <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button} labelStyle={{ color: 'white' }}>
                             Save Changes
                         </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
+                        <Button textColor='black' onPress={handleCloseSaveBottomSheet} style={styles.button}>
                             Cancel
                         </Button>
                     </View>
@@ -194,7 +194,7 @@ const UpdateEducation = () => {
                     mode="date"
                     onConfirm={handleDateConfirm}
                     onCancel={hideDatePicker}
-                    date={selectedDateField === 'from' ? fromValue : toValue} // Pass the initial date here
+                    date={selectedDateField === 'from' ? fromValue : toValue}
                 />
             </View>
         </TouchableWithoutFeedback>

@@ -40,7 +40,8 @@ const AddSkillScreen = () => {
   const snapPoints = useMemo(() => ['25%', '30%'], []);
 
   const openBottomSheet = () => {
-    bottomSheetRef.current?.expand();
+    Keyboard.dismiss();
+    setTimeout(() => bottomSheetRef.current?.expand(), 50);
   };
 
   const closeBottomSheet = () => {
@@ -53,7 +54,7 @@ const AddSkillScreen = () => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
         <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
           <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />

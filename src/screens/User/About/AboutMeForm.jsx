@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
-import { View, StyleSheet, Text, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, StyleSheet, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Button, Appbar } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useForm } from 'react-hook-form';
@@ -34,7 +34,7 @@ const AboutMeScreen = () => {
             const { data } = await axiosInstance.put(`/user/profile/update-about`, dataToUpdate, { headers });
             const updatedUser = { ...user, ...dataToUpdate };
             queryClient.setQueryData(['user'], updatedUser);
-            AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
+            await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
             console.log('About Me update successful:', data);
             navigation.goBack();
             return data;
@@ -47,7 +47,7 @@ const AboutMeScreen = () => {
     };
 
     const handleOpenUpdateBottomSheet = () => {
-        Keyboard.dismiss()
+        Keyboard.dismiss();
         setTimeout(() => updateBottomSheetRef.current?.expand(), 50);
     };
 
@@ -66,18 +66,18 @@ const AboutMeScreen = () => {
     );
 
     return (
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                     <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
                     <Appbar.Content title="Update About" titleStyle={{ color: 'white' }} />
                 </Appbar.Header>
-                <View style={styles.container}>
-                    <View style={{ padding: 15, marginTop: 25 }}>
+                <View style={styles.contentContainer}>
+                    <View style={styles.formContainer}>
                         <CustomTextInput
                             mode="outlined"
                             control={control}
-                            multiline={true}
+                            multiline
                             numberOfLines={15}
                             name="about_me"
                             placeholder="Tell me about yourself"
@@ -94,15 +94,15 @@ const AboutMeScreen = () => {
                     index={-1}
                     snapPoints={snapPoints}
                     backdropComponent={renderBackdrop}
-                    enablePanDownToClose={true}
+                    enablePanDownToClose
                 >
                     <View style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Update</Text>
                         <Text>Are you sure you want to update your information?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
+                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button} textColor='white'>
                             Yes, Update
                         </Button>
-                        <Button onPress={handleCloseUpdateBottomSheet} style={styles.button}>
+                        <Button onPress={handleCloseUpdateBottomSheet} style={styles.button} textColor='black'>
                             Cancel
                         </Button>
                     </View>
@@ -115,9 +115,20 @@ const AboutMeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F4F7FB'
+        backgroundColor: '#F4F7FB',
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    contentContainer: {
+        flex: 1,
+        padding: 15,
+        marginTop: 25,
+    },
+    formContainer: {
+        marginBottom: 15,
+    },
+    bottomSheetContent: {
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+    },
     bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
