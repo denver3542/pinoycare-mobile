@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from "../../../hooks/useAuth";
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
@@ -40,7 +40,7 @@ const EditUserProfileScreen = () => {
 
     const saveBottomSheetRef = useRef(null);
     const deleteBottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const snapPoints = useMemo(() => ['25%',], []);
 
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
@@ -285,36 +285,25 @@ const EditUserProfileScreen = () => {
                     backdropComponent={renderBackdrop}
                     enablePanDownToClose={true}
                 >
-                    <View style={styles.bottomSheetContent}>
+                    <BottomSheetView style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
-                            Save Changes
-                        </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
-                    </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>Save Changes</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </BottomSheetView>
                 </BottomSheet>
 
-                {/* <BottomSheet
-                    ref={deleteBottomSheetRef}
-                    index={-1}
-                    snapPoints={snapPoints}
-                    backdropComponent={renderBackdrop}
-                    enablePanDownToClose={true}
-                >
-                    <View style={styles.bottomSheetContent}>
-                        <Text style={styles.bottomSheetTitle}>Delete Account</Text>
-                        <Text>Are you sure you want to delete your account?</Text>
-                        <Button mode="contained" onPress={deleteUser} style={styles.button}>
-                            Yes, Delete
-                        </Button>
-                        <Button onPress={handleCloseDeleteBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
-                    </View>
-                </BottomSheet> */}
+
             </View>
         </TouchableWithoutFeedback>
     );
@@ -365,14 +354,40 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 4
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    bottomSheetContent: { padding: 20, flex: 1 },
     bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    button: {
+    buttonContainer: {
         marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 

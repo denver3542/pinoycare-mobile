@@ -7,8 +7,9 @@ import moment from 'moment';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useUpdateTrainingsAndSeminars } from './hooks/useSeminarsActions';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const SeminarsAndTrainingsUpdate = () => {
     const navigation = useNavigation();
@@ -16,7 +17,7 @@ const SeminarsAndTrainingsUpdate = () => {
     const { seminarsItem } = route.params;
 
     const saveBottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const snapPoints = useMemo(() => ['25%'], []);
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
@@ -106,6 +107,9 @@ const SeminarsAndTrainingsUpdate = () => {
                 </Appbar.Header>
 
                 <ScrollView>
+                    <Spinner
+                        visible={isLoading}
+                    />
                     <View style={{ padding: 8 }}>
                         {/* Form for updating seminars and trainings */}
                         <View style={styles.container}>
@@ -181,18 +185,22 @@ const SeminarsAndTrainingsUpdate = () => {
                     backdropComponent={renderBackdrop}
                     enablePanDownToClose={true}
                 >
-                    <View style={styles.bottomSheetContent}>
+                    <BottomSheetView style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <View style={{ marginTop: 10, gap: 5 }}>
-                            <Button mode="contained" onPress={handleSubmit(onSubmit)} labelStyle={{ color: 'white' }}>
-                                Save Changes
-                            </Button>
-                            <Button onPress={handleCloseSaveBottomSheet} labelStyle={{ color: 'black' }}>
-                                Cancel
-                            </Button>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>Save Changes</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
                         </View>
-                    </View>
+                    </BottomSheetView>
                 </BottomSheet>
 
             </View>
@@ -208,11 +216,40 @@ const styles = StyleSheet.create({
     dateContainer: {
         marginBottom: 16,
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+    bottomSheetContent: { padding: 20, flex: 1 },
     bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
+    },
+    buttonContainer: {
+        marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 
 });

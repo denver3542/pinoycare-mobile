@@ -7,9 +7,10 @@ import moment from 'moment';
 import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useUpdateWorkExperience } from './hooks/useWorkExperience';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const UpdateWorkExperience = () => {
     const navigation = useNavigation();
@@ -82,7 +83,7 @@ const UpdateWorkExperience = () => {
     }
 
     const saveBottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const snapPoints = useMemo(() => ['25%'], []);
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
@@ -93,11 +94,6 @@ const UpdateWorkExperience = () => {
         []
     );
 
-    const handleInputFocus = () => {
-        if (saveBottomSheetRef.current) {
-            saveBottomSheetRef.current.close();
-        }
-    };
 
     return (
         <TouchableWithoutFeedback>
@@ -108,6 +104,9 @@ const UpdateWorkExperience = () => {
                 </Appbar.Header>
 
                 <ScrollView style={styles.container}>
+                    <Spinner
+                        visible={isLoading}
+                    />
                     <View style={styles.formContainer}>
                         <CustomTextInput
                             control={control}
@@ -187,7 +186,7 @@ const UpdateWorkExperience = () => {
                             />
                         )}
 
-                        <Button mode="contained" onPress={handleOpenSaveBottomSheet} disabled={isLoading}>
+                        <Button mode="contained" onPress={handleOpenSaveBottomSheet}>
                             <Text style={{ color: 'white' }}>Save</Text>
                         </Button>
                     </View>
@@ -199,16 +198,23 @@ const UpdateWorkExperience = () => {
                     backdropComponent={renderBackdrop}
                     enablePanDownToClose={true}
                 >
-                    <View style={styles.bottomSheetContent}>
+                    <BottomSheetView style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>
-                            Save Changes
-                        </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
-                    </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>Save Changes</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+
+                    </BottomSheetView>
                 </BottomSheet>
             </View>
         </TouchableWithoutFeedback>
@@ -232,8 +238,39 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 }
+    bottomSheetContent: {
+        padding: 20,
+        flex: 1
+    },
+    buttonContainer: {
+        marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
 });
 
 export default UpdateWorkExperience;

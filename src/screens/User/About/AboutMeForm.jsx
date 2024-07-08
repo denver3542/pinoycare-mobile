@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from '../../../../utils/axiosConfig';
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useUser } from '../../../hooks/useUser';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 
 const AboutMeScreen = () => {
     const { user } = useUser();
@@ -20,11 +20,6 @@ const AboutMeScreen = () => {
             about_me: user?.about_me || '',
         },
     });
-
-    const [isLoading, setIsLoading] = useState(false);
-
-    const updateBottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
 
     const updateAboutMe = async (dataToUpdate) => {
         try {
@@ -46,24 +41,24 @@ const AboutMeScreen = () => {
         }
     };
 
+    const [isLoading, setIsLoading] = useState(false);
+
+    const updateBottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%'], []);
+    const handleCloseUpdateBottomSheet = () => { updateBottomSheetRef.current?.close(); };
     const handleOpenUpdateBottomSheet = () => {
         Keyboard.dismiss();
-        setTimeout(() => updateBottomSheetRef.current?.expand(), 50);
+        setTimeout(() => updateBottomSheetRef.current?.expand());
     };
-
-    const handleCloseUpdateBottomSheet = () => {
-        updateBottomSheetRef.current?.close();
-    };
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+        []
+    );
 
     const onSubmit = async (data) => {
         await updateAboutMe(data);
         handleCloseUpdateBottomSheet();
     };
-
-    const renderBackdrop = useCallback(
-        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
-        []
-    );
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -83,7 +78,11 @@ const AboutMeScreen = () => {
                             placeholder="Tell me about yourself"
                             label='About Me'
                         />
-                        <Button mode="contained" onPress={handleOpenUpdateBottomSheet}>
+                        <Button
+                            mode="contained"
+                            onPress={handleOpenUpdateBottomSheet}
+                            labelStyle={{ color: 'white' }}
+                        >
                             Update
                         </Button>
                     </View>
@@ -94,18 +93,24 @@ const AboutMeScreen = () => {
                     index={-1}
                     snapPoints={snapPoints}
                     backdropComponent={renderBackdrop}
-                    enablePanDownToClose
+                    enablePanDownToClose={true}
                 >
-                    <View style={styles.bottomSheetContent}>
+                    <BottomSheetView style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Update</Text>
                         <Text>Are you sure you want to update your information?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button} textColor='white'>
-                            Yes, Update
-                        </Button>
-                        <Button onPress={handleCloseUpdateBottomSheet} style={styles.button} textColor='black'>
-                            Cancel
-                        </Button>
-                    </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>Yes, Update</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseUpdateBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </BottomSheetView>
                 </BottomSheet>
             </View>
         </TouchableWithoutFeedback>
@@ -125,17 +130,43 @@ const styles = StyleSheet.create({
     formContainer: {
         marginBottom: 15,
     },
-    bottomSheetContent: {
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-    },
     bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    button: {
+    bottomSheetContent: {
+        padding: 20,
+        flex: 1
+    },
+    buttonContainer: {
         marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 

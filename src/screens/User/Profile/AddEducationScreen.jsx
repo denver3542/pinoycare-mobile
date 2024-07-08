@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { Button, Appbar, HelperText } from 'react-native-paper';
+import { Button, Appbar, ActivityIndicator } from 'react-native-paper';
 import CustomTextInput from '../../../components/CustomTextInput';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useUser } from '../../../hooks/useUser';
 import { useEducations } from './Education/hooks/useEducationActions';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CustomSelectBox from "../../../components/CustomSelectBox";
 import { useNavigation } from '@react-navigation/native';
@@ -26,29 +25,26 @@ const EducationForm = () => {
         },
     });
 
-    const [isLoading, setIsLoading] = useState(false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDateField, setSelectedDateField] = useState(null);
 
     const fromValue = watch('from') || new Date();
     const toValue = watch('to') || new Date();
 
-    const { mutate } = useEducations();
+    const { mutate, isLoading } = useEducations();
+
     useEffect(() => {
         if (user) {
             setValue('level', user.level);
             setValue('school_name', user.school_name);
-            setValue('course', user.track);
+            setValue('track', user.track);
             setValue('from', user.from);
             setValue('to', user.to);
         }
     }, [user, setValue]);
 
     const onSave = handleSubmit(async (data) => {
-        setIsLoading(true);
         await mutate(data);
-        setIsLoading(false);
-        bottomSheetRef.current?.close();
     });
 
     const bottomSheetRef = useRef(null);
@@ -56,10 +52,10 @@ const EducationForm = () => {
     const handleCloseSaveBottomSheet = () => bottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
-        setTimeout(() => bottomSheetRef.current?.expand(), 100);
+        setTimeout(() => bottomSheetRef.current?.expand(), 50);
     };
 
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const snapPoints = useMemo(() => ['25%'], []);
 
     const renderBackdrop = useCallback(
         (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
@@ -93,6 +89,9 @@ const EducationForm = () => {
 
     return (
         <View style={{ flex: 1 }}>
+            <Spinner
+                visible={isLoading}
+            />
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
                 <Appbar.Content title="Add Education" titleStyle={{ color: 'white' }} />
@@ -161,13 +160,12 @@ const EducationForm = () => {
                     </View>
                 </View>
             </TouchableWithoutFeedback>
-            <Spinner visible={isLoading} />
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
                 onConfirm={handleDateConfirm}
                 onCancel={hideDatePicker}
-                date={fromValue} // Pass the initial date here
+                date={fromValue}
             />
             <BottomSheet
                 ref={bottomSheetRef}
@@ -176,16 +174,22 @@ const EducationForm = () => {
                 backdropComponent={renderBackdrop}
                 enablePanDownToClose={true}
             >
-                <View style={styles.bottomSheetContent}>
+                <BottomSheetView style={styles.bottomSheetContent}>
                     <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                     <Text>Are you sure you want to save these changes?</Text>
-                    <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button}>
-                        Save Changes
-                    </Button>
-                    <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                        Cancel
-                    </Button>
-                </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableWithoutFeedback onPress={onSave}>
+                            <View style={[styles.button, styles.yesButton]}>
+                                <Text style={styles.buttonText}>Save Changes</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                            <View style={[styles.button, styles.cancelButton]}>
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </BottomSheetView>
             </BottomSheet>
         </View>
     );
@@ -201,11 +205,45 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 },
+    bottomSheetContent: {
+        padding: 20,
+        flex: 1
+    },
+    buttonContainer: {
+        marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
     dateContainer: {
         marginBottom: 15,
     },
+    spinnerTextStyle: {
+        color: '#FFF'
+    }
 });
 
 export default EducationForm;

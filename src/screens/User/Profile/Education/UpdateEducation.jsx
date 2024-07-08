@@ -9,6 +9,7 @@ import moment from 'moment';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useUpdateEducations } from './hooks/useEducationActions';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const UpdateEducation = () => {
     const navigation = useNavigation();
@@ -72,7 +73,7 @@ const UpdateEducation = () => {
     const selectedLevel = watch('level');
 
     const saveBottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const snapPoints = useMemo(() => ['25%'], []);
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
@@ -170,6 +171,7 @@ const UpdateEducation = () => {
                         </Button>
 
                     </View>
+                    <Spinner visible={isLoading} />
                 </View>
                 <BottomSheet
                     ref={saveBottomSheetRef}
@@ -181,12 +183,18 @@ const UpdateEducation = () => {
                     <View style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button} labelStyle={{ color: 'white' }}>
-                            Save Changes
-                        </Button>
-                        <Button textColor='black' onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSave)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>  Save Changes</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
                     </View>
                 </BottomSheet>
                 <DateTimePickerModal
@@ -221,9 +229,40 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 },
-    dateContainer: {
+    bottomSheetContent: {
+        padding: 20,
+        flex: 1
+    },
+    buttonContainer: {
+        marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    eContainer: {
         marginBottom: 15,
     },
 });

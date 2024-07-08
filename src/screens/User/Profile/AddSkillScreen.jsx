@@ -4,9 +4,8 @@ import { Button, Appbar, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import Spinner from 'react-native-loading-spinner-overlay';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import CustomTextInput from '../../../components/CustomTextInput';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import useSkills from './Skills/hooks/useSkills';
 
 const AddSkillScreen = () => {
@@ -37,7 +36,7 @@ const AddSkillScreen = () => {
 
   // Bottom Sheet
   const bottomSheetRef = useRef(null);
-  const snapPoints = useMemo(() => ['25%', '30%'], []);
+  const snapPoints = useMemo(() => ['25%'], []);
 
   const openBottomSheet = () => {
     Keyboard.dismiss();
@@ -99,16 +98,22 @@ const AddSkillScreen = () => {
           backdropComponent={renderBackdrop}
           enablePanDownToClose={true}
         >
-          <View style={styles.bottomSheetContent}>
+          <BottomSheetView style={styles.bottomSheetContent}>
             <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
             <Text>Are you sure you want to save these skills?</Text>
-            <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.buttonModal}>
-              Yes, Save
-            </Button>
-            <Button onPress={closeBottomSheet} style={styles.buttonModal}>
-              Cancel
-            </Button>
-          </View>
+            <View style={styles.buttonModalContainer}>
+              <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                <View style={[styles.buttonStyle, styles.yesButton]}>
+                  <Text style={styles.buttonText}>Save Changes</Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={closeBottomSheet}>
+                <View style={[styles.buttonStyle, styles.cancelButton]}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </BottomSheetView>
         </BottomSheet>
         <Spinner visible={isLoading} />
       </View>
@@ -149,10 +154,39 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     marginTop: 10,
   },
-  buttonModal: {
+  buttonModalContainer: {
     marginTop: 10,
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
   },
-  bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
+  yesButton: {
+    backgroundColor: '#0A3480',
+  },
+  cancelButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#0A3480',
+  },
+  cancelButtonText: {
+    color: '#0A3480',
+    fontWeight: 'bold'
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  buttonStyle: {
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 50,
+    paddingVertical: 10,
+  },
+  bottomSheetContent: {
+    padding: 20,
+    flex: 1,
+  },
   bottomSheetTitle: {
     fontSize: 20,
     fontWeight: 'bold',

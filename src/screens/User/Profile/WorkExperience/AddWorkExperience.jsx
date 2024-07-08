@@ -7,9 +7,10 @@ import AuthenticatedLayout from '../../../../Layout/User/Unauthorize/Authenticat
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { useWorkExperience } from './hooks/useWorkExperience';
 import { useUser } from '../../../../hooks/useUser';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import moment from 'moment';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const AddWorkExperience = () => {
     const navigation = useNavigation();
@@ -79,7 +80,7 @@ const AddWorkExperience = () => {
     });
 
     const saveBottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '30%'], []);
+    const snapPoints = useMemo(() => ['25%'], []);
     const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
     const handleOpenSaveBottomSheet = () => {
         Keyboard.dismiss();
@@ -105,6 +106,9 @@ const AddWorkExperience = () => {
                     <Appbar.Content title="Add Work Experience" titleStyle={{ color: 'white' }} />
                 </Appbar.Header>
                 <ScrollView style={styles.container}>
+                    <Spinner
+                        visible={isLoading}
+                    />
                     <View style={{ padding: 8 }}>
                         <CustomTextInput
                             control={control}
@@ -208,8 +212,6 @@ const AddWorkExperience = () => {
                         <Button
                             mode="contained"
                             onPress={handleOpenSaveBottomSheet}
-                            loading={isLoading}
-                            disabled={isLoading}
                             style={styles.saveButton}
                         >
                             Save
@@ -232,16 +234,23 @@ const AddWorkExperience = () => {
                     backdropComponent={renderBackdrop}
                     enablePanDownToClose={true}
                 >
-                    <View style={styles.bottomSheetContent}>
+                    <BottomSheetView style={styles.bottomSheetContent}>
                         <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
                         <Text>Are you sure you want to save these changes?</Text>
-                        <Button mode="contained" onPress={handleSubmit(onSave)} style={styles.button}>
-                            Save Changes
-                        </Button>
-                        <Button onPress={handleCloseSaveBottomSheet} style={styles.button}>
-                            Cancel
-                        </Button>
-                    </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSave)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>Save Changes</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+
+                    </BottomSheetView>
                 </BottomSheet>
             </View>
         </TouchableWithoutFeedback>
@@ -269,11 +278,43 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    bottomSheetContent: { paddingHorizontal: 20, paddingVertical: 15 },
-    button: { marginTop: 10 },
+    bottomSheetContent: {
+        padding: 20,
+        flex: 1
+    },
+    buttonContainer: {
+        marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+    },
+    button: {
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
     dateContainer: {
         marginBottom: 10,
     },
 });
+
 
 export default AddWorkExperience;
