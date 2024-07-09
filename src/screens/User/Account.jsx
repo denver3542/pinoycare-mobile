@@ -115,7 +115,7 @@ const Account = ({ activeNav }) => {
                   flexWrap: 'wrap',
                   marginTop: 2
                 }}>
-                  <Chip
+                  {/* <Chip
                     onPress={() => {
                       if (user?.verified?.status !== 'verified' && user?.verified?.status !== 'to be reviewed') {
                         navigation.navigate("WalkThroughVerificationScreen");
@@ -145,6 +145,37 @@ const Account = ({ activeNav }) => {
                     {user?.verified?.status === 'verified' ? 'Verified' :
                       user?.verified?.status === 'failed' ? 'Verify' :
                         user?.verified?.status === 'to be reviewed' ? 'Under review' : user?.verified?.status || "Verify"}
+                  </Chip> */}
+                  <Chip
+                    onPress={() => {
+                      if (user?.status !== 'pending' && user?.verified?.status !== 'pending') {
+                        navigation.navigate("WalkThroughVerificationScreen");
+                      }
+                    }}
+                    icon={({ size, color }) => (
+                      user?.status === 'pending' ? (
+                        <MaterialIcons name="hourglass-top" size={12} color={color} />
+                      ) : (
+                        user?.status === 'approved' ? (
+                          <MaterialIcons name="verified-user" size={12} color={color} />
+                        ) : (
+                          <MaterialIcons name="shield" size={12} color={color} />
+                        )
+                      )
+                    )}
+                    compact
+                    style={{ backgroundColor: 'white', borderRadius: 8 }}
+                    textStyle={{
+                      color: 'black', fontSize: 10, fontWeight: 'bold',
+                      minHeight: 10,
+                      lineHeight: 12,
+                      alignItems: "center",
+                      marginVertical: 2
+                    }}
+                  >
+                    {user?.verified?.status === 'approved' ? 'Verified' :
+                      user?.verified?.status === 'rejected' ? 'Verify' :
+                        user?.verified?.status === 'pending' ? 'Under review' : user?.verified?.status || "Verify"}
                   </Chip>
                 </View>
 

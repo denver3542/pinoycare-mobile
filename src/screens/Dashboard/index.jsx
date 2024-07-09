@@ -141,6 +141,19 @@ function Dashboard() {
     );
   };
 
+  const getDeleteConfirmationMessage = (type) => {
+    switch (type) {
+      case "applications":
+        return "Are you sure you want to delete this application?";
+      case "offers":
+        return "Are you sure you want to delete this job offer?";
+      case "savedJobs":
+        return "Are you sure you want to delete this Saved Job? This job will be unsaved.";
+      default:
+        return "Are you sure you want to delete this item?";
+    }
+  };
+
   return (
     <ScrollView
       style={styles.scrollView}
@@ -268,12 +281,11 @@ function Dashboard() {
 
       </View>
 
-      {/* Confirmation Modal */}
       <Portal>
         <Dialog visible={confirmationVisible} onDismiss={() => setConfirmationVisible(false)}>
-          <Dialog.Title>Delete Item</Dialog.Title>
+          <Dialog.Title>Confirm Delete</Dialog.Title>
           <Dialog.Content>
-            <Paragraph>Are you sure you want to delete this item?</Paragraph>
+            <Paragraph>{itemToDelete && getDeleteConfirmationMessage(itemToDelete.type)}</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setConfirmationVisible(false)}>Cancel</Button>
@@ -282,16 +294,6 @@ function Dashboard() {
         </Dialog>
       </Portal>
 
-      {/* <Snackbar
-        visible={!!deletedItem}
-        onDismiss={() => setDeletedItem(null)}
-        action={{
-          label: "Undo",
-          onPress: undoDelete,
-        }}
-      >
-        Item deleted
-      </Snackbar> */}
     </ScrollView>
   );
 }
