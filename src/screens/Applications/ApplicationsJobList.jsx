@@ -17,7 +17,7 @@ const JobApplicationList = ({ application }) => {
     }
 
     const { job } = application;
-    const { title, company, media } = job;
+    const { title = 'n/a', company = 'n/a', media = [] } = job;
     const applicationStatus = getApplicationStatus(dashboardData.applications, job.id);
     const badgeColor = getBadgeColor(applicationStatus);
     const badgeTextColor = getBadgeTextColor(applicationStatus);
@@ -29,14 +29,14 @@ const JobApplicationList = ({ application }) => {
                     <View style={styles.cardContent}>
                         <Image
                             source={{
-                                uri: media && media.length > 0 ? media[0].original_url : logo,
+                                uri: media.length > 0 ? media[0].original_url : logo,
                             }}
                             style={styles.jobImage}
                         />
                         <View style={styles.applicationDetails}>
                             <View>
-                                <Text style={styles.appliedProfession}>{title || 'n/a'}</Text>
-                                <Text style={styles.appliedCompany}>{company || 'n/a'}</Text>
+                                <Text style={styles.appliedProfession}>{title}</Text>
+                                <Text style={styles.appliedCompany}>{company}</Text>
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                     <Badge
                                         value={applicationStatus || 'n/a'}
@@ -49,7 +49,7 @@ const JobApplicationList = ({ application }) => {
                                     />
                                 </View>
                             </View>
-                            <Icon source="chevron-right" size={25} />
+                            <Icon name="chevron-right" size={25} />
                         </View>
                     </View>
                 </View>
@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
     },
     card: {
         flexGrow: 1,
-        // backgroundColor: "#ffff",
         borderRadius: 12,
         marginBottom: 0,
     },

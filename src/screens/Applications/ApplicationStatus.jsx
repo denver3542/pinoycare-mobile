@@ -7,7 +7,7 @@ import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { fDate } from "../../../utils/formatTime";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Badge } from 'react-native-elements';
-
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 const ApplicationStatus = () => {
     const { params } = useRoute();
@@ -17,8 +17,14 @@ const ApplicationStatus = () => {
     const { width: contentWidth } = useWindowDimensions();
     const windowWidth = Dimensions.get('window').width;
     const maxWidth = Math.min(windowWidth, 768);
-    const imageHeight = maxWidth * 0.5;
     const [index, setIndex] = useState(0);
+    const [routes] = useState([
+        { key: 'description', title: 'Description' },
+        { key: 'jobsummary', title: 'Job Summary' },
+        { key: 'jobskills', title: 'Skills' },
+        { key: 'jobchedules', title: 'Schedules' },
+        { key: 'questions', title: 'Questions' },
+    ]);
 
     const formatSalary = (salary) => {
         if (!salary) return 'n/a';
@@ -55,7 +61,191 @@ const ApplicationStatus = () => {
         }
     };
 
+    const Description = () => (
+        <ScrollView>
+            <View style={styles.tabContent}>
+                <Text style={styles.headerTitle}>Description</Text>
+                <RenderHtml
+                    contentWidth={contentWidth}
+                    source={{ html: `<div style="text-align: justify;">${job?.description}</div>` }}
+                // tagsStyles={{ div: { textAlign: 'justify' } }}
+                />
+            </View>
+        </ScrollView>
+    );
 
+
+    const JobSummaryRoute = () => (
+        <ScrollView>
+            <View style={styles.tabContent}>
+                <Text style={[styles.headerTitle, { marginBottom: 15 }]}>Job Summary</Text>
+
+                <View style={{ paddingHorizontal: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <View>
+                            <View>
+                                <Text style={styles.jobPosition}>Job Category</Text>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                    {job.categories && job.categories.length > 0 ? (
+                                        job.categories.map((category, index) => (
+                                            <Text key={index} style={styles.jobTitle}>{category.name}</Text>
+                                        ))
+                                    ) : (
+                                        <Text style={styles.jobTitle}>No categories </Text>
+                                    )}
+                                </View>
+                            </View>
+                            <View>
+                                <Text style={styles.jobPosition}>Job Position</Text>
+                                <Text style={styles.jobTitle}>{job?.title}</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.jobPosition}>Vacancy</Text>
+                                <Text style={styles.jobTitle}>{job?.max_applicant} vacant</Text>
+                            </View>
+                            {/* {job.schedules && job.schedules.length > 0 && (
+                                <View>
+                                    <Text style={styles.jobPosition}>Shift and Schedule</Text>
+                                    {job.schedules.map((schedule, index) => (
+                                        <Text key={index} style={styles.jobTitle}>{schedule}</Text>
+                                    ))}
+                                </View>
+                            )} */}
+                        </View>
+                        <View style={{ right: 50 }}>
+                            <View>
+                                <Text style={styles.jobPosition}>Job Work Place</Text>
+                                <Text style={styles.jobTitle}>{job?.workplace}</Text>
+                            </View>
+
+                            <View>
+                                <Text style={styles.jobPosition}>Job Type</Text>
+                                <Text style={styles.jobTitle}>{job?.type}</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.jobPosition}>Location</Text>
+                                <Text style={styles.jobTitle}>{job?.location}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+            </View>
+        </ScrollView>
+    );
+
+    const JobSkillsRoute = () => (
+        <ScrollView>
+            <View style={styles.tabContent}>
+                <Text style={[styles.headerTitle, { marginBottom: 15 }]}>Skills</Text>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <View>
+                        {/* <Text style={styles.jobPosition}>Job Skills</Text> */}
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            {job.skills && job.skills.length > 0 ? (
+                                job.skills.map((skill, index) => (
+                                    <Chip key={index} mode="outlined" style={styles.skillChip} textStyle={{
+                                        minHeight: 15,
+                                        lineHeight: 15,
+                                        marginRight: 15,
+                                        marginLeft: 15,
+                                        marginVertical: 5,
+                                        fontSize: 12
+                                    }}>{skill.skill_name}</Chip>
+                                ))
+                            ) : (
+                                <Text style={styles.jobTitle}>No categories available</Text>
+                            )}
+                        </View>
+                    </View>
+                </View>
+
+            </View>
+        </ScrollView>
+
+
+    );
+
+    const JobSchedulesRoute = () => (
+        <ScrollView>
+            <View style={styles.tabContent}>
+                <Text style={[styles.headerTitle, { marginBottom: 15 }]}>Job Schedule</Text>
+                <View style={{ paddingHorizontal: 10 }}>
+                    {job.schedules && job.schedules.length > 0 && (
+                        <View>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                {job.schedules.map((schedule, index) => (
+                                    <Chip
+                                        key={index}
+                                        mode="outlined"
+                                        style={styles.skillChip}
+                                        textStyle={{
+                                            minHeight: 15,
+                                            lineHeight: 15,
+                                            marginRight: 15,
+                                            marginLeft: 15,
+                                            marginVertical: 5,
+                                            fontSize: 12
+                                        }}
+                                    >
+                                        {schedule}
+                                    </Chip>
+                                ))}
+                            </View>
+                        </View>
+                    )}
+                </View>
+
+            </View>
+        </ScrollView>
+
+
+    );
+
+
+    const QuestionsRoute = () => {
+
+        const mapBooleanToYesNo = (value) => {
+            return value ? 'Yes' : 'No';
+        };
+
+        return (
+            <ScrollView>
+                <View style={styles.tabContent}>
+                    <Text style={[styles.headerTitle, { marginBottom: 15 }]}>Job Questions</Text>
+                    {job.question && job.question.length > 0 ? (
+                        job.question.map((question, index) => {
+                            const answer = application.answers.find(a => a.job_question_id === question.id);
+
+                            let displayAnswer;
+                            if (answer && question.type === 'boolean') {
+                                displayAnswer = mapBooleanToYesNo(answer.answer);
+                            } else {
+                                displayAnswer = answer ? answer.answer : 'No answer provided';
+                            }
+
+                            return (
+                                <View key={index} style={styles.questionContainer}>
+                                    <Text style={styles.questionTitle}>{index + 1}. {question.question}</Text>
+                                    <Text style={styles.answerText}>{displayAnswer}</Text>
+                                </View>
+                            );
+                        })
+                    ) : (
+                        <Text>No questions available</Text>
+                    )}
+                </View>
+            </ScrollView>
+        );
+    };
+
+    const renderScene = SceneMap({
+        description: Description,
+        questions: QuestionsRoute,
+        jobsummary: JobSummaryRoute,
+        jobskills: JobSkillsRoute,
+        jobchedules: JobSchedulesRoute,
+    });
 
     return (
         <View style={styles.container}>
@@ -78,17 +268,11 @@ const ApplicationStatus = () => {
                     <View style={{ top: 0 }}>
                         <View style={[styles.cardContent, { alignItems: 'center' }]}>
                             <Text variant='titleLarge' style={{ fontWeight: 'bold' }}>{job.title}</Text>
-                            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#5690FD' }}>{job.company}</Text>
+                            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#0A3480' }}>{job.company}</Text>
                             <Text style={{ color: 'gray' }} variant="labelSmall"> Posted {job.created_at ? fDate(job.created_at) : 'n/a'}</Text>
-                            {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}><MaterialIcons name="location-on" size={18} color='#0A3480'></MaterialIcons>
-                                <Text style={{ color: 'gray' }} variant="labelSmall">{job?.location}</Text>
-                            </View> */}
                         </View>
-                        {/* <View style={{ paddingHorizontal: 15 }}>
-                            <Divider style={{ height: 1 }} />
-                        </View> */}
 
-                        <View style={{ flexGrow: 1, backgroundColor: '#fff', borderRadius: 14, padding: 20 }}>
+                        <View style={{ flexGrow: 1, backgroundColor: '#fff', padding: 20, borderTopLeftRadius: 14, borderTopRightRadius: 14 }}>
                             <View style={{ flexGrow: 1, paddingVertical: 0, flexGrow: 1, gap: 10 }}>
                                 <View style={{ padding: 0, alignItems: 'center', justifyContent: 'center' }}>
                                     <Text variant="titleMedium">Your Application Status</Text>
@@ -105,23 +289,36 @@ const ApplicationStatus = () => {
                                     textStyle={[styles.chipText, { color: getBadgeTextColor(application.status) }]}
                                 />
                             </View>
+
                         </View>
                     </View>
                 </View>
-
+                <TabView
+                    navigationState={{ index, routes }}
+                    renderScene={renderScene}
+                    onIndexChange={setIndex}
+                    initialLayout={{ width: contentWidth }}
+                    renderTabBar={props => (
+                        <TabBar
+                            {...props}
+                            indicatorStyle={{ backgroundColor: '#0A3480' }}
+                            style={{ backgroundColor: 'white', elevation: 0 }}
+                            labelStyle={{ color: '#0A3480', fontWeight: 'bold', fontSize: 12 }}
+                            tabStyle={{ height: 45 }}
+                            scrollEnabled={true}
+                        />
+                    )}
+                />
             </View>
-
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     contentWrapper: {
-        padding: 8,
         backgroundColor: "#F4F7FB",
         flex: 1
     },
@@ -134,49 +331,51 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         gap: 5
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-    },
-    button: {
-        flex: 1,
-        marginHorizontal: 5,
-        borderRadius: 8,
-        height: 30
-    },
-    activeButton: {
-        backgroundColor: '#0A3480',
-    },
-    buttonLabel: {
-        fontSize: 12,
-        minHeight: 12,
-        lineHeight: 12,
-        marginRight: 10,
-        marginLeft: 10,
-        marginVertical: 9
-    },
     tabContent: {
         flex: 1,
-        marginTop: 5,
+        padding: 20
     },
+    headerTitle: { fontWeight: 'bold', fontSize: 16 },
+    description: { fontSize: 14 },
     chipContainer: {
         flexDirection: "row",
         flexWrap: "wrap",
         marginTop: 5,
     },
     skillChip: {
-        margin: 2,
+        marginRight: 10,
+        marginBottom: 5,
         fontSize: 12,
-        borderRadius: 5
+        borderRadius: 50
     },
     centeredChip: {
         justifyContent: 'center',
         alignItems: 'center',
         height: 40,
     },
-    chipText: { fontWeight: 'bold' }
+    chipText: { fontWeight: 'bold' },
+    questionContainer: {
+        marginBottom: 10,
+    },
+    questionTitle: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#393939'
+    },
+    answerText: {
+        marginTop: 5,
+        paddingHorizontal: 30,
+    },
+    jobPosition: {
+        color: 'gray',
+        marginBottom: 5,
+    },
+    jobTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#0A3480'
+    },
 });
 
 export default ApplicationStatus;

@@ -51,20 +51,18 @@ const ChangeEducationScreen = () => {
 
     const renderRightActions = (progress, dragX, itemId) => {
         const trans = dragX.interpolate({
-            inputRange: [-100, 0],
+            inputRange: [-80, 0],
             outputRange: [0, 100],
             extrapolate: 'clamp',
         });
 
         return (
-            <TouchableOpacity
-                style={[styles.rightActionContainer]}
-                onPress={() => handleDelete(itemId)}
+            <Animated.View style={[styles.rightActionContainer]} onPress={() => handleDelete(itemId)}
             >
-                <Animated.View style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}>
+                <TouchableOpacity style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}>
                     <MaterialIcons name="delete" size={30} color="gray" />
-                </Animated.View>
-            </TouchableOpacity>
+                </TouchableOpacity>
+            </Animated.View>
         );
     };
 
@@ -169,17 +167,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     rightActionContainer: {
-        // flex: 1,
-        flexDirection: 'row',
-        // justifyContent: 'flex-end',
+        flexDirection: "row",
+        alignItems: "center",
     },
     deleteButton: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 100,
+        justifyContent: "center",
+        alignItems: "center",
+        width: 70,
         borderRadius: 8,
         margin: 8,
-        // backgroundColor: 'red',
     },
 });
 

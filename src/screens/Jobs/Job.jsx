@@ -133,7 +133,7 @@ export default function Job() {
                   <MaterialIcons name="work" size={25} color='#5690FD'></MaterialIcons>
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
-                  <Text variant="labelMedium" style={{ color: 'gray' }}>Position</Text>
+                  <Text variant="labelMedium" style={{ color: 'gray' }}>Type</Text>
                   <Text variant="labelLarge" style={{ color: '#414141' }}>{job.type}</Text>
                 </View>
               </View>

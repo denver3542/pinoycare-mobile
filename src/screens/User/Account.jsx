@@ -73,12 +73,6 @@ const Account = ({ activeNav }) => {
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
                   <Text style={styles.headerName}>{user?.name || ""}</Text>
-                  {/* <IconButton
-                    icon={() => <MaterialIcons name="border-color" size={14} color="white" />}
-                    size={20}
-                    selected
-                    onPress={() => navigation.navigate("EditUserProfileScreen")}
-                  /> */}
                 </View>
                 <View style={{ marginBottom: 5 }}>
                   <View style={{ flexDirection: 'row' }}>
@@ -94,22 +88,6 @@ const Account = ({ activeNav }) => {
                     <Text style={styles.headerText}>{user?.email || "n/a"} </Text>
                   </View>
                 </View>
-                {/* <TouchableOpacity
-                  style={{ flexDirection: 'row', alignItems: 'center' }}
-                  onPress={() => {
-                    if (user?.status !== 'approved') {
-                      navigation.navigate("WalkThroughVerificationScreen");
-                    }
-                  }}
-                >
-                  <MaterialIcons name="check-circle-outline" size={14} color="white" style={{ marginRight: 3 }} />
-                  <Text style={{ color: 'white' }}>
-                    {user?.status === 'approved' ? 'Verified' :
-                      user?.status === 'pending' ? 'Verify Now' :
-                        user?.status === 'created' ? 'Verify Now' :
-                          user?.status === 'rejected' ? 'Rejected' : user?.status || ""}
-                  </Text>
-                </TouchableOpacity> */}
 
                 <View style={{
                   flexWrap: 'wrap',
@@ -148,7 +126,7 @@ const Account = ({ activeNav }) => {
                   </Chip> */}
                   <Chip
                     onPress={() => {
-                      if (user?.status !== 'pending' && user?.verified?.status !== 'pending') {
+                      if (user?.status !== 'pending' && user?.status !== 'approved') {
                         navigation.navigate("WalkThroughVerificationScreen");
                       }
                     }}
@@ -173,10 +151,12 @@ const Account = ({ activeNav }) => {
                       marginVertical: 2
                     }}
                   >
-                    {user?.verified?.status === 'approved' ? 'Verified' :
-                      user?.verified?.status === 'rejected' ? 'Verify' :
-                        user?.verified?.status === 'pending' ? 'Under review' : user?.verified?.status || "Verify"}
+                    {user?.status === 'approved' ? 'Verified' :
+                      user?.status === 'rejected' ? 'Verify' :
+                        user?.status === 'pending' ? 'Under review' :
+                          user?.status === 'created' ? 'Verify' : "Verify"}
                   </Chip>
+
                 </View>
 
 
@@ -194,15 +174,8 @@ const Account = ({ activeNav }) => {
                 <Text style={styles.cardTitle}>About Me</Text>
               </TouchableOpacity>
 
-              {/* <IconButton
-                icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
-                size={20}
-                selected
-                onPress={() => navigation.navigate("AboutMeScreen")}
-              /> */}
             </View>
             <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
-            {/* <Divider style={styles.divider} /> */}
             <View style={styles.contentContainer}>
               <Text style={styles.cardDescription}>{user?.about_me}</Text>
             </View>

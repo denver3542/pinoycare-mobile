@@ -54,7 +54,7 @@ const SkillsChip = ({ skills }) => {
                 ))}
             </View>
 
-            {!showAllSkills && skills && skills.length > 5 && (
+            {/* {!showAllSkills && skills && skills.length > 5 && (
                 <TouchableOpacity onPress={handlePress}>
                     <Text style={styles.showAllButton}>Show More</Text>
                 </TouchableOpacity>
@@ -63,7 +63,7 @@ const SkillsChip = ({ skills }) => {
                 <TouchableOpacity onPress={handlePress}>
                     <Text style={styles.showAllButton}>Show Less</Text>
                 </TouchableOpacity>
-            )}
+            )} */}
         </View>
     );
 };
