@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 
-export async function getUser(signal) {
+async function getUser(signal) {
   let user = await AsyncStorage.getItem("upcare_user");
   if (!user) {
     return null;
@@ -16,6 +16,28 @@ export async function getUser(signal) {
 
   return data.user;
 }
+
+const deleteResource = async (url, idField, id) => {
+  try {
+    const storedUser = await AsyncStorage.getItem("upcare_user");
+    const headers = storedUser ? getJWTHeader(JSON.parse(storedUser)) : {};
+
+    const response = await axiosInstance.delete(url, {
+      headers,
+      data: { [idField]: id },
+    });
+
+    if (response.status !== 200) {
+      throw new Error('Failed to delete resource');
+    }
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
+
 
 export const useUser = () => {
   const queryClient = useQueryClient();
@@ -41,7 +63,6 @@ export const useUser = () => {
     },
   });
 
-  // Derive isAuthenticated from user state
   const isAuthenticated = !!user;
 
   function updateUser(newUser) {
@@ -101,6 +122,51 @@ export const useUser = () => {
     }
   }
 
+  const deleteSkill = useMutation({
+    mutationFn: (skillsId) => deleteResource('/user/profile/delete-skills', 'skill_id', skillsId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['user']);
+    },
+    onError: (error) => {
+      console.error('Error deleting skill:', error);
+    },
+  });
+
+
+  const deleteEducation = useMutation({
+    mutationFn: (educationId) => deleteResource('/user/profile/delete-educations', 'education_id', educationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['user']);
+    },
+  });
+
+  const deleteTraining = useMutation({
+    mutationFn: (trainingId) => deleteResource('/user/profile/delete-trainings', 'trainings_id', trainingId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['user']);
+      console.log('Training deleted successfully');
+    },
+    onError: (error) => {
+      console.error('Error deleting training:', error);
+    },
+  });
+
+
+
+  const deleteExperience = useMutation({
+    mutationFn: (experienceId) => deleteResource('/user/profile/delete-experience', 'experience_id', experienceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['user']);
+      console.log('Experience deleted successfully');
+    },
+    onError: (error) => {
+      console.error('Error deleting experience:', error);
+    },
+  });
+
+
+
+
   return {
     user,
     isAuthenticated,
@@ -111,6 +177,10 @@ export const useUser = () => {
     updateUser,
     clearUser,
     addPushToken,
-    verifyUser
+    verifyUser,
+    deleteSkill: deleteSkill.mutate,
+    deleteEducation: deleteEducation.mutate,
+    deleteTraining: deleteTraining.mutate,
+    deleteExperience: deleteExperience.mutate,
   };
 };

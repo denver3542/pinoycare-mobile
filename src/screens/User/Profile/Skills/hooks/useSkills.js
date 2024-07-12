@@ -36,12 +36,10 @@ export default function useSkills() {
             onSuccess: (updatedUser) => {
                 queryClient.setQueryData(['user'], updatedUser);
                 queryClient.invalidateQueries(['user']);
-                navigation.goBack();
+                // navigation.goBack();
             },
             onError: (error) => {
-                if (error.message !== "At least one skill is required") {
-                    console.error("Error adding skills:", error);
-                }
+
             },
             onSettled: () => {
                 queryClient.invalidateQueries({ queryKey: ['user'] })
@@ -49,4 +47,3 @@ export default function useSkills() {
         }
     );
 }
-

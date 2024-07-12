@@ -91,7 +91,7 @@ const VerificationScreen = () => {
         if (!result.canceled) {
             const { uri, type } = result.assets[0];
             let imageFileType = uri.split('.').pop().toLowerCase();
-            if (imageFileType !== 'jpeg' && imageFileType !== 'png') {
+            if (imageFileType !== 'jpeg' && imageFileType !== 'png' && imageFileType !== 'jpg') {
                 Alert.alert('Invalid File Type', 'Please select a JPEG or PNG image file.');
                 return;
             }

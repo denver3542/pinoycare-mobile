@@ -126,8 +126,10 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#F4F7FB'
     },
     card: {
+        backgroundColor: 'white',
         margin: 10,
         borderRadius: 10,
         shadowColor: '#000',
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.1,
         shadowRadius: 1,
-        elevation: 4,
+        elevation: 0,
     },
     modal: {
         backgroundColor: 'white',

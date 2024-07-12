@@ -1,27 +1,25 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
 import { IconButton, Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
-import { Swipeable } from 'react-native-gesture-handler'; // Import Swipeable component
+import { Swipeable } from 'react-native-gesture-handler';
 import { useUser } from '../../../../hooks/useUser';
 
-const LoadMoreButton = ({ onPress, loading }) => {
-    return (
-        <TouchableOpacity style={styles.loadMoreButton} onPress={onPress} disabled={loading}>
-            {loading ? (
-                <ActivityIndicator size="small" color="black" />
-            ) : (
-                <Text style={styles.loadMoreButtonText}>Load More</Text>
-            )}
-        </TouchableOpacity>
-    );
-};
+const LoadMoreButton = ({ onPress, loading }) => (
+    <TouchableOpacity style={styles.loadMoreButton} onPress={onPress} disabled={loading}>
+        {loading ? (
+            <ActivityIndicator size="small" color="black" />
+        ) : (
+            <Text style={styles.loadMoreButtonText}>Load More</Text>
+        )}
+    </TouchableOpacity>
+);
 
 const ChangeEducationScreen = () => {
     const navigation = useNavigation();
-    const { user } = useUser();
+    const { user, deleteEducation } = useUser();
     const [visibleItems, setVisibleItems] = useState(5);
     const [loading, setLoading] = useState(false);
 
@@ -45,8 +43,15 @@ const ChangeEducationScreen = () => {
         return educationLevels[level] || '';
     };
 
-    const handleDelete = (itemId) => {
-        console.log("Deleting item with ID:", itemId);
+    const handleDelete = (educationId) => {
+        deleteEducation(educationId, {
+            onSuccess: () => {
+                console.log("Education deleted successfully");
+            },
+            onError: (error) => {
+                console.error('Error deleting education:', error);
+            }
+        });
     };
 
     const renderRightActions = (progress, dragX, itemId) => {
@@ -57,9 +62,11 @@ const ChangeEducationScreen = () => {
         });
 
         return (
-            <Animated.View style={[styles.rightActionContainer]} onPress={() => handleDelete(itemId)}
-            >
-                <TouchableOpacity style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}>
+            <Animated.View style={styles.rightActionContainer}>
+                <TouchableOpacity
+                    style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}
+                    onPress={() => handleDelete(itemId)}
+                >
                     <MaterialIcons name="delete" size={30} color="gray" />
                 </TouchableOpacity>
             </Animated.View>
@@ -98,7 +105,7 @@ const ChangeEducationScreen = () => {
         <View style={styles.container}>
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Edit Education" titleStyle={{ color: 'white' }} />
+                <Appbar.Content title="Education" titleStyle={{ color: 'white' }} />
                 <Appbar.Action icon={() => <MaterialIcons name="add" size={24} color="white" />} onPress={() => navigation.navigate("AddEducationScreen")} />
             </Appbar.Header>
             <FlatList
@@ -146,11 +153,6 @@ const styles = StyleSheet.create({
     educationDetail: {
         fontSize: 14,
         color: '#555',
-    },
-    certificateImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 10,
     },
     iconButton: {
         padding: 0,

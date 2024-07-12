@@ -123,7 +123,6 @@ const EducationForm = () => {
                             />
                         )}
                         <TouchableOpacity
-                            style={styles.dateContainer}
                             onPress={() => showDatePickerForField('from')}
                         >
                             <CustomTextInput
@@ -139,7 +138,6 @@ const EducationForm = () => {
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.dateContainer}
                             onPress={() => showDatePickerForField('to')}
                         >
                             <CustomTextInput

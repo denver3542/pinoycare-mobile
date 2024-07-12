@@ -7,9 +7,11 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import CustomTextInput from '../../../components/CustomTextInput';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import useSkills from './Skills/hooks/useSkills';
+import { useUser } from '../../../hooks/useUser';
 
 const AddSkillScreen = () => {
   const navigation = useNavigation();
+  const { user, deleteSkill } = useUser();
   const { control, handleSubmit, setValue, getValues, formState: { errors, isSubmitted } } = useForm({
     defaultValues: {
       skill_name: '',
@@ -19,22 +21,34 @@ const AddSkillScreen = () => {
   const [tags, setTags] = useState([]);
 
   const addTag = () => {
-    const text = getValues('skill_name');
-    if (text && !tags.includes(text)) {
-      setTags(prevTags => [...prevTags, text]);
-      setValue('skill_name', '');
-    }
+    const skillName = getValues('skill_name');
+    if (!skillName) return;
+
+    setTags([...tags, skillName]);
+    setValue('skill_name', '');
   };
 
-  const removeTag = (index) => {
-    setTags(prevTags => prevTags.filter((_, i) => i !== index));
+  const removeTag = (indexToRemove) => {
+    const updatedTags = tags.filter((_, index) => index !== indexToRemove);
+    setTags(updatedTags);
   };
 
   const onSubmit = async () => {
+    if (tags.length === 0) return;
+
     await mutate({ skills: tags });
+    setTags([]);
   };
 
-  // Bottom Sheet
+  const deleteSkillHandler = async (skillsId) => {
+    try {
+      console.log('Deleting skill with ID:', skillsId);
+      await deleteSkill(skillsId);
+    } catch (error) {
+      console.error('Error deleting skill:', error);
+    }
+  };
+
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ['25%'], []);
 
@@ -59,38 +73,51 @@ const AddSkillScreen = () => {
           <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
           <Appbar.Content title="Add Skill" titleStyle={{ color: 'white' }} />
         </Appbar.Header>
-        <View style={styles.container}>
-          <ScrollView>
-            <Text style={styles.headerText}>Professional Skills</Text>
-            <CustomTextInput
-              placeholder="Add Skill"
-              control={control}
-              label="Skill Name"
-              mode="outlined"
-              name="skill_name"
-              onSubmitEditing={addTag}
-              error={(isSubmitted && tags.length === 0 && errors.skill_name) ? "Skill name is required" : undefined}
-            />
-            <View style={styles.chipContainer}>
-              {tags.map((tag, index) => (
-                <Chip key={`tag-${index}`} onClose={() => removeTag(index)} style={styles.chip}>
-                  {tag}
-                </Chip>
-              ))}
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button mode="outlined" onPress={addTag} style={styles.button}>Add</Button>
-              <Button
-                mode="contained"
-                onPress={openBottomSheet}
-                style={[styles.button, { opacity: tags.length === 0 ? 0.5 : 1 }]}
-                disabled={tags.length === 0}
+        <ScrollView style={styles.container}>
+
+          <CustomTextInput
+            placeholder="Add Skill"
+            control={control}
+            label="Skill Name"
+            mode="outlined"
+            name="skill_name"
+            onSubmitEditing={addTag}
+          />
+          <Text style={{ fontWeight: 'bold', fontSize: 18 }}> Added Skills</Text>
+          <View style={styles.chipContainer}>
+            {[...user.skills, ...tags].map((item, index) => (
+              <Chip
+                mode='outlined'
+                key={index}
+                style={styles.chip}
+                onClose={() => {
+                  const isUserSkill = index < user.skills.length;
+                  const adjustedIndex = isUserSkill ? index : index - user.skills.length;
+                  removeTag(adjustedIndex);
+                  if (isUserSkill) {
+                    deleteSkillHandler(item.skill_id);
+                  }
+                }}
               >
-                Save
-              </Button>
-            </View>
-          </ScrollView>
-        </View>
+                {item.skill_name || item}
+              </Chip>
+            ))}
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button mode="outlined" style={styles.button} onPress={addTag}>
+              Add
+            </Button>
+            <Button
+              mode="contained"
+              onPress={openBottomSheet}
+              style={[styles.button]}
+            >
+              Save
+            </Button>
+          </View>
+
+        </ScrollView>
         <BottomSheet
           ref={bottomSheetRef}
           index={-1}
@@ -125,15 +152,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     backgroundColor: '#F4F7FB'
-  },
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#0A3480',
-    marginBottom: 40,
-    marginTop: 60
   },
   chipContainer: {
     flexDirection: 'row',
@@ -142,6 +162,7 @@ const styles = StyleSheet.create({
   },
   chip: {
     margin: 4,
+    borderRadius: 50
   },
   buttonContainer: {
     flexDirection: 'row',
