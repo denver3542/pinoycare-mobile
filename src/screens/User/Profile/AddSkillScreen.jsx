@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    flex: 1
   },
   chip: {
     margin: 4,
