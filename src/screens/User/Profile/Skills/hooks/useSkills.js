@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance, { getJWTHeader } from "../../../../../../utils/axiosConfig";
@@ -11,9 +10,9 @@ async function addSkills(dataToUpdate, user) {
 
     const headers = getJWTHeader(user);
     const { data } = await axiosInstance.post("/user/profile/add-skills", dataToUpdate, { headers });
-    const updatedUser = { ...user, ...dataToUpdate };
+    const updatedUser = { ...user, skills: [...user.skills, ...dataToUpdate.skills] };
     await AsyncStorage.setItem('upcare_user', JSON.stringify(updatedUser));
-    return data.user;
+    return updatedUser;
 }
 
 export default function useSkills() {
@@ -30,19 +29,22 @@ export default function useSkills() {
             return addSkills(dataToUpdate, user);
         },
         {
-            onMutate: () => {
+            onMutate: async (newSkills) => {
+                await queryClient.cancelQueries(['user']);
+                const previousUser = queryClient.getQueryData(['user']);
 
-            },
-            onSuccess: (updatedUser) => {
-                queryClient.setQueryData(['user'], updatedUser);
-                queryClient.invalidateQueries(['user']);
-                // navigation.goBack();
-            },
-            onError: (error) => {
+                queryClient.setQueryData(['user'], (oldUser) => ({
+                    ...oldUser,
+                    skills: [...oldUser.skills, ...newSkills.skills],
+                }));
 
+                return { previousUser };
+            },
+            onError: (err, newSkills, context) => {
+                queryClient.setQueryData(['user'], context.previousUser);
             },
             onSettled: () => {
-                queryClient.invalidateQueries({ queryKey: ['user'] })
+                queryClient.invalidateQueries(['user']);
             },
         }
     );
