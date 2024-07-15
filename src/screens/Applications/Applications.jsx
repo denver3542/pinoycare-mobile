@@ -158,8 +158,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     backgroundColor: 'white',
+    marginBottom: 8,
     padding: 10,
-
     marginHorizontal: 8,
     borderRadius: 15,
     elevation: 0,

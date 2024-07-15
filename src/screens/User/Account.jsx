@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Chip, Divider, IconButton, Snackbar, Button, useTheme, Appbar } from "react-native-paper";
+import { Chip, Divider, IconButton, Snackbar, Button, useTheme, Appbar, Portal, Modal } from "react-native-paper";
 import {
   View,
   Image,
@@ -26,8 +26,8 @@ const Account = ({ activeNav }) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { user, isFetched, isLoading, refetchUser } = useUser();
-  const { logout } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -39,7 +39,8 @@ const Account = ({ activeNav }) => {
       });
   };
 
-
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
   return (
 
     <ScrollView
@@ -93,41 +94,14 @@ const Account = ({ activeNav }) => {
                   flexWrap: 'wrap',
                   marginTop: 2
                 }}>
-                  {/* <Chip
-                    onPress={() => {
-                      if (user?.verified?.status !== 'verified' && user?.verified?.status !== 'to be reviewed') {
-                        navigation.navigate("WalkThroughVerificationScreen");
-                      }
-                    }}
-                    icon={({ size, color }) => (
-                      user?.verified?.status === 'to be reviewed' ? (
-                        <MaterialIcons name="hourglass-top" size={12} color={color} />
-                      ) : (
-                        user?.verified?.status === 'verified' ? (
-                          <MaterialIcons name="verified-user" size={12} color={color} />
-                        ) : (
-                          <MaterialIcons name="shield" size={12} color={color} />
-                        )
-                      )
-                    )}
-                    compact
-                    style={{ backgroundColor: 'white', borderRadius: 8 }}
-                    textStyle={{
-                      color: 'black', fontSize: 10, fontWeight: 'bold',
-                      minHeight: 10,
-                      lineHeight: 12,
-                      alignItems: "center",
-                      marginVertical: 2
-                    }}
-                  >
-                    {user?.verified?.status === 'verified' ? 'Verified' :
-                      user?.verified?.status === 'failed' ? 'Verify' :
-                        user?.verified?.status === 'to be reviewed' ? 'Under review' : user?.verified?.status || "Verify"}
-                  </Chip> */}
+
                   <Chip
                     onPress={() => {
                       if (user?.status !== 'pending' && user?.status !== 'approved') {
                         navigation.navigate("WalkThroughVerificationScreen");
+                        hideModal();
+                      } else {
+                        showModal();
                       }
                     }}
                     icon={({ size, color }) => (
@@ -193,6 +167,33 @@ const Account = ({ activeNav }) => {
         </View>
 
       </View>
+      <Portal>
+        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {user?.status === 'approved' && (
+              <MaterialIcons name="verified" size={30} color={colors.primary} style={styles.icon} />
+            )}
+            {user?.status === 'rejected' && (
+              <MaterialIcons name="gpp-bad" size={30} color={colors.primary} style={styles.icon} />
+            )}
+            {user?.status === 'pending' && (
+              <MaterialIcons name="hourglass-top" size={30} color={colors.primary} style={styles.icon} />
+            )}
+            {user?.status === 'created' && (
+              <MaterialIcons name="shield" size={30} color={colors.primary} style={styles.icon} />
+            )}
+            <Text style={styles.modalText}>
+              {user?.status === 'approved' ? 'Your account is verified. We have verified your account and confirmed your status in profile ' :
+                user?.status === 'rejected' ? 'Your account verification was rejected. Please try again.' :
+                  user?.status === 'pending' ? 'Your account is under review.' :
+                    user?.status === 'created' ? 'Please verify your account.' : "Please verify your account."}
+            </Text>
+          </View>
+          <Divider style={{ marginVertical: 5 }} />
+          <Button mode="contained" onPress={hideModal} style={styles.button} contentStyle={{ bottom: 2 }}>Close</Button>
+        </Modal>
+      </Portal>
+
     </ScrollView>
 
   );
@@ -270,10 +271,7 @@ const styles = StyleSheet.create({
     color: "#DFDFDF", fontSize: 12
   },
   headerText: { color: "#DFDFDF", fontSize: 12 },
-  button: {
-    marginLeft: 10,
-    padding: 0,
-  },
+
   flexReverse: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -335,16 +333,35 @@ const styles = StyleSheet.create({
   educationDescription: {
     marginBottom: 5,
   },
-  button: {
-    padding: 0,
-    width: 100,
-  },
   imageStyle: {
     width: 30,
     height: 30,
     marginLeft: 10,
     marginRight: 10,
   },
+  modalContainer: {
+    backgroundColor: "white",
+    marginHorizontal: 10,
+    borderRadius: 10,
+
+  },
+  modalContent: {
+    alignItems: 'center',
+    padding: 40,
+  },
+  modalText: {
+    textAlign: "center",
+    fontSize: 22
+  },
+  button: {
+    borderRadius: 20,
+    marginHorizontal: 70,
+    marginVertical: 15
+  },
+  icon: {
+    marginBottom: 10,
+  },
+
 });
 
 export default Account;

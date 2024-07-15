@@ -7,10 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 import useSkills from './Skills/hooks/useSkills';
 import { useUser } from '../../../hooks/useUser';
 import CustomTextInput from '../../../components/CustomTextInput';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const AddSkillScreen = () => {
   const navigation = useNavigation();
-  const { mutate } = useSkills();
+  const { mutate, isLoading } = useSkills();
   const { user, deleteSkill } = useUser();
   const { control, handleSubmit, reset } = useForm();
   const [localSkills, setLocalSkills] = useState(user.skills);
@@ -61,6 +62,7 @@ const AddSkillScreen = () => {
 
   return (
     <View style={styles.flex}>
+      <Spinner visible={isLoading} />
       <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
         <Appbar.Content title="Add Skill" titleStyle={styles.whiteText} />
