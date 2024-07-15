@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Text, StyleSheet, View, FlatList, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
-import { Appbar, IconButton } from 'react-native-paper';
+import { Appbar, IconButton, Dialog, Paragraph, Button } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../../../hooks/useUser';
@@ -24,6 +24,8 @@ const SeminarsAndTrainingsEdit = () => {
     const { user, deleteTraining } = useUser();
     const [visibleItems, setVisibleItems] = useState(5);
     const [loading, setLoading] = useState(false);
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [seminarsIdToDelete, setSeminarsIdToDelete] = useState(null);
 
     const loadMore = () => {
         setLoading(true);
@@ -57,7 +59,10 @@ const SeminarsAndTrainingsEdit = () => {
             <Animated.View style={styles.rightActionContainer}>
                 <TouchableOpacity
                     style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}
-                    onPress={() => handleDelete(trainingId)}
+                    onPress={() => {
+                        setSeminarsIdToDelete(trainingId);
+                        setDialogVisible(true);
+                    }}
                 >
                     <MaterialIcons name="delete" size={30} color="gray" />
                 </TouchableOpacity>
@@ -121,6 +126,20 @@ const SeminarsAndTrainingsEdit = () => {
                     ) : null
                 }
             />
+
+            <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
+                <Dialog.Title>Confirm Delete</Dialog.Title>
+                <Dialog.Content>
+                    <Paragraph>Are you sure you want to delete this?</Paragraph>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+                    <Button onPress={() => {
+                        handleDelete(seminarsIdToDelete);
+                        setDialogVisible(false);
+                    }}>Delete</Button>
+                </Dialog.Actions>
+            </Dialog>
         </View>
     );
 };
@@ -128,7 +147,7 @@ const SeminarsAndTrainingsEdit = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#F4F7FB'
     },
     itemContainer: {
         backgroundColor: 'white',

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
-import { IconButton, Appbar } from 'react-native-paper';
+import { IconButton, Appbar, Dialog, Paragraph, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
@@ -22,6 +22,8 @@ const ChangeEducationScreen = () => {
     const { user, deleteEducation } = useUser();
     const [visibleItems, setVisibleItems] = useState(5);
     const [loading, setLoading] = useState(false);
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [educationIdToDelete, setEducationIdToDelete] = useState(null);
 
     const loadMore = () => {
         setLoading(true);
@@ -65,7 +67,10 @@ const ChangeEducationScreen = () => {
             <Animated.View style={styles.rightActionContainer}>
                 <TouchableOpacity
                     style={[styles.deleteButton, { transform: [{ translateX: trans }] }]}
-                    onPress={() => handleDelete(itemId)}
+                    onPress={() => {
+                        setEducationIdToDelete(itemId);
+                        setDialogVisible(true);
+                    }}
                 >
                     <MaterialIcons name="delete" size={30} color="gray" />
                 </TouchableOpacity>
@@ -118,6 +123,20 @@ const ChangeEducationScreen = () => {
                     ) : null
                 }
             />
+
+            <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
+                <Dialog.Title>Confirm Delete</Dialog.Title>
+                <Dialog.Content>
+                    <Paragraph>Are you sure you want to delete this?</Paragraph>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+                    <Button onPress={() => {
+                        handleDelete(educationIdToDelete);
+                        setDialogVisible(false);
+                    }}>Delete</Button>
+                </Dialog.Actions>
+            </Dialog>
         </View>
     );
 };
@@ -125,6 +144,7 @@ const ChangeEducationScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#F4F7FB'
     },
     educationContainer: {
         backgroundColor: 'white',

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { View, StyleSheet, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, StyleSheet, Text, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
 import { Appbar, Chip } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import useSkills from './Skills/hooks/useSkills';
 import { useUser } from '../../../hooks/useUser';
 import CustomTextInput from '../../../components/CustomTextInput';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const AddSkillScreen = () => {
   const navigation = useNavigation();
@@ -18,29 +17,26 @@ const AddSkillScreen = () => {
 
   const onSubmit = async (data) => {
     const { newSkill } = data;
-    closeBottomSheet();
-    if (!newSkill.trim()) {
-      return;
-    }
+    if (!newSkill.trim()) return;
 
+    closeBottomSheet();
     try {
-      const updatedSkills = [...localSkills, { skill_name: newSkill }];
-      setLocalSkills(updatedSkills);
-      await mutate({ skills: [newSkill] });
-      reset();
+      await mutate(newSkill, {
+        onSuccess: (addedSkill) => {
+          setLocalSkills((prevSkills) => [...prevSkills, addedSkill]);
+          reset();
+        },
+      });
     } catch (error) {
       console.error('Failed to add skill:', error);
     }
   };
 
-  const handleDeleteSkill = async (skillsId, skillName) => {
+  const handleDeleteSkill = async (skillId) => {
     try {
-
-      const updatedSkills = localSkills.filter(skill => skill.id !== skillsId);
+      const updatedSkills = localSkills.filter(skill => skill.id !== skillId);
       setLocalSkills(updatedSkills);
-
-
-      await deleteSkill(skillsId);
+      await deleteSkill(skillId);
     } catch (error) {
       console.error('Error deleting skill:', error);
     }
@@ -64,10 +60,10 @@ const AddSkillScreen = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+    <View style={styles.flex}>
+      <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-        <Appbar.Content title="Add Skill" titleStyle={{ color: 'white' }} />
+        <Appbar.Content title="Add Skill" titleStyle={styles.whiteText} />
         <Appbar.Action icon="content-save" color="white" onPress={openBottomSheet} />
       </Appbar.Header>
       <View style={styles.container}>
@@ -88,7 +84,7 @@ const AddSkillScreen = () => {
           name="newSkill"
           defaultValue=""
         />
-        <ScrollView style={{ padding: 5 }}>
+        <ScrollView style={styles.padding}>
           <Text style={styles.heading}>Added Skills</Text>
           <View style={styles.chipContainer}>
             {localSkills.map((skill, index) => (
@@ -96,12 +92,8 @@ const AddSkillScreen = () => {
                 key={index}
                 mode='outlined'
                 style={styles.chip}
-                textStyle={{
-                  minHeight: 15,
-                  lineHeight: 15,
-                  fontSize: 12
-                }}
-                onClose={() => handleDeleteSkill(skill.id, skill.skill_name)}
+                textStyle={styles.chipText}
+                onClose={() => handleDeleteSkill(skill.id)}
               >
                 {skill.skill_name}
               </Chip>
@@ -139,10 +131,26 @@ const AddSkillScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  header: {
+    backgroundColor: '#0A3480',
+  },
+  whiteText: {
+    color: 'white',
+  },
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#F4F7FB'
+    backgroundColor: '#F4F7FB',
+  },
+  input: {
+    height: 40,
+    marginBottom: 10,
+  },
+  padding: {
+    padding: 5,
   },
   heading: {
     fontSize: 18,
@@ -152,15 +160,16 @@ const styles = StyleSheet.create({
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    flex: 1
+    flex: 1,
   },
   chip: {
     margin: 4,
-    borderRadius: 50
+    borderRadius: 50,
   },
-  input: {
-    height: 40,
-    marginBottom: 10,
+  chipText: {
+    minHeight: 15,
+    lineHeight: 15,
+    fontSize: 12,
   },
   buttonModalContainer: {
     marginTop: 10,
@@ -177,7 +186,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: '#0A3480',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   buttonText: {
     color: 'white',

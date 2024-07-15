@@ -99,8 +99,6 @@ const styles = StyleSheet.create({
     },
     card: {
         flexGrow: 1,
-        borderRadius: 12,
-        marginBottom: 0,
     },
     cardContent: {
         padding: 4,
