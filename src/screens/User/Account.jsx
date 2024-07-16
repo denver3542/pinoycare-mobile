@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Chip, Divider, IconButton, Snackbar, Button, useTheme, Appbar, Portal, Modal } from "react-native-paper";
 import {
   View,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ScrollView, RefreshControl
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import Spinner from 'react-native-loading-spinner-overlay';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AuthenticatedLayout from "../../Layout/User/Unauthorize/AuthenticatedLayout";
@@ -22,11 +22,14 @@ import useSkills from "./Profile/Skills/hooks/useSkills";
 import { useAuth } from "../../hooks/useAuth";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
+
 const Account = ({ activeNav }) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { user, isFetched, isLoading, refetchUser } = useUser();
+  const { user, isFetched, refetchUser } = useUser();
+  const { logout } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const isFocused = useIsFocused();
   const [visible, setVisible] = useState(false);
 
   const onRefresh = () => {
@@ -41,8 +44,27 @@ const Account = ({ activeNav }) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-  return (
 
+  const handleChipPress = () => {
+    showModal();
+  };
+
+  const handleModalClose = () => {
+    hideModal();
+    if (user?.status === 'created' || user?.status === 'rejected') {
+      navigation.navigate("WalkThroughVerificationScreen");
+    }
+  };
+
+  const handleButtonPress = () => {
+    hideModal();
+    if (user?.status === 'created' || user?.status === 'rejected') {
+      navigation.navigate("WalkThroughVerificationScreen");
+    }
+  };
+
+
+  return (
     <ScrollView
       style={styles.container}
       refreshControl={
@@ -62,7 +84,6 @@ const Account = ({ activeNav }) => {
         </Appbar.Header>
 
         <View style={styles.contentStyle}>
-
           <View style={styles.userInfo}>
             <View style={styles.profileImageContainer}>
               <Image
@@ -90,29 +111,21 @@ const Account = ({ activeNav }) => {
                   </View>
                 </View>
 
-                <View style={{
-                  flexWrap: 'wrap',
-                  marginTop: 2
-                }}>
-
+                <View style={{ flexWrap: 'wrap', marginTop: 2 }}>
                   <Chip
-                    onPress={() => {
-                      if (user?.status !== 'pending' && user?.status !== 'approved') {
-                        navigation.navigate("WalkThroughVerificationScreen");
-                        hideModal();
-                      } else {
-                        showModal();
-                      }
-                    }}
+                    onPress={handleChipPress}
                     icon={({ size, color }) => (
                       user?.status === 'pending' ? (
                         <MaterialIcons name="hourglass-top" size={12} color={color} />
                       ) : (
-                        user?.status === 'approved' ? (
-                          <MaterialIcons name="verified-user" size={12} color={color} />
-                        ) : (
+                        user?.status === 'created' ? (
                           <MaterialIcons name="shield" size={12} color={color} />
-                        )
+                        ) :
+                          user?.status === 'approved' ? (
+                            <MaterialIcons name="verified" size={12} color={color} />
+                          ) : (
+                            <MaterialIcons name="gpp-bad" size={12} color={color} />
+                          )
                       )
                     )}
                     compact
@@ -126,18 +139,14 @@ const Account = ({ activeNav }) => {
                     }}
                   >
                     {user?.status === 'approved' ? 'Verified' :
-                      user?.status === 'rejected' ? 'Verify' :
+                      user?.status === 'rejected' ? 'Rejected' :
                         user?.status === 'pending' ? 'Under review' :
-                          user?.status === 'created' ? 'Verify' : "Verify"}
+                          user?.status === 'created' ? 'Unverified' : "Verify"}
                   </Chip>
-
                 </View>
-
-
 
               </View>
             </View>
-
           </View>
 
           <Divider style={styles.divider} />
@@ -147,13 +156,11 @@ const Account = ({ activeNav }) => {
               <TouchableOpacity onPress={() => navigation.navigate("AboutMeScreen")}>
                 <Text style={styles.cardTitle}>About Me</Text>
               </TouchableOpacity>
-
             </View>
             <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.contentContainer}>
               <Text style={styles.cardDescription}>{user?.about_me}</Text>
             </View>
-
           </View>
 
           {isFetched && (
@@ -165,8 +172,8 @@ const Account = ({ activeNav }) => {
             </>
           )}
         </View>
-
       </View>
+
       <Portal>
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -182,20 +189,47 @@ const Account = ({ activeNav }) => {
             {user?.status === 'created' && (
               <MaterialIcons name="shield" size={30} color={colors.primary} style={styles.icon} />
             )}
-            <Text style={styles.modalText}>
-              {user?.status === 'approved' ? 'Your account is verified. We have verified your account and confirmed your status in profile ' :
-                user?.status === 'rejected' ? 'Your account verification was rejected. Please try again.' :
-                  user?.status === 'pending' ? 'Your account is under review.' :
-                    user?.status === 'created' ? 'Please verify your account.' : "Please verify your account."}
-            </Text>
+            <View style={styles.modalText}>
+              {user?.status === 'approved' && (
+                <>
+                  <Text style={[styles.modalText, { fontSize: 20, fontWeight: '500' }]}>Your account has been successfully verified.</Text>
+                </>
+              )}
+              {user?.status === 'rejected' && (
+                <>
+                  <Text style={[styles.modalText, { fontSize: 20, fontWeight: '500' }]}>Your account verification was not approved.</Text>
+                  <Text style={[styles.modalText, { color: 'gray' }]}>Please try again or contact support for assistance.</Text>
+                </>
+              )}
+              {user?.status === 'pending' && (
+                <>
+                  <Text style={[styles.modalText, { fontSize: 20, fontWeight: '500' }]}>Your account is currently under review.</Text>
+                  <Text style={[styles.modalText, { color: 'gray' }]}>You will receive an update shortly.</Text>
+                </>
+              )}
+              {user?.status === 'created' && (
+                <>
+                  <Text style={[styles.modalText, { fontSize: 20, fontWeight: '500' }]}>Account  Unverified</Text>
+                  <Text style={[styles.modalText, { color: 'gray' }]}>Please verify your account.</Text>
+                </>
+              )}
+              {['approved', 'rejected', 'pending', 'created'].indexOf(user?.status) === -1 && (
+                <>
+                  <Text>Please verify your account to proceed.</Text>
+                </>
+              )}
+            </View>
+
           </View>
-          <Divider style={{ marginVertical: 5 }} />
-          <Button mode="contained" onPress={hideModal} style={styles.button} contentStyle={{ bottom: 2 }}>Close</Button>
+          <Divider />
+          <Button mode="contained" onPress={handleButtonPress} style={styles.button} >
+            <Text style={{
+              lineHeight: 15,
+            }}>{user?.status === 'created' || user?.status === 'rejected' ? 'Okay' : 'Close'}</Text>
+          </Button>
         </Modal>
       </Portal>
-
     </ScrollView>
-
   );
 };
 
@@ -216,11 +250,6 @@ const styles = StyleSheet.create({
     right: 0,
     marginTop: 20
   },
-  // userInfoContainer: {
-  //   flexDirection: "row",
-  //   alignItems: 'flex-start',
-  //   justifyContent: 'space-between'
-  // },
   profileImageContainer: {
     flex: 1,
     backgroundColor: "#0A3480",
@@ -239,13 +268,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
     top: 10
   },
-  // userInfo: {
-  //   flex: 1,
-  //   marginLeft: 5,
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'flex-start',
-  // },
   userInfo: {
     flex: 1
   },
@@ -268,7 +290,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   headerProfession: {
-    color: "#DFDFDF", fontSize: 12
+    color: "#DFDFDF",
+    fontSize: 12
   },
   headerText: { color: "#DFDFDF", fontSize: 12 },
 
@@ -277,7 +300,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contentStyle: {
-    // backgroundColor: "#F4F7FB",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     marginTop: 10,
@@ -309,9 +331,6 @@ const styles = StyleSheet.create({
   cardDescription: {
     textAlign: 'justify'
   },
-  educationItem: {
-    padding: 20
-  },
   cardIcon: {
     marginRight: 10,
   },
@@ -341,22 +360,23 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: "white",
-    marginHorizontal: 10,
+    margin: 20,
     borderRadius: 10,
-
   },
   modalContent: {
     alignItems: 'center',
-    padding: 40,
+    padding: 20,
   },
   modalText: {
     textAlign: "center",
-    fontSize: 22
+    justifyContent: 'center',
   },
   button: {
-    borderRadius: 20,
-    marginHorizontal: 70,
-    marginVertical: 15
+    // borderRadius: 8,
+    marginHorizontal: 50,
+    marginVertical: 10,
+    height: 35,
+
   },
   icon: {
     marginBottom: 10,
