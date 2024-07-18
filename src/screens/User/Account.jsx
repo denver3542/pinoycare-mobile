@@ -26,7 +26,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 const Account = ({ activeNav }) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { user, isFetched, refetchUser } = useUser();
+  const { user, isFetched, refetchUser, city } = useUser();
   const { logout } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused();
@@ -103,7 +103,10 @@ const Account = ({ activeNav }) => {
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 0 }}>
                     <MaterialIcons name="location-on" size={14} color="white" style={{ marginRight: 5 }} />
-                    <Text style={styles.headerText}>{user?.permanent_address || "n/a"} </Text>
+                    <Text style={styles.headerText}>
+                      {user?.permanent_address ? user.permanent_address : city || "n/a"}
+                    </Text>
+
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 0, alignItems: 'center' }}>
                     <MaterialIcons name="email" size={14} color="white" style={{ marginRight: 5 }} />

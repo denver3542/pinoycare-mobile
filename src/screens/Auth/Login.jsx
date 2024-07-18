@@ -24,9 +24,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useAuth } from "../../hooks/useAuth";
+// import * as Facebook from 'expo-auth-session/providers/facebook';
+// import * as WebBrowser from 'expo-web-browser';
+// import * as AuthSession from 'expo-auth-session';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-
+// WebBrowser.maybeCompleteAuthSession();
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -36,18 +39,47 @@ const validationSchema = Yup.object({
 const Login = () => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login, googleLoginOrSignup, facebookLoginOrSignup, fbRequest, request } = useAuth();
+  const { login, googleLoginOrSignup } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
     setError,
-    formState: { errors, isLoading, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
+
+  // const [requestFb, responseFb, promptAsyncFb] = Facebook.useAuthRequest({
+  //   clientId: '481189014291453',
+  //   customUriScheme: 'fbconnect',
+  //   redirectUri: 'fbconnect://cct.com.upcare.mobile',
+  //   responseType: AuthSession.ResponseType.Token,
+  //   scopes: ['public_profile', 'email'],
+  // });
+
+  // useEffect(() => {
+  //   if (responseFb?.type === 'success') {
+  //     const { access_token } = responseFb.params;
+  //     (async () => {
+  //       try {
+  //         const userResponse = await fetch(`https://graph.facebook.com/me?access_token=${access_token}&fields=id,name,email,picture.type(large)`);
+  //         const userData = await userResponse.json();
+  //         console.log('Logged in!', userData);
+  //         // navigation.navigate('NextScreen', { user: userData });
+  //       } catch (error) {
+  //         console.error('Error fetching user data:', error);
+  //         Alert.alert('Error fetching user data');
+  //       }
+  //     })();
+  //   } else if (responseFb?.type === 'error') {
+  //     console.log('Facebook login error:', responseFb.error);
+  //     Alert.alert(`Facebook Login Error: ${responseFb.error}`);
+  //   }
+  // }, [responseFb]);
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -75,12 +107,8 @@ const Login = () => {
     googleLoginOrSignup();
   };
 
-  const handleFacebookSignIn = () => {
-    facebookLoginOrSignup();
-  };
-
-  const handleAppleSignIn = () => {
-    console.log('Apple Pressed');
+  const handleFacebookSignIn = async () => {
+    promptAsyncFb();
   };
 
   return (
@@ -99,7 +127,7 @@ const Login = () => {
           </Text>
           {generalError && (
             <View style={{ marginBottom: 4, marginTop: -8 }}>
-              <HelperText type="error" visible={generalError}>{generalError}</HelperText>
+              <HelperText type="error" visible={!!generalError}>{generalError}</HelperText>
             </View>
           )}
           <CustomTextInput
@@ -123,19 +151,11 @@ const Login = () => {
             }
             rules={{ required: "Password is required" }}
             mode="outlined"
-            error={errors.password}
+            error={!!errors.password}
           />
           <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
             <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
           </TouchableOpacity>
-          {/* <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={isLoading || isSubmitting}
-            style={styles.button}
-          >
-            LOGIN
-          </Button> */}
           <Button
             style={styles.button}
             labelStyle={{
@@ -154,29 +174,26 @@ const Login = () => {
             <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
               <SocialIcon
                 raised={true}
-                // light
                 title='Sign In With Google'
-                disabled={!request}
                 button
                 type='google'
                 onPress={handleGoogleSignIn}
               />
-              <SocialIcon
+              {/* <SocialIcon
                 raised={true}
-                // light
                 title='Sign In With Facebook'
-                disabled={!fbRequest}
+                disabled={!requestFb}
                 button
                 type='facebook'
                 onPress={handleFacebookSignIn}
-              />
+              /> */}
               <SocialIcon
                 raised={true}
                 light
                 title='Sign In With Apple ID'
                 button
                 type='apple'
-                onPress={handleAppleSignIn}
+                onPress={() => console.log('Apple Pressed')}
               />
             </View>
           </View>

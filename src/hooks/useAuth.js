@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { useUser } from "./useUser";
@@ -124,6 +123,7 @@ export function useAuth() {
     iosClientId: facebookConfig.iosClientId,
     expoClientId: facebookConfig.expoClientId,
     clientId: facebookConfig.webClientId,
+    selectAccount: true,
     redirectUri: AuthSession.makeRedirectUri({ useProxy: true }),
   });
 

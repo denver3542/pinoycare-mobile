@@ -1,21 +1,15 @@
-import React, { useState, useLayoutEffect } from 'react';
-import HTML from 'react-native-render-html';
+import React, { useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions } from 'react-native';
-import useJobs from './hook/useJobs';
-import Spinner from 'react-native-loading-spinner-overlay';
-import { Appbar, Card, Paragraph, IconButton, useTheme, TouchableRipple, Searchbar } from 'react-native-paper';
+import { Appbar, IconButton, useTheme, Searchbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
-import HTMLView from 'react-native-htmlview';
-import { FontAwesome5 } from "@expo/vector-icons";
-import { color } from '@rneui/base';
-import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
-import HeaderNotification from '../../../components/HeaderNotification';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useUser } from '../../../hooks/useUser';
-import { useSaveJob } from './hook/useJobs';
+import useJobs from './hook/useJobs';
+import Spinner from 'react-native-loading-spinner-overlay';
+import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
+import HeaderNotification from '../../../components/HeaderNotification';
+import StarRating from './jobRating';  // Import the StarRating component
 
 const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
@@ -26,6 +20,7 @@ const JobListings = ({ activeNav }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [savedJobs, setSavedJobs] = useState({});
   const windowWidth = useWindowDimensions().width;
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -34,21 +29,6 @@ const JobListings = ({ activeNav }) => {
       .finally(() => {
         setRefreshing(false);
       });
-  };
-  const [descriptionVisibility, setDescriptionVisibility] = useState({});
-
-  const toggleDescriptionVisibility = (jobId) => {
-    setDescriptionVisibility((prevVisibility) => ({
-      ...prevVisibility,
-      [jobId]: !prevVisibility[jobId],
-    }));
-  };
-
-  const truncateDescription = (description, jobId, limit = 150) => {
-    if (description.length <= limit || descriptionVisibility[jobId]) {
-      return description;
-    }
-    return description.slice(0, limit) + '...';
   };
 
   const onChangeSearch = (query) => setSearchQuery(query);
@@ -64,27 +44,12 @@ const JobListings = ({ activeNav }) => {
     navigation.navigate('Job', { job });
   };
 
-  const saveJob = useSaveJob();
-
-  const handleSave = async (jobId) => {
-    try {
-      saveJob.mutate(jobId);
-    } catch (error) {
-      console.error('Failed to save job:', error);
-    }
-  };
-
   const renderJob = ({ item }) => {
-    const descriptionLimit = 150;
-
-    const isTruncated = item.description.length > descriptionLimit;
-
     const isSaved = user && user.saved_jobs && user.saved_jobs.find(savedJob => savedJob.job_id === item.id);
 
     return (
       <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
         <View style={styles.cardContentRow}>
-
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
               <Image source={{ uri: item.media[0].original_url }} style={styles.jobImage} />
@@ -92,43 +57,32 @@ const JobListings = ({ activeNav }) => {
               <View style={styles.placeholderCard} />
             )
           }
-
           <View style={styles.cardContentText}>
             <View style={styles.titleRow}>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.company}>{item.company}</Text>
+                <Text style={{ fontWeight: '500' }}>{item.location}</Text>
+                <StarRating rating={item.matchScore / 25} />
+                {item.isMatched && (
+                  <Text style={styles.matchedText}>Your profile matches this job</Text>
+                )}
               </View>
-
-              <TouchableWithoutFeedback >
+              <TouchableWithoutFeedback>
                 <IconButton
                   onPress={() => handleSave(item.id)}
                   icon={isSaved ? "bookmark" : "bookmark-outline"}
                   color={isSaved ? "#0A3480" : "#888"}
-                  selected
                   size={24}
                 />
               </TouchableWithoutFeedback>
             </View>
             <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
-            <Paragraph style={styles.location}>
-              <MaterialIcons name="location-on" size={14} color="#0A3480" />
-              {` ${item.location}`}
-            </Paragraph>
-            <HTML source={{ html: truncateDescription(item.description, item.id, descriptionLimit) }} contentWidth={windowWidth} tagsStyles={{ p: { textAlign: 'justify' } }} />
-            {isTruncated && (
-              <TouchableWithoutFeedback>
-                <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
-                  {descriptionVisibility[item.id] ? 'Show less' : 'Show more'}
-                </Text>
-              </TouchableWithoutFeedback>
-            )}
           </View>
         </View>
       </TouchableWithoutFeedback>
     );
   };
-
 
   return (
     <View style={styles.container}>
@@ -181,13 +135,11 @@ const styles = StyleSheet.create({
   },
   cardContentRow: {
     flexDirection: 'row',
-    // paddingHorizontal: 8
   },
   cardContentText: {
     flex: 1,
     paddingLeft: 10,
   },
-
   listContentContainer: {
     padding: 8
   },
@@ -197,31 +149,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontWeight: 'bold',
+    fontWeight: '500',
     fontSize: 20,
   },
   postedDate: {
-    marginBottom: 4,
     color: '#888',
     fontSize: 12,
   },
-  location: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    fontSize: 12,
-  },
-  description: {
-    marginTop: 5,
-  },
   company: {
     fontSize: 14,
-    fontWeight: 'bold',
-    // color: 'gray'
-  },
-  readMore: {
-    color: '#0A3480',
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontWeight: '500',
   },
   jobImage: {
     width: 80,
@@ -251,15 +188,17 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 8,
   },
-  titleStyle: {
-    fontWeight: 'bold'
-  },
   imageStyle: {
     width: 30,
     height: 30,
     marginLeft: 10,
     marginRight: 10
   },
+  matchedText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#676767'
+  }
 });
 
 export default JobListings;

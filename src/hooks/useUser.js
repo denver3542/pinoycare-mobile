@@ -1,7 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import * as Location from 'expo-location';
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
+import { useEffect } from "react";
+import { Alert } from "react-native";
 
 async function getUser(signal) {
   let user = await AsyncStorage.getItem("upcare_user");
@@ -16,6 +19,44 @@ async function getUser(signal) {
 
   return data.user;
 }
+
+
+const fetchLocation = async () => {
+  let { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    throw new Error('Permission to access location was denied');
+  }
+
+  let location = await Location.getCurrentPositionAsync({});
+  let reverseGeocode = await Location.reverseGeocodeAsync({
+    latitude: location.coords.latitude,
+    longitude: location.coords.longitude,
+  });
+
+  let city = reverseGeocode[0].city;
+
+  return city;
+};
+
+
+const updateLocationOnServer = async (city) => {
+  const storedUser = await AsyncStorage.getItem("upcare_user");
+  if (!storedUser) {
+    throw new Error('User not logged in');
+  }
+
+  const user = JSON.parse(storedUser);
+  const headers = getJWTHeader(user);
+
+  try {
+    const response = await axiosInstance.put("/user/update/location", { city }, {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to update location on server');
+  }
+};
 
 const deleteResource = async (url, idField, id) => {
   try {
@@ -36,17 +77,14 @@ const deleteResource = async (url, idField, id) => {
   }
 };
 
-
-
-
 export const useUser = () => {
   const queryClient = useQueryClient();
   const {
     data: user,
-    isLoading,
+    isLoading: userLoading,
     isFetching,
     isFetched,
-    refetch,
+    refetch: refetchUser,
   } = useQuery({
     queryKey: ["user"],
     queryFn: ({ signal }) => getUser(signal),
@@ -62,6 +100,29 @@ export const useUser = () => {
       clearUser();
     },
   });
+
+  const { data: city, isLoading: cityLoading, error: cityError } = useQuery({
+    queryKey: ["city"],
+    queryFn: fetchLocation,
+    enabled: !!user,
+  });
+
+
+  const { mutate: updateLocation } = useMutation(updateLocationOnServer, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['user']);
+    },
+    onError: (error) => {
+      console.error('Failed to update user location:', error);
+
+    },
+  });
+
+  // const { data: city, isLoading: cityLoading, error: cityError } = useQuery({
+  //   queryKey: ["city", location],
+  //   queryFn: () => fetchCityName(location),
+  //   enabled: !!location,
+  // });
 
   const isAuthenticated = !!user;
 
@@ -122,6 +183,9 @@ export const useUser = () => {
     }
   }
 
+
+
+
   const deleteSkill = useMutation({
     mutationFn: (skillsId) => deleteResource('/user/profile/delete-skills', 'skill_id', skillsId),
     onSuccess: () => {
@@ -151,8 +215,6 @@ export const useUser = () => {
     },
   });
 
-
-
   const deleteExperience = useMutation({
     mutationFn: (experienceId) => deleteResource('/user/profile/delete-experience', 'experience_id', experienceId),
     onSuccess: () => {
@@ -164,23 +226,30 @@ export const useUser = () => {
     },
   });
 
-
-
+  useEffect(() => {
+    if (city && city.length > 0) {
+      updateLocation(city);
+    }
+  }, [city]);
 
   return {
     user,
     isAuthenticated,
-    isLoading,
+    userLoading,
     isFetching,
     isFetched,
-    refetchUser: refetch,
+    refetchUser,
     updateUser,
     clearUser,
     addPushToken,
     verifyUser,
+    city,
+    cityLoading,
+    cityError,
     deleteSkill: deleteSkill.mutate,
     deleteEducation: deleteEducation.mutate,
     deleteTraining: deleteTraining.mutate,
     deleteExperience: deleteExperience.mutate,
   };
 };
+
