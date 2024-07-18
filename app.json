@@ -4,9 +4,6 @@
     "slug": "pinoycare-mobile",
     "version": "1.0.5",
     "owner": "supportih",
-    "facebookScheme": "fb481189014291453",
-    "facebookDisplayName": "Upcare",
-    "facebookAppId": "481189014291453",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -37,16 +34,11 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "facebook": {
-        "redirectUri": "https://com.upcare.mobile/expo-development-client/?url=http%3A%2F%2F192.168.1.176%3A8081"
-      },
       "eas": {
         "projectId": "8acda25c-7755-4c8c-9b69-3e19b78b60e3"
       }
     },
     "plugins": [
-
-
       "expo-updates",
       [
         "expo-build-properties",
