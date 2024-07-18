@@ -9,7 +9,8 @@ import useJobs from './hook/useJobs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
 import HeaderNotification from '../../../components/HeaderNotification';
-import StarRating from './jobRating';  // Import the StarRating component
+import { useSaveJob } from './hook/useJobs';
+import StarRating from './jobRating';
 
 const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
@@ -20,6 +21,7 @@ const JobListings = ({ activeNav }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [savedJobs, setSavedJobs] = useState({});
   const windowWidth = useWindowDimensions().width;
+  const saveJob = useSaveJob();
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -42,6 +44,16 @@ const JobListings = ({ activeNav }) => {
 
   const navigateToJobDetails = (job) => {
     navigation.navigate('Job', { job });
+  };
+
+
+
+  const handleSave = async (jobId) => {
+    try {
+      saveJob.mutate(jobId);
+    } catch (error) {
+      console.error('Failed to save job:', error);
+    }
   };
 
   const renderJob = ({ item }) => {
@@ -73,6 +85,7 @@ const JobListings = ({ activeNav }) => {
                   onPress={() => handleSave(item.id)}
                   icon={isSaved ? "bookmark" : "bookmark-outline"}
                   color={isSaved ? "#0A3480" : "#888"}
+                  selected
                   size={24}
                 />
               </TouchableWithoutFeedback>

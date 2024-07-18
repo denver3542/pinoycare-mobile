@@ -1,28 +1,40 @@
+// jobRating.js
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { View, Text, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 const StarRating = ({ rating }) => {
-    const stars = [1, 2, 3, 4, 5];
+    const percentage = rating * 25;
 
     return (
-        <View style={styles.starContainer}>
-            {stars.map((star) => (
-                <Icon
-                    key={star}
-                    name="star"
-                    type="font-awesome"
-                    color={star <= rating ? "#FFD700" : "#E5E5E5"}
-                    size={20}
-                />
-            ))}
+        <View style={styles.container}>
+            <View style={styles.stars}>
+                {[1, 2, 3, 4].map((star) => (
+                    <FontAwesome
+                        key={star}
+                        name={star <= rating ? "star" : "star-o"}
+                        size={20}
+                        color="#FFD700"
+                    />
+                ))}
+            </View>
+            <Text style={styles.percentage}>{percentage}%</Text>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    starContainer: {
+    container: {
         flexDirection: 'row',
+        alignItems: 'center',
+    },
+    stars: {
+        flexDirection: 'row',
+    },
+    percentage: {
+        marginLeft: 5,
+        fontSize: 14,
+        color: '#888',
     },
 });
 
