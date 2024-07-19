@@ -31,7 +31,6 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import HeaderNotification from "../../components/HeaderNotification";
 import { Swipeable } from "react-native-gesture-handler";
-import * as Location from 'expo-location';
 
 function Dashboard() {
   const { colors } = useTheme();

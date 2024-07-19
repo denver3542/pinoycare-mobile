@@ -1,10 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import * as Location from 'expo-location';
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 import { useEffect } from "react";
-import { Alert } from "react-native";
+import * as Location from 'expo-location';
+
+
 
 async function getUser(signal) {
   let user = await AsyncStorage.getItem("upcare_user");
@@ -118,11 +119,6 @@ export const useUser = () => {
     },
   });
 
-  // const { data: city, isLoading: cityLoading, error: cityError } = useQuery({
-  //   queryKey: ["city", location],
-  //   queryFn: () => fetchCityName(location),
-  //   enabled: !!location,
-  // });
 
   const isAuthenticated = !!user;
 

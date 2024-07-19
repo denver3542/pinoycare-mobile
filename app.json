@@ -61,6 +61,6 @@
     "updates": {
       "url": "https://u.expo.dev/8acda25c-7755-4c8c-9b69-3e19b78b60e3"
     },
-    "scheme": ["com.upcare.mobile", "fb481189014291453"]
+    "scheme": "com.upcare.mobile"
   }
 }

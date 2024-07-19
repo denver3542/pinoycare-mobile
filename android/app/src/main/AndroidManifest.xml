@@ -31,9 +31,6 @@
         <data android:scheme="com.upcare.mobile"/>
         <data android:scheme="exp+pinoycare-mobile"/>
         <data android:scheme="pinoycare-mobile"/>
-        <data android:scheme="fb481189014291453"/>
-        <data android:scheme="com.upcare.mobile" android:host="authorize"/>
-        <data android:scheme="fbconnect" android:host="cct.com.upcare.mobile"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
