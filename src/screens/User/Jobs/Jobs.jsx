@@ -76,9 +76,7 @@ const JobListings = ({ activeNav }) => {
                 <Text style={styles.company}>{item.company}</Text>
                 <Text style={{ fontWeight: '500' }}>{item.location}</Text>
                 <StarRating rating={item.matchScore / 25} />
-                {item.isMatched && (
-                  <Text style={styles.matchedText}>Your profile matches this job</Text>
-                )}
+
               </View>
               <TouchableWithoutFeedback>
                 <IconButton

@@ -330,10 +330,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#0A3480'
   },
-  educationDescription: {
-    fontSize: 16,
-    color: "#556789",
-  },
   cardDescription: {
     textAlign: 'justify'
   },
@@ -355,9 +351,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: "#0A3480",
   },
-  educationDescription: {
-    marginBottom: 5,
-  },
+
   imageStyle: {
     width: 30,
     height: 30,

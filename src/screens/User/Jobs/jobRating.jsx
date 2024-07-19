@@ -18,7 +18,7 @@ const StarRating = ({ rating }) => {
                     />
                 ))}
             </View>
-            <Text style={styles.percentage}>{percentage}%</Text>
+            <Text style={styles.percentage}>{percentage}% matched</Text>
         </View>
     );
 };

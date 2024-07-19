@@ -23,7 +23,7 @@ import * as yup from "yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
-import { SocialIcon } from 'react-native-elements';
+import { colors, SocialIcon } from 'react-native-elements';
 
 // Define validation schema
 const schema = yup
@@ -144,14 +144,15 @@ const Signup = () => {
           }}
         />
         <View style={{ marginBottom: 0, flex: 1 }}>
-          <Text style={{
+          {/* <Text style={{
             fontSize: 30,
             textAlign: "center",
             marginBottom: 20,
             fontWeight: "bold",
             color: "red",
           }}>
-            Create <Text
+            Create
+            <Text
               style={{
                 fontWeight: "bold",
                 color: colors.primary,
@@ -162,6 +163,10 @@ const Signup = () => {
             >
               Your Account
             </Text>
+          </Text> */}
+          <Text style={[styles.title, { color: 'red' }]}>
+            Create <Text style={styles.highlight}>
+              Your Account</Text>
           </Text>
 
           <View style={{ justifyContent: "center", gap: 0 }}>
@@ -366,6 +371,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  title: {
+    fontSize: 30,
+    textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
+  highlight: {
+    fontWeight: "bold",
+    color: '#0A3480'
   },
 });
 

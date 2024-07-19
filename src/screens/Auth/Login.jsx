@@ -123,7 +123,8 @@ const Login = () => {
         </View>
         <View style={{ flex: 1, top: 0 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
-            Let's <Text style={styles.highlight}>Sign</Text> you in.
+            Let's <Text style={styles.highlight}>Sign </Text>
+            you in.
           </Text>
           {generalError && (
             <View style={{ marginBottom: 4, marginTop: -8 }}>
