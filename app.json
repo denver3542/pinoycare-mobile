@@ -2,7 +2,7 @@
   "expo": {
     "name": "Upcare",
     "slug": "pinoycare-mobile",
-    "version": "1.0.6",
+    "version": "1.0.5",
     "owner": "supportih",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,7 +28,7 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "com.upcare.mobile",
-      "versionCode": 37
+      "versionCode": 36
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,20 +39,14 @@
       }
     },
     "plugins": [
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-        }
-      ],
       "expo-updates",
       [
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
-            "buildToolsVersion": "35.0.0",
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0",
             "googleServicesFile": "./google-services.json"
           },
           "ios": {

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 import { useEffect } from "react";
-import * as Location from 'expo-location';
+// import * as Location from 'expo-location';
 
 
 
@@ -22,42 +22,42 @@ async function getUser(signal) {
 }
 
 
-const fetchLocation = async () => {
-  let { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== 'granted') {
-    throw new Error('Permission to access location was denied');
-  }
+// const fetchLocation = async () => {
+//   let { status } = await Location.requestForegroundPermissionsAsync();
+//   if (status !== 'granted') {
+//     throw new Error('Permission to access location was denied');
+//   }
 
-  let location = await Location.getCurrentPositionAsync({});
-  let reverseGeocode = await Location.reverseGeocodeAsync({
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-  });
+//   let location = await Location.getCurrentPositionAsync({});
+//   let reverseGeocode = await Location.reverseGeocodeAsync({
+//     latitude: location.coords.latitude,
+//     longitude: location.coords.longitude,
+//   });
 
-  let city = reverseGeocode[0].city;
+//   let city = reverseGeocode[0].city;
 
-  return city;
-};
+//   return city;
+// };
 
 
-const updateLocationOnServer = async (city) => {
-  const storedUser = await AsyncStorage.getItem("upcare_user");
-  if (!storedUser) {
-    throw new Error('User not logged in');
-  }
+// const updateLocationOnServer = async (city) => {
+//   const storedUser = await AsyncStorage.getItem("upcare_user");
+//   if (!storedUser) {
+//     throw new Error('User not logged in');
+//   }
 
-  const user = JSON.parse(storedUser);
-  const headers = getJWTHeader(user);
+//   const user = JSON.parse(storedUser);
+//   const headers = getJWTHeader(user);
 
-  try {
-    const response = await axiosInstance.put("/user/update/location", { city }, {
-      headers,
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error('Failed to update location on server');
-  }
-};
+//   try {
+//     const response = await axiosInstance.put("/user/update/location", { city }, {
+//       headers,
+//     });
+//     return response.data;
+//   } catch (error) {
+//     throw new Error('Failed to update location on server');
+//   }
+// };
 
 const deleteResource = async (url, idField, id) => {
   try {
@@ -102,22 +102,22 @@ export const useUser = () => {
     },
   });
 
-  const { data: city, isLoading: cityLoading, error: cityError } = useQuery({
-    queryKey: ["city"],
-    queryFn: fetchLocation,
-    enabled: !!user,
-  });
+  // const { data: city, isLoading: cityLoading, error: cityError } = useQuery({
+  //   queryKey: ["city"],
+  //   queryFn: fetchLocation,
+  //   enabled: !!user,
+  // });
 
 
-  const { mutate: updateLocation } = useMutation(updateLocationOnServer, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['user']);
-    },
-    onError: (error) => {
-      console.error('Failed to update user location:', error);
+  // const { mutate: updateLocation } = useMutation(updateLocationOnServer, {
+  //   onSuccess: (data) => {
+  //     queryClient.invalidateQueries(['user']);
+  //   },
+  //   onError: (error) => {
+  //     console.error('Failed to update user location:', error);
 
-    },
-  });
+  //   },
+  // });
 
 
   const isAuthenticated = !!user;
@@ -222,11 +222,11 @@ export const useUser = () => {
     },
   });
 
-  useEffect(() => {
-    if (city && city.length > 0) {
-      updateLocation(city);
-    }
-  }, [city]);
+  // useEffect(() => {
+  //   if (city && city.length > 0) {
+  //     updateLocation(city);
+  //   }
+  // }, [city]);
 
   return {
     user,
@@ -239,9 +239,9 @@ export const useUser = () => {
     clearUser,
     addPushToken,
     verifyUser,
-    city,
-    cityLoading,
-    cityError,
+    // city,
+    // cityLoading,
+    // cityError,
     deleteSkill: deleteSkill.mutate,
     deleteEducation: deleteEducation.mutate,
     deleteTraining: deleteTraining.mutate,

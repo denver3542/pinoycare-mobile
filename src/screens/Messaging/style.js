@@ -82,6 +82,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
   },
 
+
   replyContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -91,14 +92,14 @@ export const styles = StyleSheet.create({
     borderColor: "#ccc",
     backgroundColor: "#f0f0f0",
   },
+
   attachedFilesContainer: {
-    paddingHorizontal: 10,
-  },
-  attachmentContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
+    flexWrap: "wrap",
+    paddingHorizontal: 10,
+    padding: 10,
   },
+
   attachmentImage: {
     width: 50,
     height: 50,
@@ -108,6 +109,7 @@ export const styles = StyleSheet.create({
   attachmentText: {
     flex: 1,
     marginRight: 10,
+    fontSize: 16,
   },
   fileContainer: {
     marginTop: 10,
@@ -131,28 +133,10 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
-  attachmentText: {
-    fontSize: 16,
-    marginRight: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#fff",
-  },
-  input: {
-    flex: 1,
-    marginHorizontal: 10,
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-  },
-  attachedFilesContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    padding: 10,
-  },
+
+
+
+
   bottomModal: {
     justifyContent: "flex-end",
     margin: 0,
