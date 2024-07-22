@@ -8,10 +8,10 @@ const JobMatching = ({ rating }) => {
     return (
         <View style={styles.container}>
             <AnimatedCircularProgress
-                size={50}
-                width={5}
+                size={35}
+                width={4}
                 fill={percentage}
-                tintColor="#0A3480"
+                tintColor="#FDED56"
                 backgroundColor="gray"
             >
                 {
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     percentage: {
-        fontSize: 12,
+        fontSize: 10,
     },
     matchedText: {
         marginLeft: 10,
