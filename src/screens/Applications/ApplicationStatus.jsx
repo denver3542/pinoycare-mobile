@@ -68,7 +68,6 @@ const ApplicationStatus = () => {
                 <RenderHtml
                     contentWidth={contentWidth}
                     source={{ html: `<div style="text-align: justify;">${job?.description}</div>` }}
-                // tagsStyles={{ div: { textAlign: 'justify' } }}
                 />
             </View>
         </ScrollView>

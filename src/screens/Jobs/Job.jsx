@@ -9,6 +9,8 @@ import { useUser } from "../../hooks/useUser";
 import useJob from "../../screens/User/Jobs/hook/useJobs";
 import { useQueryClient } from "@tanstack/react-query";
 import { MaterialIcons } from "@expo/vector-icons";
+import RenderHtml from 'react-native-render-html';
+import JobMatching from "../User/Jobs/jobMatching";
 
 export default function Job() {
   const { colors } = useTheme();
@@ -109,7 +111,7 @@ export default function Job() {
     >
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
-        <Appbar.Content title={job.title || "Job Details"} titleStyle={{ color: 'white' }} />
+        {/* <Appbar.Content title={job.title || "Job Details"} titleStyle={{ color: 'white' }} /> */}
       </Appbar.Header>
       {job.media && job.media[0] && job.media[0].original_url && (
         <Card.Cover
@@ -159,19 +161,28 @@ export default function Job() {
                   <Text variant="labelLarge" style={{ color: '#414141' }}>{job.workplace}</Text>
                 </View>
               </View>
+
+
             </View>
+            {/* <Divider style={{ margin: 20 }} />
+
+            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+              <JobMatching rating={job.matchScore / 25} />
+            </View> */}
           </View>
+
+
+
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Description</Text>
-            <View style={{ paddingHorizontal: 10 }}>
-              <HTMLView
-                value={job.description}
-              />
-            </View>
+            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Description</Text>
+            <RenderHtml
+              contentWidth={contentWidth}
+              source={{ html: `<div style="text-align: justify;">${job?.description}</div>` }}
+            />
           </View>
           <View style={[styles.cardContent]}>
             <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Skills</Text>
-            <View style={{ paddingHorizontal: 10 }}>
+            <View style={{ paddingHorizontal: 0 }}>
               <View style={styles.chipContainer}>
                 {job.skills && job.skills.length > 0 ? (
                   job.skills.map((item) => (
@@ -194,7 +205,7 @@ export default function Job() {
           </View>
           <View style={[styles.cardContent]}>
             <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Shift and Schedule</Text>
-            <View style={{ paddingHorizontal: 10 }}>
+            <View style={{ paddingHorizontal: 0 }}>
               <View style={styles.chipContainer}>
                 {job.schedules && job.schedules.length > 0 ? (
                   job.schedules.map((schedule, index) => (
@@ -218,7 +229,7 @@ export default function Job() {
 
           <View style={[styles.cardContent]}>
             <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Vacancy</Text>
-            <View style={{ paddingHorizontal: 10 }}>
+            <View style={{ paddingHorizontal: 0 }}>
               <View style={styles.chipContainer}>
                 <Chip textStyle={{
                   minHeight: 14,
@@ -233,6 +244,15 @@ export default function Job() {
               </View>
             </View>
           </View>
+
+          <View style={[styles.cardContent]}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Match</Text>
+            <View style={{ paddingHorizontal: 0 }}>
+              <JobMatching rating={job.matchScore / 25} />
+            </View>
+          </View>
+
+
         </View>
       </View>
       <Divider style={{ marginVertical: 10 }} />
@@ -249,8 +269,7 @@ export default function Job() {
           ]}
           onPress={handleApply}
           disabled={isApplied}
-        >
-          {isApplied ? "Applied" : "Apply"}
+        >{isApplied ? "Applied" : "Apply"}
         </Button>
       </View>
       <Portal>
@@ -294,6 +313,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 8,
     flex: 1
   },

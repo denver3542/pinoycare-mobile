@@ -10,7 +10,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
 import HeaderNotification from '../../../components/HeaderNotification';
 import { useSaveJob } from './hook/useJobs';
-// import StarRating from './jobRating';
+import JobMatching from './jobMatching';
 
 const JobListings = ({ activeNav }) => {
   const { colors } = useTheme();
@@ -75,7 +75,7 @@ const JobListings = ({ activeNav }) => {
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.company}>{item.company}</Text>
                 <Text style={{ fontWeight: '500' }}>{item.location}</Text>
-                {/* <StarRating rating={item.matchScore / 25} /> */}
+
 
               </View>
 
