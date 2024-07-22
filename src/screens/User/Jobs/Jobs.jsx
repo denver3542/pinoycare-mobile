@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions, Pressable, TouchableOpacity } from 'react-native';
 import { Appbar, IconButton, useTheme, Searchbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
@@ -60,7 +60,7 @@ const JobListings = ({ activeNav }) => {
     const isSaved = user && user.saved_jobs && user.saved_jobs.find(savedJob => savedJob.job_id === item.id);
 
     return (
-      <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
+      <Pressable onPress={() => navigateToJobDetails(item)} style={styles.card}>
         <View style={styles.cardContentRow}>
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
@@ -79,20 +79,18 @@ const JobListings = ({ activeNav }) => {
 
               </View>
 
-              <TouchableWithoutFeedback>
-                <IconButton
-                  onPress={() => handleSave(item.id)}
-                  icon={isSaved ? "bookmark" : "bookmark-outline"}
-                  color={isSaved ? "#0A3480" : "#888"}
-                  selected
-                  size={24}
-                />
-              </TouchableWithoutFeedback>
+              <IconButton
+                onPress={() => handleSave(item.id)}
+                icon={isSaved ? "bookmark" : "bookmark-outline"}
+                color={isSaved ? "#0A3480" : "#888"}
+                selected
+                size={24}
+              />
             </View>
             <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      </Pressable>
     );
   };
 
