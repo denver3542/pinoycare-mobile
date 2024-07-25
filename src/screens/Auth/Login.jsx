@@ -6,9 +6,9 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert
+  Alert,
 } from "react-native";
-import { SocialIcon } from 'react-native-elements';
+import { SocialIcon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import {
   Text,
@@ -16,7 +16,7 @@ import {
   useTheme,
   HelperText,
   IconButton,
-  TextInput
+  TextInput,
 } from "react-native-paper";
 import { useForm } from "react-hook-form";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -24,70 +24,51 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useAuth } from "../../hooks/useAuth";
-// import * as Facebook from 'expo-auth-session/providers/facebook';
-// import * as WebBrowser from 'expo-web-browser';
-// import * as AuthSession from 'expo-auth-session';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-
-// WebBrowser.maybeCompleteAuthSession();
+import * as AppleAuthentication from "expo-apple-authentication";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
 }).required();
 
 const Login = () => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login, googleLoginOrSignup } = useAuth();
+  const {
+    login,
+    googleLoginOrSignup,
+    facebookLoginOrSignup,
+    fbRequest,
+    request,
+  } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const navigation = useNavigation();
-
   const {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isLoading, isSubmitting },
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
-
-  // const [requestFb, responseFb, promptAsyncFb] = Facebook.useAuthRequest({
-  //   clientId: '481189014291453',
-  //   customUriScheme: 'fbconnect',
-  //   redirectUri: 'fbconnect://cct.com.upcare.mobile',
-  //   responseType: AuthSession.ResponseType.Token,
-  //   scopes: ['public_profile', 'email'],
-  // });
-
-  // useEffect(() => {
-  //   if (responseFb?.type === 'success') {
-  //     const { access_token } = responseFb.params;
-  //     (async () => {
-  //       try {
-  //         const userResponse = await fetch(`https://graph.facebook.com/me?access_token=${access_token}&fields=id,name,email,picture.type(large)`);
-  //         const userData = await userResponse.json();
-  //         console.log('Logged in!', userData);
-  //         // navigation.navigate('NextScreen', { user: userData });
-  //       } catch (error) {
-  //         console.error('Error fetching user data:', error);
-  //         Alert.alert('Error fetching user data');
-  //       }
-  //     })();
-  //   } else if (responseFb?.type === 'error') {
-  //     console.log('Facebook login error:', responseFb.error);
-  //     Alert.alert(`Facebook Login Error: ${responseFb.error}`);
-  //   }
-  // }, [responseFb]);
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       const res = await login(data);
       if (res.success === 0) {
-        setError("email", { type: "custom", message: "Email doesn't exist or isn't valid." });
-        setError("password", { type: "custom", message: "Password is incorrect." });
+        setError("email", {
+          type: "custom",
+          message: "Email doesn't exist or isn't valid.",
+        });
+        setError("password", {
+          type: "custom",
+          message: "Password is incorrect.",
+        });
         setGeneralError(res?.message || "Invalid username or password.");
       } else {
         console.log("Login success");
@@ -107,8 +88,32 @@ const Login = () => {
     googleLoginOrSignup();
   };
 
-  const handleFacebookSignIn = async () => {
-    promptAsyncFb();
+  const handleFacebookSignIn = () => {
+    facebookLoginOrSignup();
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      // Handle the returned credential
+      console.log(credential.email);
+      // You can send the credential to your backend or use it directly in your app
+    } catch (e) {
+      if (e.code === "ERR_CANCELED") {
+        // Handle that the user canceled the sign-in flow
+        Alert.alert("Apple Sign-In was canceled.");
+      } else {
+        // Handle other errors
+        console.error(e);
+        Alert.alert("Apple Sign-In failed.");
+      }
+    }
   };
 
   return (
@@ -123,12 +128,13 @@ const Login = () => {
         </View>
         <View style={{ flex: 1, top: 0 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
-            Let's <Text style={styles.highlight}>Sign </Text>
-            you in.
+            Let's <Text style={styles.highlight}>Sign</Text> you in.
           </Text>
           {generalError && (
             <View style={{ marginBottom: 4, marginTop: -8 }}>
-              <HelperText type="error" visible={!!generalError}>{generalError}</HelperText>
+              <HelperText type="error" visible={generalError}>
+                {generalError}
+              </HelperText>
             </View>
           )}
           <CustomTextInput
@@ -152,10 +158,14 @@ const Login = () => {
             }
             rules={{ required: "Password is required" }}
             mode="outlined"
-            error={!!errors.password}
+            error={errors.password}
           />
-          <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-            <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ForgotPassword")}
+          >
+            <Text style={[styles.linkText, { marginVertical: 5 }]}>
+              Forgot Password?
+            </Text>
           </TouchableOpacity>
           <Button
             style={styles.button}
@@ -163,7 +173,7 @@ const Login = () => {
               fontSize: 14,
               width: 250,
               paddingVertical: 6,
-              color: 'white'
+              color: "white",
             }}
             mode="elevated"
             onPress={handleSubmit(onSubmit)}
@@ -171,38 +181,52 @@ const Login = () => {
             LOGIN
           </Button>
           <View>
-            <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
-            <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
+            <Text style={{ textAlign: "center", marginVertical: 20 }}>
+              or continue with
+            </Text>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-around",
+              }}
+            >
               <SocialIcon
                 raised={true}
-                title='Sign In With Google'
+                title="Sign In With Google"
+                disabled={!request}
                 button
-                type='google'
+                type="google"
                 onPress={handleGoogleSignIn}
               />
-              {/* <SocialIcon
-                raised={true}
-                title='Sign In With Facebook'
-                disabled={!requestFb}
-                button
-                type='facebook'
-                onPress={handleFacebookSignIn}
-              /> */}
               <SocialIcon
                 raised={true}
-                light
-                title='Sign In With Apple ID'
+                title="Sign In With Facebook"
+                disabled={!fbRequest}
                 button
-                type='apple'
-                onPress={() => console.log('Apple Pressed')}
+                type="facebook"
+                onPress={handleFacebookSignIn}
               />
+              {Platform.OS === "ios" && (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={
+                    AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                  }
+                  buttonStyle={
+                    AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                  }
+                  cornerRadius={20}
+                  style={{ width: "100%", height: 53, marginTop: 4 }}
+                  onPress={handleAppleSignIn}
+                />
+              )}
             </View>
           </View>
         </View>
 
         <TouchableWithoutFeedback onPress={() => navigation.navigate("SignUp")}>
           <Text style={styles.signUpText}>
-            You don't have an account yet? <Text style={styles.linkText}>Sign up</Text>
+            You don't have an account yet?{" "}
+            <Text style={styles.linkText}>Sign up</Text>
           </Text>
         </TouchableWithoutFeedback>
       </ScrollView>
@@ -232,12 +256,12 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     borderRadius: 50,
-    backgroundColor: '#0A3480',
+    backgroundColor: "#0A3480",
   },
   linkText: {
     color: "#0A3480",
     textAlign: "right",
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   signUpText: {
     marginTop: 20,
