@@ -43,6 +43,7 @@ const Login = () => {
     facebookLoginOrSignup,
     fbRequest,
     request,
+    handleAppleSignInOrSignUp,
   } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
@@ -100,10 +101,18 @@ const Login = () => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
+      // console.log(credential);
+      // Send the credential to your backend
+      const response = await handleAppleSignInOrSignUp(credential);
 
-      // Handle the returned credential
-      console.log(credential.email);
-      // You can send the credential to your backend or use it directly in your app
+      if (response.success) {
+        // Handle successful authentication
+        console.log("Login success", response);
+        // Store token and user information if necessary
+      } else {
+        // Handle unsuccessful authentication
+        setGeneralError("Apple Sign-In failed.");
+      }
     } catch (e) {
       if (e.code === "ERR_CANCELED") {
         // Handle that the user canceled the sign-in flow
@@ -212,7 +221,8 @@ const Login = () => {
                     AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
                   }
                   buttonStyle={
-                    AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                    AppleAuthentication.AppleAuthenticationButtonStyle
+                      .WHITE_OUTLINE
                   }
                   cornerRadius={20}
                   style={{ width: "100%", height: 53, marginTop: 4 }}

@@ -3,7 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
 import { useEffect, useState } from "react";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
+import axios from "axios";
 
 async function getUser(signal) {
   let user = await AsyncStorage.getItem("upcare_user");
@@ -21,8 +22,8 @@ async function getUser(signal) {
 
 const fetchLocation = async () => {
   let { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== 'granted') {
-    throw new Error('Permission to access location was denied');
+  if (status !== "granted") {
+    throw new Error("Permission to access location was denied");
   }
 
   let location = await Location.getCurrentPositionAsync({});
@@ -38,17 +39,21 @@ const fetchLocation = async () => {
 const updateLocationOnServer = async (city) => {
   const storedUser = await AsyncStorage.getItem("upcare_user");
   if (!storedUser) {
-    throw new Error('User not logged in');
+    throw new Error("User not logged in");
   }
 
   const user = JSON.parse(storedUser);
   const headers = getJWTHeader(user);
 
   try {
-    const response = await axiosInstance.put("/user/update/location", { city }, { headers });
+    const response = await axiosInstance.put(
+      "/user/update/location",
+      { city },
+      { headers }
+    );
     return response.data;
   } catch (error) {
-    throw new Error('Failed to update location on server');
+    throw new Error("Failed to update location on server");
   }
 };
 
@@ -63,7 +68,7 @@ const deleteResource = async (url, idField, id) => {
     });
 
     if (response.status !== 200) {
-      throw new Error('Failed to delete resource');
+      throw new Error("Failed to delete resource");
     }
     return response.data;
   } catch (error) {
@@ -75,6 +80,7 @@ export const useUser = () => {
   const queryClient = useQueryClient();
   const [city, setCity] = useState(null);
   const [cityFetched, setCityFetched] = useState(false);
+  const SERVER_ERROR = "There was an error contacting the server.";
 
   const {
     data: user,
@@ -101,22 +107,22 @@ export const useUser = () => {
   useQuery({
     queryKey: ["city"],
     queryFn: fetchLocation,
-    enabled: !!user && !cityFetched,  // Fetch city only if user is available and city hasn't been fetched
+    enabled: !!user && !cityFetched, // Fetch city only if user is available and city hasn't been fetched
     onSuccess: (fetchedCity) => {
       setCity(fetchedCity);
-      setCityFetched(true);  // Mark city as fetched
+      setCityFetched(true); // Mark city as fetched
     },
     onError: (error) => {
-      console.error('Failed to fetch location:', error);
+      console.error("Failed to fetch location:", error);
     },
   });
 
   const { mutate: updateLocation } = useMutation(updateLocationOnServer, {
     onSuccess: () => {
-      queryClient.invalidateQueries(['user']);
+      queryClient.invalidateQueries(["user"]);
     },
     onError: (error) => {
-      console.error('Failed to update user location:', error);
+      console.error("Failed to update user location:", error);
     },
   });
 
@@ -168,16 +174,20 @@ export const useUser = () => {
         if (image.uri) {
           formData.append(`image[${index}]`, {
             uri: image.uri,
-            type: 'image/jpeg',
+            type: "image/jpeg",
             name: `image_${index}.jpg`,
           });
         }
       });
 
-      const { data } = await axiosInstance.post("/user/profile/submit-verification", images, {
-        headers,
-        formData,
-      });
+      const { data } = await axiosInstance.post(
+        "/user/profile/submit-verification",
+        images,
+        {
+          headers,
+          formData,
+        }
+      );
       return data.user;
     } catch (error) {
       console.error("Error verifying user:", error);
@@ -186,43 +196,100 @@ export const useUser = () => {
   }
 
   const deleteSkill = useMutation({
-    mutationFn: (skillsId) => deleteResource('/user/profile/delete-skills', 'skill_id', skillsId),
+    mutationFn: (skillsId) =>
+      deleteResource("/user/profile/delete-skills", "skill_id", skillsId),
     onSuccess: () => {
-      queryClient.invalidateQueries(['user']);
+      queryClient.invalidateQueries(["user"]);
     },
     onError: (error) => {
-      console.error('Error deleting skill:', error);
+      console.error("Error deleting skill:", error);
     },
   });
 
   const deleteEducation = useMutation({
-    mutationFn: (educationId) => deleteResource('/user/profile/delete-educations', 'education_id', educationId),
+    mutationFn: (educationId) =>
+      deleteResource(
+        "/user/profile/delete-educations",
+        "education_id",
+        educationId
+      ),
     onSuccess: () => {
-      queryClient.invalidateQueries(['user']);
+      queryClient.invalidateQueries(["user"]);
     },
   });
 
   const deleteTraining = useMutation({
-    mutationFn: (trainingId) => deleteResource('/user/profile/delete-trainings', 'trainings_id', trainingId),
+    mutationFn: (trainingId) =>
+      deleteResource(
+        "/user/profile/delete-trainings",
+        "trainings_id",
+        trainingId
+      ),
     onSuccess: () => {
-      queryClient.invalidateQueries(['user']);
-      console.log('Training deleted successfully');
+      queryClient.invalidateQueries(["user"]);
+      console.log("Training deleted successfully");
     },
     onError: (error) => {
-      console.error('Error deleting training:', error);
+      console.error("Error deleting training:", error);
     },
   });
 
   const deleteExperience = useMutation({
-    mutationFn: (experienceId) => deleteResource('/user/profile/delete-experience', 'experience_id', experienceId),
+    mutationFn: (experienceId) =>
+      deleteResource(
+        "/user/profile/delete-experience",
+        "experience_id",
+        experienceId
+      ),
     onSuccess: () => {
-      queryClient.invalidateQueries(['user']);
-      console.log('Experience deleted successfully');
+      queryClient.invalidateQueries(["user"]);
+      console.log("Experience deleted successfully");
     },
     onError: (error) => {
-      console.error('Error deleting experience:', error);
+      console.error("Error deleting experience:", error);
     },
   });
+
+  const linkAppleAccount = async (credential) => {
+    try {
+      const storedUser = await AsyncStorage.getItem("upcare_user");
+      if (!storedUser) {
+        return null;
+      }
+
+      const user = JSON.parse(storedUser);
+      const headers = getJWTHeader(user);
+
+      const response = await axiosInstance.post(
+        "/auth/link-apple-account",
+        {
+          authorizationCode: credential.authorizationCode,
+          identityToken: credential.identityToken,
+          user: JSON.stringify({
+            email: credential.email,
+            fullName: credential.fullName,
+          }),
+        },
+        {
+          headers: getJWTHeader(user),
+        }
+      );
+
+      console.log(response);
+      if (response.data.status === "success") {
+        queryClient.invalidateQueries(["user"]);
+        return { success: true, message: "Apple account linked successfully." };
+      } else {
+        return { success: false, message: response.data.message };
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = axios.isAxiosError(error)
+        ? error.response?.data?.message || SERVER_ERROR
+        : SERVER_ERROR;
+      return { success: false, message: errorMessage };
+    }
+  };
 
   return {
     user,
@@ -241,5 +308,6 @@ export const useUser = () => {
     deleteEducation: deleteEducation.mutate,
     deleteTraining: deleteTraining.mutate,
     deleteExperience: deleteExperience.mutate,
+    linkAppleAccount,
   };
 };
