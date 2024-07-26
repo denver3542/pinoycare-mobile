@@ -1,19 +1,18 @@
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { TouchableHighlight } from "react-native-gesture-handler";
 import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const TodoCard = ({ rate }) => {
+const TodoCard = () => {
     const navigation = useNavigation();
 
-    const percentage = rate * 25;
+
     return (
         <View style={styles.card}>
             <View style={styles.cardContent}>
                 <View style={styles.textContainer}>
-                    <Text style={styles.headerTextStyle}>Your today's task</Text>
-                    <Text style={styles.headerTextStyle}>almost done!</Text>
+                    <Text style={styles.headerTextStyle}>Create Your Vision</Text>
+                    <Text style={styles.headerTextStyle}>Your Today's Task</Text>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => navigation.navigate('TodoList')}
@@ -21,23 +20,7 @@ const TodoCard = ({ rate }) => {
                         <Text style={styles.buttonText}>View To Do</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.progressContainer}>
-                    <AnimatedCircularProgress
-                        size={90}
-                        width={6}
-                        fill={percentage}
-                        tintColor="#FDED56"
-                        backgroundColor="gray"
-                    >
-                        {
-                            (fill) => (
-                                <Text style={styles.percentage}>
-                                    {percentage}%
-                                </Text>
-                            )
-                        }
-                    </AnimatedCircularProgress>
-                </View>
+                <MaterialIcons name="emoji-events" size={100} color="#FFD700" />
             </View>
         </View>
     );
@@ -57,7 +40,6 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         flex: 1,
-
     },
     headerTextStyle: {
         fontSize: 20,
@@ -71,7 +53,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 100,
         borderRadius: 8,
-
     },
     buttonText: {
         color: '#0A3480',
@@ -80,7 +61,13 @@ const styles = StyleSheet.create({
     },
     progressContainer: {
         marginLeft: 10,
-        right: 10
+        right: 10,
+        alignItems: 'center'
+    },
+    percentage: {
+        fontSize: 16,
+        color: 'white',
+        marginTop: 5
     }
 });
 

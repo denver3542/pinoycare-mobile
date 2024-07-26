@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Keyboard, TouchableOpacity, TouchableHighlight } from 'react-native';
-import { Text, Chip, Appbar, Button, FAB, Portal, Dialog } from 'react-native-paper';
+import { Text, Chip, Appbar, Button, FAB, Portal, Dialog, RadioButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { format, startOfDay } from 'date-fns';
 import moment from 'moment';
@@ -12,13 +12,15 @@ import { TextInput } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useTodo, useUpdateTodo } from './hooks/useTodo';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Svg, { Path } from 'react-native-svg';
 
 const mapStatusToDisplayName = (status) => {
     switch (status) {
         case 'todo':
             return 'To Do';
         case 'incomplete':
-            return 'In Progress';
+            return 'In Complete';
         case 'complete':
             return 'Completed';
         default:
@@ -53,8 +55,10 @@ const getChipStyle = (status) => {
 
 const TodoList = () => {
     const navigation = useNavigation();
-    const { data, refetch, isLoading, error, deleteTodo } = useTodo();
-    const { mutate: updateTodo } = useUpdateTodo();
+    const { data, refetch, error, deleteTodo } = useTodo();
+
+    const { mutate: updateTodo, isLoading: isUpdating } = useUpdateTodo()
+
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedStatus, setSelectedStatus] = useState('all');
     const [selectedTask, setSelectedTask] = useState(null);
@@ -62,14 +66,20 @@ const TodoList = () => {
     const [addTodoVisible, setAddTodoVisible] = useState(false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [dateFieldName, setDateFieldName] = useState(null);
+    const [fabOpen, setFabOpen] = useState(false);
+
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
 
     const updateBottomSheetRef = useRef(null);
     const addTodoBottomSheetRef = useRef(null);
 
     const { control, handleSubmit, setValue, reset } = useForm();
 
-    const snapPoints = useMemo(() => ['60%'], []);
-    const addTodoSnapPoints = useMemo(() => ['55%'], []);
+    const snapPoints = useMemo(() => ['80%'], []);
+    const addTodoSnapPoints = useMemo(() => ['65%'], []);
 
     const handleCloseBottomSheet = () => { updateBottomSheetRef.current?.close(); };
     const handleOpenBottomSheet = (task) => {
@@ -80,14 +90,15 @@ const TodoList = () => {
         setValue('end_time', moment(task.end_time).format('MMMM D, YYYY h:mm A'));
         setValue('start_time_iso', task.start_time);
         setValue('end_time_iso', task.end_time);
+        setValue('status', task.status);
         Keyboard.dismiss();
-        setTimeout(() => updateBottomSheetRef.current?.expand(), 300);
+        setTimeout(() => updateBottomSheetRef.current?.expand());
     };
 
     const handleOpenAddTodoBottomSheet = () => {
         setAddTodoVisible(true);
         Keyboard.dismiss();
-        setTimeout(() => addTodoBottomSheetRef.current?.expand(), 300);
+        setTimeout(() => addTodoBottomSheetRef.current?.expand());
     };
 
     const renderBackdrop = useCallback(
@@ -108,17 +119,24 @@ const TodoList = () => {
             start_time: formatDateForSubmission(new Date(formData.start_time_iso)),
             end_time: formatDateForSubmission(new Date(formData.end_time_iso)),
         };
-        await updateTodo({
-            ...formattedData,
-            id: selectedTask.id,
-        });
-        handleCloseBottomSheet();
+        try {
+            await updateTodo({
+                ...formattedData,
+                id: selectedTask.id,
+            });
+            // Handle successful update if needed
+        } catch (error) {
+            // Handle error if needed
+            console.error("Update failed", error);
+        } finally {
+            handleCloseBottomSheet(); // Close BottomSheet after update
+        }
     };
-
 
 
     const handleDelete = async () => {
         await deleteTodo(selectedTask.id);
+        handleCloseBottomSheet();
         setVisible(false);
     };
 
@@ -129,7 +147,6 @@ const TodoList = () => {
         setDateFieldName(fieldName);
         setDatePickerVisibility(true);
     };
-
 
     const handleConfirm = (date) => {
         setDatePickerVisibility(false);
@@ -157,16 +174,35 @@ const TodoList = () => {
             });
         }
 
+        tasks = tasks.map(task => {
+            const startTime = new Date(task.start_time);
+            const endTime = new Date(task.end_time);
+            if (startTime > endTime) {
+                task.status = 'pending';
+            }
+            return task;
+        });
+
         return tasks;
     };
 
-    const currentDate = new Date();
-    const isCurrentDate = (date) => {
-        return startOfDay(date).getTime() === startOfDay(currentDate).getTime();
+    const getMarkedDates = (tasks) => {
+        const markedDates = {};
+        if (tasks) {
+            tasks.forEach(task => {
+                const date = startOfDay(new Date(task.start_time));
+                const dateString = format(date, 'yyyy-MM-dd');
+                if (!markedDates[dateString]) {
+                    markedDates[dateString] = { marked: true, dotColor: '#0A3480' };
+                }
+            });
+        }
+        markedDates[selectedDate] = { ...markedDates[selectedDate], selected: true, selectedColor: '#0A3480' };
+        return markedDates;
     };
+
     return (
         <View style={{ flex: 1 }}>
-            <Spinner visible={isLoading} />
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
                 <Appbar.Content title={`Today, ${format(new Date(), 'MMM dd')}`} color="white" />
@@ -174,10 +210,12 @@ const TodoList = () => {
 
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={styles.containerWrapper}>
+                    <Spinner visible={isUpdating} />
+
                     <View style={styles.calendarContainer}>
                         <Calendar
                             onDayPress={(day) => setSelectedDate(day.dateString)}
-                            markedDates={{ [selectedDate]: { selected: true, selectedColor: '#0A3480' } }}
+                            markedDates={getMarkedDates(data?.tasks)}
                             markingType={'simple'}
                         />
                     </View>
@@ -212,13 +250,8 @@ const TodoList = () => {
                                 >
                                     <View style={styles.cardContent}>
                                         <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                                            <Text style={styles.title}>{task.title}</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                                                <Text style={styles.time}>{moment(task.start_time).format('h:mm a')} - {moment(task.end_time).format('h:mm a')}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <Text style={styles.category}>{task.description}</Text>
+                                            <Text style={styles.title}>{capitalizeFirstLetter(task.title)}</Text>
+
                                             <View style={styles.timeStatusContainer}>
                                                 <Chip textStyle={{
                                                     minHeight: 15,
@@ -235,6 +268,23 @@ const TodoList = () => {
                                                 }}>
                                                     {mapStatusToDisplayName(task.status)}
                                                 </Chip>
+                                            </View>
+                                        </View>
+                                        <View style={{ flexDirection: 'column', gap: 10 }}>
+                                            <Text style={styles.description}>{capitalizeFirstLetter(task.description)}</Text>
+
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                {/* <MaterialIcons name="schedule" size={22} color="#0A3480" /> */}
+                                                <Svg
+                                                    width="18px"
+                                                    height="18px"
+                                                    viewBox="0 -960 960 960"
+                                                    fill="#0A3480"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <Path d="m612-292 56-56-148-148v-184h-80v216l172 172ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                                                </Svg>
+                                                <Text style={styles.time}> {moment(task.start_time).format('h:mm a')} - {moment(task.end_time).format('h:mm a')}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -267,7 +317,7 @@ const TodoList = () => {
                     {selectedTask && (
                         <>
                             <View style={styles.bottomSheetHeader}>
-                                <Text style={styles.bottomSheetTitle}>{selectedTask.title}</Text>
+                                <Text style={styles.bottomSheetTitle}>Update - {selectedTask.title}</Text>
                             </View>
 
                             <Controller
@@ -296,6 +346,8 @@ const TodoList = () => {
                                         onChangeText={onChange}
                                         mode="outlined"
                                         style={styles.input}
+                                        multiline={true}
+                                        numberOfLines={5}
                                     />
                                 )}
                             />
@@ -334,13 +386,51 @@ const TodoList = () => {
                                     </TouchableOpacity>
                                 )}
                             />
-                            <View style={{ gap: 10 }}>
+
+                            <Controller
+                                control={control}
+                                name="status"
+                                render={({ field: { onChange, value } }) => (
+                                    <View style={styles.radioGroup}>
+                                        <Text>Status</Text>
+                                        <RadioButton.Group
+                                            onValueChange={onChange}
+                                            value={value}
+                                        >
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <View style={styles.radioButton}>
+                                                    <RadioButton value="todo" />
+                                                    <Text>Todo</Text>
+                                                </View>
+                                                <View style={styles.radioButton}>
+                                                    <RadioButton value="incomplete" />
+                                                    <Text>Incomplete</Text>
+                                                </View>
+                                                <View style={styles.radioButton}>
+                                                    <RadioButton value="complete" />
+                                                    <Text>Complete</Text>
+                                                </View>
+                                            </View>
+                                        </RadioButton.Group>
+                                    </View>
+                                )}
+                            />
+                            {/* <View style={{ gap: 10 }}>
                                 <Button mode="contained" onPress={handleSubmit(handleUpdate)}>
                                     Update Task
                                 </Button>
                                 <Button mode="outlined" onPress={showDeleteDialog}>
                                     Delete
                                 </Button>
+                            </View> */}
+                            <View style={styles.buttonContainer}>
+                                <TouchableOpacity style={[styles.button, styles.yesButton]} onPress={handleSubmit(handleUpdate)}>
+                                    <Text style={styles.buttonText}> Update Task</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={showDeleteDialog}>
+                                    <Text style={styles.cancelButtonText}>Delete</Text>
+                                </TouchableOpacity>
                             </View>
                         </>
                     )}
@@ -356,6 +446,7 @@ const TodoList = () => {
             >
                 <TodoAdd onClose={() => addTodoBottomSheetRef.current?.close()} />
             </BottomSheet>
+
 
             <Portal>
                 <Dialog visible={visible} onDismiss={hideDeleteDialog}>
@@ -392,7 +483,6 @@ const styles = StyleSheet.create({
     calendarContainer: {
         padding: 10,
         backgroundColor: 'white',
-        // elevation: 1,
         marginBottom: 10
     },
     chipContainer: {
@@ -402,8 +492,8 @@ const styles = StyleSheet.create({
     },
     chip: {
         backgroundColor: '#e0e0e0',
-        borderWidth: 0,
-        elevation: 1,
+        borderWidth: 0.5,
+        maxWidth: '100%'
     },
     selectedChip: {
         backgroundColor: '#0A3480',
@@ -426,10 +516,12 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         borderColor: '#ddd',
         borderWidth: 0.5,
+        gap: 5
     },
-    category: {
+    description: {
         fontSize: 14,
-        color: '#757575',
+        color: '#4F4F4F',
+        textAlign: 'justify'
     },
     title: {
         fontSize: 16,
@@ -443,7 +535,8 @@ const styles = StyleSheet.create({
     },
     time: {
         fontSize: 14,
-        color: '#757575',
+        color: '#0A3480',
+        fontWeight: '700'
     },
     noTasksText: {
         textAlign: 'center',
@@ -465,33 +558,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-    bottomSheetTime: {
-        fontSize: 16,
-        color: '#757575',
-    },
-    bottomSheetBody: {
-        flex: 1,
-    },
-    bottomSheetDescription: {
-        fontSize: 16,
-        marginBottom: 16,
-    },
-    bottomSheetNotes: {
-        marginBottom: 16,
-    },
-    bottomSheetNotesTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    bottomSheetNote: {
-        fontSize: 16,
-        marginBottom: 4,
-    },
-    bottomSheetActions: {
-        borderTopWidth: 1,
-        borderTopColor: '#ddd',
-    },
     fabContainer: {
         position: 'absolute',
         margin: 16,
@@ -504,6 +570,47 @@ const styles = StyleSheet.create({
     },
     input: {
         marginBottom: 16,
+    },
+    buttonContainer: {
+        flex: 1,
+        marginTop: 10,
+        flexDirection: 'column',
+        gap: 10
+    },
+    button: {
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    radioGroup: {
+        margin: 10,
+
+    },
+    radioButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+    },
+    spinnerTextStyle: {
+        color: '#FFF',
     },
 });
 

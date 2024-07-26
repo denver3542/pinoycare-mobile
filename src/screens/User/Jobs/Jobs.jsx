@@ -72,19 +72,28 @@ const JobListings = ({ activeNav }) => {
           <View style={styles.cardContentText}>
             <View style={styles.titleRow}>
               <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.title}>{item.title}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <IconButton
+                    onPress={() => handleSave(item.id)}
+                    icon={isSaved ? "bookmark" : "bookmark-outline"}
+                    color={isSaved ? "#0A3480" : "#888"}
+                    selected
+                    size={24}
+                  />
+                </View>
                 <Text style={styles.company}>{item.company}</Text>
                 <Text style={{ fontWeight: '500' }}>{item.location}</Text>
                 <JobMatching rating={item.matchScore / 25} />
               </View>
 
-              <IconButton
+              {/* <IconButton
                 onPress={() => handleSave(item.id)}
                 icon={isSaved ? "bookmark" : "bookmark-outline"}
                 color={isSaved ? "#0A3480" : "#888"}
                 selected
                 size={24}
-              />
+              /> */}
             </View>
             <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
           </View>
@@ -153,9 +162,9 @@ const styles = StyleSheet.create({
     padding: 8
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
   },
   title: {
     fontWeight: '500',

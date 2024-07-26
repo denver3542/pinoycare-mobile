@@ -103,7 +103,6 @@ export function useAddTodoData() {
             onSuccess: () => {
                 queryClient.invalidateQueries(["user"]);
                 queryClient.invalidateQueries("tasks");
-                navigation.goBack();
             },
             onError: (error) => {
                 console.error("Failed to submit todo:", error);
