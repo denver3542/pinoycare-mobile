@@ -31,6 +31,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import HeaderMessageNotification from "../../components/HeaderMessageNotification";
 import HeaderNotification from "../../components/HeaderNotification";
 import { Swipeable } from "react-native-gesture-handler";
+import TodoCard from "./Todo";
 
 function Dashboard() {
   const { colors } = useTheme();
@@ -201,6 +202,10 @@ function Dashboard() {
           inputStyle={styles.searchInput}
           placeholderTextColor="gray"
         />
+
+        <View>
+          <TodoCard />
+        </View>
 
         <View style={styles.card}>
           <View style={styles.sectionContainer}>

@@ -29,6 +29,8 @@ import VerificationScreen from "../screens/User/Profile/Verify/VerificationScree
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
 import ApplicationStatus from "../screens/Applications/ApplicationStatus";
+import TodoList from "../screens/Dashboard/Todo/todoList";
+import TodoAdd from "../screens/Dashboard/Todo/todoAdd";
 
 // Import hooks
 import { useUser } from "../hooks/useUser";
@@ -43,6 +45,8 @@ import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
 
 const Stack = createNativeStackNavigator();
+
+
 
 function LandingNavigation() {
   const { user, isFetched, isFetching } = useUser();
@@ -173,6 +177,15 @@ function LandingNavigation() {
               <Stack.Screen
                 name="Questionnaire"
                 component={JobApplicationQuestionnaire}
+              />
+
+              <Stack.Screen
+                name="TodoList"
+                component={TodoList}
+              />
+              <Stack.Screen
+                name="TodoAdd"
+                component={TodoAdd}
               />
             </>
           )}
