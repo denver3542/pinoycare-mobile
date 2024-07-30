@@ -116,8 +116,8 @@ export default function Job() {
       {job.media && job.media[0] && job.media[0].original_url && (
         <Card.Cover
           source={{ uri: job.media[0].original_url }}
-          resizeMode="cover"
-          style={[styles.image, { borderRadius: 0 }]}
+          resizeMode="stretch"
+          style={[styles.image, { borderRadius: 0, height: 400 }]}
         />
       )}
       <View style={styles.contentWrapper}>

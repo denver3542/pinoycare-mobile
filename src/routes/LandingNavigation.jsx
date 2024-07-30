@@ -31,7 +31,6 @@ import Job from "../screens/Jobs/Job";
 import ApplicationStatus from "../screens/Applications/ApplicationStatus";
 import TodoList from "../screens/Dashboard/Todo/todoList";
 import TodoAdd from "../screens/Dashboard/Todo/todoAdd";
-
 // Import hooks
 import { useUser } from "../hooks/useUser";
 import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
@@ -43,6 +42,7 @@ import GuestFeeds from "../screens/Guest/Feeds";
 import GuestJob from "../screens/Guest/Job";
 import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
+import SearchJob from "../screens/Dashboard/SearchJob";
 
 const Stack = createNativeStackNavigator();
 
@@ -186,6 +186,10 @@ function LandingNavigation() {
               <Stack.Screen
                 name="TodoAdd"
                 component={TodoAdd}
+              />
+              <Stack.Screen
+                name="SearchJob"
+                component={SearchJob}
               />
             </>
           )}

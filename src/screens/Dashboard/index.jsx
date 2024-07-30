@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Animated,
   Modal,
+  TouchableHighlight,
 } from "react-native";
 import {
   Text,
@@ -194,22 +195,21 @@ function Dashboard() {
       </Appbar.Header>
 
       <View style={styles.container}>
-        <Searchbar
-          placeholder="Search"
-          style={styles.searchbar}
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          inputStyle={styles.searchInput}
-          placeholderTextColor="gray"
-        />
+        <TouchableHighlight onPress={() => navigation.navigate('SearchJob')} underlayColor="#ddd">
+          <Searchbar
+            placeholder="Search"
+            style={styles.searchbar}
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            inputStyle={styles.searchInput}
+            placeholderTextColor="gray"
+          />
+        </TouchableHighlight>
 
         <View>
           <TodoCard />
         </View>
 
-        {/* <View>
-          <Text>add flat list here</Text>
-        </View> */}
 
         <View style={styles.card}>
           <View style={styles.sectionContainer}>

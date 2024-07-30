@@ -74,6 +74,7 @@ const JobListings = ({ activeNav, rating }) => {
       <TouchableHighlight onPress={() => navigateToJobDetails(item)} style={styles.card}
         underlayColor="#ddd">
         <View style={styles.cardContentRow}>
+
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
               <Image source={{ uri: item.media[0].original_url }} style={styles.jobImage} />
@@ -81,16 +82,16 @@ const JobListings = ({ activeNav, rating }) => {
               <View style={styles.placeholderCard} />
             )
           }
+
           <View style={styles.cardContentText}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.title}>{item.title}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', flex: 1 }}>
+              <Text style={styles.titleTextStyle}>{item.title}</Text>
               <IconButton
                 onPress={() => handleSave(item.id)}
                 icon={isSaved ? "bookmark" : "bookmark-outline"}
                 color={isSaved ? "#0A3480" : "#888"}
                 selected
                 size={24}
-                style={{ left: 10 }}
               />
             </View>
             <View style={{ bottom: 10 }}>
@@ -160,8 +161,10 @@ const styles = StyleSheet.create({
   },
 
   cardContentRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
-    top: 10,
+    // top: 10,
     // backgroundColor: 'red',
     paddingHorizontal: 15,
     paddingVertical: 10
@@ -169,7 +172,7 @@ const styles = StyleSheet.create({
   cardContentText: {
     flex: 1,
     marginLeft: 10,
-    bottom: 15,
+    justifyContent: 'center'
     // backgroundColor: 'blue',
   },
   listContentContainer: {
@@ -178,9 +181,10 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'column',
   },
-  title: {
+  titleTextStyle: {
     fontWeight: '500',
-    fontSize: 20,
+    fontSize: 18,
+    flexShrink: 1,
   },
   postedDate: {
     color: '#888',
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 6,
-    marginRight: 5
+    marginRight: 5,
   },
   placeholderCard: {
     width: 80,
