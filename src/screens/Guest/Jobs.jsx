@@ -24,7 +24,7 @@ import {
 import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 import useJobs from "./hooks/useJobs";
-import Job from "./Job";
+import Job from "../Guest/Job";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import HTMLView from "react-native-htmlview";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -44,8 +44,8 @@ const GuestJobs = () => {
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
-      .then(() => {})
-      .catch(() => {})
+      .then(() => { })
+      .catch(() => { })
       .finally(() => {
         setRefreshing(false);
       });
@@ -97,6 +97,11 @@ const GuestJobs = () => {
     setShowApplyModal(false);
   };
 
+  const navigateToJobDetails = (job) => {
+    navigation.navigate("GuestJob", { job });
+  };
+
+
   const renderJobItem = ({ item }) => {
     const postedDate = moment(item.date_posted).format("LL");
     const navigateToJobDetails = () => {
@@ -117,7 +122,7 @@ const GuestJobs = () => {
     const postedDate = moment(job.date_posted).format("LL");
 
     return (
-      <View style={styles.card}>
+      <TouchableWithoutFeedback onPress={() => navigateToJobDetails(job)} style={styles.card}>
         <View style={styles.cardContentRow}>
           {job.media && job.media.length > 0 && job.media[0].original_url ? (
             <Image
@@ -138,7 +143,7 @@ const GuestJobs = () => {
               </View>
               <TouchableWithoutFeedback onPress={() => showModal(job.id)}>
                 <MaterialIcons
-                  name="favorite-border"
+                  name="bookmark-outline"
                   size={24}
                   color="#0A3480"
                 />
@@ -168,7 +173,7 @@ const GuestJobs = () => {
             )}
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   };
 

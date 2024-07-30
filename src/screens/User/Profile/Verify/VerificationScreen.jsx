@@ -91,7 +91,7 @@ const VerificationScreen = () => {
         if (!result.canceled) {
             const { uri, type } = result.assets[0];
             let imageFileType = uri.split('.').pop().toLowerCase();
-            if (imageFileType !== 'jpeg' && imageFileType !== 'png') {
+            if (imageFileType !== 'jpeg' && imageFileType !== 'png' && imageFileType !== 'jpg') {
                 Alert.alert('Invalid File Type', 'Please select a JPEG or PNG image file.');
                 return;
             }
@@ -104,8 +104,8 @@ const VerificationScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
             </Appbar.Header>
             <ScrollView contentContainerStyle={styles.container}>
                 {Array.from({ length: 3 }).map((_, index) => (

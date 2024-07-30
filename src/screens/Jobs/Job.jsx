@@ -1,37 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, RefreshControl } from "react-native";
-import { useNavigation, useRoute } from '@react-navigation/native';
-import {
-  Appbar,
-  Button,
-  Card,
-  Chip,
-  Divider,
-  Modal,
-  Text,
-  Title,
-  useTheme,
-  Portal
-} from "react-native-paper";
 import HTMLView from "react-native-htmlview";
+import { View, ScrollView, StyleSheet, RefreshControl, useWindowDimensions, Dimensions } from "react-native";
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { Appbar, Button, Card, Chip, Divider, Modal, Portal, Text, useTheme } from "react-native-paper";
 import { fDate } from "../../../utils/formatTime";
 import { addCommasToNumber } from "../../../utils/currencyFormat";
 import { useUser } from "../../hooks/useUser";
-import useJob from "./hook/useJob";
-import { useUserApplications } from "../../components/useUserApplications";
+import useJob from "../../screens/User/Jobs/hook/useJobs";
+import { useQueryClient } from "@tanstack/react-query";
+import { MaterialIcons } from "@expo/vector-icons";
+import RenderHtml from 'react-native-render-html';
+import JobMatching from "../User/Jobs/jobMatching";
 
 export default function Job() {
   const { colors } = useTheme();
   const { params } = useRoute();
+  const job = params?.job || {};
   const navigation = useNavigation();
   const { user, isFetched } = useUser();
-  const { appliedJobs } = useUserApplications();
   const [isApplied, setIsApplied] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const job = params.job;
-  const { data: jobData, isFetching, refetch, isRefetching } = useJob(job.uuid);
+  const { data: jobData, isFetching, refetch } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const { width: contentWidth } = useWindowDimensions();
+  const windowWidth = Dimensions.get('window').width;
+  const maxWidth = Math.min(windowWidth, 768);
+  const imageHeight = maxWidth * 9 / 10;
+  const queryClient = useQueryClient();
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+
+  const formatSalary = (salary) => {
+    if (!salary) return 'n/a';
+    return `₱${(salary / 1000).toFixed(0)}k`;
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -43,41 +46,56 @@ export default function Job() {
       });
   };
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
-  useEffect(() => {
-    setIsApplied(appliedJobs.includes(job.id));
-  }, [appliedJobs, job.id]);
-
   useEffect(() => {
     if (user && isFetched) {
-      const appliedJob = user.applications?.find(
-        (app) => app.job_id === job.id
+      console.log("User data:", user);
+      console.log("Job data:", job);
+
+      const appliedJob = job.application?.find(
+        (app) => app.user_id === user.id
       );
       setIsApplied(!!appliedJob);
+      setApplicationStatus(appliedJob ? appliedJob.status : null);
+
+      if (appliedJob) {
+        console.log(`User has an application for the job with ID ${job.id}`);
+        console.log(`Application status: ${appliedJob.status}`);
+      } else {
+        console.log(`User does not have an application for the job with ID ${job.id}`);
+      }
+
+
+      console.log(`Checking application for job with ID ${job.id}: ${appliedJob ? 'Application found' : 'No application found'}`);
     }
-  }, [user, isFetched]);
+  }, [user, isFetched, job]);
 
   useEffect(() => {
-    if (jobData && !isFetching) {
-      setQuestions(jobData.question || []);
+    if (job && !isFetching) {
+      setQuestions(job.question || []);
     }
-  }, [jobData, isFetching]);
+  }, [job, isFetching]);
 
   const handleSave = () => {
     showModal(true);
   };
 
   const handleApply = () => {
-    if (user) {
-      navigation.navigate("Questionnaire", { jobData });
-      console.log('user:', user)
+    if (!user) {
+      setShowApplyModal(true);
     } else {
-      showModal(true);
+      navigation.navigate("Questionnaire", { job });
     }
   };
 
+  const signIn = () => {
+    navigation.navigate("Login");
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setShowSaveModal(false);
+    setShowApplyModal(false);
+  };
 
   return (
     <ScrollView
@@ -93,94 +111,199 @@ export default function Job() {
     >
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
-        <Appbar.Content title={params.job.title} titleStyle={{ color: 'white' }} />
+        {/* <Appbar.Content title={job.title || "Job Details"} titleStyle={{ color: 'white' }} /> */}
       </Appbar.Header>
-      <Card style={styles.card}>
-        <Card.Cover source={{ uri: params.job.media[0].original_url }} />
-        <Card.Actions style={styles.cardActions}>
-          {!user && !isFetched && (
-            <Button icon="" style={styles.saveButton} onPress={handleSave}>
-              Save
-            </Button>
-          )}
-          <Button
-            style={[
-              // styles.applyButton,
-              { color: isApplied ? "#fff" : "primary" },
-            ]}
-            onPress={handleApply}
-            disabled={isApplied}
-          >
-            {isApplied ? "Applied" : "Apply"}
-          </Button>
-        </Card.Actions>
-        <Card.Content>
-          <Title style={styles.title}>{job.title}</Title>
-          <Text style={styles.company}>{job.company}</Text>
-          <View style={styles.metaContainer}>
-            <Text style={styles.metaText}>
-              <Text style={styles.metaIcon}>📅</Text> {fDate(job.created_at)}
-            </Text>
-          </View>
-          <Divider style={styles.divider} />
-          <Text style={styles.actionTitle}>Description:</Text>
-          <HTMLView value={job.description} style={styles.description} />
-          <Divider style={styles.divider} />
-          <View style={[styles.infoContainer, { alignItems: "baseline" }]}>
-            <Text style={styles.sectionTitle}>Offered Salary:</Text>
-            <Text variant="bodyLarge" style={styles.infoText}>
-              {"₱" + addCommasToNumber(job.salary_from || 0)} -{" "}
-              {"₱" + addCommasToNumber(job.salary_to || 0)}
-            </Text>
-          </View>
-          <Divider style={styles.divider} />
-          <Text style={styles.sectionTitle}>Skills</Text>
-          <View style={styles.chipContainer}>
-            {job.skills &&
-              job.skills?.map((item) => (
-                <Chip key={item.id} style={styles.skillChip}>
-                  {item.skill_name}
-                </Chip>
-              ))}
-          </View>
-          <Text style={styles.sectionTitle}>Shift and Schedule</Text>
-          <View style={styles.chipContainer}>
-            {job.schedules.length > 0 ? (
-              job.schedules.map((item) => (
-                <Chip key={item} style={styles.skillChip}>
-                  {item}
-                </Chip>
-              ))
-            ) : (
-              <Text>N/A</Text>
-            )}
-          </View>
-        </Card.Content>
-      </Card>
-      {user && isFetched ? null : (
-        <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={hideModal}
-            contentContainerStyle={styles.modal}
-          >
-            <Text style={styles.modalText}>
-              Would you like to apply for this job? Please sign in.
-            </Text>
-            <Button
-              mode="contained"
-              onPress={() => {
-                navigation.navigate("Login");
-                hideModal();
-              }}
-            >
-              Sign in
-            </Button>
-
-            <Button style={styles.button} onPress={hideModal}>Cancel</Button>
-          </Modal>
-        </Portal>
+      {job.media && job.media[0] && job.media[0].original_url && (
+        <Card.Cover
+          source={{ uri: job.media[0].original_url }}
+          resizeMode="stretch"
+          style={[styles.image, { borderRadius: 0, height: 400 }]}
+        />
       )}
+      <View style={styles.contentWrapper}>
+        <View style={styles.card}>
+          <View style={[styles.cardContent, { alignItems: 'center' }]}>
+            <Text variant='titleLarge' style={{ fontWeight: 'bold' }}>{job.title}</Text>
+            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#5690FD' }}>{job.company}</Text>
+            <Text style={{ color: 'gray' }} variant="labelSmall"> Posted {job.created_at ? fDate(job.created_at) : 'n/a'}</Text>
+          </View>
+
+          <View style={{ backgroundColor: '#fff', borderRadius: 14, paddingVertical: 20 }}>
+            <View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+                <View style={{ backgroundColor: '#EEF4FF', padding: 15, borderRadius: 100, }}>
+                  <MaterialIcons name="work" size={25} color='#5690FD'></MaterialIcons>
+                </View>
+                <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
+                  <Text variant="labelMedium" style={{ color: 'gray' }}>Type</Text>
+                  <Text variant="labelLarge" style={{ color: '#414141' }}>{job.type}</Text>
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+                <View style={{ backgroundColor: '#DBFFEC', padding: 15, borderRadius: 100, }}>
+                  <MaterialIcons name="attach-money" size={25} color='#00D261'></MaterialIcons>
+                </View>
+                <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
+                  <Text variant="labelMedium" style={{ color: 'gray' }}>Salary</Text>
+                  <Text variant="labelLarge" style={{ color: '#414141' }}>
+                    {formatSalary(job.salary_from)} - {formatSalary(job.salary_to)}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+                <View style={{ backgroundColor: '#FFDBDB', padding: 15, borderRadius: 100, }}>
+                  <MaterialIcons name="location-on" size={25} color='#FF4C4C'></MaterialIcons>
+                </View>
+                <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
+                  <Text variant="labelMedium" style={{ color: 'gray' }}>Work Place</Text>
+                  <Text variant="labelLarge" style={{ color: '#414141' }}>{job.workplace}</Text>
+                </View>
+              </View>
+
+
+            </View>
+            {/* <Divider style={{ margin: 20 }} />
+
+            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
+              <JobMatching rating={job.matchScore / 25} />
+            </View> */}
+          </View>
+
+
+
+          <View style={[styles.cardContent]}>
+            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Description</Text>
+            <RenderHtml
+              contentWidth={contentWidth}
+              source={{ html: `<div style="text-align: justify;">${job?.description}</div>` }}
+            />
+          </View>
+          <View style={[styles.cardContent]}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Skills</Text>
+            <View style={{ paddingHorizontal: 0 }}>
+              <View style={styles.chipContainer}>
+                {job.skills && job.skills.length > 0 ? (
+                  job.skills.map((item) => (
+                    <Chip key={item.id} textStyle={{
+                      minHeight: 14,
+                      lineHeight: 14,
+                      marginRight: 10,
+                      marginLeft: 10,
+                      marginVertical: 5,
+                      fontSize: 14
+                    }} style={styles.skillChip}>
+                      <Text>{item.skill_name}</Text>
+                    </Chip>
+                  ))
+                ) : (
+                  <Text>No Skills Required</Text>
+                )}
+              </View>
+            </View>
+          </View>
+          <View style={[styles.cardContent]}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Shift and Schedule</Text>
+            <View style={{ paddingHorizontal: 0 }}>
+              <View style={styles.chipContainer}>
+                {job.schedules && job.schedules.length > 0 ? (
+                  job.schedules.map((schedule, index) => (
+                    <Chip key={index} textStyle={{
+                      minHeight: 14,
+                      lineHeight: 14,
+                      marginRight: 10,
+                      marginLeft: 10,
+                      marginVertical: 5,
+                      fontSize: 14
+                    }} style={styles.skillChip}>
+                      <Text>{schedule}</Text>
+                    </Chip>
+                  ))
+                ) : (
+                  <Text>No Schedule Details</Text>
+                )}
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.cardContent]}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Vacancy</Text>
+            <View style={{ paddingHorizontal: 0 }}>
+              <View style={styles.chipContainer}>
+                <Chip textStyle={{
+                  minHeight: 14,
+                  lineHeight: 14,
+                  marginRight: 10,
+                  marginLeft: 10,
+                  marginVertical: 5,
+                  fontSize: 14
+                }} style={styles.skillChip}>
+                  <Text>{job.max_applicant ?? 'n/a'} vacant</Text>
+                </Chip>
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.cardContent]}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Match</Text>
+            <View style={{ paddingHorizontal: 0 }}>
+              <JobMatching rating={job.matchScore / 25} />
+            </View>
+          </View>
+
+
+        </View>
+      </View>
+      <Divider style={{ marginVertical: 10 }} />
+      <View style={{ marginHorizontal: 10 }}>
+        {!user && !isFetched && (
+          <Button icon="" style={styles.saveButton} onPress={handleSave}>
+            Save
+          </Button>
+        )}
+        <Button
+          mode="contained"
+          style={[
+            { color: isApplied ? "#fff" : "primary" },
+          ]}
+          onPress={handleApply}
+          disabled={isApplied}
+        >{isApplied ? "Applied" : "Apply"}
+        </Button>
+      </View>
+      <Portal>
+        <Modal
+          visible={showSaveModal}
+          onDismiss={() => setShowSaveModal(false)}
+          contentContainerStyle={styles.modal}
+        >
+          <Text style={styles.modalText}>
+            Would you like to save this job? Please sign in.
+          </Text>
+          <Button onPress={signIn} mode="contained">
+            Sign In
+          </Button>
+          <Button onPress={closeModal} mode="text" style={styles.button}>
+            Cancel
+          </Button>
+        </Modal>
+        <Modal
+          visible={showApplyModal}
+          onDismiss={() => setShowApplyModal(false)}
+          contentContainerStyle={styles.modal}
+        >
+          <Text style={styles.modalText}>
+            Would you like to apply for this job? Please sign in.
+          </Text>
+          <Button onPress={signIn} mode="contained">
+            Sign In
+          </Button>
+          <Button onPress={closeModal} mode="text" style={styles.button}>
+            Cancel
+          </Button>
+        </Modal>
+      </Portal>
     </ScrollView>
   );
 }
@@ -188,7 +311,17 @@ export default function Job() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FB'
+  },
+  contentWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 8,
+    flex: 1
+  },
+
+  cardContent: {
+    paddingHorizontal: 8,
+    paddingVertical: 15,
   },
   modal: {
     backgroundColor: 'white',
@@ -206,13 +339,13 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 20,
+    backgroundColor: "#F4F7FB",
   },
   card: {
+    width: '100%',
+    borderRadius: 0,
     margin: 5,
-    elevation: 5,
-  },
-  cardActions: {
-    justifyContent: "space-around",
+    backgroundColor: "#F4F7FB",
   },
   saveButton: {},
   applyButton: {
@@ -248,7 +381,9 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 5,
+    textAlign: 'justify',
   },
+
   infoContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -262,9 +397,12 @@ const styles = StyleSheet.create({
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 5,
   },
   skillChip: {
     margin: 2,
+  },
+  a: {
+    fontWeight: '300',
+    color: 'red',
   },
 });

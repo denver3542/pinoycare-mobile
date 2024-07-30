@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, View, Linking } from "react-native";
+import { StyleSheet, View, Linking, ScrollView } from "react-native";
 import {
   Button,
   Text,
@@ -10,18 +10,20 @@ import {
   Checkbox,
   List,
   IconButton,
+  RadioButton
 } from "react-native-paper";
 import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useForm } from "react-hook-form";
 import CustomSelectBox from "../../components/CustomSelectBox";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import RNPickerSelect from "react-native-picker-select";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
+import { colors, SocialIcon } from 'react-native-elements';
 
 // Define validation schema
 const schema = yup
@@ -47,7 +49,7 @@ const Signup = () => {
   const navigation = useNavigation();
   const [formErrors, setFormErrors] = useState({});
 
-  const { signup } = useAuth();
+  const { signup, googleLoginOrSignup, request } = useAuth();
   const {
     control,
     watch,
@@ -63,6 +65,7 @@ const Signup = () => {
   const [showPw, setShowPw] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const fontSize = Platform.OS === 'ios' ? 10 : 16;
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -118,185 +121,226 @@ const Signup = () => {
     hideDatePicker();
   };
 
+  const handleGoogleSignIn = async () => {
+    googleLoginOrSignup();
+  };
+  const [gender, setGender] = useState(null); // State to hold selected gender
+  const [visible, setVisible] = useState(false); // State to manage dropdown visibility
+
+
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
+
   return (
-    <UnathorizeLayout>
-      <IconButton
-        icon="arrow-left"
-        onPress={() => navigation.goBack()}
-      />
-      <View style={{ marginTop: 50 }}>
-        <Text style={{
-          fontSize: 30,
-          textAlign: "center",
-          marginBottom: 20,
-          fontWeight: "bold",
-          color: "red",
-        }}>
-          Create <Text
-            style={{
-              fontWeight: "bold",
-              color: colors.primary,
-              fontSize: 18,
-              textAlign: "center",
-              fontSize: 30,
-            }}
-          >
-            Your Account
-          </Text>
-        </Text>
-
-        <View style={{ justifyContent: "center", gap: 0 }}>
-          <CustomTextInput
-            control={control}
-            name="firstname"
-            label="First Name"
-            mode="outlined"
-            rules={{ required: "First Name is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="middlename"
-            label="Middle Name"
-            rules={{ required: "Middlename is required" }}
-            mode="outlined"
-          />
-          <CustomTextInput
-            control={control}
-            name="lastname"
-            label="Last Name"
-            rules={{ required: "Last Name is required" }}
-            mode="outlined"
-          />
-          {/* Here is the selection of gender */}
-          <View style={{ width: "100%", marginBottom: 15 }}>
-            <RNPickerSelect
-              onValueChange={(value) => setValue("gender", value)}
-              items={[
-                { label: "Male", value: "M" },
-                { label: "Female", value: "F" },
-                { label: "Other", value: "Other" },
-              ]}
-              style={{
-                inputAndroid: {
-                  color: colors.text,
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 1,
-                  borderColor: "gray",
-                  borderRadius: 5,
-                  paddingRight: 30,
-                  backgroundColor: "#FFFFFF",
-                },
-                inputIOS: {
-                  color: colors.text,
-                  paddingHorizontal: 10,
-                  paddingVertical: 20,
-                  borderWidth: 1,
-                  borderColor: errors.gender ? "red" : "gray",
-                  borderRadius: 5,
-                  paddingRight: 30,
-                  backgroundColor: "#FFFFFF",
-                },
-              }}
-              placeholder={{ label: "Select your gender", value: null }}
-            />
-            {errors.gender && (
-              <Text style={{ color: "red" }}>{errors.gender.message}</Text>
-            )}
-          </View>
-          <List.Item
-            title="Birth date"
-            right={(props) => (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>
-                  {watcher?.date_of_birth
-                    ? moment(watcher.date_of_birth).format("YYYY-MM-DD")
-                    : ""}
-                </Text>
-                <List.Icon {...props} icon="chevron-right" />
-              </View>
-            )}
-            style={{
-              backgroundColor: "#fff",
-              borderWidth: 1,
-              borderColor: "gray",
-              borderRadius: 5,
-              marginBottom: 15,
-            }}
-            onPress={showDatePicker}
-          />
-          <CustomTextInput
-            control={control}
-            name="email"
-            label="Email"
-            mode="outlined"
-            rules={{ required: "Email is required" }}
-          />
-          <CustomTextInput
-            control={control}
-            name="password"
-            label="Password"
-            mode="outlined"
-            rules={{ required: "Password is required" }}
-            secureTextEntry={!showPw}
-            right={
-              <TextInput.Icon
-                icon={showPw ? "eye-off" : "eye"}
-                onPress={() => setShowPw((pw) => !pw)}
-              />
-            }
-          />
-          <CustomTextInput
-            control={control}
-            name="confirmpassword"
-            label="Confirm Password"
-            mode="outlined"
-            rules={{ required: "Password is required" }}
-            secureTextEntry={!showPw}
-            right={
-              <TextInput.Icon
-                icon={showPw ? "eye-off" : "eye"}
-                onPress={() => setShowPw((pw) => !pw)}
-              />
-            }
-          />
-
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={isSubmitting || isLoading}
-          >
-            Sign Up
-          </Button>
-          <View style={{ display: "flex", justifyContent: "center" }}>
-            {errors.terms && (
-              <Text style={{ color: "red", textAlign: "center" }}>
-                * {errors.terms.message}
-              </Text>
-            )}
-          </View>
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={agreeToTerms ? "checked" : "unchecked"}
-              onPress={() => setAgreeToTerms(!agreeToTerms)}
-              color={colors.primary}
-            />
+    <ScrollView style={{ flex: 1, backgroundColor: "#F4F7FB", }}>
+      <View style={{ padding: 15, }}>
+        <IconButton
+          icon="arrow-left"
+          onPress={() => navigation.goBack()}
+          style={{
+            marginTop: 50,
+            right: 20
+          }}
+        />
+        <View style={{ marginBottom: 0, flex: 1 }}>
+          {/* <Text style={{
+            fontSize: 30,
+            textAlign: "center",
+            marginBottom: 20,
+            fontWeight: "bold",
+            color: "red",
+          }}>
+            Create
             <Text
-              onPress={openTermsLink}
-              style={{ color: colors.text, marginLeft: 8 }}
+              style={{
+                fontWeight: "bold",
+                color: colors.primary,
+                fontSize: 18,
+                textAlign: "center",
+                fontSize: 30,
+              }}
             >
-              I agree to Terms & Conditions
+              Your Account
             </Text>
-          </View>
-
-          <Text
-            style={{ textAlign: "center", marginBottom: 20, color: colors.text }}
-          >
-            Already have an account?{" "}
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={{ color: "red" }}>Sign In</Text>
-            </TouchableOpacity>
+          </Text> */}
+          <Text style={[styles.title, { color: 'red' }]}>
+            Create <Text style={styles.highlight}>
+              Your Account</Text>
           </Text>
+
+          <View style={{ justifyContent: "center", gap: 0 }}>
+            <CustomTextInput
+              control={control}
+              name="firstname"
+              label="First Name"
+              mode="outlined"
+              rules={{ required: "First Name is required" }}
+            />
+            <CustomTextInput
+              control={control}
+              name="middlename"
+              label="Middle Name"
+              rules={{ required: "Middlename is required" }}
+              mode="outlined"
+            />
+            <CustomTextInput
+              control={control}
+              name="lastname"
+              label="Last Name"
+              rules={{ required: "Last Name is required" }}
+              mode="outlined"
+            />
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+              <RadioButton.Group
+                onValueChange={(value) => setValue('gender', value)}
+                value={watcher.gender}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Select Gender</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <RadioButton.Android value="M" color={colors.primary} />
+                    <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Male</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <RadioButton.Android value="F" color={colors.primary} />
+                    <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Female</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+
+
+            <List.Item
+              title="Birth date"
+              titleStyle={{ fontSize: fontSize }}
+              right={(props) => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ fontSize: fontSize }}>
+                    {watcher?.date_of_birth
+                      ? moment(watcher.date_of_birth).format('YYYY-MM-DD')
+                      : ''}
+                  </Text>
+                  <List.Icon {...props} icon="chevron-right" />
+                </View>
+              )}
+              style={{
+                backgroundColor: '#fff',
+                borderWidth: 1,
+                borderColor: 'gray',
+                borderRadius: 5,
+                marginBottom: 15,
+              }}
+              onPress={showDatePicker}
+            />
+            <CustomTextInput
+              control={control}
+              name="email"
+              label="Email"
+              mode="outlined"
+              rules={{ required: "Email is required" }}
+            />
+            <CustomTextInput
+              control={control}
+              name="password"
+              label="Password"
+              mode="outlined"
+              rules={{ required: "Password is required" }}
+              secureTextEntry={!showPw}
+              right={
+                <TextInput.Icon
+                  icon={showPw ? "eye-off" : "eye"}
+                  onPress={() => setShowPw((pw) => !pw)}
+                />
+              }
+            />
+            <CustomTextInput
+              control={control}
+              name="confirmpassword"
+              label="Confirm Password"
+              mode="outlined"
+              rules={{ required: "Password is required" }}
+              secureTextEntry={!showPw}
+              right={
+                <TextInput.Icon
+                  icon={showPw ? "eye-off" : "eye"}
+                  onPress={() => setShowPw((pw) => !pw)}
+                />
+              }
+            />
+
+            <Button
+              mode="elevated"
+              onPress={handleSubmit(onSubmit)}
+              loading={isSubmitting || isLoading}
+              labelStyle={{
+                fontSize: 14,
+                color: 'white',
+                paddingVertical: 4,
+              }}
+              style={{ borderRadius: 50, backgroundColor: '#0A3480', }}
+            >
+              Sign Up
+            </Button>
+            <View style={{ display: "flex", justifyContent: "center" }}>
+              {errors.terms && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  * {errors.terms.message}
+                </Text>
+              )}
+            </View>
+            <View style={styles.checkboxContainer}>
+              <Checkbox.Android
+                status={agreeToTerms ? "checked" : "unchecked"}
+                onPress={() => setAgreeToTerms(!agreeToTerms)}
+                color={colors.primary}
+              />
+              <Text
+                onPress={openTermsLink}
+                style={{ color: colors.text, marginLeft: 8 }}
+              >
+                I agree to Terms & Conditions
+              </Text>
+            </View>
+
+            <Text style={{ textAlign: "center", marginVertical: 20 }}>or register with</Text>
+            <SocialIcon
+              raised={true}
+              // light
+              title='Sign Up With Google'
+              disabled={!request}
+              button
+              type='google'
+              height={50}
+              onPress={handleGoogleSignIn}
+            />
+
+            <SocialIcon
+              raised={true}
+              // light
+              title='Sign Up With Facebook'
+              labelStyle={{
+                fontSize: 14,
+                paddingVertical: 6,
+              }}
+              disabled={!request}
+              button
+              type='facebook'
+              height={50}
+            />
+
+            <SocialIcon
+              raised={true}
+              light
+              title='Sign Up With Apple ID'
+              disabled={!request}
+              button
+              type='apple'
+              height={50}
+
+            />
+
+          </View>
         </View>
       </View>
       <DateTimePickerModal
@@ -308,7 +352,13 @@ const Signup = () => {
           watcher.contact_bdate ? new Date(watcher.contact_bdate) : new Date()
         }
       />
-    </UnathorizeLayout>
+      <Text
+        style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
+      >
+        Already have an account?{" "}
+        <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
+      </Text>
+    </ScrollView>
   );
 };
 
@@ -321,6 +371,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  title: {
+    fontSize: 30,
+    textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
+  highlight: {
+    fontWeight: "bold",
+    color: '#0A3480'
   },
 });
 

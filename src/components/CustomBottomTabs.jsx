@@ -6,19 +6,21 @@ import Jobs from "../screens/User/Jobs/Jobs";
 import Feeds from "../screens/User/Feeds/Feeds";
 import Applications from "../screens/Applications/Applications";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useUser } from "../hooks/useUser";
+import { Image } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
 const tabScreens = [
   { name: "Feeds", component: Feeds, iconName: "list" },
-  { name: "Find Jobs", component: Jobs, iconName: "search", },
+  { name: "Find Jobs", component: Jobs, iconName: "search" },
   { name: "Dashboard", component: Dashboard, iconName: "dashboard" },
   { name: "Application", component: Applications, iconName: "assignment" },
   { name: "Account", component: Account, iconName: "account-circle" },
 ];
 
 function CustomBottomTabs() {
+  const { user } = useUser();
   return (
     <Tab.Navigator
       screenOptions={{ animationEnabled: true, headerShown: false }}
@@ -30,10 +32,18 @@ function CustomBottomTabs() {
           name={screen.name}
           component={screen.component}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name={screen.iconName} color={color} size={size} />
-            ),
-            ...(screen.headerSearchBarOptions && { headerSearchBarOptions: screen.headerSearchBarOptions }),
+            tabBarIcon: ({ color, size }) =>
+              screen.name === "Account" && user && user.media && user.media[0] && user.media[0].original_url ? (
+                <Image
+                  source={{ uri: user.media[0].original_url }}
+                  style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 0.5, borderColor: 'gray' }}
+                />
+              ) : (
+                <MaterialIcons name={screen.iconName} color={color} size={size} />
+              ),
+            ...(screen.headerSearchBarOptions && {
+              headerSearchBarOptions: screen.headerSearchBarOptions,
+            }),
           }}
         />
       ))}

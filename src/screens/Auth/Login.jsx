@@ -1,27 +1,32 @@
-import { useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Platform } from "react-native";
-import { SocialIcon } from 'react-native-elements';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from "react-native";
+import { SocialIcon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import {
   Text,
   Button,
-  TextInput,
   useTheme,
   HelperText,
-  Appbar,
   IconButton,
-  TouchableRipple,
+  TextInput,
 } from "react-native-paper";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { useForm } from "react-hook-form";
 import Spinner from "react-native-loading-spinner-overlay";
-import useAuth from "../../hooks/useAuth";
-import CustomTextInput from "../../components/CustomTextInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import CustomTextInput from "../../components/CustomTextInput";
+import { useAuth } from "../../hooks/useAuth";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as AppleAuthentication from "expo-apple-authentication";
 
-// Define your validation schema
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
@@ -29,24 +34,20 @@ const validationSchema = Yup.object({
     .required("Password is required"),
 }).required();
 
-const Login = ({ navigation }) => {
+const Login = () => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
+  const {
+    login,
+    googleLoginOrSignup,
+    facebookLoginOrSignup,
+    fbRequest,
+    request,
+    handleAppleSignInOrSignUp,
+  } = useAuth();
+  const [showPw, setShowPw] = useState(false);
   const [generalError, setGeneralError] = useState("");
-  const handleGoogleSignIn = () => {
-    console.log('Google Pressed')
-  };
-
-  const handleFacebookSignIn = () => {
-    console.log('Facebook Pressed')
-  };
-
-  const handleAppleSignIn = () => {
-    console.log('Apple Pressed')
-  };
-
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -81,27 +82,60 @@ const Login = ({ navigation }) => {
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowPw(!showPw);
+  };
+
+  const handleGoogleSignIn = async () => {
+    googleLoginOrSignup();
+  };
+
+  const handleFacebookSignIn = () => {
+    facebookLoginOrSignup();
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      // console.log(credential);
+      // Send the credential to your backend
+      const response = await handleAppleSignInOrSignUp(credential);
+
+      if (response.success) {
+        // Handle successful authentication
+        console.log("Login success", response);
+        // Store token and user information if necessary
+      } else {
+        // Handle unsuccessful authentication
+        setGeneralError("Apple Sign-In failed.");
+      }
+    } catch (e) {
+      if (e.code === "ERR_CANCELED") {
+        // Handle that the user canceled the sign-in flow
+        Alert.alert("Apple Sign-In was canceled.");
+      } else {
+        // Handle other errors
+        console.error(e);
+        Alert.alert("Apple Sign-In failed.");
+      }
+    }
   };
 
   return (
-    <>
-      <ScrollView style={styles.container}>
-        <Spinner visible={loading} color={colors.primary} />
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            bottom: 5,
-            top: 20
-          }}
-        >
-          <IconButton
-            icon="arrow-left"
-            onPress={() => navigation.goBack()}
-          />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <Spinner visible={loading} color={colors.primary} />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={{ top: 45, right: 20, marginBottom: 50 }}>
+          <IconButton icon="arrow-left" onPress={() => navigation.goBack()} />
         </View>
-        <View style={{ flex: 1, marginVertical: 100 }}>
+        <View style={{ flex: 1, top: 0 }}>
           <Text style={[styles.title, { color: colors.primary }]}>
             Let's <Text style={styles.highlight}>Sign</Text> you in.
           </Text>
@@ -124,8 +158,13 @@ const Login = ({ navigation }) => {
             control={control}
             name="password"
             label="Password"
-            secureTextEntry={!showPassword}
-            toggleSecureTextEntry={togglePasswordVisibility}
+            secureTextEntry={!showPw}
+            right={
+              <TextInput.Icon
+                icon={showPw ? "eye" : "eye-off"}
+                onPress={togglePasswordVisibility}
+              />
+            }
             rules={{ required: "Password is required" }}
             mode="outlined"
             error={errors.password}
@@ -133,56 +172,86 @@ const Login = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => navigation.navigate("ForgotPassword")}
           >
-            <Text style={[styles.linkText, { marginVertical: 5 }]}>Forgot Password?</Text>
+            <Text style={[styles.linkText, { marginVertical: 5 }]}>
+              Forgot Password?
+            </Text>
           </TouchableOpacity>
           <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={isLoading || isSubmitting}
             style={styles.button}
+            labelStyle={{
+              fontSize: 14,
+              width: 250,
+              paddingVertical: 6,
+              color: "white",
+            }}
+            mode="elevated"
+            onPress={handleSubmit(onSubmit)}
           >
             LOGIN
           </Button>
-
-          {/* Additional sign-up options */}
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ textAlign: "center", marginVertical: 20 }}>or continue with</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+          <View>
+            <Text style={{ textAlign: "center", marginVertical: 20 }}>
+              or continue with
+            </Text>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-around",
+              }}
+            >
               <SocialIcon
-                light
-                type='google'
+                raised={true}
+                title="Sign In With Google"
+                disabled={!request}
+                button
+                type="google"
                 onPress={handleGoogleSignIn}
               />
-              <SocialIcon
-                light
-                type='facebook'
+              {/* <SocialIcon
+                raised={true}
+                title="Sign In With Facebook"
+                disabled={!fbRequest}
+                button
+                type="facebook"
                 onPress={handleFacebookSignIn}
-              />
-              <SocialIcon
-                light
-                type='apple'
-                onPress={handleAppleSignIn}
-              />
+              /> */}
+              {Platform.OS === "ios" && (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={
+                    AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                  }
+                  buttonStyle={
+                    AppleAuthentication.AppleAuthenticationButtonStyle
+                      .WHITE_OUTLINE
+                  }
+                  cornerRadius={20}
+                  style={{ width: "100%", height: 53, marginTop: 4 }}
+                  onPress={handleAppleSignIn}
+                />
+              )}
             </View>
           </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-            <Text style={styles.signUpText}>
-              You don't have an account yet?{" "}
-              <Text style={styles.linkText}>Sign up</Text>
-            </Text>
-          </TouchableOpacity>
         </View>
+
+        <TouchableWithoutFeedback onPress={() => navigation.navigate("SignUp")}>
+          <Text style={styles.signUpText}>
+            You don't have an account yet?{" "}
+            <Text style={styles.linkText}>Sign up</Text>
+          </Text>
+        </TouchableWithoutFeedback>
       </ScrollView>
-    </>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 4,
-    padding: 20,
+    flex: 1,
     backgroundColor: "#F4F7FB",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 20,
   },
   title: {
     fontSize: 30,
@@ -194,44 +263,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "red",
   },
-  input: {
-    marginBottom: 8,
-  },
   button: {
     marginTop: 8,
-    paddingVertical: 3,
-    borderRadius: 50
+    borderRadius: 50,
+    backgroundColor: "#0A3480",
   },
   linkText: {
     color: "#0A3480",
-    // textDecorationLine: "underline",
     textAlign: "right",
-    fontWeight: 'bold'
-    // marginBottom: 8,
+    fontWeight: "bold",
   },
   signUpText: {
-    marginTop: 50,
+    marginTop: 20,
     textAlign: "center",
-  },
-  icons: {
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    backgroundColor: 'white',
-    borderRadius: 14,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 1,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.41,
-      },
-      android: {
-        elevation: 0.2,
-      },
-    }),
   },
 });
 

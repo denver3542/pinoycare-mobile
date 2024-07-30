@@ -42,21 +42,22 @@ export default function useMessaging() {
   const { data, isFetching, isFetched, isLoading, isRefetching, refetch } =
     useQuery(["inbox"], () => getInbox());
 
-  const sendMessage = async (otherUserId, message) => {
+  const send = async (formData) => {
+    // console.log(formData);
     try {
       const storedUser = await AsyncStorage.getItem("upcare_user");
       const headers = storedUser ? getJWTHeader(JSON.parse(storedUser)) : {};
 
       const { data } = await axiosInstance.post(
         `/user/send-message`,
-        { to_user_id: otherUserId, message: message },
+        formData,
         {
           headers,
           "Content-Type": "application/json;charset=utf-8",
         }
       );
 
-      return data;
+      return data.success;
     } catch (error) {
       console.log(error);
     }
@@ -68,12 +69,10 @@ export default function useMessaging() {
     isLoading,
     isRefetching,
     refetch,
-    sendMessage,
+    send,
   };
 }
 
 export function useConvo(otherUserId) {
   return useQuery([`convo_${otherUserId}`], () => getConvo(otherUserId));
 }
-
-export function sendMessage(otherUserId, message) {}

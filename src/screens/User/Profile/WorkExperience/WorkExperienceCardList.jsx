@@ -14,9 +14,11 @@ const WorkExperience = ({ work_experiences }) => {
         <View style={styles.card}>
             <View style={styles.headerContainer}>
                 <View style={styles.sectionContent}>
-                    <Text style={styles.cardTitle}>Work Experience</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("EditWorkExperience")}>
+                        <Text style={styles.cardTitle}>Work Experience</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.iconContainer}>
+                {/* <View style={styles.iconContainer}>
                     <IconButton
                         icon={() => <MaterialIcons name="add" size={22} color="#0A3480" />}
                         onPress={() => navigation.navigate("AddWorkExperience")}
@@ -25,7 +27,7 @@ const WorkExperience = ({ work_experiences }) => {
                         icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
                         onPress={() => navigation.navigate("EditWorkExperience")}
                     />
-                </View>
+                </View> */}
             </View>
             <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View>
@@ -35,20 +37,13 @@ const WorkExperience = ({ work_experiences }) => {
                             <Text style={styles.educationTitle}>{experience.position}</Text>
                             <View style={styles.row}>
                                 <Text style={styles.educationDescription}>{experience.company_name}</Text>
-                                <Text style={styles.educationDescription}>{moment(experience.date_started).format('MMM YYYY')} - {moment(experience.date_ended).format('MMM YYYY')}</Text>
                             </View>
-                            {/* <Text style={styles.educationDescription}>Salary: {experience.salary}</Text>
-                            <Text style={styles.educationDescription}>Contact Person: {experience.contact_person}</Text>
-                            <Text style={styles.educationDescription}>Contact Position: {experience.contact_position}</Text>
-                            <Text style={styles.educationDescription}>Contact Phone: {experience.contact_phone}</Text> */}
+                            <Text style={styles.educationDescription}>{moment(experience.date_started).format('MMM YYYY')} - {moment(experience.date_ended).format('MMM YYYY')}</Text>
                         </View>
-                        {/* {index < experiencesToShow.length - 1 && (
-                            <Divider style={styles.divider} />
-                        )} */}
                     </React.Fragment>
                 ))}
                 {/* <Divider style={styles.divider} /> */}
-                {work_experiences.length > 1 && (
+                {work_experiences.length > 3 && (
                     <TouchableOpacity
                         onPress={() => setShowAllWorkExperience(!showAllWorkExperience)}
                         style={styles.showMoreButton}
@@ -67,7 +62,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 15,
         padding: 15,
-        elevation: 0,
+        borderWidth: 0.5,
+        borderColor: '#ddd',
     },
     headerContainer: {
         flexDirection: "row",
@@ -82,13 +78,13 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        // color: '#0A3480',
+        color: "#0A3480",
     },
     iconContainer: {
         flexDirection: 'row',
     },
     experience: {
-        // marginBottom: 10,
+        marginBottom: 10,
         // backgroundColor: '#CFDDE6', borderRadius: 14, padding: 15
     },
     educationTitle: {

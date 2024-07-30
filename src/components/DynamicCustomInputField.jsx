@@ -1,42 +1,45 @@
-import { View } from "react-native";
-import { RadioButton, Text } from "react-native-paper";
+import React from "react";
+import { View, Text } from "react-native";
+import { RadioButton, TextInput } from "react-native-paper";
 
-const InputField = ({ question, value, onChange }) => {
-  switch (question.type) {
-    case "text":
-      return (
+const InputField = ({ question, value, onChange, error }) => {
+  return (
+    <View style={{ marginBottom: 20 }}>
+      {question.type === "text" && (
         <TextInput
           mode="outlined"
-          label={question.question}
+          label="Type your answer here"
           value={value}
           onChangeText={onChange}
-          placeholder="Type your answer here"
+          placeholder=""
+          error={!!error}
         />
-      );
-    case "number":
-      return (
+      )}
+      {question.type === "numeric" && (
         <TextInput
           mode="outlined"
-          label={question.question}
+          label='Enter a number'
           value={value}
           onChangeText={onChange}
           keyboardType="numeric"
-          placeholder="Enter a number"
+          placeholder=""
+          error={!!error}
         />
-      );
-    case "boolean":
-      return (
-        <RadioButton.Group onValueChange={onChange} value={value}>
-          <Text>{question.question}</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <RadioButton.Item label="Yes" value="true" position="leading" />
-            <RadioButton.Item label="No" value="false" position="leading" />
-          </View>
-        </RadioButton.Group>
-      );
-    default:
-      return null;
-  }
+      )}
+      {question.type === "boolean" && (
+        <View>
+          {/* <Text>{question.question}</Text> */}
+          <RadioButton.Group onValueChange={onChange} value={value}>
+            <View style={{ flexDirection: "row" }}>
+              <RadioButton.Item label="Yes" value="true" position="leading" />
+              <RadioButton.Item label="No" value="false" position="leading" />
+            </View>
+          </RadioButton.Group>
+        </View>
+      )}
+      {error && <Text style={{ color: "red" }}>{error}</Text>}
+    </View>
+  );
 };
 
 export default InputField;

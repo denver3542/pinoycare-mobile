@@ -24,7 +24,7 @@ const getEducationLevelName = (level) => {
     }
 };
 
-const d = ({ educations }) => {
+const educations = ({ educations }) => {
     const [showAllEducations, setShowAllEducations] = useState(false);
     const limitedEducations = showAllEducations ? educations : educations.slice(0, 3);
     const navigation = useNavigation();
@@ -40,19 +40,9 @@ const d = ({ educations }) => {
     return (
         <View style={styles.card}>
             <View style={styles.headerContainer}>
-                <Text style={styles.cardTitle}>Education</Text>
-                <View style={styles.iconContainer}>
-                    <IconButton
-                        icon={() => <MaterialIcons name="add" size={22} color='#334567' />}
-                        size={20}
-                        onPress={navigateToAddEducation}
-                    />
-                    <IconButton
-                        icon={() => <MaterialIcons name="border-color" size={14} color="#0A3480" />}
-                        size={25}
-                        onPress={navigateToEditEducation}
-                    />
-                </View>
+                <TouchableOpacity onPress={navigateToEditEducation}>
+                    <Text style={styles.cardTitle}>Education</Text>
+                </TouchableOpacity>
             </View>
             <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.educationContainer}>
@@ -63,10 +53,10 @@ const d = ({ educations }) => {
                                 <Text style={styles.educationTitle}>{education.school_name}</Text>
                                 <View style={styles.educationRow}>
                                     <Text style={styles.educationDescription}>{getEducationLevelName(education.level)}</Text>
-                                    <Text style={styles.educationDuration}>
-                                        {moment(education.from).format('MMM YYYY')} - {moment(education.to).format('MMM YYYY')}
-                                    </Text>
                                 </View>
+                                <Text style={styles.educationDuration}>
+                                    {moment(education.from).format('MMM YYYY')} - {moment(education.to).format('MMM YYYY')}
+                                </Text>
                             </View>
                         </View>
                         {/* {index < limitedEducations.length - 1 && <Divider style={styles.divider} />} */}
@@ -74,13 +64,13 @@ const d = ({ educations }) => {
                 ))}
                 {/* <Divider style={styles.divider} /> */}
             </View>
-            {educations?.length > 1 && (
+            {/* {educations?.length > 3 && (
                 <TouchableOpacity onPress={() => setShowAllEducations((prev) => !prev)} style={styles.showMoreLessButton}>
                     <Text style={styles.showMoreLessText}>
                         {showAllEducations ? "Show Less" : "Show More"}
                     </Text>
                 </TouchableOpacity>
-            )}
+            )} */}
         </View>
     );
 };
@@ -90,7 +80,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
-        elevation: 0,
+        borderWidth: 0.5,
+        borderColor: '#ddd',
         marginBottom: 8,
     },
     headerContainer: {
@@ -106,7 +97,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        // color: '#334567',
+        color: '#0A3480',
     },
     iconContainer: {
         flexDirection: 'row',
@@ -151,4 +142,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default d;
+export default educations;

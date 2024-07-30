@@ -8,8 +8,8 @@ const WalkThroughVerificationScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Appbar.Header>
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
+            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
                 {/* <Appbar.Content title="ID Verification" /> */}
             </Appbar.Header>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Alert, ScrollView } from 'react-native';
-import { Button, Appbar, RadioButton, IconButton, Portal, Modal } from 'react-native-paper';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
+import { Button, Appbar, RadioButton, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../components/CustomTextInput';
 import { useForm } from 'react-hook-form';
@@ -9,22 +9,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
 import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from "../../../hooks/useUser";
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import * as ImagePicker from 'expo-image-picker';
-import useAuth from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 
 const defaultProfileImage = require('../../../../assets/images/default-men.png');
 
 const EditUserProfileScreen = () => {
     const { deleteUser } = useAuth();
-    const [deleteVisible, setDeleteVisible] = useState(false);
-    const showDeleteModal = () => setDeleteVisible(true);
-    const hideDeleteModal = () => setDeleteVisible(false);
     const navigation = useNavigation();
     const { user } = useUser();
     const queryClient = useQueryClient();
     const [gender, setGender] = useState(user?.gender || '');
-    const [profileImage, setProfileImage] = useState(user?.media[0]?.original_url || defaultProfileImage); // Set profile image from user data if available
+    const [profileImage, setProfileImage] = useState(user?.media[0]?.original_url || defaultProfileImage);
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, setValue } = useForm({
         defaultValues: {
@@ -40,6 +37,18 @@ const EditUserProfileScreen = () => {
             "profession": user?.profession || '',
         }
     });
+
+    const saveBottomSheetRef = useRef(null);
+    const deleteBottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%',], []);
+
+    const handleCloseSaveBottomSheet = () => saveBottomSheetRef.current?.close();
+    const handleOpenSaveBottomSheet = () => {
+        Keyboard.dismiss();
+        setTimeout(() => saveBottomSheetRef.current?.expand(), 50);
+    };
+    const handleCloseDeleteBottomSheet = () => deleteBottomSheetRef.current?.close();
+    const handleOpenDeleteBottomSheet = () => deleteBottomSheetRef.current?.expand();
 
     const updateProfile = async (dataToUpdate) => {
         try {
@@ -118,159 +127,185 @@ const EditUserProfileScreen = () => {
         }
     };
 
-
-
-
     const onSubmit = async (data) => {
         data.gender = gender;
         await updateProfile(data);
-        navigation.goBack();
+        handleCloseSaveBottomSheet();
     };
-
 
     const handleGenderChange = (value) => {
         setGender(value);
     };
 
-
     useEffect(() => {
         setValue("gender", gender);
     }, [gender, setValue]);
 
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+        []
+    );
+
+    const handleInputFocus = () => {
+        if (saveBottomSheetRef.current) {
+            saveBottomSheetRef.current.close();
+        }
+    };
+
     return (
-
-        <View style={styles.container}>
-            <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
-                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-                <Appbar.Content title="Profile" titleStyle={{ color: 'white' }} />
-                <Appbar.Action icon="content-save" color="white" onPress={handleSubmit(onSubmit)} />
-            </Appbar.Header>
-            <ScrollView>
-                <View style={styles.header}>
-                    <View style={styles.headerContainer}>
-                        <View style={styles.imageUpdate}>
-                            <Image
-                                source={
-                                    user && user.media[0]
-                                        ? { uri: user.media[0].original_url }
-                                        : require("../../../../assets/images/sample-profile.jpg")
-                                }
-                                style={styles.profileImage}
-                            />
-                            <IconButton
-                                mode="outlined"
-                                selected
-                                icon="camera"
-                                size={16}
-                                style={styles.cameraIcon}
-                                onPress={handleProfilePictureUpload}
-                            />
-                        </View>
-
-
-                    </View>
-                </View>
-
-                <View style={{ padding: 8 }}>
-                    <CustomTextInput
-                        control={control}
-                        name="firstname"
-                        label="First Name"
-                        mode="outlined"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        name="middlename"
-                        label="Middle Name"
-                        mode="outlined"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        name="lastname"
-                        label="Last Name"
-                        mode="outlined"
-                    />
-
-                    <View style={styles.genderRadioButton}>
-                        <View style={{}}>
-                            <Text style={{ fontSize: 16 }}>Choose Gender</Text>
-                        </View>
-                        <View style={styles.radioGroup}>
-                            <RadioButton
-                                value="M"
-                                status={gender === 'M' ? 'checked' : 'unchecked'}
-                                onPress={() => handleGenderChange('M')}
-                            />
-                            <Text>Male</Text>
-
-                            <RadioButton
-                                value="F"
-                                status={gender === 'F' ? 'checked' : 'unchecked'}
-                                onPress={() => handleGenderChange('F')}
-                            />
-                            <Text>Female</Text>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.container}>
+                <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
+                    <Appbar.Content title="Profile" titleStyle={{ color: 'white' }} />
+                    <Appbar.Action icon="content-save" color="white" onPress={handleOpenSaveBottomSheet} />
+                </Appbar.Header>
+                <ScrollView>
+                    <View style={styles.header}>
+                        <View style={styles.headerContainer}>
+                            <View style={styles.imageUpdate}>
+                                <Image
+                                    source={
+                                        user && user.media[0]
+                                            ? { uri: user.media[0].original_url }
+                                            : require("../../../../assets/images/sample-profile.jpg")
+                                    }
+                                    style={styles.profileImage}
+                                />
+                                <IconButton
+                                    mode="outlined"
+                                    selected
+                                    icon="camera"
+                                    size={16}
+                                    style={styles.cameraIcon}
+                                    onPress={handleProfilePictureUpload}
+                                />
+                            </View>
                         </View>
                     </View>
 
-                    <CustomTextInput
-                        control={control}
-                        name="phone"
-                        label="Phone"
-                        mode="outlined"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        name="email"
-                        label="Email"
-                        mode="outlined"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        label="Permanent Address"
-                        name="permanent_address"
-                        mode="outlined"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        label="Current Address"
-                        name="current_address"
-                        mode="outlined"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        label="Preferred Rate"
-                        name="preferred_rate"
-                        mode="outlined"
-                        type="money"
-                    />
-                    <CustomTextInput
-                        control={control}
-                        label="Profession"
-                        name="profession"
-                        mode="outlined"
-                    />
+                    <View style={{ padding: 8 }}>
+                        <CustomTextInput
+                            control={control}
+                            name="firstname"
+                            label="First Name"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            name="middlename"
+                            label="Middle Name"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            name="lastname"
+                            label="Last Name"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
 
-                    <Button mode="contained" onPress={showDeleteModal} labelStyle={{ color: 'white' }}>
-                        Delete Account
-                    </Button>
-                </View>
-                <Portal>
-                    <Modal visible={deleteVisible} onDismiss={hideDeleteModal} contentContainerStyle={styles.modal}>
-                        <Text style={styles.modalTitle}>Delete Account</Text>
-                        <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
-                        <Button mode="contained" onPress={deleteUser} style={styles.button}>
-                            Yes, Delete
-                        </Button>
-                        <Button onPress={hideDeleteModal} style={styles.button}>
-                            Cancel
-                        </Button>
-                    </Modal>
-                </Portal>
+                        <View style={styles.genderRadioButton}>
+                            <View>
+                                <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Choose Gender</Text>
+                            </View>
+                            <View style={styles.radioGroup}>
+                                <RadioButton.Android
+                                    value="M"
+                                    status={gender === 'M' ? 'checked' : 'unchecked'}
+                                    onPress={() => handleGenderChange('M')}
+                                />
+                                <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Male</Text>
 
+                                <RadioButton.Android
+                                    value="F"
+                                    status={gender === 'F' ? 'checked' : 'unchecked'}
+                                    onPress={() => handleGenderChange('F')}
+                                />
+                                <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Female</Text>
+                            </View>
+                        </View>
+
+                        <CustomTextInput
+                            control={control}
+                            name="phone"
+                            label="Phone"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            name="email"
+                            label="Email"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            label="Permanent Address"
+                            name="permanent_address"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            label="Current Address"
+                            name="current_address"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            label="Preferred Rate"
+                            name="preferred_rate"
+                            mode="outlined"
+                            type="money"
+                            onFocus={handleInputFocus}
+                        />
+                        <CustomTextInput
+                            control={control}
+                            label="Profession"
+                            name="profession"
+                            mode="outlined"
+                            onFocus={handleInputFocus}
+                        />
+
+                        {/* <Button mode="contained" onPress={handleOpenDeleteBottomSheet} labelStyle={{ color: 'white' }}>
+                            Delete Account
+                        </Button> */}
+                    </View>
+                </ScrollView>
                 <Spinner visible={isLoading} />
-            </ScrollView>
-        </View>
+                <BottomSheet
+                    ref={saveBottomSheetRef}
+                    index={-1}
+                    snapPoints={snapPoints}
+                    backdropComponent={renderBackdrop}
+                    enablePanDownToClose={true}
+                >
+                    <BottomSheetView style={styles.bottomSheetContent}>
+                        <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
+                        <Text>Are you sure you want to save these changes?</Text>
+                        <View style={styles.buttonContainer}>
+                            <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                                <View style={[styles.button, styles.yesButton]}>
+                                    <Text style={styles.buttonText}>Save Changes</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={handleCloseSaveBottomSheet}>
+                                <View style={[styles.button, styles.cancelButton]}>
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </BottomSheetView>
+                </BottomSheet>
 
+
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -308,12 +343,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0,
-        // backgroundColor: 'rgba(0, 0, 0, 0.4)',
-        // borderWidth: 1,
-        // borderColor: 'white',
-        // height: 40, // Adjust the height as needed
-        // width: 40, // Optional: Set width to maintain aspect ratio
-        // borderRadius: 20, // Optional: Make it circular
     },
     radioGroup: {
         flexDirection: 'row',
@@ -325,24 +354,42 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 4
     },
-    modalTitle: {
+    bottomSheetContent: { padding: 20, flex: 1 },
+    bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    modalText: {
-        fontSize: 16,
-        marginBottom: 20
-    },
-    modal: {
-        backgroundColor: 'white',
-        padding: 20,
-        margin: 20,
-        borderRadius: 10,
+    buttonContainer: {
+        marginTop: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
     },
     button: {
-        marginTop: 10,
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 50,
+        paddingVertical: 10,
+    },
+    yesButton: {
+        backgroundColor: '#0A3480',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: '#0A3480',
+    },
+    cancelButtonText: {
+        color: '#0A3480',
+        fontWeight: 'bold'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
+
 
 export default EditUserProfileScreen;

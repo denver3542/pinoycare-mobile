@@ -1,39 +1,39 @@
 {
   "project_info": {
-    "project_number": "364621639961",
-    "project_id": "nasya-mobile-app",
-    "storage_bucket": "nasya-mobile-app.appspot.com"
+    "project_number": "1052234263699",
+    "project_id": "upcaremobile",
+    "storage_bucket": "upcaremobile.appspot.com"
   },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:364621639961:android:9b765bf0e659984b055588",
-        "android_client_info": {
-          "package_name": "com.support.nasya"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "364621639961-42fahffangf5e5624ooh6p5t074ilkv3.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCKgpJZNAZotm_pT8g_3kel3xpKaevr9oU"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "364621639961-42fahffangf5e5624ooh6p5t074ilkv3.apps.googleusercontent.com",
-              "client_type": 3
+  "client": [{
+    "client_info": {
+      "mobilesdk_app_id": "1:1052234263699:android:f7efdbefd83a1565617166",
+      "android_client_info": {
+        "package_name": "com.upcare.mobile"
+      }
+    },
+    "oauth_client": [{
+      "client_id": "1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com",
+      "client_type": 3
+    }],
+    "api_key": [{
+      "current_key": "AIzaSyApuz2jb1As_at_84x_SHgUB3xojGHnmQM"
+    }],
+    "services": {
+      "appinvite_service": {
+        "other_platform_oauth_client": [{
+            "client_id": "1052234263699-ttdsak4ukns3og6gp39984oth3rhl5f4.apps.googleusercontent.com",
+            "client_type": 3
+          },
+          {
+            "client_id": "1052234263699-60th2744n696g8md6pid4ocoqj8irvgd.apps.googleusercontent.com",
+            "client_type": 2,
+            "ios_info": {
+              "bundle_id": "com.upcare.mobile"
             }
-          ]
-        }
+          }
+        ]
       }
     }
-  ],
+  }],
   "configuration_version": "1"
 }

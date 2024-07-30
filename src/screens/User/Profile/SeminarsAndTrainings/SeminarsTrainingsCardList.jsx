@@ -22,9 +22,11 @@ const SeminarsTrainings = ({ trainings }) => {
             <View style={styles.headerContainer}>
                 <View style={styles.sectionContent}>
                     {/* <MaterialIcons name="school" size={24} color="#0A3480" style={styles.cardIcon} /> */}
-                    <Text style={styles.cardTitle}>Seminars and Trainings</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}>
+                        <Text style={styles.cardTitle}>Seminars and Trainings</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.iconContainer}>
+                {/* <View style={styles.iconContainer}>
                     <IconButton
                         icon={() => <MaterialIcons name="add" size={22} color="#334567" />}
                         onPress={() => navigation.navigate("AddSeminarsAndTrainings")}
@@ -33,7 +35,7 @@ const SeminarsTrainings = ({ trainings }) => {
                         icon={() => <MaterialIcons name="border-color" size={14} color="#334567" />}
                         onPress={() => navigation.navigate("SeminarsAndTrainingsEdit")}
                     />
-                </View>
+                </View> */}
             </View>
             <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.contentContainer}>
@@ -58,9 +60,6 @@ const SeminarsTrainings = ({ trainings }) => {
                             <View style={styles.textContainer}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={styles.trainingTitle}>{training.facilitated_by}</Text>
-                                    <Text style={styles.trainingDuration}>
-                                        {moment(training.date_started).format('MMM YYYY')} - {moment(training.date_completed).format('MMM YYYY')}
-                                    </Text>
                                 </View>
                                 <Text style={styles.trainingDescription}>
                                     {expandedTrainings[index] || training.description.length <= 100
@@ -72,6 +71,9 @@ const SeminarsTrainings = ({ trainings }) => {
                                                 </Text>
                                             </TouchableOpacity>
                                     }
+                                </Text>
+                                <Text style={styles.trainingDuration}>
+                                    {moment(training.date_started).format('MMM YYYY')} - {moment(training.date_completed).format('MMM YYYY')}
                                 </Text>
 
                             </View>
@@ -102,7 +104,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
-        elevation: 0,
+        borderWidth: 0.5,
+        borderColor: '#ddd',
         marginBottom: 8,
     },
     headerContainer: {
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: "bold",
         fontSize: 20,
-        // color: "#334567",
+        color: "#0A3480",
     },
     iconContainer: {
         flexDirection: 'row',

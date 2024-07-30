@@ -1,22 +1,31 @@
-import React, { useState, useLayoutEffect } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform } from 'react-native';
-import useJobs from './hook/useJobs';
-import Spinner from 'react-native-loading-spinner-overlay';
-import { Appbar, Card, Paragraph, IconButton, useTheme, TouchableRipple, Searchbar } from 'react-native-paper';
+import React, { useState } from 'react';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions, Pressable, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { Appbar, IconButton, useTheme, Searchbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
-import HTMLView from 'react-native-htmlview';
-import { FontAwesome5 } from "@expo/vector-icons";
-import { color } from '@rneui/base';
-import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
-import HeaderNotification from '../../../components/HeaderNotification';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useUser } from '../../../hooks/useUser';
+import useJobs from './hook/useJobs';
+import Spinner from 'react-native-loading-spinner-overlay';
+import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
+import HeaderNotification from '../../../components/HeaderNotification';
 import { useSaveJob } from './hook/useJobs';
 
-const JobListings = ({ activeNav }) => {
+const Matching = ({ rating }) => {
+  const { colors } = useTheme();
+  const percentage = rating * 25;
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Text style={styles.percentage}>
+        {percentage}%
+      </Text>
+      <Text style={[styles.matchedText, { color: colors.primary }]}>Matched </Text>
+    </View>
+  );
+};
+
+const JobListings = ({ activeNav, rating }) => {
+  const percentage = rating * 25;
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
   const { user } = useUser();
@@ -24,6 +33,8 @@ const JobListings = ({ activeNav }) => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [savedJobs, setSavedJobs] = useState({});
+  const windowWidth = useWindowDimensions().width;
+  const saveJob = useSaveJob();
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -33,21 +44,6 @@ const JobListings = ({ activeNav }) => {
       .finally(() => {
         setRefreshing(false);
       });
-  };
-  const [descriptionVisibility, setDescriptionVisibility] = useState({});
-
-  const toggleDescriptionVisibility = (jobId) => {
-    setDescriptionVisibility((prevVisibility) => ({
-      ...prevVisibility,
-      [jobId]: !prevVisibility[jobId],
-    }));
-  };
-
-  const truncateDescription = (description, jobId, limit = 150) => {
-    if (description.length <= limit || descriptionVisibility[jobId]) {
-      return description;
-    }
-    return description.slice(0, limit) + '...';
   };
 
   const onChangeSearch = (query) => setSearchQuery(query);
@@ -63,8 +59,6 @@ const JobListings = ({ activeNav }) => {
     navigation.navigate('Job', { job });
   };
 
-  const saveJob = useSaveJob();
-
   const handleSave = async (jobId) => {
     try {
       saveJob.mutate(jobId);
@@ -74,15 +68,13 @@ const JobListings = ({ activeNav }) => {
   };
 
   const renderJob = ({ item }) => {
-    const descriptionLimit = 150;
-
-    const isTruncated = item.description.length > descriptionLimit;
-
-    const isSaved = user && user.saved_jobs.some(savedJob => savedJob.job_id === item.id);
+    const isSaved = user && user.saved_jobs && user.saved_jobs.find(savedJob => savedJob.job_id === item.id);
 
     return (
-      <TouchableWithoutFeedback onPress={() => navigateToJobDetails(item)} style={styles.card}>
+      <TouchableHighlight onPress={() => navigateToJobDetails(item)} style={styles.card}
+        underlayColor="#ddd">
         <View style={styles.cardContentRow}>
+
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
               <Image source={{ uri: item.media[0].original_url }} style={styles.jobImage} />
@@ -92,41 +84,25 @@ const JobListings = ({ activeNav }) => {
           }
 
           <View style={styles.cardContentText}>
-            <View style={styles.titleRow}>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.company}>{item.company}</Text>
-              </View>
-
-              <TouchableWithoutFeedback >
-                <IconButton
-                  onPress={() => handleSave(item.id)}
-                  icon={isSaved ? "bookmark" : "bookmark-outline"}
-                  color={isSaved ? "#0A3480" : "#888"}
-                  selected
-                  size={24}
-                />
-              </TouchableWithoutFeedback>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', flex: 1 }}>
+              <Text style={styles.titleTextStyle}>{item.title}</Text>
+              <IconButton
+                onPress={() => handleSave(item.id)}
+                icon={isSaved ? "bookmark" : "bookmark-outline"}
+                color={isSaved ? "#0A3480" : "#888"}
+                selected
+                size={24}
+              />
             </View>
-            <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
-            <Paragraph style={styles.location}>
-              <MaterialIcons name="location-on" size={14} color="#0A3480" />
-              {` ${item.location}`}
-            </Paragraph>
-            <HTMLView
-              value={truncateDescription(item.description, item.id, descriptionLimit)}
-              style={styles.description}
-            />
-            {isTruncated && (
-              <TouchableWithoutFeedback>
-                <Text style={styles.readMore} onPress={() => toggleDescriptionVisibility(item.id)}>
-                  {descriptionVisibility[item.id] ? 'Read less' : 'Read more'}
-                </Text>
-              </TouchableWithoutFeedback>
-            )}
+            <View style={{ bottom: 10 }}>
+              <Text style={styles.company}>{item.company}</Text>
+              <Text style={{ fontWeight: '500' }}>{item.location}</Text>
+              <Matching rating={item.matchScore / 25} />
+              <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
+            </View>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableHighlight>
     );
   };
 
@@ -171,64 +147,58 @@ const JobListings = ({ activeNav }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F4F7FB' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F4F7FB'
+  },
   card: {
     marginTop: 8,
-    backgroundColor: 'white',
-    paddingVertical: 10,
+    backgroundColor: '#fff',
+    padding: 0,
     borderRadius: 8,
-    elevation: 0,
+    borderWidth: 0.5,
+    borderColor: '#ddd',
   },
+
   cardContentRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
-    paddingHorizontal: 8
+    // top: 10,
+    // backgroundColor: 'red',
+    paddingHorizontal: 15,
+    paddingVertical: 10
   },
   cardContentText: {
     flex: 1,
-    paddingLeft: 10,
+    marginLeft: 10,
+    justifyContent: 'center'
+    // backgroundColor: 'blue',
   },
-
   listContentContainer: {
     padding: 8
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
   },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 20,
+  titleTextStyle: {
+    fontWeight: '500',
+    fontSize: 18,
+    flexShrink: 1,
   },
   postedDate: {
-    marginBottom: 4,
     color: '#888',
     fontSize: 12,
   },
-  location: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    fontSize: 12,
-  },
-  description: {
-    marginTop: 5,
-  },
   company: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: 'gray'
-  },
-  readMore: {
-    color: '#0A3480',
-    marginTop: 5,
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontWeight: '500',
   },
   jobImage: {
     width: 80,
     height: 80,
     borderRadius: 6,
-    marginRight: 5
+    marginRight: 5,
   },
   placeholderCard: {
     width: 80,
@@ -252,14 +222,22 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 8,
   },
-  titleStyle: {
-    fontWeight: 'bold'
-  },
   imageStyle: {
     width: 30,
     height: 30,
     marginLeft: 10,
     marginRight: 10
+  },
+  matchedText: {
+    color: '#0A3480',
+    fontWeight: '600',
+    fontSize: 14
+  },
+  percentage: {
+    color: '#0A3480',
+    fontWeight: '600',
+    marginRight: 5,
+    fontSize: 14
   },
 });
 

@@ -7,7 +7,7 @@ export const UserApplicationsProvider = ({ children }) => {
 
   const addAppliedJob = (jobId) => {
     if (!appliedJobs.includes(jobId)) {
-      setAppliedJobs([...appliedJobs, jobId]);
+      setAppliedJobs((prevJobs) => [...prevJobs, jobId]);
     }
   };
 

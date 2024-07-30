@@ -16,6 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Job({ job }) {
   const [isSaved, setIsSaved] = useState(false);
+
   const handleSave = () => {
     setIsSaved(!isSaved);
     console.log("save job");

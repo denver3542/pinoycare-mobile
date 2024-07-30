@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { HelperText, useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select";
 
 const CustomSelectBox = ({
   control,
@@ -13,7 +13,7 @@ const CustomSelectBox = ({
   items,
   ...rest
 }) => {
-  const theme = useTheme(); // Access the theme
+  const theme = useTheme();
   const [isFocused, setFocused] = useState(false);
 
   return (
@@ -21,10 +21,7 @@ const CustomSelectBox = ({
       control={control}
       name={name}
       rules={rules}
-      render={({
-        field: { value, onChange, onBlur },
-        fieldState: { error },
-      }) => (
+      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
         <View>
           <View
             style={[
@@ -34,34 +31,34 @@ const CustomSelectBox = ({
               error && styles.errorContainer,
               {
                 borderColor: isFocused
-                  ? theme.colors.primary // Border color when focused
+                  ? theme.colors.primary
                   : error
                     ? theme.colors.error
-                    : theme.colors.primary, // Border color when not focused and no error
-                borderWidth: isFocused || error ? 2 : 1, // Border width based on focus and error state
+                    : theme.colors.primary,
+                borderWidth: isFocused || error ? 2 : 1,
               },
             ]}
           >
-            <Picker
-              selectedValue={value}
+            <RNPickerSelect
+              value={value}
               onValueChange={onChange}
-              onBlur={() => {
-                setFocused(false);
-                onBlur();
+              onOpen={() => setFocused(true)}
+              onClose={() => setFocused(false)}
+              items={items}
+              style={{
+                inputIOS: {
+                  fontSize: 14,
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                },
+                inputAndroid: {
+                  fontSize: 14,
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                },
               }}
-              onFocus={() => setFocused(true)}
-              style={{ fontSize: 14 }}
               {...rest}
-            >
-              {items.map((item) => (
-                <Picker.Item
-                  key={item.value}
-                  label={item.label}
-                  value={item.value}
-                  mode={mode}
-                />
-              ))}
-            </Picker>
+            />
           </View>
           {!!error && error.message && (
             <HelperText
@@ -78,12 +75,10 @@ const CustomSelectBox = ({
   );
 };
 
-export default CustomSelectBox;
-
 const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 15,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     height: 50,
     borderRadius: 4,
     overflow: "hidden",
@@ -92,3 +87,5 @@ const styles = StyleSheet.create({
     borderColor: "red",
   },
 });
+
+export default CustomSelectBox;

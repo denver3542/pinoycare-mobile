@@ -17,25 +17,13 @@ const SkillsChip = ({ skills }) => {
         <View style={styles.card}>
             <View style={styles.header}>
                 <View style={styles.sectionHeader}>
-                    {/* <FontAwesome5
-                        name="star"
-                        size={18}
-                        color="#0A3480"
-                        style={styles.cardIcon}
-                        solid
-                    /> */}
-                    <Text style={styles.cardTitle}>Skills</Text>
+
+                    <TouchableOpacity onPress={() => navigation.navigate("AddSkillScreen")}>
+                        <Text style={styles.cardTitle} >Skills</Text>
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.iconContainer}>
-                    <IconButton
-                        icon={() => <MaterialIcons name="add" size={22} color="#0A3480" />}
-                        size={25}
-                        selected
-                        onPress={() => navigation.navigate("AddSkillScreen")}
-                    />
 
-                </View>
             </View>
             <Divider style={{ bottom: 10, color: 'red', height: 1, }} />
             <View style={styles.skillsContainer}>
@@ -46,22 +34,13 @@ const SkillsChip = ({ skills }) => {
                         marginRight: 10,
                         marginLeft: 10,
                         marginVertical: 5
-                    }} mode='outlined' key={index} onPress={() => { }} style={styles.chip}>
+                    }} mode='outlined' key={index} style={styles.chip}>
                         <Text style={styles.skillText}>{skillItem.skill_name}</Text>
                     </Chip>
                 ))}
             </View>
 
-            {!showAllSkills && skills && skills.length > 5 && (
-                <TouchableOpacity onPress={handlePress}>
-                    <Text style={styles.showAllButton}>Show More</Text>
-                </TouchableOpacity>
-            )}
-            {showAllSkills && (
-                <TouchableOpacity onPress={handlePress}>
-                    <Text style={styles.showAllButton}>Show Less</Text>
-                </TouchableOpacity>
-            )}
+
         </View>
     );
 };
@@ -72,7 +51,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 8,
         padding: 15,
-        elevation: 0,
+        borderWidth: 0.5,
+        borderColor: '#ddd'
     },
     header: {
         flexDirection: "row",
@@ -87,7 +67,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 20,
-        // color: '#334567'
+        color: '#0A3480'
     },
     cardIcon: {
         marginRight: 10,

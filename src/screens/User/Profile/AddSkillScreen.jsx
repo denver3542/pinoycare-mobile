@@ -1,107 +1,215 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Platform } from 'react-native';
-import { Chip, Button, Appbar, Text } from 'react-native-paper';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
+import { View, StyleSheet, Text, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
+import { Appbar, Chip } from 'react-native-paper';
+import { useForm, Controller } from 'react-hook-form';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
-import { useForm } from 'react-hook-form';
-import { useUser } from '../../../hooks/useUser';
 import useSkills from './Skills/hooks/useSkills';
-import Spinner from 'react-native-loading-spinner-overlay';
-import AuthenticatedLayout from '../../../Layout/User/Unauthorize/AuthenticatedLayout';
+import { useUser } from '../../../hooks/useUser';
 import CustomTextInput from '../../../components/CustomTextInput';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const AddSkillScreen = () => {
-  const { user } = useUser();
   const navigation = useNavigation();
-  const { control, handleSubmit, setValue, getValues, formState: { errors, isSubmitted } } = useForm({
-    defaultValues: {
-      skill_name: user?.skill_name || '',
-    },
-  });
   const { mutate, isLoading } = useSkills();
-  const [tags, setTags] = useState([]);
+  const { user, deleteSkill } = useUser();
+  const { control, handleSubmit, reset } = useForm();
+  const [localSkills, setLocalSkills] = useState(user.skills);
 
-  const addTag = () => {
-    const text = getValues('skill_name');
-    if (text && !tags.includes(text)) {
-      setTags(prevTags => [...prevTags, text]);
-      setValue('skill_name', '');
+  const onSubmit = async (data) => {
+    const { newSkill } = data;
+    if (!newSkill.trim()) return;
+
+    closeBottomSheet();
+    try {
+      await mutate(newSkill, {
+        onSuccess: (addedSkill) => {
+          setLocalSkills((prevSkills) => [...prevSkills, addedSkill]);
+          reset();
+        },
+      });
+    } catch (error) {
+      console.error('Failed to add skill:', error);
     }
   };
 
-  const removeTag = (index) => {
-    setTags(prevTags => prevTags.filter((_, i) => i !== index));
+  const handleDeleteSkill = async (skillId) => {
+    try {
+      const updatedSkills = localSkills.filter(skill => skill.id !== skillId);
+      setLocalSkills(updatedSkills);
+      await deleteSkill(skillId);
+    } catch (error) {
+      console.error('Error deleting skill:', error);
+    }
   };
 
-  const onSubmit = async () => {
-    await mutate({ skills: tags });
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ['25%'], []);
+
+  const openBottomSheet = () => {
+    Keyboard.dismiss();
+    setTimeout(() => bottomSheetRef.current?.expand(), 50);
   };
+
+  const closeBottomSheet = () => {
+    bottomSheetRef.current?.close();
+  };
+
+  const renderBackdrop = useCallback(
+    (props) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    []
+  );
 
   return (
-    <AuthenticatedLayout>
-      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+    <View style={styles.flex}>
+      <Spinner visible={isLoading} />
+      <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
-        <Appbar.Content title="Add Skill" titleStyle={{ color: 'white' }} />
+        <Appbar.Content title="Add Skill" titleStyle={styles.whiteText} />
+        <Appbar.Action icon="content-save" color="white" onPress={openBottomSheet} />
       </Appbar.Header>
       <View style={styles.container}>
-        <ScrollView>
-          <Text style={styles.headerText}>Professional Skills</Text>
-          <CustomTextInput
-            placeholder="Add Skill"
-            control={control}
-            label="Skill Name"
-            mode="outlined"
-            name="skill_name"
-            onSubmitEditing={addTag}
-            error={(isSubmitted && tags.length === 0 && errors.skill_name) ? "Skill name is required" : undefined}
-          />
+        <Controller
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <CustomTextInput
+              control={control}
+              style={styles.input}
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+              label="Enter new skill"
+              name="skill_name"
+              onSubmitEditing={handleSubmit(onSubmit)}
+            />
+          )}
+          name="newSkill"
+          defaultValue=""
+        />
+        <ScrollView style={styles.padding}>
+          <Text style={styles.heading}>Added Skills</Text>
           <View style={styles.chipContainer}>
-            {tags.map((tag, index) => (
-              <Chip key={`tag-${index}`} onClose={() => removeTag(index)} style={styles.chip}>
-                {tag}
+            {localSkills.map((skill, index) => (
+              <Chip
+                key={index}
+                mode='outlined'
+                style={styles.chip}
+                textStyle={styles.chipText}
+                onClose={() => handleDeleteSkill(skill.id)}
+              >
+                {skill.skill_name}
               </Chip>
             ))}
           </View>
         </ScrollView>
-        <View style={styles.buttonContainer}>
-          <Button mode="outlined" onPress={addTag} style={styles.button}>Add</Button>
-          <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.button}>Save</Button>
-        </View>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          backdropComponent={renderBackdrop}
+          enablePanDownToClose={true}
+        >
+          <BottomSheetView style={styles.bottomSheetContent}>
+            <Text style={styles.bottomSheetTitle}>Confirm Save</Text>
+            <Text>Are you sure you want to save these skills?</Text>
+            <View style={styles.buttonModalContainer}>
+              <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+                <View style={[styles.buttonStyle, styles.yesButton]}>
+                  <Text style={styles.buttonText}>Save Changes</Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={closeBottomSheet}>
+                <View style={[styles.buttonStyle, styles.cancelButton]}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
       </View>
-      <Spinner visible={isLoading} />
-    </AuthenticatedLayout>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  header: {
+    backgroundColor: '#0A3480',
+  },
+  whiteText: {
+    color: 'white',
+  },
   container: {
     flex: 1,
     padding: 10,
-    justifyContent: 'space-between'
+    backgroundColor: '#F4F7FB',
   },
-  headerText: {
+  input: {
+    height: 40,
+    marginBottom: 10,
+  },
+  padding: {
+    padding: 5,
+  },
+  heading: {
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 20,
-    color: '#0A3480',
-    marginBottom: 40,
-    marginTop: 60
+    marginBottom: 10,
   },
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingBottom: 20,
+    flex: 1,
   },
   chip: {
     margin: 4,
+    borderRadius: 50,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 'auto',
+  chipText: {
+    minHeight: 15,
+    lineHeight: 15,
+    fontSize: 12,
   },
-  button: {
-    flexGrow: 1,
-    marginHorizontal: 4,
+  buttonModalContainer: {
+    marginTop: 10,
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+  },
+  yesButton: {
+    backgroundColor: '#0A3480',
+  },
+  cancelButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#0A3480',
+  },
+  cancelButtonText: {
+    color: '#0A3480',
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  buttonStyle: {
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 50,
+    paddingVertical: 10,
+  },
+  bottomSheetContent: {
+    padding: 20,
+    flex: 1,
+  },
+  bottomSheetTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

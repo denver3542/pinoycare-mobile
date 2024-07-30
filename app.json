@@ -2,7 +2,8 @@
   "expo": {
     "name": "Upcare",
     "slug": "pinoycare-mobile",
-    "version": "1.0.2",
+    "version": "1.0.7",
+    "owner": "supportih",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,17 +17,20 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.upcare.mobile",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you."
+        "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you.",
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes."
       },
-      "buildNumber": "9"
+      "buildNumber": "12",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "com.upcare.mobile",
-      "versionCode": 33
+      "versionCode": 39
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,17 +41,19 @@
       }
     },
     "plugins": [
+
       "expo-updates",
       [
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 33,
-            "targetSdkVersion": 33,
-            "buildToolsVersion": "33.0.0"
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0",
+            "googleServicesFile": "./google-services.json"
           },
           "ios": {
-            "deploymentTarget": "13.4"
+            "deploymentTarget": "13.5"
           }
         }
       ]
@@ -57,6 +63,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/8acda25c-7755-4c8c-9b69-3e19b78b60e3"
-    }
+    },
+    "scheme": "com.upcare.mobile"
   }
 }
