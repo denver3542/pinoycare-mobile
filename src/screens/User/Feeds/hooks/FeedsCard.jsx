@@ -74,7 +74,7 @@ const FeedsCard = ({ feed }) => {
     };
 
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, paddingBottom: 15 }}>
         <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
           <Text style={{ color: selectedReaction ? "red" : "black", fontSize: 20 }}>
             {selectedReaction ? "❤️" : "❤️"}
@@ -102,19 +102,21 @@ const FeedsCard = ({ feed }) => {
           {feed.image && <Image source={{ uri: feed.image }} resizeMode="stretch" style={[styles.image, { height: imageHeight }]} />}
         </TouchableWithoutFeedback>
 
-        <Text style={styles.content}>
-          {showFullContent || feed.content.length <= MAX_LENGTH
-            ? feed.content
-            : `${feed.content.substring(0, MAX_LENGTH)}... `}
-          {feed.content.length > MAX_LENGTH && (
-            <Text style={styles.toggleButton} onPress={toggleContent}>
-              {showFullContent ? " Show less" : "Show more"}
-            </Text>
-          )}
-        </Text>
+        <View style={styles.contentStyle}>
+          <Text style={styles.content}>
+            {showFullContent || feed.content.length <= MAX_LENGTH
+              ? feed.content
+              : `${feed.content.substring(0, MAX_LENGTH)}... `}
+            {feed.content.length > MAX_LENGTH && (
+              <Text style={styles.toggleButton} onPress={toggleContent}>
+                {showFullContent ? " Show less" : "Show more"}
+              </Text>
+            )}
+          </Text>
+        </View>
 
         <Divider style={{ marginVertical: 10 }} />
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', }}>
           <ReactionButton postId={feed.id} reaction="love" userReactions={feed.reactions || []} />
         </View>
 
@@ -164,20 +166,21 @@ const FeedsCard = ({ feed }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   feedContainer: {
     marginBottom: 8,
-    padding: 10,
+    // padding: 10,
     backgroundColor: "white",
     borderRadius: 10,
-    elevation: 0,
+    borderWidth: 0.5,
+    borderColor: '#ddd'
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    padding: 10,
   },
   creatorInfo: {
     flexDirection: "row",
@@ -201,11 +204,18 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 200,
-    borderRadius: 10,
+    // borderRadius: 10,
     marginBottom: 10,
+
   },
   content: {
     textAlign: "justify",
+    // paddingHorizontal: 10,
+  },
+
+  contentStyle: {
+    flex: 1,
+    paddingHorizontal: 8,
   },
   toggleButton: {
     color: "#0A3480",

@@ -207,14 +207,14 @@ const Login = () => {
                 type="google"
                 onPress={handleGoogleSignIn}
               />
-              <SocialIcon
+              {/* <SocialIcon
                 raised={true}
                 title="Sign In With Facebook"
                 disabled={!fbRequest}
                 button
                 type="facebook"
                 onPress={handleFacebookSignIn}
-              />
+              /> */}
               {Platform.OS === "ios" && (
                 <AppleAuthentication.AppleAuthenticationButton
                   buttonType={

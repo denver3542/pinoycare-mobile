@@ -207,6 +207,10 @@ function Dashboard() {
           <TodoCard />
         </View>
 
+        {/* <View>
+          <Text>add flat list here</Text>
+        </View> */}
+
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Applications</Text>
@@ -352,6 +356,8 @@ const styles = StyleSheet.create({
   card: {
     padding: 15,
     borderRadius: 15,
+    borderWidth: 0.5,
+    borderColor: '#ddd',
     backgroundColor: "white",
     marginTop: 8,
     flex: 1,

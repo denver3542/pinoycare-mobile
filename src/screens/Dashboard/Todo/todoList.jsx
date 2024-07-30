@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
-import { View, StyleSheet, ScrollView, Keyboard, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, ScrollView, Keyboard, TouchableOpacity, TouchableHighlight, Dimensions } from 'react-native';
 import { Text, Chip, Appbar, Button, FAB, Portal, Dialog, RadioButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { format, startOfDay } from 'date-fns';
@@ -53,6 +53,8 @@ const getChipStyle = (status) => {
     }
 };
 
+const { width, height } = Dimensions.get('window');
+
 const TodoList = () => {
     const navigation = useNavigation();
     const { data, refetch, error, deleteTodo } = useTodo();
@@ -78,10 +80,14 @@ const TodoList = () => {
 
     const { control, handleSubmit, setValue, reset } = useForm();
 
-    const snapPoints = useMemo(() => ['80%'], []);
-    const addTodoSnapPoints = useMemo(() => ['65%'], []);
+    const snapPoints = useMemo(() => ["80%"], []);
+    const addTodoSnapPoints = useMemo(() => ['80%'], []);
 
-    const handleCloseBottomSheet = () => { updateBottomSheetRef.current?.close(); };
+    const handleCloseBottomSheet = () => {
+        Keyboard.dismiss();
+        addTodoBottomSheetRef.current?.close();
+        updateBottomSheetRef.current?.close();
+    };
     const handleOpenBottomSheet = (task) => {
         setSelectedTask(task);
         setValue('title', task.title);
@@ -129,7 +135,7 @@ const TodoList = () => {
             // Handle error if needed
             console.error("Update failed", error);
         } finally {
-            handleCloseBottomSheet(); // Close BottomSheet after update
+            handleCloseBottomSheet();
         }
     };
 
@@ -245,7 +251,7 @@ const TodoList = () => {
                             filterTasks(data.tasks).map((task) => (
                                 <TouchableHighlight
                                     key={task.id}
-                                    onLongPress={() => handleOpenBottomSheet(task)}
+                                    onPress={() => handleOpenBottomSheet(task)}
                                     style={[styles.card, { borderRadius: 14 }]}
                                 >
                                     <View style={styles.cardContent}>
@@ -316,6 +322,7 @@ const TodoList = () => {
                 <BottomSheetView style={styles.bottomSheetContent}>
                     {selectedTask && (
                         <>
+
                             <View style={styles.bottomSheetHeader}>
                                 <Text style={styles.bottomSheetTitle}>Update - {selectedTask.title}</Text>
                             </View>
@@ -365,6 +372,7 @@ const TodoList = () => {
                                             value={value}
                                             style={styles.input}
                                             editable={false}
+                                            onPress={() => showDatePicker('start_time')}
                                         />
                                     </TouchableOpacity>
                                 )}
@@ -382,6 +390,7 @@ const TodoList = () => {
                                             value={value}
                                             style={styles.input}
                                             editable={false}
+                                            onPress={() => showDatePicker('start_time')}
                                         />
                                     </TouchableOpacity>
                                 )}
@@ -399,15 +408,15 @@ const TodoList = () => {
                                         >
                                             <View style={{ flexDirection: 'row' }}>
                                                 <View style={styles.radioButton}>
-                                                    <RadioButton value="todo" />
+                                                    <RadioButton.Android value="todo" />
                                                     <Text>Todo</Text>
                                                 </View>
                                                 <View style={styles.radioButton}>
-                                                    <RadioButton value="incomplete" />
+                                                    <RadioButton.Android value="incomplete" />
                                                     <Text>Incomplete</Text>
                                                 </View>
                                                 <View style={styles.radioButton}>
-                                                    <RadioButton value="complete" />
+                                                    <RadioButton.Android value="complete" />
                                                     <Text>Complete</Text>
                                                 </View>
                                             </View>
@@ -423,6 +432,10 @@ const TodoList = () => {
                                     Delete
                                 </Button>
                             </View> */}
+
+
+
+
                             <View style={styles.buttonContainer}>
                                 <TouchableOpacity style={[styles.button, styles.yesButton]} onPress={handleSubmit(handleUpdate)}>
                                     <Text style={styles.buttonText}> Update Task</Text>
@@ -432,6 +445,7 @@ const TodoList = () => {
                                     <Text style={styles.cancelButtonText}>Delete</Text>
                                 </TouchableOpacity>
                             </View>
+
                         </>
                     )}
                 </BottomSheetView>
@@ -546,7 +560,8 @@ const styles = StyleSheet.create({
     },
     bottomSheetContent: {
         flex: 1,
-        padding: 16,
+        maxHeight: height * 0.75,
+        padding: 15,
     },
     bottomSheetHeader: {
         borderBottomWidth: 1,
@@ -572,17 +587,17 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     buttonContainer: {
-        flex: 1,
-        marginTop: 10,
+        // backgroundColor: 'red',
+        // marginBottom: 10,
         flexDirection: 'column',
         gap: 10
     },
     button: {
-        marginHorizontal: 5,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 4,
         alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 50,
-        paddingVertical: 10,
+        borderRadius: 50
     },
     yesButton: {
         backgroundColor: '#0A3480',
@@ -601,8 +616,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     radioGroup: {
-        margin: 10,
-
+        marginBottom: 10,
     },
     radioButton: {
         flexDirection: 'row',

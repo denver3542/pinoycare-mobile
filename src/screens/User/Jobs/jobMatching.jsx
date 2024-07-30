@@ -7,10 +7,23 @@ const JobMatching = ({ rating }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.percentage}>
-                {percentage}%
-            </Text>
-            <Text style={styles.matchedText}>Matched</Text>
+            <AnimatedCircularProgress
+                size={50}
+                width={5}
+                fill={percentage}
+                tintColor="#FDED56"
+                backgroundColor="gray"
+                lineCap="round"
+            >
+                {
+                    (fill) => (
+                        <Text style={styles.percentage}>
+                            {percentage}%
+                        </Text>
+                    )
+                }
+            </AnimatedCircularProgress>
+            <Text style={styles.matchedText}>matched</Text>
         </View>
     );
 };
@@ -21,14 +34,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     percentage: {
-        color: '#0A3480',
-        fontWeight: '600'
-        // fontSize: 10,
+        fontSize: 10,
     },
     matchedText: {
-        color: '#0A3480',
-        marginLeft: 5,
-        fontWeight: '600'
+        marginLeft: 10,
     },
 });
 

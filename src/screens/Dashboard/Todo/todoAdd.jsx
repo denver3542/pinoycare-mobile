@@ -1,11 +1,10 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Text, Keyboard } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Text, Pressable, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Appbar, TextInput, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import CustomTextInput from "../../../components/CustomTextInput";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { format } from 'date-fns';
 import { useAddTodoData } from './hooks/useTodo';
@@ -83,83 +82,89 @@ const TodoAdd = ({ onClose }) => {
                         start_time_iso: '',
                         end_time_iso: ''
                     });
-                    if (onClose) onClose();
+                    if (onClose) {
+                        Keyboard.dismiss();
+                        onClose();
+                    }
                 }, 3000);
             } catch (error) {
                 setLoading(false);
-
+                // Handle error accordingly
             }
         }
     };
 
-
-
     return (
         <KeyboardAvoidingView
             style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <ScrollView contentContainerStyle={styles.containerWrapper}>
-                <Spinner visible={loading} />
-                <View style={styles.bottomSheetHeader}>
-                    <Text style={styles.bottomSheetTitle}>Add New</Text>
-                </View>
-                <CustomTextInput
-                    control={control}
-                    name="title"
-                    label="Title"
-                    mode="outlined"
-                    rules={{ required: 'This field is required' }}
-                />
-                <CustomTextInput
-                    control={control}
-                    name="description"
-                    label="Note"
-                    mode="outlined"
-                    multiline={true}
-                    numberOfLines={5}
-                    rules={{ required: 'This field is required' }}
-                />
-                <View style={styles.datePickerContainer}>
-                    <TouchableOpacity onPress={() => showDatePicker('start_time')}>
-                        <TextInput
-                            label="Start"
-                            mode="outlined"
-                            name="start_time"
-                            value={watch('start_time')}
-                            editable={false}
-                            style={styles.dateInput}
-                        />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.datePickerContainer}>
-                    <TouchableOpacity onPress={() => showDatePicker('end_time')}>
-                        <TextInput
-                            label="End"
-                            mode="outlined"
-                            name="end_time"
-                            value={watch('end_time')}
-                            editable={false}
-                            style={styles.dateInput}
-                        />
-                    </TouchableOpacity>
-                </View>
-                <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="datetime"
-                    onConfirm={handleConfirm}
-                    onCancel={() => setDatePickerVisibility(false)}
-                    minimumDate={dateFieldName === 'end_time' && startTime ? startTime : undefined}
-                />
-                <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-                    Submit
-                </Button>
-            </ScrollView>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView
+                    contentContainerStyle={styles.containerWrapper}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Spinner visible={loading} />
+                    <View style={styles.bottomSheetHeader}>
+                        <Text style={styles.bottomSheetTitle}>Add New</Text>
+                    </View>
+                    <CustomTextInput
+                        control={control}
+                        name="title"
+                        label="Title"
+                        mode="outlined"
+                        rules={{ required: 'This field is required' }}
+                    />
+                    <CustomTextInput
+                        control={control}
+                        name="description"
+                        label="Note"
+                        mode="outlined"
+                        multiline={true}
+                        numberOfLines={5}
+                        rules={{ required: 'This field is required' }}
+                    />
+                    <View style={styles.datePickerContainer}>
+                        <TouchableOpacity onPress={() => showDatePicker('start_time')}>
+                            <TextInput
+                                label="Start"
+                                mode="outlined"
+                                name="start_time"
+                                value={watch('start_time')}
+                                editable={false}
+                                style={styles.dateInput}
+                                onPress={() => showDatePicker('start_time')}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.datePickerContainer}>
+                        <TouchableOpacity onPress={() => showDatePicker('end_time')}>
+                            <TextInput
+                                label="End"
+                                mode="outlined"
+                                name="end_time"
+                                value={watch('end_time')}
+                                editable={false}
+                                style={styles.dateInput}
+                                onPress={() => showDatePicker('end_time')}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="datetime"
+                        onConfirm={handleConfirm}
+                        onCancel={() => setDatePickerVisibility(false)}
+                        minimumDate={dateFieldName === 'end_time' && startTime ? startTime : undefined}
+                    />
+                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+                        Submit
+                    </Button>
+                </ScrollView>
+            </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -182,11 +187,10 @@ const styles = StyleSheet.create({
     bottomSheetTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-
     },
     bottomSheetContent: {
         padding: 20,
-        flex: 1
+        flex: 1,
     },
     bottomSheetHeader: {
         borderBottomWidth: 1,
@@ -217,15 +221,15 @@ const styles = StyleSheet.create({
     },
     cancelButtonText: {
         color: '#0A3480',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
     },
     spinnerTextStyle: {
-        color: '#FFF'
-    }
+        color: '#FFF',
+    },
 });
 
 export default TodoAdd;

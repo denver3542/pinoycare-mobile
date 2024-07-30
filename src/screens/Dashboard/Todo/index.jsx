@@ -2,27 +2,34 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { TouchableHighlight } from "@gorhom/bottom-sheet";
 
 const TodoCard = () => {
     const navigation = useNavigation();
 
 
     return (
-        <View style={styles.card}>
-            <View style={styles.cardContent}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.headerTextStyle}>Create Your Vision</Text>
-                    <Text style={styles.headerTextStyle}>Your Today's Task</Text>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('TodoList')}
-                    >
-                        <Text style={styles.buttonText}>View To Do</Text>
-                    </TouchableOpacity>
+        <TouchableHighlight
+            onPress={() => navigation.navigate('TodoList')}
+            underlayColor="#ddd"
+        >
+            <View style={styles.card}>
+                <View style={styles.cardContent}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.headerTextStyle}>Create Your Vision</Text>
+                        <Text style={styles.headerTextStyle}>Your Today's Task</Text>
+                        <TouchableHighlight
+                            style={styles.button}
+                            onPress={() => navigation.navigate('TodoList')}
+                            underlayColor="#ddd"
+                        >
+                            <Text style={styles.buttonText}>View To Do</Text>
+                        </TouchableHighlight>
+                    </View>
+                    <MaterialIcons name="emoji-events" size={100} color="#FFD700" />
                 </View>
-                <MaterialIcons name="emoji-events" size={100} color="#FFD700" />
             </View>
-        </View>
+        </TouchableHighlight>
     );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions, Pressable, TouchableOpacity } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View, Text, Image, TextInput, Platform, useWindowDimensions, Pressable, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { Appbar, IconButton, useTheme, Searchbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
@@ -10,9 +10,22 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
 import HeaderNotification from '../../../components/HeaderNotification';
 import { useSaveJob } from './hook/useJobs';
-import JobMatching from './jobMatching';
 
-const JobListings = ({ activeNav }) => {
+const Matching = ({ rating }) => {
+  const { colors } = useTheme();
+  const percentage = rating * 25;
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Text style={styles.percentage}>
+        {percentage}%
+      </Text>
+      <Text style={[styles.matchedText, { color: colors.primary }]}>Matched </Text>
+    </View>
+  );
+};
+
+const JobListings = ({ activeNav, rating }) => {
+  const percentage = rating * 25;
   const { colors } = useTheme();
   const { data, isLoading, isRefetching, refetch } = useJobs();
   const { user } = useUser();
@@ -46,8 +59,6 @@ const JobListings = ({ activeNav }) => {
     navigation.navigate('Job', { job });
   };
 
-
-
   const handleSave = async (jobId) => {
     try {
       saveJob.mutate(jobId);
@@ -60,7 +71,8 @@ const JobListings = ({ activeNav }) => {
     const isSaved = user && user.saved_jobs && user.saved_jobs.find(savedJob => savedJob.job_id === item.id);
 
     return (
-      <Pressable onPress={() => navigateToJobDetails(item)} style={styles.card}>
+      <TouchableHighlight onPress={() => navigateToJobDetails(item)} style={styles.card}
+        underlayColor="#ddd">
         <View style={styles.cardContentRow}>
           {
             item.media && item.media.length > 0 && item.media[0].original_url ? (
@@ -70,35 +82,26 @@ const JobListings = ({ activeNav }) => {
             )
           }
           <View style={styles.cardContentText}>
-            <View style={styles.titleRow}>
-              <View style={{ flexDirection: 'column' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Text style={styles.title}>{item.title}</Text>
-                  <IconButton
-                    onPress={() => handleSave(item.id)}
-                    icon={isSaved ? "bookmark" : "bookmark-outline"}
-                    color={isSaved ? "#0A3480" : "#888"}
-                    selected
-                    size={24}
-                  />
-                </View>
-                <Text style={styles.company}>{item.company}</Text>
-                <Text style={{ fontWeight: '500' }}>{item.location}</Text>
-                <JobMatching rating={item.matchScore / 25} />
-              </View>
-
-              {/* <IconButton
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={styles.title}>{item.title}</Text>
+              <IconButton
                 onPress={() => handleSave(item.id)}
                 icon={isSaved ? "bookmark" : "bookmark-outline"}
                 color={isSaved ? "#0A3480" : "#888"}
                 selected
                 size={24}
-              /> */}
+                style={{ left: 10 }}
+              />
             </View>
-            <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
+            <View style={{ bottom: 10 }}>
+              <Text style={styles.company}>{item.company}</Text>
+              <Text style={{ fontWeight: '500' }}>{item.location}</Text>
+              <Matching rating={item.matchScore / 25} />
+              <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
+            </View>
           </View>
         </View>
-      </Pressable>
+      </TouchableHighlight>
     );
   };
 
@@ -143,28 +146,37 @@ const JobListings = ({ activeNav }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F4F7FB' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F4F7FB'
+  },
   card: {
     marginTop: 8,
-    backgroundColor: 'white',
-    padding: 10,
+    backgroundColor: '#fff',
+    padding: 0,
     borderRadius: 8,
-    elevation: 0,
+    borderWidth: 0.5,
+    borderColor: '#ddd',
   },
+
   cardContentRow: {
     flexDirection: 'row',
+    top: 10,
+    // backgroundColor: 'red',
+    paddingHorizontal: 15,
+    paddingVertical: 10
   },
   cardContentText: {
     flex: 1,
-    paddingLeft: 10,
+    marginLeft: 10,
+    bottom: 15,
+    // backgroundColor: 'blue',
   },
   listContentContainer: {
     padding: 8
   },
   titleRow: {
     flexDirection: 'column',
-    // alignItems: 'center',
-    // justifyContent: 'space-between',
   },
   title: {
     fontWeight: '500',
@@ -213,10 +225,16 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   matchedText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#676767'
-  }
+    color: '#0A3480',
+    fontWeight: '600',
+    fontSize: 14
+  },
+  percentage: {
+    color: '#0A3480',
+    fontWeight: '600',
+    marginRight: 5,
+    fontSize: 14
+  },
 });
 
 export default JobListings;

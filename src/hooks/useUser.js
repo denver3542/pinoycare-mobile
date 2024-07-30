@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { clearStoredUser, setStoredUser } from "../user-storage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as Location from "expo-location";
 import axios from "axios";
 
@@ -80,6 +80,7 @@ export const useUser = () => {
   const queryClient = useQueryClient();
   const [city, setCity] = useState(null);
   const [cityFetched, setCityFetched] = useState(false);
+  const locationUpdateRef = useRef(false);
   const SERVER_ERROR = "There was an error contacting the server.";
 
   const {
@@ -107,10 +108,15 @@ export const useUser = () => {
   useQuery({
     queryKey: ["city"],
     queryFn: fetchLocation,
-    enabled: !!user && !cityFetched, // Fetch city only if user is available and city hasn't been fetched
+    enabled: !!user && !cityFetched,
     onSuccess: (fetchedCity) => {
-      setCity(fetchedCity);
-      setCityFetched(true); // Mark city as fetched
+      if (!cityFetched) {
+        setCity(fetchedCity);
+        setCityFetched(true);
+        console.log("City fetched:", fetchedCity);
+      } else {
+        console.log("City was already fetched.");
+      }
     },
     onError: (error) => {
       console.error("Failed to fetch location:", error);
@@ -128,7 +134,9 @@ export const useUser = () => {
 
   useEffect(() => {
     if (city && cityFetched) {
+      console.log("Updating location on server with city:", city);
       updateLocation(city);
+      locationUpdateRef.current = true;
     }
   }, [city, cityFetched, updateLocation]);
 

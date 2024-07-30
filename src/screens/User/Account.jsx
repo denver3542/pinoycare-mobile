@@ -19,6 +19,7 @@ import {
   ScrollView,
   RefreshControl,
   Alert,
+  Platform,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -43,8 +44,8 @@ const Account = ({ activeNav }) => {
   const onRefresh = () => {
     setRefreshing(true);
     refetchUser()
-      .then(() => {})
-      .catch(() => {})
+      .then(() => { })
+      .catch(() => { })
       .finally(() => {
         setRefreshing(false);
       });
@@ -167,9 +168,7 @@ const Account = ({ activeNav }) => {
                       style={{ marginRight: 5 }}
                     />
                     <Text style={styles.headerText}>
-                      {user?.permanent_address
-                        ? user.permanent_address
-                        : city || "n/a"}
+                      {user?.city || "n/a"}
                     </Text>
                   </View>
                   <View
@@ -228,17 +227,38 @@ const Account = ({ activeNav }) => {
                     {user?.status === "approved"
                       ? "Verified"
                       : user?.status === "rejected"
-                      ? "Rejected"
-                      : user?.status === "pending"
-                      ? "Under review"
-                      : user?.status === "created"
-                      ? "Unverified"
-                      : "Verify"}
+                        ? "Rejected"
+                        : user?.status === "pending"
+                          ? "Under review"
+                          : user?.status === "created"
+                            ? "Unverified"
+                            : "Verify"}
                   </Chip>
                 </View>
               </View>
             </View>
           </View>
+
+          {Platform.OS === 'ios' && (
+            <Button
+              mode="contained"
+              icon="apple"
+              onPress={handleLinkAppleAccount}
+              style={styles.linkAppleButton}
+            >
+              Link Apple Account
+            </Button>
+          )}
+
+          {/* <Button
+            mode="contained"
+            icon="apple"
+            onPress={handleLinkAppleAccount}
+            style={styles.linkAppleButton}
+          >
+            Link Apple Account
+          </Button> */}
+
 
           <Divider style={styles.divider} />
 
@@ -263,14 +283,6 @@ const Account = ({ activeNav }) => {
             </View>
           </View>
 
-          <Button
-            mode="contained"
-            icon="apple"
-            onPress={handleLinkAppleAccount}
-            style={styles.linkAppleButton}
-          >
-            Link Apple Account
-          </Button>
 
           {isFetched && (
             <>
@@ -383,10 +395,10 @@ const Account = ({ activeNav }) => {
               {["approved", "rejected", "pending", "created"].indexOf(
                 user?.status
               ) === -1 && (
-                <>
-                  <Text>Please verify your account to proceed.</Text>
-                </>
-              )}
+                  <>
+                    <Text>Please verify your account to proceed.</Text>
+                  </>
+                )}
             </View>
           </View>
           <Divider />
@@ -500,7 +512,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 15,
-    elevation: 0,
+    borderWidth: 0.5,
+    borderColor: '#ddd'
   },
   cardContent: {
     justifyContent: "center",
