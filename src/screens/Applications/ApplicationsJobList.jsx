@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, TouchableHighlight } from "react-native";
 import { Text, Icon } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import logo from "../../../assets/images/hero-bg.jpg";
@@ -23,10 +23,11 @@ const JobApplicationList = ({ application }) => {
     const badgeTextColor = getBadgeTextColor(applicationStatus);
 
     return (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate("ApplicationStatus", { job: application })}>
-            <View style={styles.container}>
-                <View style={styles.card}>
-                    <View style={styles.cardContent}>
+        <TouchableHighlight onPress={() => navigation.navigate("ApplicationStatus", { job: application })}
+            underlayColor="#ddd"
+            style={styles.container}
+        >
+            <>
                         <Image
                             source={{
                                 uri: media.length > 0 ? media[0].original_url : logo,
@@ -51,10 +52,9 @@ const JobApplicationList = ({ application }) => {
                             </View>
                             <Icon name="chevron-right" size={25} />
                         </View>
-                    </View>
-                </View>
-            </View>
-        </TouchableWithoutFeedback>
+
+            </>
+        </TouchableHighlight>
     );
 };
 
@@ -96,15 +96,21 @@ const getBadgeTextColor = (status) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'white',
+        marginBottom: 8,
+        padding: 10,
+        borderRadius: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderWidth: 0.5,
+         borderColor: '#ddd'
     },
     card: {
-        flexGrow: 1,
-    },
-    cardContent: {
         padding: 4,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+
     appliedProfession: {
         fontSize: 16,
         fontWeight: 'bold',

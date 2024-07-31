@@ -75,6 +75,7 @@ const Applications = () => {
         <Swipeable
           renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.id)}
         >
+
           <View style={styles.itemContainer}>
             <ApplicationsJobList application={item} />
           </View>
@@ -137,6 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F7FB',
+
   },
   listContainer: {
     padding: 8,
@@ -157,12 +159,8 @@ const styles = StyleSheet.create({
     // marginBottom: 15
   },
   itemContainer: {
-    backgroundColor: 'white',
     marginBottom: 8,
-    padding: 10,
-    marginHorizontal: 8,
-    borderRadius: 15,
-    elevation: 0,
+    padding: 8,
 
   },
   title: {

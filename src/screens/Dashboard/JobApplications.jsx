@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, TouchableHighlight } from "react-native";
 import { Text, Icon, Divider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import logo from "../../../assets/images/hero-bg.jpg";
@@ -23,8 +23,9 @@ const JobApplications = ({ application }) => {
     const badgeTextColor = getBadgeTextColor(applicationStatus);
 
     return (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate("ApplicationStatus", { job: application })}>
-            <View style={styles.container}>
+        <TouchableHighlight onPress={() => navigation.navigate("ApplicationStatus", { job: application })}
+        underlayColor="#ddd" style={styles.container}>
+            <>
                 <View style={styles.card}>
                     <View style={styles.cardContent}>
                         <Image
@@ -54,8 +55,8 @@ const JobApplications = ({ application }) => {
                         </View>
                     </View>
                 </View>
-            </View>
-        </TouchableWithoutFeedback>
+            </>
+        </TouchableHighlight>
     );
 };
 
@@ -97,12 +98,11 @@ const getBadgeTextColor = (status) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    card: {
-        flexGrow: 1,
         backgroundColor: "#F5F5F5",
-        borderRadius: 14,
+        borderRadius: 10,
         marginBottom: 10,
+        borderWidth: 0.5,
+        borderColor: '#ddd'
     },
     cardContent: {
         padding: 8,
