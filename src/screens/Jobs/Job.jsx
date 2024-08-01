@@ -58,7 +58,7 @@ export default function Job() {
 
   const formatSalary = (salary) => {
     if (!salary) return 'n/a';
-    return `₱${(salary / 1000).toFixed(0)}k`;
+    return `${(salary / 1000).toFixed(0)}k`;
   };
 
   const onRefresh = () => {
@@ -162,7 +162,7 @@ export default function Job() {
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
                   <Text variant="labelMedium" style={{ color: 'gray' }}>Type</Text>
-                  <Text variant="labelLarge" style={{ color: '#414141' }}>{job.type}</Text>
+                  <Text variant="labelMedium" style={{ color: '#414141' }}>{job.type}</Text>
                 </View>
               </View>
 
@@ -172,8 +172,8 @@ export default function Job() {
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
                   <Text variant="labelMedium" style={{ color: 'gray' }}>Salary</Text>
-                  <Text variant="labelLarge" style={{ color: '#414141' }}>
-                    {formatSalary(job.salary_from)} - {formatSalary(job.salary_to)}
+                  <Text variant="labelMedium" style={{ color: '#414141' }}>
+                    {job.currency} {formatSalary(job.salary_from)} - {formatSalary(job.salary_to)} / {job.rate_type}
                   </Text>
                 </View>
               </View>
@@ -184,7 +184,7 @@ export default function Job() {
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
                   <Text variant="labelMedium" style={{ color: 'gray' }}>Work Place</Text>
-                  <Text variant="labelLarge" style={{ color: '#414141' }}>{job.workplace}</Text>
+                  <Text variant="labelMedium" style={{ color: '#414141' }}>{job.workplace}</Text>
                 </View>
               </View>
 
@@ -199,7 +199,7 @@ export default function Job() {
 
           <View style={[styles.cardContent]}>
         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Description</Text>
-      
+
           {renderDescription()}
           {job?.description?.length > truncatedDescriptionLength && (
             <TouchableOpacity onPress={toggleDescription}>
