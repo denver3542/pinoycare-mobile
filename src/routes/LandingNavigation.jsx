@@ -31,6 +31,7 @@ import Job from "../screens/Jobs/Job";
 import ApplicationStatus from "../screens/Applications/ApplicationStatus";
 import TodoList from "../screens/Dashboard/Todo/todoList";
 import TodoAdd from "../screens/Dashboard/Todo/todoAdd";
+import OTPVerification from "../screens/Auth/OTPVerification";
 // Import hooks
 import { useUser } from "../hooks/useUser";
 import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
@@ -78,13 +79,11 @@ function LandingNavigation() {
                 options={{ animation: "fade", animationTiming: 3000 }}
               />
               <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="OTPVerification" component={OTPVerification}/>
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />
               <Stack.Screen name="GuestJob" component={GuestJob} />
-              <Stack.Screen
-                name="ForgotPassword"
-                component={ForgotPasswordScreen}
-              />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
               <Stack.Screen name="Professional" component={Professional} />
               <Stack.Screen
                 name="IndividualEmployer"
@@ -111,7 +110,7 @@ function LandingNavigation() {
             </>
           ) : (
             <>
-              <Stack.Screen name="BottomTabs" component={CustomBottomTabs} />
+            <Stack.Screen name="BottomTabs" component={CustomBottomTabs} options={{ animation: "fade", animationTiming: '3000' }}/>
               <Stack.Screen name="Job" component={Job} />
               <Stack.Screen
                 name="ApplicationStatus"
@@ -191,6 +190,7 @@ function LandingNavigation() {
                 name="SearchJob"
                 component={SearchJob}
               />
+
             </>
           )}
         </Stack.Navigator>

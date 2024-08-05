@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     marginBottom: 8,
-    padding: 8,
+    paddingHorizontal: 8,
 
   },
   title: {

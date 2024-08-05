@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        marginBottom: 8,
+        // marginBottom: 8,
         padding: 10,
         borderRadius: 15,
         flexDirection: 'row',
@@ -105,11 +105,12 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
          borderColor: '#ddd'
     },
-    card: {
-        padding: 4,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
+    // card: {
+    //     padding: 4,
+    //     flexDirection: 'row',
+    //     backgroundColor: 'pink',
+    //     justifyContent: 'space-between',
+    // },
 
     appliedProfession: {
         fontSize: 16,
