@@ -71,7 +71,27 @@ export function useAuth() {
 
   // User authentication functions
   const login = (userDetails) => authServerCall("/auth/login", userDetails);
-  const signup = (userDetails) => authServerCall("/auth/signup", userDetails);
+  const signup = async (userDetails) => {
+      const response = await axiosInstance.post("/auth/signup", userDetails);
+      return handleSignupResponse(response.data);
+  };
+
+
+  const handleSignupResponse = (data) => {
+    console.log("Handle Signup Response Data:", data);
+
+    if (data.success === 1 || data.success === true) {
+      return { success: true, user: data.user, message: data.message };
+    } else {
+      return {
+        success: false,
+        message: data.message || SERVER_ERROR,
+        errors: data.errors || [],
+      };
+    }
+  };
+
+
   const verifyOtp = async (otpCode) => {
     const response = await authServerCall("/auth/verify-otp", { otp_code: otpCode });
     return response; };

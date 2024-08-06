@@ -84,41 +84,31 @@ const Signup = () => {
       return;
     }
 
-    console.log("Submitting form with inputs:", inputs);
-
     try {
       const res = await signup(inputs);
-      console.log("Signup response:", res);
-
-      if (!res.success) { // Simplified condition
-        console.log("Validation errors present. Handling server-side errors.");
-        handleServerErrors(res.errors);
-        return;
+      if (!res.success) {
+        // Handle server-side validation errors
+        const errors = res.errors;
+        for (const key in errors) {
+          setError(key, {
+            type: "server",
+            message: errors[key][0],
+          });
+        }
+      } else {
+        // Navigate to OTP screen
+        navigation.navigate('OTPVerification', { email: inputs.email });
       }
-
-      navigation.navigate('OTPVerification', { email: inputs.email });
-
     } catch (err) {
+      // Handle unexpected errors
       console.log("Signup error:", err);
       if (err.response?.data?.errors) {
         handleServerErrors(err.response.data.errors);
+      } else {
+        Alert.alert("An error occurred. Please try again.");
       }
     }
   };
-
-  const handleServerErrors = (errors) => {
-    for (const key in errors) {
-      setError(key, {
-        type: "server",
-        message: errors[key][0],
-      });
-    }
-  };
-
-
-
-
-
 
 
 
