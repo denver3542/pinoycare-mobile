@@ -84,27 +84,42 @@ const Signup = () => {
       return;
     }
 
+    console.log("Submitting form with inputs:", inputs);
+
     try {
       const res = await signup(inputs);
-      if (res.success === 0) {
-        const errors = res.errors;
-        for (const key in errors) {
-          setError(key, {
-            type: "server",
-            message: errors[key][0],
-          });
-        }
-      } else {
-        // Navigate to OTP screen
-        navigation.navigate('OTPVerification', { email: inputs.email});
+      console.log("Signup response:", res);
+
+      if (!res.success) { // Simplified condition
+        console.log("Validation errors present. Handling server-side errors.");
+        handleServerErrors(res.errors);
+        return;
       }
+
+      navigation.navigate('OTPVerification', { email: inputs.email });
+
     } catch (err) {
-      if (err.errors.length > 0) {
-        setFormErrors(err.errors);
+      console.log("Signup error:", err);
+      if (err.response?.data?.errors) {
+        handleServerErrors(err.response.data.errors);
       }
-      Alert.alert(err.message);
     }
   };
+
+  const handleServerErrors = (errors) => {
+    for (const key in errors) {
+      setError(key, {
+        type: "server",
+        message: errors[key][0],
+      });
+    }
+  };
+
+
+
+
+
+
 
 
   const openTermsLink = () => {
@@ -119,8 +134,8 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     googleLoginOrSignup();
   };
-  const [gender, setGender] = useState(null); // State to hold selected gender
-  const [visible, setVisible] = useState(false); // State to manage dropdown visibility
+  const [gender, setGender] = useState(null);
+  const [visible, setVisible] = useState(false);
 
 
   const openMenu = () => setVisible(true);
@@ -170,7 +185,7 @@ const Signup = () => {
               name="firstname"
               label="First Name"
               mode="outlined"
-              rules={{ required: "First Name is required" }}
+            //   rules={{ required: "First Name is required" }}
             />
             <CustomTextInput
               control={control}
@@ -264,6 +279,20 @@ const Signup = () => {
               }
             />
 
+        <View style={styles.checkboxContainer}>
+              <Checkbox.Android
+                status={agreeToTerms ? "checked" : "unchecked"}
+                onPress={() => setAgreeToTerms(!agreeToTerms)}
+                color={colors.primary}
+              />
+              <Text
+                onPress={openTermsLink}
+                style={{ color: colors.text, marginLeft: 8 }}
+              >
+                I agree to Terms & Conditions
+              </Text>
+            </View>
+
             <Button
               mode="elevated"
               onPress={handleSubmit(onSubmit)}
@@ -284,19 +313,7 @@ const Signup = () => {
                 </Text>
               )}
             </View>
-            <View style={styles.checkboxContainer}>
-              <Checkbox.Android
-                status={agreeToTerms ? "checked" : "unchecked"}
-                onPress={() => setAgreeToTerms(!agreeToTerms)}
-                color={colors.primary}
-              />
-              <Text
-                onPress={openTermsLink}
-                style={{ color: colors.text, marginLeft: 8 }}
-              >
-                I agree to Terms & Conditions
-              </Text>
-            </View>
+
 
             <Text style={{ textAlign: "center", marginVertical: 20 }}>or register with</Text>
             <SocialIcon
@@ -310,30 +327,9 @@ const Signup = () => {
               onPress={handleGoogleSignIn}
             />
 
-            <SocialIcon
-              raised={true}
-              // light
-              title='Sign Up With Facebook'
-              labelStyle={{
-                fontSize: 14,
-                paddingVertical: 6,
-              }}
-              disabled={!request}
-              button
-              type='facebook'
-              height={50}
-            />
 
-            <SocialIcon
-              raised={true}
-              light
-              title='Sign Up With Apple ID'
-              disabled={!request}
-              button
-              type='apple'
-              height={50}
 
-            />
+
 
           </View>
         </View>
@@ -364,6 +360,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginVertical: 5
   },
   title: {
     fontSize: 30,

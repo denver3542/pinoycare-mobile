@@ -53,7 +53,7 @@ const OTPVerification = () => {
     return (
         <View style={styles.container}>
             <Appbar.Header mode="small" style={{ backgroundColor: "#0A3480"}} >
-                <Appbar.BackAction onPress={() => navigation.goBack()} />
+                <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
                 <Appbar.Content title="OTP Verification" color='white' />
             </Appbar.Header>
 
