@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
   },
   cardContent: {
-    marginTop: 8,
+    marginVertical: 8,
   },
   seeMoreContainer: {
     flexDirection: "row",

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HTMLView from "react-native-htmlview";
-import { View, ScrollView, StyleSheet, RefreshControl, useWindowDimensions, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet, RefreshControl, useWindowDimensions, Dimensions, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Appbar, Button, Card, Chip, Divider, Modal, Portal, Text, useTheme } from "react-native-paper";
 import { fDate } from "../../../utils/formatTime";
@@ -30,10 +30,35 @@ export default function Job() {
   const queryClient = useQueryClient();
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showApplyModal, setShowApplyModal] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const truncatedDescriptionLength = 150;
+
+  const toggleDescription = () => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+  };
+
+  const renderDescription = () => {
+    if (!job?.description) return '';
+
+    const truncatedDescription = job.description.substring(0, truncatedDescriptionLength);
+    const shouldShowMore = job.description.length > truncatedDescriptionLength;
+    const descriptionToShow = isDescriptionExpanded ? job.description : `${truncatedDescription}${shouldShowMore ? '...' : ''}`;
+
+    return (
+      <RenderHtml
+        contentWidth={contentWidth}
+        source={{
+          html: `<div style="text-align: justify;">${descriptionToShow}</div>`
+        }}
+      />
+    );
+  };
+
+
 
   const formatSalary = (salary) => {
     if (!salary) return 'n/a';
-    return `₱${(salary / 1000).toFixed(0)}k`;
+    return `${(salary / 1000).toFixed(0)}k`;
   };
 
   const onRefresh = () => {
@@ -124,11 +149,12 @@ export default function Job() {
         <View style={styles.card}>
           <View style={[styles.cardContent, { alignItems: 'center' }]}>
             <Text variant='titleLarge' style={{ fontWeight: 'bold' }}>{job.title}</Text>
-            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#5690FD' }}>{job.company}</Text>
+            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#5690FD', textAlign: 'center'  }}>{job.company}</Text>
             <Text style={{ color: 'gray' }} variant="labelSmall"> Posted {job.created_at ? fDate(job.created_at) : 'n/a'}</Text>
           </View>
 
-          <View style={{ backgroundColor: '#fff', borderRadius: 14, paddingVertical: 20 }}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 14, paddingVertical: 20,
+          borderWidth: 0.5, borderColor: '#ddd' }}>
             <View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-evenly' }}>
               <View style={{ flexDirection: 'column', alignItems: 'center', }}>
                 <View style={{ backgroundColor: '#EEF4FF', padding: 15, borderRadius: 100, }}>
@@ -136,7 +162,7 @@ export default function Job() {
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
                   <Text variant="labelMedium" style={{ color: 'gray' }}>Type</Text>
-                  <Text variant="labelLarge" style={{ color: '#414141' }}>{job.type}</Text>
+                  <Text variant="labelMedium" style={{ color: '#414141' }}>{job.type}</Text>
                 </View>
               </View>
 
@@ -146,8 +172,8 @@ export default function Job() {
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
                   <Text variant="labelMedium" style={{ color: 'gray' }}>Salary</Text>
-                  <Text variant="labelLarge" style={{ color: '#414141' }}>
-                    {formatSalary(job.salary_from)} - {formatSalary(job.salary_to)}
+                  <Text variant="labelMedium" style={{ color: '#414141' }}>
+                    {job.currency} {formatSalary(job.salary_from)} - {formatSalary(job.salary_to)} / {job.rate_type}
                   </Text>
                 </View>
               </View>
@@ -158,7 +184,7 @@ export default function Job() {
                 </View>
                 <View style={{ marginTop: 4, alignItems: 'center', gap: 2 }}>
                   <Text variant="labelMedium" style={{ color: 'gray' }}>Work Place</Text>
-                  <Text variant="labelLarge" style={{ color: '#414141' }}>{job.workplace}</Text>
+                  <Text variant="labelMedium" style={{ color: '#414141' }}>{job.workplace}</Text>
                 </View>
               </View>
 
@@ -171,15 +197,19 @@ export default function Job() {
             </View> */}
           </View>
 
-
-
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Description</Text>
-            <RenderHtml
-              contentWidth={contentWidth}
-              source={{ html: `<div style="text-align: justify;">${job?.description}</div>` }}
-            />
-          </View>
+        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Description</Text>
+
+          {renderDescription()}
+          {job?.description?.length > truncatedDescriptionLength && (
+            <TouchableOpacity onPress={toggleDescription}>
+              <Text style={{ fontWeight: '700', color: '#0A3480',  }}>
+                {isDescriptionExpanded ? 'Read Less' : 'Read More'}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+      </View>
           <View style={[styles.cardContent]}>
             <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 18 }}>Skills</Text>
             <View style={{ paddingHorizontal: 0 }}>

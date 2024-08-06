@@ -54,6 +54,8 @@ export function useAuth() {
 
   // Handle responses from the server
   const handleResponse = (data) => {
+
+    console.log("Handle Response Data:", data);
     if (data.user && data.token) {
       setStoredUser(data.user);
       updateUser(data.user);
@@ -62,7 +64,7 @@ export function useAuth() {
       return {
         success: false,
         message: data.message || SERVER_ERROR,
-        errors: data.errors,
+        errors: data.errors || [],
       };
     }
   };
@@ -70,6 +72,17 @@ export function useAuth() {
   // User authentication functions
   const login = (userDetails) => authServerCall("/auth/login", userDetails);
   const signup = (userDetails) => authServerCall("/auth/signup", userDetails);
+  const verifyOtp = async (otpCode) => {
+    const response = await authServerCall("/auth/verify-otp", { otp_code: otpCode });
+    return response; };
+
+    const resendOtp = async (email) => {console.log('resendOtp called with email:', email);
+            const response = await authServerCall('/auth/resend-otp', { email });
+            console.log('resendOtp response:', response);
+            return response;
+    };
+
+
 
   const logout = async () => {
     try {
@@ -168,6 +181,8 @@ export function useAuth() {
   return {
     login,
     signup,
+    verifyOtp,
+    resendOtp,
     logout,
     initiatePasswordReset,
     resetPassword,

@@ -76,7 +76,6 @@ const Signup = () => {
   };
 
   const onSubmit = async (inputs) => {
-    console.log(inputs);
     if (!agreeToTerms) {
       setError("terms", {
         type: "required",
@@ -88,7 +87,6 @@ const Signup = () => {
     try {
       const res = await signup(inputs);
       if (res.success === 0) {
-        console.log(res.errors);
         const errors = res.errors;
         for (const key in errors) {
           setError(key, {
@@ -97,20 +95,17 @@ const Signup = () => {
           });
         }
       } else {
-        console.log("success");
-        // showSnackbar()
+        // Navigate to OTP screen
+        navigation.navigate('OTPVerification', { email: inputs.email});
       }
     } catch (err) {
       if (err.errors.length > 0) {
         setFormErrors(err.errors);
-        // console.log(err.errors);
-        console.log(err);
       }
       Alert.alert(err.message);
-    } finally {
-      // setLoading(false);
     }
   };
+
 
   const openTermsLink = () => {
     Linking.openURL("https://example.com/terms");
@@ -352,9 +347,7 @@ const Signup = () => {
           watcher.contact_bdate ? new Date(watcher.contact_bdate) : new Date()
         }
       />
-      <Text
-        style={{ textAlign: "center", marginBottom: 10, color: colors.text }}
-      >
+      <Text style={{ textAlign: "center", marginBottom: 10, color: colors.text }}>
         Already have an account?{" "}
         <Text style={{ color: "#0A3480", fontWeight: 'bold' }} onPress={() => navigation.navigate("Login")}>Sign In</Text>
       </Text>

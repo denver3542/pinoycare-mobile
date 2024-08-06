@@ -2,7 +2,7 @@
   "expo": {
     "name": "Upcare",
     "slug": "pinoycare-mobile",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "owner": "supportih",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,7 @@
         "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you.",
         "NSCameraUsageDescription": "This app uses the camera to scan barcodes."
       },
-      "buildNumber": "12",
+      "buildNumber": "13",
       "usesAppleSignIn": true
     },
     "android": {
@@ -30,7 +30,7 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "com.upcare.mobile",
-      "versionCode": 39
+      "versionCode": 40
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,7 +41,6 @@
       }
     },
     "plugins": [
-
       "expo-updates",
       [
         "expo-build-properties",

@@ -20,7 +20,7 @@ const VerificationScreen = () => {
         let formData = new FormData();
         let imageCount = 0;
 
-        ['1', '2', '3'].forEach(id => {
+        ['1', '2'].forEach(id => {
             const frontImage = data[`id${id}FrontImage`];
             const backImage = data[`id${id}BackImage`];
 
@@ -45,11 +45,6 @@ const VerificationScreen = () => {
             }
         });
 
-        if (imageCount < 2) {
-            setLoading(false);
-            Alert.alert('Insufficient Images', 'Please submit at least 2 IDs Front and Back.');
-            return;
-        }
 
         setLoading(true);
         try {
@@ -108,7 +103,7 @@ const VerificationScreen = () => {
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
             </Appbar.Header>
             <ScrollView contentContainerStyle={styles.container}>
-                {Array.from({ length: 3 }).map((_, index) => (
+                {Array.from({ length: 2 }).map((_, index) => (
                     <View key={index}>
                         <Title>{`ID ${index + 1}`}</Title>
                         <Controller
@@ -161,10 +156,8 @@ const styles = StyleSheet.create({
     },
     imagePicker: {
         backgroundColor: "#0A3480",
-        alignItems: 'center',
         justifyContent: 'center',
         height: 150,
-        width: '100%',
         borderRadius: 14,
         marginBottom: 16,
     },
