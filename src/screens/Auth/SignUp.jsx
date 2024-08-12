@@ -10,7 +10,8 @@ import {
   Checkbox,
   List,
   IconButton,
-  RadioButton
+  RadioButton,
+  HelperText
 } from "react-native-paper";
 import UnathorizeLayout from "../../Layout/User/Unauthorize/UnathorizeLayout";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -24,6 +25,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { colors, SocialIcon } from 'react-native-elements';
+import * as AppleAuthentication from "expo-apple-authentication";
 
 // Define validation schema
 const schema = yup
@@ -31,8 +33,6 @@ const schema = yup
     firstname: yup.string().required("First Name is required"),
     middlename: yup.string().required("Middle Name is required"),
     lastname: yup.string().required("Last Name is required"),
-    gender: yup.string().required("Gender is required"),
-    date_of_birth: yup.date().required("Birthdate is required"),
     email: yup.string().email("Invalid email").required("Email is required"),
     password: yup
       .string()
@@ -45,11 +45,12 @@ const schema = yup
   })
   .required();
 
+
 const Signup = () => {
   const navigation = useNavigation();
   const [formErrors, setFormErrors] = useState({});
 
-  const { signup, googleLoginOrSignup, request } = useAuth();
+  const { signup, googleLoginOrSignup, request, handleAppleSignInOrSignUp  } = useAuth();
   const {
     control,
     watch,
@@ -84,31 +85,37 @@ const Signup = () => {
       return;
     }
 
+    console.log("Submitting form with inputs:", inputs);
+
     try {
       const res = await signup(inputs);
+      console.log("Signup response:", res);
+
       if (!res.success) {
-        // Handle server-side validation errors
-        const errors = res.errors;
-        for (const key in errors) {
-          setError(key, {
-            type: "server",
-            message: errors[key][0],
-          });
-        }
-      } else {
-        // Navigate to OTP screen
-        navigation.navigate('OTPVerification', { email: inputs.email });
+        console.log("Validation errors present. Handling server-side errors.");
+        handleServerErrors(res.errors);
+        return;
       }
+
+      navigation.navigate('OTPVerification', { email: inputs.email });
+
     } catch (err) {
-      // Handle unexpected errors
       console.log("Signup error:", err);
       if (err.response?.data?.errors) {
         handleServerErrors(err.response.data.errors);
-      } else {
-        Alert.alert("An error occurred. Please try again.");
       }
     }
   };
+
+  const handleServerErrors = (errors) => {
+    for (const key in errors) {
+      setError(key, {
+        type: "server",
+        message: errors[key][0],
+      });
+    }
+  };
+
 
 
 
@@ -131,6 +138,38 @@ const Signup = () => {
   const openMenu = () => setVisible(true);
 
   const closeMenu = () => setVisible(false);
+
+  const handleAppleSignIn = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      // console.log(credential);
+      // Send the credential to your backend
+      const response = await handleAppleSignInOrSignUp(credential);
+
+      if (response.success) {
+        // Handle successful authentication
+        console.log("Login success", response);
+        // Store token and user information if necessary
+      } else {
+        // Handle unsuccessful authentication
+        setGeneralError("Apple Sign-In failed.");
+      }
+    } catch (e) {
+      if (e.code === "ERR_CANCELED") {
+        // Handle that the user canceled the sign-in flow
+        Alert.alert("Apple Sign-In was canceled.");
+      } else {
+        // Handle other errors
+        console.error(e);
+        Alert.alert("Apple Sign-In failed.");
+      }
+    }
+  };
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#F4F7FB", }}>
@@ -191,48 +230,53 @@ const Signup = () => {
               rules={{ required: "Last Name is required" }}
               mode="outlined"
             />
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
-              <RadioButton.Group
-                onValueChange={(value) => setValue('gender', value)}
-                value={watcher.gender}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Select Gender</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <RadioButton.Android value="M" color={colors.primary} />
-                    <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Male</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <RadioButton.Android value="F" color={colors.primary} />
-                    <Text style={{ fontSize: Platform.OS === 'ios' ? 10 : 16, marginRight: 20 }}>Female</Text>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
+
+<View style={{ marginBottom: 10 }}>
+  <RadioButton.Group
+    onValueChange={(value) => setValue('gender', value)}
+    value={watcher.gender}
+  >
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Text style={{ fontSize: fontSize, marginRight: 20 }}>Select Gender (Optional)</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <RadioButton.Android value="M" color={colors.primary} />
+        <Text style={{ fontSize: fontSize }}>Male</Text>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <RadioButton.Android value="F" color={colors.primary} />
+        <Text style={{ fontSize: fontSize }}>Female</Text>
+      </View>
+    </View>
+
+  </RadioButton.Group>
+</View>
 
 
-            <List.Item
-              title="Birth date"
-              titleStyle={{ fontSize: fontSize }}
-              right={(props) => (
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ fontSize: fontSize }}>
-                    {watcher?.date_of_birth
-                      ? moment(watcher.date_of_birth).format('YYYY-MM-DD')
-                      : ''}
-                  </Text>
-                  <List.Icon {...props} icon="chevron-right" />
-                </View>
-              )}
-              style={{
-                backgroundColor: '#fff',
-                borderWidth: 1,
-                borderColor: 'gray',
-                borderRadius: 5,
-                marginBottom: 15,
-              }}
-              onPress={showDatePicker}
-            />
+
+
+
+<List.Item
+  title="Birth date (Optional)"
+  titleStyle={{ fontSize: fontSize }}
+  right={(props) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Text style={{ fontSize: fontSize }}>
+        {watcher?.date_of_birth
+          ? moment(watcher.date_of_birth).format('YYYY-MM-DD')
+          : ''}
+      </Text>
+      <List.Icon {...props} icon="chevron-right" />
+    </View>
+  )}
+  style={{
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    marginBottom: 15,
+  }}
+  onPress={showDatePicker}
+/>
             <CustomTextInput
               control={control}
               name="email"
@@ -318,6 +362,20 @@ const Signup = () => {
             />
 
 
+              {Platform.OS === "ios" && (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={
+                    AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                  }
+                  buttonStyle={
+                    AppleAuthentication.AppleAuthenticationButtonStyle
+                      .WHITE_OUTLINE
+                  }
+                  cornerRadius={20}
+                  style={{ width: "100%", height: 53, marginTop: 4 }}
+                  onPress={handleAppleSignIn}
+                />
+              )}
 
 
 
