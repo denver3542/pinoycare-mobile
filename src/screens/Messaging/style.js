@@ -44,9 +44,10 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
   },
   myMessageContent: {
-    backgroundColor: "#dcf8c6",
+    backgroundColor: "#012970",
     borderBottomRightRadius: 0,
     borderRadius: 20,
+    color: "white",
   },
   theirMessageContent: {
     backgroundColor: "#fff",
@@ -54,10 +55,10 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
   },
   myMessageText: {
-    color: "#000",
+    color: "#fff",
   },
   theirMessageText: {
-    color: "#000",
+    color: "#012970",
   },
   replyText: {
     fontStyle: "italic",
@@ -81,7 +82,6 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#f0f0f0",
   },
-
 
   replyContainer: {
     flexDirection: "row",
@@ -133,9 +133,6 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
-
-
-
 
   bottomModal: {
     justifyContent: "flex-end",

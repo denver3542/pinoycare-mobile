@@ -1,75 +1,67 @@
-import React from "react";
-import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
-import { List, Button, Divider, Appbar, Text } from "react-native-paper";
-import { useUser } from "../../hooks/useUser";
-import moment from "moment";
+import React, { useEffect, useMemo, useState } from "react";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import { Appbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/core";
-
-const notifications = [
-  {
-    id: 1,
-    title: "New Message",
-    description: "You have received a new message.",
-  },
-  {
-    id: 2,
-    title: "Update Available",
-    description: "A new update is available for download.",
-  },
-  // Add more notifications here
-];
-
-const NotificationItem = ({ title, description, onPress, date }) => (
-  <View>
-    <List.Item
-      title={title}
-      titleStyle={{ fontSize: 15 }}
-      description={() => (
-        <View>
-          <Text variant="labelMedium" style={{ fontWeight: "500" }}>
-            {description}
-          </Text>
-          <Text variant="labelSmall">
-            {moment(date).format("MM/DD/YYYY hh:mm A")}
-          </Text>
-        </View>
-      )}
-      left={(props) => <List.Icon {...props} icon="bell" />}
-    //   right={() => onPress && <Button onPress={onPress}>View</Button>}
-    />
-    <Divider />
-  </View>
-);
+import NotificationItem from "../../components/notification/NotificationItem";
+import useNotification from "./hook/useNotifications";
 
 const NotificationsList = () => {
-  const { user, isFetched } = useUser();
+  const {
+    data,
+    isFetched: notifIsFetched,
+    isRefetching,
+    refetch,
+  } = useNotification();
+  const [notifications, setNotifications] = useState([]);
   const navigation = useNavigation();
-  const onNotificationPress = (notificationId) => {
-    console.log("Notification pressed, id:", notificationId);
-    // Add your navigation or handling logic here
-  };
-  const renderItem = ({ item }) => (
-    <NotificationItem
-      title={item.message}
-      description={
-        item.type === "message_update" ? "Message update" : "Job update"
-      }
-      onPress={() => onNotificationPress(item.id)}
-      date={item.updated_at}
-    />
-  );
+
+  // Memoize the filtered and sorted notifications to prevent unnecessary calculations
+  const filteredNotifications = useMemo(() => {
+    if (!notifIsFetched || !data) return [];
+
+    // Sort by date
+    const sortedNotifications = [...data].sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
+
+    // Filter job offer notifications
+    const jobOfferNotif = sortedNotifications.filter(
+      (notif) => notif.type === "job_offer"
+    );
+
+    // Filter and deduplicate message notifications
+    const filteredMessageNotif = sortedNotifications
+      .filter((notif) => notif.type === "message_update")
+      .filter(
+        (notif, index, self) =>
+          index === self.findIndex((t) => t.user_id === notif.user_id)
+      );
+
+    return [...jobOfferNotif, ...filteredMessageNotif];
+  }, [data, notifIsFetched]);
+
+  useEffect(() => {
+    setNotifications(filteredNotifications);
+  }, [filteredNotifications]);
+
+  const renderItem = ({ item }) => <NotificationItem item={item} />;
+
+  console.log(notifications);
 
   return (
-    <View>
-      <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
+    <View style={styles.container}>
+      <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Notifications" color="white" />
       </Appbar.Header>
       <FlatList
-        data={user.notifications}
+        data={notifications}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.listContainer}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
       />
     </View>
   );
@@ -77,7 +69,13 @@ const NotificationsList = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
+    flex: 1,
+  },
+  header: {
+    backgroundColor: "#0A3480",
+  },
+  listContainer: {
+    padding: 10,
   },
 });
 

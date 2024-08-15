@@ -57,7 +57,7 @@ export const renderMessageItem = ({ item }) => {
             <Card.Content
               style={
                 isMyMessage
-                  ? styles.myMessageContent
+                  ? [styles.myMessageContent, { backgroundColor: "#09b36c" }]
                   : styles.theirMessageContent
               }
             >

@@ -46,6 +46,23 @@ function Dashboard() {
     deleteSavedJob,
     deleteError,
   } = useDashboard();
+
+  const unreadMessageCount =
+    isFetched &&
+    (data.notifications?.filter(
+      (notif) => notif.type === "message_update" && notif.read == 0
+    ).length ??
+      0);
+
+  const unreadNotifications =
+    isFetched &&
+    (data.notifications?.filter(
+      (notif) => notif.type !== "message_update" && notif.read == 0
+    ).length ??
+      0);
+
+  console.log(unreadNotifications);
+
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
@@ -54,8 +71,6 @@ function Dashboard() {
   const [savedJobs, setSavedJobs] = useState([]);
   const [showMoreOffers, setShowMoreOffers] = useState(false);
   const [showMoreSavedJobs, setShowMoreSavedJobs] = useState(false);
-  const [loadingSavedJobs, setLoadingSavedJobs] = useState(false);
-  const [loadingJobOffers, setLoadingJobOffers] = useState(false);
   const [deletedItem, setDeletedItem] = useState(null);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -183,19 +198,20 @@ function Dashboard() {
               Welcome Back{" "}
               <MaterialIcons name="emoji-emotions" color="yellow" />
             </Text>
-            <Text style={styles.headerName}>
-              {user?.firstname || "N/A"}
-            </Text>
+            <Text style={styles.headerName}>{user?.firstname || "N/A"}</Text>
           </View>
         </View>
         <View style={styles.iconsContainer}>
-          <HeaderMessageNotification />
-          <HeaderNotification />
+          <HeaderMessageNotification unreadMessageCount={unreadMessageCount} />
+          <HeaderNotification undreadNotificationCount={unreadNotifications} />
         </View>
       </Appbar.Header>
 
       <View style={styles.container}>
-        <TouchableHighlight onPress={() => navigation.navigate('SearchJob')} underlayColor="#ddd">
+        <TouchableHighlight
+          onPress={() => navigation.navigate("SearchJob")}
+          underlayColor="#ddd"
+        >
           <Searchbar
             placeholder="Search"
             style={styles.searchbar}
@@ -210,14 +226,15 @@ function Dashboard() {
           <TodoCard />
         </View>
 
-
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Applications</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("Application")}
             >
-              <Text style={styles.seeMoreText}>See All ({applications.length})</Text>
+              <Text style={styles.seeMoreText}>
+                See All ({applications.length})
+              </Text>
             </TouchableOpacity>
           </View>
           <Divider style={styles.divider} />
@@ -228,7 +245,12 @@ function Dashboard() {
                 <Swipeable
                   key={application.id}
                   renderRightActions={(progress, dragX) =>
-                    renderRightActions(progress, dragX, application.id, "applications")
+                    renderRightActions(
+                      progress,
+                      dragX,
+                      application.id,
+                      "applications"
+                    )
                   }
                 >
                   <JobApplications application={application} />
@@ -240,24 +262,33 @@ function Dashboard() {
         <View style={styles.card}>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Job Offers</Text>
-            <TouchableOpacity onPress={() => handleSeeMore("offers")} style={styles.seeMoreContainer}>
+            <TouchableOpacity
+              onPress={() => handleSeeMore("offers")}
+              style={styles.seeMoreContainer}
+            >
               <Text style={styles.seeMoreText}>
-                {showMoreOffers ? "Show Less" : `Show More (${offeredJobs.length})`}
+                {showMoreOffers
+                  ? "Show Less"
+                  : `Show More (${offeredJobs.length})`}
               </Text>
             </TouchableOpacity>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {isFetched && offeredJobs.length > 0 && (showMoreOffers ? offeredJobs : offeredJobs.slice(0, 5)).map((job) => (
-              <Swipeable
-                key={job.id}
-                renderRightActions={(progress, dragX) =>
-                  renderRightActions(progress, dragX, job.id, "offers")
-                }
-              >
-                <ApplicationListCard application={job} />
-              </Swipeable>
-            ))}
+            {isFetched &&
+              offeredJobs.length > 0 &&
+              (showMoreOffers ? offeredJobs : offeredJobs.slice(0, 5)).map(
+                (job) => (
+                  <Swipeable
+                    key={job.id}
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(progress, dragX, job.id, "offers")
+                    }
+                  >
+                    <ApplicationListCard application={job} />
+                  </Swipeable>
+                )
+              )}
           </View>
         </View>
 
@@ -269,40 +300,51 @@ function Dashboard() {
               style={styles.seeMoreContainer}
             >
               <Text style={styles.seeMoreText}>
-                {showMoreSavedJobs ? "Show Less" : `Show More (${savedJobs.length})`}
+                {showMoreSavedJobs
+                  ? "Show Less"
+                  : `Show More (${savedJobs.length})`}
               </Text>
             </TouchableOpacity>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.cardContent}>
-            {isFetched && savedJobs.length > 0 && (showMoreSavedJobs ? savedJobs : savedJobs.slice(0, 5)).map((job) => (
-              <Swipeable
-                key={job.id}
-                renderRightActions={(progress, dragX) =>
-                  renderRightActions(progress, dragX, job.id, "savedJobs")
-                }
-              >
-                <ApplicationListCard application={job} />
-              </Swipeable>
-            ))}
+            {isFetched &&
+              savedJobs.length > 0 &&
+              (showMoreSavedJobs ? savedJobs : savedJobs.slice(0, 5)).map(
+                (job) => (
+                  <Swipeable
+                    key={job.id}
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(progress, dragX, job.id, "savedJobs")
+                    }
+                  >
+                    <ApplicationListCard application={job} />
+                  </Swipeable>
+                )
+              )}
           </View>
         </View>
-
       </View>
 
       <Portal>
-        <Dialog visible={confirmationVisible} onDismiss={() => setConfirmationVisible(false)}>
+        <Dialog
+          visible={confirmationVisible}
+          onDismiss={() => setConfirmationVisible(false)}
+        >
           <Dialog.Title>Confirm Delete</Dialog.Title>
           <Dialog.Content>
-            <Paragraph>{itemToDelete && getDeleteConfirmationMessage(itemToDelete.type)}</Paragraph>
+            <Paragraph>
+              {itemToDelete && getDeleteConfirmationMessage(itemToDelete.type)}
+            </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setConfirmationVisible(false)}>Cancel</Button>
+            <Button onPress={() => setConfirmationVisible(false)}>
+              Cancel
+            </Button>
             <Button onPress={confirmDelete}>Delete</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
-
     </ScrollView>
   );
 }
@@ -357,7 +399,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     borderWidth: 0.5,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     backgroundColor: "white",
     marginTop: 8,
     flex: 1,

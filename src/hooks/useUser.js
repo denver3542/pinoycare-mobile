@@ -113,9 +113,9 @@ export const useUser = () => {
       if (!cityFetched) {
         setCity(fetchedCity);
         setCityFetched(true);
-        console.log("City fetched:", fetchedCity);
+        // console.log("City fetched:", fetchedCity);
       } else {
-        console.log("City was already fetched.");
+        // console.log("City was already fetched.");
       }
     },
     onError: (error) => {
@@ -134,7 +134,6 @@ export const useUser = () => {
 
   useEffect(() => {
     if (city && cityFetched) {
-      console.log("Updating location on server with city:", city);
       updateLocation(city);
       locationUpdateRef.current = true;
     }
@@ -283,7 +282,6 @@ export const useUser = () => {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         queryClient.invalidateQueries(["user"]);
         return { success: true, message: "Apple account linked successfully." };
