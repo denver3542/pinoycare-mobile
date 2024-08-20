@@ -13,15 +13,6 @@ function handleRegistrationError(errorMessage) {
 }
 
 export async function registerForPushNotificationsAsync() {
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
   if (Device.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
@@ -34,30 +25,25 @@ export async function registerForPushNotificationsAsync() {
     }
 
     if (finalStatus !== "granted") {
-      handleRegistrationError(
-        "Permission not granted to get push token for push notification!"
-      );
+      alert("Failed to get push token for push notification!");
       return;
     }
 
-    const projectId =
-      Constants?.expoConfig?.extra?.eas?.projectId ??
-      Constants?.easConfig?.projectId;
+    const token = (await Notifications.getExpoPushTokenAsync()).data;
 
-    console.log(finalStatus);
-    console.log(projectId);
-    if (!projectId) {
-      handleRegistrationError();
-      console.error("Project ID not found");
-    }
-    try {
-      const pushTokenString = await Notifications.getExpoPushTokenAsync();
-      console.log(pushTokenString);
-      return pushTokenString;
-    } catch (e) {
-      handleRegistrationError(`${e}`);
-    }
+    console.log(token);
+    // Here, you could send the token to your server if needed
+    return token;
   } else {
-    handleRegistrationError("Must use physical device for push notifications");
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
   }
 }
