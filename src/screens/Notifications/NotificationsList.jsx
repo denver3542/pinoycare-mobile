@@ -46,8 +46,6 @@ const NotificationsList = () => {
 
   const renderItem = ({ item }) => <NotificationItem item={item} />;
 
-  console.log(notifications);
-
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>

@@ -41,58 +41,20 @@ import NotificationsList from "../screens/Notifications/NotificationsList";
 import JobApplicationQuestionnaire from "../screens/Jobs/JobApplicationQuestionnaire ";
 import GuestFeeds from "../screens/Guest/Feeds";
 import GuestJob from "../screens/Guest/Job";
-import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
 import SearchJob from "../screens/Dashboard/SearchJob";
-
-import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
 
 const Stack = createNativeStackNavigator();
 
 function LandingNavigation() {
   const { user, isFetched, isFetching } = useUser();
   const [loading, setLoading] = useState(true);
-  const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
     if (isFetched) {
       setLoading(false);
-
-      registerForPushNotificationsAsync().then((token) => {
-        console.log(token);
-        setExpoPushToken(token);
-      });
-
-      const subscription = Notifications.addNotificationReceivedListener(
-        (notification) => {
-          // Handle notification
-          Alert.alert(
-            notification.request.content.title,
-            notification.request.content.body
-          );
-        }
-      );
-
-      return () => subscription.remove();
     }
   }, [isFetched]);
-
-  async function registerForPushNotificationsAsync() {
-    let token;
-    if (Platform.OS === "android") {
-      await Notifications.getPermissionsAsync();
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-    } else {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      console.log(status);
-      if (status === "granted") {
-        token = (await Notifications.getExpoPushTokenAsync()).data;
-      }
-    }
-    console.log(token);
-    return token;
-  }
 
   const screenOptions = {
     headerShown: false,

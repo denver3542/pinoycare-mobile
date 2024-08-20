@@ -12,7 +12,6 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 
 const ApplicationListCard = ({ application }) => {
-  console.log(application);
   const navigation = useNavigation();
 
   // Function to format salary with Peso sign

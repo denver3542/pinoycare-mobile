@@ -33,7 +33,6 @@ export default function useNotification() {
         }
       );
 
-      console.log(data.success);
       return true;
     } catch (error) {
       console.error(error);
