@@ -1,16 +1,26 @@
 import React from "react";
-import { View, Image, StyleSheet, TouchableWithoutFeedback, TouchableHighlight } from "react-native";
+import {
+  View,
+  Image,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableHighlight,
+} from "react-native";
 import logo from "../../assets/images/hero-bg.jpg";
 import { Divider, Chip, Text, Icon } from "react-native-paper";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 
 const ApplicationListCard = ({ application }) => {
+  console.log(application);
   const navigation = useNavigation();
 
   // Function to format salary with Peso sign
   const formatSalary = (amount) => {
-    return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(amount);
   };
 
   // Check if application and application.job are defined
@@ -19,34 +29,45 @@ const ApplicationListCard = ({ application }) => {
   }
 
   const { job } = application;
-  const { title, company, location, media, workplace, type, salary_from, salary_to } = job;
+  const {
+    title,
+    company,
+    location,
+    media,
+    workplace,
+    type,
+    salary_from,
+    salary_to,
+  } = job;
 
   return (
-    <TouchableHighlight onPress={() => navigation.navigate("Job", application)}
-    underlayColor="#ddd" style={styles.card}>
+    <TouchableHighlight
+      onPress={() => navigation.navigate("Job", application)}
+      underlayColor="#ddd"
+      style={styles.card}
+    >
       <>
         <View style={styles.cardContent}>
-
-            <Image
-              source={{
-                uri: media && media.length > 0 ? media[0].original_url : logo,
-              }}
-              style={styles.jobImage}
-            />
-            <View style={{
+          <Image
+            source={{
+              uri: media && media.length > 0 ? media[0].original_url : logo,
+            }}
+            style={styles.jobImage}
+          />
+          <View
+            style={{
               flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-              <View>
-                <Text style={styles.jobTitle}>{title || 'n/a'}</Text>
-                <Text style={styles.company}>{company || 'n/a'}</Text>
-              </View>
-              <Icon source="chevron-right" size={25} />
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View>
+              <Text style={styles.jobTitle}>{title || "n/a"}</Text>
+              <Text style={styles.company}>{company || "n/a"}</Text>
             </View>
-
-
+            <Icon source="chevron-right" size={25} />
+          </View>
         </View>
       </>
     </TouchableHighlight>
@@ -60,15 +81,15 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 8,
     borderWidth: 0.5,
-    borderColor: '#ddd'
+    borderColor: "#ddd",
   },
   chip: {
     marginRight: 5,
     borderRadius: 5,
-    backgroundColor: '#0A3480',
+    backgroundColor: "#0A3480",
   },
   chipText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
     // fontWeight: 'bold',
     minHeight: 12,
@@ -78,7 +99,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   cardContent: {
-   flexDirection: 'row'
+    flexDirection: "row",
   },
   jobImage: {
     width: 50,
@@ -92,7 +113,7 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontSize: 16,
     // marginBottom: 4,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   company: {
     fontSize: 14,
@@ -101,7 +122,7 @@ const styles = StyleSheet.create({
   },
   salaryText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   location: {
     fontSize: 12,
@@ -109,7 +130,7 @@ const styles = StyleSheet.create({
   divider: {
     marginVertical: 5,
   },
-  jobLocation: {}
+  jobLocation: {},
 });
 
 export default ApplicationListCard;

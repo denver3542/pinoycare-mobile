@@ -13,7 +13,7 @@ const MessageList = () => {
   const renderItem = ({ item }) => {
     const recentMessage =
       item.receivedMessages[item.receivedMessages.length - 1]?.message;
-    console.log(recentMessage);
+
     const isRead =
       item.receivedMessages[item.receivedMessages.length - 1].read_at;
 

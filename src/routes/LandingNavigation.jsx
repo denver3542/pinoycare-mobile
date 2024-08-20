@@ -45,19 +45,54 @@ import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
 import SearchJob from "../screens/Dashboard/SearchJob";
 
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
+
 const Stack = createNativeStackNavigator();
-
-
 
 function LandingNavigation() {
   const { user, isFetched, isFetching } = useUser();
   const [loading, setLoading] = useState(true);
+  const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
     if (isFetched) {
       setLoading(false);
+
+      registerForPushNotificationsAsync().then((token) => {
+        console.log(token);
+        setExpoPushToken(token);
+      });
+
+      const subscription = Notifications.addNotificationReceivedListener(
+        (notification) => {
+          // Handle notification
+          Alert.alert(
+            notification.request.content.title,
+            notification.request.content.body
+          );
+        }
+      );
+
+      return () => subscription.remove();
     }
   }, [isFetched]);
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Platform.OS === "android") {
+      await Notifications.getPermissionsAsync();
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    } else {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      console.log(status);
+      if (status === "granted") {
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+      }
+    }
+    console.log(token);
+    return token;
+  }
 
   const screenOptions = {
     headerShown: false,
@@ -79,11 +114,17 @@ function LandingNavigation() {
                 options={{ animation: "fade", animationTiming: 3000 }}
               />
               <Stack.Screen name="SignUp" component={SignUp} />
-              <Stack.Screen name="OTPVerification" component={OTPVerification}/>
+              <Stack.Screen
+                name="OTPVerification"
+                component={OTPVerification}
+              />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />
               <Stack.Screen name="GuestJob" component={GuestJob} />
-              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPasswordScreen}
+              />
               <Stack.Screen name="Professional" component={Professional} />
               <Stack.Screen
                 name="IndividualEmployer"
@@ -110,7 +151,11 @@ function LandingNavigation() {
             </>
           ) : (
             <>
-            <Stack.Screen name="BottomTabs" component={CustomBottomTabs} options={{ animation: "fade", animationTiming: '3000' }}/>
+              <Stack.Screen
+                name="BottomTabs"
+                component={CustomBottomTabs}
+                options={{ animation: "fade", animationTiming: "3000" }}
+              />
               <Stack.Screen name="Job" component={Job} />
               <Stack.Screen
                 name="ApplicationStatus"
@@ -178,19 +223,9 @@ function LandingNavigation() {
                 component={JobApplicationQuestionnaire}
               />
 
-              <Stack.Screen
-                name="TodoList"
-                component={TodoList}
-              />
-              <Stack.Screen
-                name="TodoAdd"
-                component={TodoAdd}
-              />
-              <Stack.Screen
-                name="SearchJob"
-                component={SearchJob}
-              />
-
+              <Stack.Screen name="TodoList" component={TodoList} />
+              <Stack.Screen name="TodoAdd" component={TodoAdd} />
+              <Stack.Screen name="SearchJob" component={SearchJob} />
             </>
           )}
         </Stack.Navigator>

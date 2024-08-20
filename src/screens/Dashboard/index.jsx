@@ -61,8 +61,6 @@ function Dashboard() {
     ).length ??
       0);
 
-  console.log(unreadNotifications);
-
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();

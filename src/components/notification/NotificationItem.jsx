@@ -5,18 +5,25 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Divider, List, Text } from "react-native-paper";
 import useNotification from "../../screens/Notifications/hook/useNotifications";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
 
 export default function NotificationItem({ item }) {
+  const navigation = useNavigation();
   const { markAsRead } = useNotification();
   const queryClient = useQueryClient();
   const onNotificationPress = (item) => {
-    // console.log("Notification pressed:", notificationId);
     if (item.read === 0) {
       if (markAsRead(item.id)) {
         queryClient.invalidateQueries(["notifications"]);
       }
     }
     // Add your navigation or handling logic here
+    // if type is equal to job_offer, then it must navigate to Job Details
+    if (item.type === "job_offer") {
+      if (item.job_offer) {
+        navigation.navigate("Job", item.job_offer);
+      }
+    }
   };
   return (
     <TouchableOpacity onPress={() => onNotificationPress(item)}>
@@ -24,14 +31,14 @@ export default function NotificationItem({ item }) {
         title={item.message}
         titleStyle={{
           fontSize: 15,
-          fontWeight: item.read === 0 ? "800" : "300",
+          fontWeight: item.read === 0 ? "800" : "500",
         }}
         description={(props) => (
           <React.Fragment>
             <Text
               variant="labelMedium"
               style={{
-                fontWeight: item.read === 0 ? "800" : "300",
+                fontWeight: item.read === 0 ? "800" : "500",
               }}
             >
               {item.type === "message_update" ? "Message update" : "Job update"}
