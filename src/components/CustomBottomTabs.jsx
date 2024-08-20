@@ -14,6 +14,7 @@ import { registerForPushNotificationsAsync } from "../../utils/pushNotificationC
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
@@ -26,17 +27,23 @@ const tabScreens = [
 ];
 
 async function setUserToken(token) {
-  const storedUser = await AsyncStorage.getItem("nasya_user");
-  const headers = storedUser ? getJWTHeader(JSON.parse(storedUser)) : {};
-  const { data } = await axiosInstance.put("/auth/push-token", token, {
-    headers,
-  });
-  return data;
+  try {
+    const storedUser = await AsyncStorage.getItem("upcare_user");
+    const headers = storedUser ? getJWTHeader(JSON.parse(storedUser)) : {};
+    const { data } = await axiosInstance.put("/auth/push-token", token, {
+      headers,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function CustomBottomTabs() {
-  const { user } = useUser();
+  const { user, isFetched } = useUser();
+  const navigation = useNavigation();
 
+  // console.log(isFetched && user.push_token);
   const queryClient = useQueryClient();
 
   const setUserPushToken = useMutation((token) => setUserToken(token), {
@@ -52,9 +59,10 @@ function CustomBottomTabs() {
     },
   });
 
-  useEffect(async () => {
-    const token = await registerForPushNotificationsAsync();
-    console.log(token);
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) => {
+      setUserPushToken.mutate({ pushToken: token });
+    });
 
     const subscription = Notifications.addNotificationReceivedListener(
       (notification) => {
@@ -64,7 +72,11 @@ function CustomBottomTabs() {
 
     const responseSubscription =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("Notification clicked!", response);
+        const data = response.notification.request.content.data;
+        console.log(data);
+        if (data && data.screen === "Notification") {
+          navigation.navigate("NotificationsList");
+        }
       });
 
     return () => {
