@@ -5,36 +5,39 @@ import FeedsCard from "./hooks/FeedsCard";
 import useFeeds from "./hooks/useFeeds";
 import HeaderMessageNotification from "../../../components/HeaderMessageNotification";
 import HeaderNotification from "../../../components/HeaderNotification";
+import CustomSearchBar from "../../../components/CustomSearchBar";
+import { FlashList } from "@shopify/flash-list";
 
 
 function Feeds({ navigation }) {
   const { colors } = useTheme();
   const { data: feeds, isRefetching, refetch } = useFeeds();
   const [refreshing, setRefreshing] = useState(false);
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
-      .then(() => { })
-      .catch(() => { })
+      .then(() => {})
+      .catch(() => {})
       .finally(() => {
         setRefreshing(false);
       });
   };
-
 
   return (
     <View style={styles.container}>
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Image source={require("../../../../assets/pinoycare.png")} style={styles.imageStyle} />
         <Appbar.Content title="Feeds" titleStyle={{ color: 'white' }} />
+        <CustomSearchBar />
         <HeaderMessageNotification />
         <HeaderNotification />
       </Appbar.Header>
-      <FlatList
+      <FlashList
         data={feeds}
         renderItem={({ item }) => <FeedsCard feed={item} />}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContainer}
+        estimatedItemSize={100} 
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -42,8 +45,8 @@ function Feeds({ navigation }) {
             colors={[colors.primary]}
           />
         }
+        showsVerticalScrollIndicator={false}
       />
-
     </View>
   );
 }

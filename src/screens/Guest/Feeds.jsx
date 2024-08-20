@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, StyleSheet, FlatList, RefreshControl, Text } from "react-native";
+import { View, StyleSheet, RefreshControl, Text } from "react-native";
 import { Modal, useTheme, Button } from "react-native-paper";
 import FeedsCard from "../../components/FeedsCard";
 import { useNavigation } from "@react-navigation/native";
 import useFeeds from "../../hooks/useFeeds";
+import { FlashList } from "@shopify/flash-list";
 
 function GuestFeeds() {
   const { colors } = useTheme();
@@ -15,8 +16,8 @@ function GuestFeeds() {
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
-      .then(() => { })
-      .catch(() => { })
+      .then(() => {})
+      .catch(() => {})
       .finally(() => {
         setRefreshing(false);
       });
@@ -27,19 +28,19 @@ function GuestFeeds() {
     navigation.navigate("Login");
   };
 
-
   const onClose = () => {
     setShowSignInModal(false);
   };
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <FlashList
         data={feeds}
         renderItem={({ item }) => (
           <FeedsCard feed={item} setShowSignInModal={setShowSignInModal} />
         )}
         keyExtractor={(item) => item.id.toString()}
+        estimatedItemSize={100} // Set an appropriate estimated size for your list items
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -55,7 +56,7 @@ function GuestFeeds() {
       >
         <View style={styles.modalContent}>
           <Text style={{ fontSize: 18, marginBottom: 20 }}>
-            Please sign in to react a post.
+            Please sign in to react to a post.
           </Text>
           <Button onPress={handleSignIn} mode="contained" style={{ color: "white", marginBottom: 10 }}>
             Sign In
@@ -63,7 +64,6 @@ function GuestFeeds() {
           <Button onPress={onClose}>Cancel</Button>
         </View>
       </Modal>
-
     </View>
   );
 }
@@ -71,17 +71,7 @@ function GuestFeeds() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 8
-  },
-  title: {
-    color: "#0A3480",
-    fontWeight: "bold",
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#0A3480",
-    alignSelf: "center",
+    padding: 8,
   },
   modalContainer: {
     justifyContent: "center",

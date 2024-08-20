@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import moment from "moment";
 import { useUser } from "../../../../hooks/useUser";
 
+
 const MAX_LENGTH = 150;
 
 const FeedsCard = ({ feed }) => {
@@ -20,7 +21,7 @@ const FeedsCard = ({ feed }) => {
   const { user } = useUser();
   const windowWidth = Dimensions.get('window').width;
   const maxWidth = Math.min(windowWidth, 768);
-  const imageHeight = maxWidth * 9 / 10;
+  const imageHeight = maxWidth * 9 / 9;
   const handleDownload = async () => {
     try {
       // Explanation to user for permission request
@@ -101,6 +102,7 @@ const FeedsCard = ({ feed }) => {
         <TouchableWithoutFeedback onPress={() => setIsImageModalVisible(true)}>
           {feed.image && <Image source={{ uri: feed.image }} resizeMode="stretch" style={[styles.image, { height: imageHeight }]} />}
         </TouchableWithoutFeedback>
+        
 
         <View style={styles.contentStyle}>
           <Text style={styles.content}>
@@ -166,13 +168,14 @@ const FeedsCard = ({ feed }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8,
+    // marginTop: 10,
+    paddingHorizontal: 0,
   },
   feedContainer: {
     marginBottom: 8,
     // padding: 10,
     backgroundColor: "white",
-    borderRadius: 10,
+    // borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#ddd'
   },

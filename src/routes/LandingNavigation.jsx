@@ -43,7 +43,7 @@ import GuestFeeds from "../screens/Guest/Feeds";
 import GuestJob from "../screens/Guest/Job";
 import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
-import SearchJob from "../screens/Dashboard/SearchJob";
+import SearchJob from "../screens/User/Jobs/SearchJob";
 
 const Stack = createNativeStackNavigator();
 
@@ -110,7 +110,7 @@ function LandingNavigation() {
             </>
           ) : (
             <>
-            <Stack.Screen name="BottomTabs" component={CustomBottomTabs} options={{ animation: "fade", animationTiming: '3000' }}/>
+              <Stack.Screen name="BottomTabs" component={CustomBottomTabs} options={{ animation: "fade", animationTiming: '3000' }}/>
               <Stack.Screen name="Job" component={Job} />
               <Stack.Screen
                 name="ApplicationStatus"
@@ -186,10 +186,8 @@ function LandingNavigation() {
                 name="TodoAdd"
                 component={TodoAdd}
               />
-              <Stack.Screen
-                name="SearchJob"
-                component={SearchJob}
-              />
+              
+              <Stack.Screen name="SearchJob" component={SearchJob} options={{ animation: "default" }}/>
 
             </>
           )}

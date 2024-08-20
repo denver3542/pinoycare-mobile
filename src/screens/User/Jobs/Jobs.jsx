@@ -89,24 +89,21 @@ const JobListings = ({ activeNav, rating }) => {
             )
           }
           <View style={styles.cardContentText}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={styles.title}>{item.title}</Text>
-              <IconButton
-                onPress={() => handleSave(item.id)}
-                icon={isSaved ? "bookmark" : "bookmark-outline"}
-                color={isSaved ? "#0A3480" : "#888"}
-                selected
-                size={24}
-                style={{ left: 10 }}
-              />
-            </View>
-            <View style={{ bottom: 10 }}>
+         
+              <Text style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{item.title}</Text>
               <Text style={styles.company}>{item.company}</Text>
               <Text style={{ fontWeight: '500' }}>{item.location}</Text>
               <Matching rating={item.matchScore / 25} />
               <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
-            </View>
           </View>
+          <IconButton
+              onPress={() => handleSave(item.id)}
+              icon={isSaved ? "bookmark" : "bookmark-outline"}
+              color={isSaved ? "#0A3480" : "#888"}
+              selected
+              size={24}
+              style={styles.iconButton}
+            />
         </View>
       </TouchableHighlight>
     );
@@ -155,62 +152,65 @@ const JobListings = ({ activeNav, rating }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FB'
+    backgroundColor: '#F4F7FB',
   },
   card: {
     marginTop: 8,
-    backgroundColor: '#fff',
     padding: 0,
     borderRadius: 8,
     borderWidth: 0.5,
     borderColor: '#ddd',
+    position: 'relative',
+    backgroundColor: '#fff'
   },
-
   cardContentRow: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center', 
     flexDirection: 'row',
-    // top: 10,
-    // backgroundColor: 'red',
-    paddingHorizontal: 15,
-    paddingVertical: 10
+    padding: 10,
   },
   cardContentText: {
     flex: 1,
     marginLeft: 10,
-    justifyContent: 'center'
-    // backgroundColor: 'blue',
   },
   listContentContainer: {
-    padding: 8
+    padding: 8,
   },
-  titleRow: {
-    flexDirection: 'column',
+  titleIconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
-    fontWeight: '500',
+    fontWeight: '700',
     fontSize: 18,
-    flexShrink: 1,
   },
-  postedDate: {
-    color: '#888',
-    fontSize: 12,
+  iconButton: {
+    margin: 0,
+    padding: 0,
+    position: 'absolute',
+    right: 0,
+    alignSelf: 'flex-start'
   },
   company: {
     fontSize: 14,
     fontWeight: '500',
   },
+  postedDate: {
+    color: '#888',
+    fontSize: 12,
+  },
   jobImage: {
     width: 80,
     height: 80,
     borderRadius: 6,
-    marginRight: 5
+    alignSelf: 'flex-start'
   },
   placeholderCard: {
     width: 80,
     height: 80,
     borderRadius: 8,
     backgroundColor: 'gray',
+     alignSelf: 'flex-start'
   },
   searchBar: {
     flex: 1,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   iosSearchBar: {
     flex: 1,
-    borderRadius: 8,
+    borderRadius: 100,
     height: 40,
     backgroundColor: '#E5E5EA',
     paddingHorizontal: 0,
@@ -232,19 +232,20 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   matchedText: {
     color: '#0A3480',
     fontWeight: '600',
-    fontSize: 14
+    fontSize: 13,
   },
   percentage: {
     color: '#0A3480',
     fontWeight: '600',
     marginRight: 5,
-    fontSize: 14
+    fontSize: 13,
   },
 });
+
 
 export default JobListings;

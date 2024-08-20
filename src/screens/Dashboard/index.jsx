@@ -195,16 +195,6 @@ function Dashboard() {
       </Appbar.Header>
 
       <View style={styles.container}>
-        <TouchableHighlight onPress={() => navigation.navigate('SearchJob')} underlayColor="#ddd">
-          <Searchbar
-            placeholder="Search"
-            style={styles.searchbar}
-            onChangeText={setSearchQuery}
-            value={searchQuery}
-            inputStyle={styles.searchInput}
-            placeholderTextColor="gray"
-          />
-        </TouchableHighlight>
 
         <View>
           <TodoCard />

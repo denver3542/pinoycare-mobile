@@ -125,14 +125,6 @@ export default function Job() {
   return (
     <ScrollView
       contentContainerStyle={styles.scrollContainer}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={[colors.primary]}
-          progressViewOffset={100}
-        />
-      }
     >
       <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />

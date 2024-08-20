@@ -34,6 +34,7 @@ export default function useJobs() {
     },
     {
       retry: false,
+      refetchOnWindowFocus: true,
       onError: (error) => {
         console.error("Error fetching jobs:", error);
       },
