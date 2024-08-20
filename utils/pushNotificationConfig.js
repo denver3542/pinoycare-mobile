@@ -30,8 +30,6 @@ export async function registerForPushNotificationsAsync() {
     }
 
     const token = (await Notifications.getExpoPushTokenAsync()).data;
-
-    console.log(token);
     // Here, you could send the token to your server if needed
     return token;
   } else {
