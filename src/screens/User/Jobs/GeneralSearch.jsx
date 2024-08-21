@@ -13,7 +13,7 @@ import { Appbar, Searchbar } from "react-native-paper";
 import useSearchJobs from "../Jobs/hook/useSearchJobs";
 import { ScrollView } from "react-native-gesture-handler";
 
-const SearchJob = () => {
+const GeneralSearch = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -215,14 +215,14 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   jobImage: {
-    width: 80,
-    height: 80,
+    width: 50,
+    height: 50,
     borderRadius: 6,
     alignSelf: "flex-start",
   },
   placeholderCard: {
-    width: 80,
-    height: 80,
+    width: 50,
+    height: 50,
     borderRadius: 8,
     backgroundColor: "gray",
     alignSelf: "flex-start",
@@ -245,4 +245,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchJob;
+export default GeneralSearch;

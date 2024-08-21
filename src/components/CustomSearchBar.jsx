@@ -10,7 +10,7 @@ function CustomSearchBar() {
       <TouchableOpacity
         style={{ position: "relative" }}
         onPress={() => {
-          navigation.navigate("SearchJob");
+          navigation.navigate("GeneralSearch");
         }}
       >
         <MaterialIcons

@@ -43,7 +43,7 @@ import GuestFeeds from "../screens/Guest/Feeds";
 import GuestJob from "../screens/Guest/Job";
 import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
-import SearchJob from "../screens/User/Jobs/SearchJob";
+import GeneralSearch from "../screens/User/Jobs/GeneralSearch";
 
 const Stack = createNativeStackNavigator();
 
@@ -187,7 +187,7 @@ function LandingNavigation() {
                 component={TodoAdd}
               />
               
-              <Stack.Screen name="SearchJob" component={SearchJob} options={{ animation: "default" }}/>
+              <Stack.Screen name="GeneralSearch" component={GeneralSearch} options={{ animation: "default" }}/>
 
             </>
           )}
