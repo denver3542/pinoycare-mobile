@@ -89,23 +89,18 @@ const SearchJob = () => {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={styles.appBar}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
-        <Appbar.Content
-          title={
-            <Searchbar
-              placeholder="Search key word"
-              onChangeText={handleSearch}
-              value={searchQuery}
-              inputStyle={styles.searchInput}
-              placeholderTextColor="gray"
-              style={
-                Platform.OS === "ios" ? styles.iosSearchBar : styles.searchbar
-              }
-            />
-          }
-        />
-      </Appbar.Header>
+     <Appbar.Header style={styles.appBar}>
+  <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+  <Searchbar
+    placeholder="Search key word"
+    onChangeText={handleSearch}
+    value={searchQuery}
+    inputStyle={styles.searchInput}
+    placeholderTextColor="gray"
+    style={styles.searchbar}
+  />
+</Appbar.Header>
+
 
       <View style={styles.contentContainer}>
         {error && <Text>Error: {error.message}</Text>}
@@ -151,13 +146,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   searchbar: {
-    height: Platform.OS === "ios" ? 32 : 36,
+    flex: 1,
+    height: 36,
     backgroundColor: "#E5E5EA",
     borderRadius: 100,
     marginRight: 10,
   },
   iosSearchBar: {
-    flex: 1,
     borderRadius: 100,
     height: 40,
     backgroundColor: "#E5E5EA",
@@ -196,7 +191,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     flexDirection: "row",
-    // backgroundColor: 'pink'
   },
   resultItem: {
     fontSize: 16,
@@ -235,11 +229,11 @@ const styles = StyleSheet.create({
   },
   resultContent: {
     flex: 1,
-    marginLeft: 15,
+    marginLeft: 10,
     justifyContent: 'center'
   },
   resultPostContent: {
-    top: -20,
+    top: -15,
     textAlign: 'justify',
     fontSize: 12,
   },
