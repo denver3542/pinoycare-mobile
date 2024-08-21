@@ -9,7 +9,7 @@ async function searchJobs(searchQuery, signal, user) {
     }
 
     try {
-        const response = await axiosInstance.get('/searchJob', {
+        const response = await axiosInstance.get('/search', {
             signal,
             headers: getJWTHeader(user),
             params: {

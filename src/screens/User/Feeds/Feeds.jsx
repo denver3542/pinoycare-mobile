@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View, StyleSheet, FlatList, RefreshControl, Image } from "react-native";
-import { Appbar, useTheme, Snackbar } from "react-native-paper";
+import React, { useState, useEffect, useRef } from "react";
+import { View, StyleSheet, RefreshControl, Image } from "react-native";
+import { Appbar, useTheme } from "react-native-paper";
 import FeedsCard from "./hooks/FeedsCard";
 import useFeeds from "./hooks/useFeeds";
 import HeaderMessageNotification from "../../../components/HeaderMessageNotification";
@@ -8,11 +8,20 @@ import HeaderNotification from "../../../components/HeaderNotification";
 import CustomSearchBar from "../../../components/CustomSearchBar";
 import { FlashList } from "@shopify/flash-list";
 
-
-function Feeds({ navigation }) {
+function Feeds({ route, navigation }) {
   const { colors } = useTheme();
-  const { data: feeds, isRefetching, refetch } = useFeeds();
+  const { data: feeds = [], isRefetching, refetch } = useFeeds(); // Provide a default value for feeds
   const [refreshing, setRefreshing] = useState(false);
+  const flashListRef = useRef(null);
+  const { post } = route.params || {}; 
+
+  const postIndex = feeds.findIndex((feed) => feed.id === post?.id); 
+
+  useEffect(() => {
+    if (flashListRef.current && postIndex >= 0) {
+      flashListRef.current.scrollToIndex({ index: postIndex, animated: true });
+    }
+  }, [postIndex, feeds]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -34,10 +43,11 @@ function Feeds({ navigation }) {
         <HeaderNotification />
       </Appbar.Header>
       <FlashList
+        ref={flashListRef}
         data={feeds}
         renderItem={({ item }) => <FeedsCard feed={item} />}
         keyExtractor={(item) => item.id.toString()}
-        estimatedItemSize={100} 
+        estimatedItemSize={100}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -58,9 +68,9 @@ const styles = StyleSheet.create({
   },
   listContainer: { marginTop: 10 },
   imageStyle: {
-    width: 30, // Adjust width as needed
-    height: 30, // Adjust height as needed
-    marginLeft: 10, // Adjust margin as needed
+    width: 30, 
+    height: 30, 
+    marginLeft: 10, 
     marginRight: 10
   },
 });
