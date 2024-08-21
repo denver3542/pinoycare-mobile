@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '700',
-    fontSize: 18,
+    fontSize: 16,
   },
   iconButton: {
     margin: 0,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   },
   company: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '',
   },
   postedDate: {
     color: '#888',
