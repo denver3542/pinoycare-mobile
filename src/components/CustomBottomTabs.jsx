@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Dashboard from "../screens/Dashboard";
 import Account from "../screens/User/Account";
 import Jobs from "../screens/User/Jobs/Jobs";
@@ -14,7 +14,7 @@ import { registerForPushNotificationsAsync } from "../../utils/pushNotificationC
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance, { getJWTHeader } from "../../utils/axiosConfig";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useNavigationState } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
@@ -39,11 +39,32 @@ async function setUserToken(token) {
   }
 }
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 function CustomBottomTabs() {
   const { user, isFetched } = useUser();
   const navigation = useNavigation();
+  const [isMessagingScreen, setIsMessagingScreen] = useState(false);
 
-  // console.log(isFetched && user.push_token);
+  // Track current screen
+  const routeName = useNavigationState(
+    (state) => state.routes[state.index].name
+  );
+
+  useEffect(() => {
+    if (routeName === "MessageList") {
+      setIsMessagingScreen(true);
+    } else {
+      setIsMessagingScreen(false);
+    }
+  }, [routeName]);
+
   const queryClient = useQueryClient();
 
   const setUserPushToken = useMutation((token) => setUserToken(token), {
@@ -66,16 +87,20 @@ function CustomBottomTabs() {
 
     const subscription = Notifications.addNotificationReceivedListener(
       (notification) => {
-        console.log("Notification received!", notification);
+        // Disable notification alert if this case is true
+        if (isMessagingScreen) {
+          Notifications.dismissNotificationAsync(
+            notification.request.identifier
+          );
+        }
       }
     );
 
     const responseSubscription =
       Notifications.addNotificationResponseReceivedListener((response) => {
         const data = response.notification.request.content.data;
-        console.log(data);
-        if (data && data.screen === "Notification") {
-          navigation.navigate("NotificationsList");
+        if (data && data.screen) {
+          navigation.navigate(data.screen);
         }
       });
 
@@ -83,7 +108,7 @@ function CustomBottomTabs() {
       Notifications.removeNotificationSubscription(subscription);
       Notifications.removeNotificationSubscription(responseSubscription);
     };
-  }, []);
+  }, [isMessagingScreen]);
 
   return (
     <Tab.Navigator

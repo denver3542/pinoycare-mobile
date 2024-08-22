@@ -1,6 +1,6 @@
 import moment from "moment";
 import React from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Divider, List, Text } from "react-native-paper";
 import useNotification from "../../screens/Notifications/hook/useNotifications";
@@ -22,7 +22,13 @@ export default function NotificationItem({ item }) {
     if (item.type === "job_offer") {
       if (item.job_offer) {
         navigation.navigate("Job", item.job_offer);
+      } else {
+        Alert.alert("Job not found.");
       }
+    } else if (item.type === "message_update") {
+      navigation.navigate("ChatConversation", {
+        contact: item.message_rel.sender,
+      });
     }
   };
   return (
