@@ -41,9 +41,9 @@ import Ably from "ably/promises";
 import { useUser } from "../../hooks/useUser";
 import ImageView from "react-native-image-viewing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axiosInstance, { getJWTHeader } from "../../../utils/axiosConfig";
 import { styles } from "./style";
 import * as MediaLibrary from "expo-media-library";
+import CustomAvatar from "../../components/CustomAvatar";
 
 const ChatConversation = () => {
   const { params } = useRoute();
@@ -287,9 +287,9 @@ const ChatConversation = () => {
             ]}
           >
             {!isMyMessage && (
-              <Avatar.Image
-                size={36}
-                source={{ uri: item.sender?.media[0]?.original_url }}
+              <CustomAvatar
+                src={item.sender?.media[0]?.original_url}
+                name={item.sender.firstname}
                 style={styles.avatarStyle}
               />
             )}
@@ -442,10 +442,10 @@ const ChatConversation = () => {
     >
       <Appbar.Header mode="small">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Avatar.Image
+        <CustomAvatar
+          src={contact.media[0]?.original_url}
+          name={contact.firstname}
           style={{ marginRight: 10 }}
-          size={36}
-          source={{ uri: contact.media[0]?.original_url }}
         />
         <Appbar.Content title={data?.otherUser?.name} />
       </Appbar.Header>

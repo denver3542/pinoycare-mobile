@@ -1,77 +1,79 @@
 {
-    "expo": {
-      "name": "Upcare",
-      "slug": "pinoycare-mobile",
-      "version": "1.0.8",
-      "owner": "supportih",
-      "orientation": "portrait",
-      "icon": "./assets/icon.png",
-      "userInterfaceStyle": "automatic",
-      "splash": {
-        "image": "./assets/splash.png",
-        "resizeMode": "contain",
+  "expo": {
+    "name": "Upcare",
+    "slug": "pinoycare-mobile",
+    "version": "1.0.8",
+    "owner": "supportih",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.upcare.mobile",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you.",
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to show relevant job offers near you and to enhance your experience by providing location-based services.",
+        "NSLocationAlwaysUsageDescription": "This app uses your location to provide continuous location tracking for better service delivery, even when the app is in the background.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs your location to provide accurate and timely services, whether the app is in use or in the background.",
+
+        "UIBackgroundModes": ["fetch", "remote-notification"]
+      },
+      "buildNumber": "13",
+      "usesAppleSignIn": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "assetBundlePatterns": ["**/*"],
-      "ios": {
-        "supportsTablet": true,
-        "bundleIdentifier": "com.upcare.mobile",
-        "infoPlist": {
-          "NSPhotoLibraryUsageDescription": "Our app uses your photo library to let you update your profile photo. This makes your profile more personal and helps others recognize you.",
-          "NSCameraUsageDescription": "This app uses the camera to scan barcodes.",
-          "NSLocationWhenInUseUsageDescription": "This app uses your location to show relevant job offers near you and to enhance your experience by providing location-based services.",
-          "NSLocationAlwaysUsageDescription": "This app uses your location to provide continuous location tracking for better service delivery, even when the app is in the background.",
-          "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs your location to provide accurate and timely services, whether the app is in use or in the background."
-        },
-        "buildNumber": "13",
-        "usesAppleSignIn": true
-      },
-      "android": {
-        "adaptiveIcon": {
-          "foregroundImage": "./assets/adaptive-icon.png",
-          "backgroundColor": "#ffffff"
-        },
-        "googleServicesFile": "./google-services.json",
-        "package": "com.upcare.mobile",
-        "versionCode": 40
-      },
-      "web": {
-        "favicon": "./assets/favicon.png"
-      },
-      "extra": {
-        "eas": {
-          "projectId": "8acda25c-7755-4c8c-9b69-3e19b78b60e3"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.upcare.mobile",
+      "versionCode": 40
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8acda25c-7755-4c8c-9b69-3e19b78b60e3"
+      }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
-      },
-      "plugins": [
-          [
-              "expo-location",
-              {
-                "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-              }
-            ],
-        "expo-updates",
-        [
-          "expo-build-properties",
-          {
-            "android": {
-              "compileSdkVersion": 34,
-              "targetSdkVersion": 34,
-              "buildToolsVersion": "34.0.0",
-              "googleServicesFile": "./google-services.json"
-            },
-            "ios": {
-              "deploymentTarget": "13.5"
-            }
-          }
-        ]
       ],
-      "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "updates": {
-        "url": "https://u.expo.dev/8acda25c-7755-4c8c-9b69-3e19b78b60e3"
-      },
-      "scheme": "com.upcare.mobile"
-    }
+      "expo-updates",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0",
+            "googleServicesFile": "./google-services.json"
+          },
+          "ios": {
+            "deploymentTarget": "13.5"
+          }
+        }
+      ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8acda25c-7755-4c8c-9b69-3e19b78b60e3"
+    },
+    "scheme": "com.upcare.mobile"
   }
+}

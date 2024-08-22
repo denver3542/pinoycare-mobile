@@ -4,7 +4,7 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 
-function HeaderMessageNotification() {
+function HeaderMessageNotification({ unreadMessageCount }) {
   const navigation = useNavigation();
   return (
     <View style={styles.headerContainer}>
@@ -20,17 +20,19 @@ function HeaderMessageNotification() {
           size={20}
           style={{ marginTop: 5 }}
         />
-        <Text
-          style={{
-            height: 8,
-            width: 8,
-            backgroundColor: "red",
-            borderRadius: 20,
-            position: "absolute",
-            right: 0,
-            bottom: 12,
-          }}
-        ></Text>
+        {unreadMessageCount > 0 && (
+          <Text
+            style={{
+              height: 8,
+              width: 8,
+              backgroundColor: "red",
+              borderRadius: 20,
+              position: "absolute",
+              right: 0,
+              bottom: 12,
+            }}
+          ></Text>
+        )}
       </TouchableOpacity>
     </View>
   );

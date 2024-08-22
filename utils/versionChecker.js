@@ -1,5 +1,5 @@
 import * as Updates from "expo-updates";
-import { Alert, Linking } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import VersionCheck from "react-native-version-check";
 
 const useVersionChecker = () => {

@@ -1,6 +1,6 @@
-import { StatusBar } from 'react-native';
-StatusBar.setBackgroundColor('#0A3480');
-StatusBar.setBarStyle('light-content');
+import { StatusBar } from "react-native";
+StatusBar.setBackgroundColor("#0A3480");
+StatusBar.setBarStyle("light-content");
 
 import { StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -22,6 +22,16 @@ import "expo-dev-client";
 import { useEffect } from "react";
 import { UserApplicationsProvider } from "./src/components/useUserApplications";
 import useVersionChecker from "./utils/versionChecker";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 SplashScreen.preventAutoHideAsync();
 
 registerTranslation("en-GB", enGB);
