@@ -118,11 +118,6 @@ function LandingNavigation() {
                 component={CustomBottomTabs}
                 options={{ animation: "fade", animationTiming: "3000" }}
               />
-              <Stack.Screen
-                name="BottomTabs"
-                component={CustomBottomTabs}
-                options={{ animation: "fade", animationTiming: "3000" }}
-              />
               <Stack.Screen name="Job" component={Job} />
               <Stack.Screen
                 name="ApplicationStatus"
