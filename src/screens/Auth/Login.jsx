@@ -61,16 +61,20 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await login(data);
-      if (res.success === 0) {
-        setError("email", {
-          type: "custom",
-          message: "Email doesn't exist or isn't valid.",
-        });
-        setError("password", {
-          type: "custom",
-          message: "Password is incorrect.",
-        });
-        setGeneralError(res?.message || "Invalid username or password.");
+      if (!res.success) {
+        if (res.message.includes("deactivated")) {
+          Alert.alert("Account Deactivated", "Your account has been deactivated. Please contact support.");
+        } else {
+          setError("email", {
+            type: "custom",
+            message: "Email doesn't exist or isn't valid.",
+          });
+          setError("password", {
+            type: "custom",
+            message: "Password is incorrect.",
+          });
+          setGeneralError(res?.message || "Invalid username or password.");
+        }
       } else {
         console.log("Login success");
       }
@@ -80,6 +84,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
   const togglePasswordVisibility = () => {
     setShowPw(!showPw);
@@ -101,24 +106,16 @@ const Login = () => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-      // console.log(credential);
-      // Send the credential to your backend
       const response = await handleAppleSignInOrSignUp(credential);
-
       if (response.success) {
-        // Handle successful authentication
         console.log("Login success", response);
-        // Store token and user information if necessary
       } else {
-        // Handle unsuccessful authentication
         setGeneralError("Apple Sign-In failed.");
       }
     } catch (e) {
       if (e.code === "ERR_CANCELED") {
-        // Handle that the user canceled the sign-in flow
         Alert.alert("Apple Sign-In was canceled.");
       } else {
-        // Handle other errors
         console.error(e);
         Alert.alert("Apple Sign-In failed.");
       }

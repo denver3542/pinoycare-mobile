@@ -36,7 +36,6 @@ export function useAuth() {
   const { clearUser, updateUser } = useUser();
   const navigation = useNavigation();
 
-  // Centralized server call
   const authServerCall = async (urlEndpoint, userDetails) => {
     try {
       const response = await axiosInstance.post(urlEndpoint, userDetails);
@@ -52,7 +51,6 @@ export function useAuth() {
     }
   };
 
-  // Handle responses from the server
   const handleResponse = (data) => {
 
     console.log("Handle Response Data:", data);
@@ -69,8 +67,9 @@ export function useAuth() {
     }
   };
 
-  // User authentication functions
+
   const login = (userDetails) => authServerCall("/auth/login", userDetails);
+  
   const signup = async (userDetails) => {
       const response = await axiosInstance.post("/auth/signup", userDetails);
       return handleSignupResponse(response.data);
