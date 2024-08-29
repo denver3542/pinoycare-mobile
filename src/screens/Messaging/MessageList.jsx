@@ -8,14 +8,15 @@ import CustomAvatar from "../../components/CustomAvatar";
 
 const MessageList = () => {
   const navigation = useNavigation();
-  const { data, isFetching, isFetched, isRefetching, refetch } = useMessaging();
+  const { data, isFetching, isFetched, isRefetching, refetch, isLoading } =
+    useMessaging();
 
   const renderItem = ({ item }) => {
     const recentMessage =
       item.receivedMessages[item.receivedMessages.length - 1]?.message;
 
     const isRead =
-      item.receivedMessages[item.receivedMessages.length - 1].read_at;
+      item.receivedMessages[item.receivedMessages.length - 1]?.read_at;
 
     return (
       <List.Item
@@ -23,8 +24,9 @@ const MessageList = () => {
         description={recentMessage}
         left={(props) => (
           <CustomAvatar
-            src={item?.media[0]?.original_url}
+            src={item?.user.media[0]?.original_url}
             name={item.firstname}
+            {...props}
           />
         )}
         right={(props) => <List.Icon {...props} icon="message-outline" />}
@@ -39,13 +41,13 @@ const MessageList = () => {
 
   return (
     <View>
-      {isFetching && <Spinner animation="fade" />}
+      <Spinner visible={isLoading} color="#0A3480" animation="fade" />
       <Appbar.Header style={{ backgroundColor: "#0A3480" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Messages" titleStyle={{ color: "white" }} />
       </Appbar.Header>
       <View style={{ padding: 5, height: "100%" }}>
-        {isFetched && (
+        {!isLoading && (
           <FlatList
             data={data.users}
             renderItem={renderItem}

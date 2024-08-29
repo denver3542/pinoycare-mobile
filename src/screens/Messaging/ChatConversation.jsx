@@ -44,12 +44,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "./style";
 import * as MediaLibrary from "expo-media-library";
 import CustomAvatar from "../../components/CustomAvatar";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const ChatConversation = () => {
   const { params } = useRoute();
   const { colors } = useTheme();
   const contact = params.contact;
   const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
@@ -77,6 +79,7 @@ const ChatConversation = () => {
   const toggleModal = () => setIsImageModalVisible(!isModalVisible);
 
   const sendMessage = async () => {
+    setIsLoading(true);
     if (text.trim() || attachedFiles.length > 0) {
       try {
         const formData = new FormData();
@@ -104,13 +107,13 @@ const ChatConversation = () => {
           return;
         }
 
-        const sendMsg = send(formData);
-
-        if (sendMsg) {
+        const sendMsg = send(formData).then((res) => {
+          refetch();
+          setIsLoading(false);
           setText("");
           setReplyTo(null);
           setAttachedFiles([]);
-        }
+        });
       } catch (error) {
         console.error("Failed to send message:", error);
       }
@@ -290,7 +293,8 @@ const ChatConversation = () => {
               <CustomAvatar
                 src={item.sender?.media[0]?.original_url}
                 name={item.sender.firstname}
-                style={styles.avatarStyle}
+                style={[styles.avatarStyle]}
+                size={30}
               />
             )}
             <Card
@@ -440,12 +444,14 @@ const ChatConversation = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 40}
     >
+      <Spinner visible={isLoading} color="#0A3480" animation="fade" />
       <Appbar.Header mode="small">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <CustomAvatar
           src={contact.media[0]?.original_url}
           name={contact.firstname}
           style={{ marginRight: 10 }}
+          size={34}
         />
         <Appbar.Content title={data?.otherUser?.name} />
       </Appbar.Header>

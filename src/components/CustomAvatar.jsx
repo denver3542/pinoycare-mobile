@@ -9,7 +9,13 @@ const CustomAvatar = forwardRef(
     const { color: colorByName, name: charAtName } = getColorByName(name);
 
     const renderContent = src ? (
-      <Avatar.Image ref={ref} source={{ uri: src }} style={style} {...other} />
+      <Avatar.Image
+        ref={ref}
+        source={{ uri: src }}
+        style={style}
+        {...other}
+        size={size}
+      />
     ) : (
       <Avatar.Text
         ref={ref}

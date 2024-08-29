@@ -26,11 +26,16 @@ export default function NotificationItem({ item }) {
         Alert.alert("Job not found.");
       }
     } else if (item.type === "message_update") {
-      navigation.navigate("ChatConversation", {
-        contact: item.message_rel.sender,
-      });
+      if (item.message_rel) {
+        navigation.navigate("ChatConversation", {
+          contact: item.message_rel?.sender,
+        });
+      } else {
+        Alert.alert("Message not found.");
+      }
     }
   };
+
   return (
     <TouchableOpacity onPress={() => onNotificationPress(item)}>
       <List.Item
