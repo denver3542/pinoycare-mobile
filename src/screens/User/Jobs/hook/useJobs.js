@@ -21,14 +21,11 @@ async function getJobs(signal, user) {
   }
 }
 
-
 export default function useJobs() {
   return useQuery(
     ["jobs"],
     async () => {
-
       const user = await AsyncStorage.getItem("upcare_user");
-
 
       return getJobs(undefined, JSON.parse(user));
     },
@@ -42,7 +39,6 @@ export default function useJobs() {
   );
 }
 
-
 async function saveJob(jobId, user) {
   if (!user) {
     throw new Error("User not found");
@@ -50,7 +46,11 @@ async function saveJob(jobId, user) {
 
   const headers = getJWTHeader(user);
   try {
-    const { data } = await axiosInstance.post("/job/save", { job_id: jobId }, { headers });
+    const { data } = await axiosInstance.post(
+      "/job/save",
+      { job_id: jobId },
+      { headers }
+    );
     return data;
   } catch (error) {
     const errorMsg = error.response?.data?.error || error.message;
