@@ -41,13 +41,10 @@ import NotificationsList from "../screens/Notifications/NotificationsList";
 import JobApplicationQuestionnaire from "../screens/Jobs/JobApplicationQuestionnaire ";
 import GuestFeeds from "../screens/Guest/Feeds";
 import GuestJob from "../screens/Guest/Job";
-import CustomGuestTopTabs from "../components/CustomGuestTopTabs";
 import Index from "../screens/Guest";
 import GeneralSearch from "../screens/User/Jobs/GeneralSearch";
 
 const Stack = createNativeStackNavigator();
-
-
 
 function LandingNavigation() {
   const { user, isFetched, isFetching } = useUser();
@@ -79,11 +76,17 @@ function LandingNavigation() {
                 options={{ animation: "fade", animationTiming: 3000 }}
               />
               <Stack.Screen name="SignUp" component={SignUp} />
-              <Stack.Screen name="OTPVerification" component={OTPVerification}/>
+              <Stack.Screen
+                name="OTPVerification"
+                component={OTPVerification}
+              />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Feeds" component={GuestFeeds} />
               <Stack.Screen name="GuestJob" component={GuestJob} />
-              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPasswordScreen}
+              />
               <Stack.Screen name="Professional" component={Professional} />
               <Stack.Screen
                 name="IndividualEmployer"
@@ -110,7 +113,11 @@ function LandingNavigation() {
             </>
           ) : (
             <>
-              <Stack.Screen name="BottomTabs" component={CustomBottomTabs} options={{ animation: "fade", animationTiming: '3000' }}/>
+              <Stack.Screen
+                name="BottomTabs"
+                component={CustomBottomTabs}
+                options={{ animation: "fade", animationTiming: "3000" }}
+              />
               <Stack.Screen name="Job" component={Job} />
               <Stack.Screen
                 name="ApplicationStatus"
@@ -178,17 +185,14 @@ function LandingNavigation() {
                 component={JobApplicationQuestionnaire}
               />
 
-              <Stack.Screen
-                name="TodoList"
-                component={TodoList}
-              />
-              <Stack.Screen
-                name="TodoAdd"
-                component={TodoAdd}
-              />
-              
-              <Stack.Screen name="GeneralSearch" component={GeneralSearch} options={{ animation: "default" }}/>
+              <Stack.Screen name="TodoList" component={TodoList} />
+              <Stack.Screen name="TodoAdd" component={TodoAdd} />
 
+              <Stack.Screen
+                name="GeneralSearch"
+                component={GeneralSearch}
+                options={{ animation: "default" }}
+              />
             </>
           )}
         </Stack.Navigator>

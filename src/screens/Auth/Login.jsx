@@ -63,7 +63,10 @@ const Login = () => {
       const res = await login(data);
       if (!res.success) {
         if (res.message.includes("deactivated")) {
-          Alert.alert("Account Deactivated", "Your account has been deactivated. Please contact support.");
+          Alert.alert(
+            "Account Deactivated",
+            "Your account has been deactivated. Please contact support."
+          );
         } else {
           setError("email", {
             type: "custom",
@@ -84,7 +87,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
 
   const togglePasswordVisibility = () => {
     setShowPw(!showPw);
@@ -108,11 +110,13 @@ const Login = () => {
       });
       const response = await handleAppleSignInOrSignUp(credential);
       if (response.success) {
-        console.log("Login success", response);
+        console.log("Login success");
       } else {
+        console.error(response);
         setGeneralError("Apple Sign-In failed.");
       }
     } catch (e) {
+      console.error(e);
       if (e.code === "ERR_CANCELED") {
         Alert.alert("Apple Sign-In was canceled.");
       } else {

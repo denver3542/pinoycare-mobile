@@ -62,6 +62,7 @@ export default function useMessaging() {
       console.log(error);
     }
   };
+
   return {
     data,
     isFetching,

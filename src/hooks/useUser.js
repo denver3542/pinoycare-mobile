@@ -276,7 +276,6 @@ export const useUser = () => {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         queryClient.invalidateQueries(["user"]);
         return { success: true, message: "Apple account linked successfully." };
