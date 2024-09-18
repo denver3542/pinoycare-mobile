@@ -13,7 +13,7 @@ const VerificationScreen = () => {
     const { user } = useUser();
     const queryClient = useQueryClient();
     const navigation = useNavigation();
-    const { control, handleSubmit, setValue, getValues } = useForm();
+    const { control, handleSubmit, setValue } = useForm();
     const [loading, setLoading] = useState(false);
 
     const onSubmit = async (data) => {
@@ -22,29 +22,21 @@ const VerificationScreen = () => {
 
         ['1', '2'].forEach(id => {
             const frontImage = data[`id${id}FrontImage`];
-            const backImage = data[`id${id}BackImage`];
-
-            if (frontImage || backImage) {
-                imageCount++;
-            }
 
             if (frontImage) {
+                imageCount++;
                 formData.append(`verification[]`, {
                     uri: frontImage,
                     type: `image/${frontImage.split('.').pop().toLowerCase()}`,
                     name: `frontImage_${id}.${frontImage.split('.').pop().toLowerCase()}`,
                 });
             }
-
-            if (backImage) {
-                formData.append(`verification[]`, {
-                    uri: backImage,
-                    type: `image/${backImage.split('.').pop().toLowerCase()}`,
-                    name: `backImage_${id}.${backImage.split('.').pop().toLowerCase()}`,
-                });
-            }
         });
 
+        if (imageCount === 0) {
+            Alert.alert('No Image', 'Please upload at least one image.');
+            return;
+        }
 
         setLoading(true);
         try {
@@ -67,9 +59,7 @@ const VerificationScreen = () => {
         }
     };
 
-
-
-    const pickImage = async (side, id) => {
+    const pickImage = async (id) => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Permission Denied', 'You need to grant camera roll access.');
@@ -84,63 +74,44 @@ const VerificationScreen = () => {
         });
 
         if (!result.canceled) {
-            const { uri, type } = result.assets[0];
+            const { uri } = result.assets[0];
             let imageFileType = uri.split('.').pop().toLowerCase();
             if (imageFileType !== 'jpeg' && imageFileType !== 'png' && imageFileType !== 'jpg') {
                 Alert.alert('Invalid File Type', 'Please select a JPEG or PNG image file.');
                 return;
             }
 
-            setValue(`id${id}${side === 'front' ? 'FrontImage' : 'BackImage'}`, uri);
+            setValue(`id${id}FrontImage`, uri);
         }
     };
-
-
 
     return (
         <View style={{ flex: 1 }}>
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color='white' />
             </Appbar.Header>
-            <ScrollView contentContainerStyle={styles.container}>
-                {Array.from({ length: 2 }).map((_, index) => (
+            <View style={styles.container}>
+                {Array.from({ length: 1 }).map((_, index) => (
                     <View key={index}>
-                        <Title>{`ID ${index + 1}`}</Title>
                         <Controller
                             control={control}
                             render={({ field: { value } }) => (
-                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('front', index + 1)}>
+                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage(index + 1)}>
                                     {value ? (
                                         <Image source={{ uri: value }} style={styles.image} />
                                     ) : (
-                                        <Text style={styles.text}>Tap to upload front image</Text>
+                                        <Text style={styles.text}>Tap to upload image</Text>
                                     )}
                                 </TouchableRipple>
                             )}
                             name={`id${index + 1}FrontImage`}
                             defaultValue=""
                         />
-                        <Controller
-                            control={control}
-                            render={({ field: { value } }) => (
-                                <TouchableRipple style={styles.imagePicker} onPress={() => pickImage('back', index + 1)}>
-                                    {value ? (
-                                        <Image source={{ uri: value }} style={styles.image} />
-                                    ) : (
-                                        <Text style={styles.text}>Tap to upload back image</Text>
-                                    )}
-                                </TouchableRipple>
-                            )}
-                            name={`id${index + 1}BackImage`}
-                            defaultValue=""
-                        />
                     </View>
                 ))}
 
                 <Button mode="outlined" loading={loading} onPress={handleSubmit(onSubmit)}>Submit</Button>
-
-
-            </ScrollView>
+            </View>
         </View>
     );
 };
@@ -149,10 +120,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         backgroundColor: "#F4F7FB",
-    },
-    imageContainer: {
-        marginVertical: 8,
-        alignItems: 'center',
+        flex: 1
     },
     imagePicker: {
         backgroundColor: "#0A3480",
@@ -177,6 +145,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-
 
 export default VerificationScreen;

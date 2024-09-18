@@ -165,8 +165,10 @@ function Dashboard() {
           onRefresh={onRefresh}
           colors={[colors.primary]}
           progressViewOffset={100}
+          
         />
       }
+      showsVerticalScrollIndicator={false}
     >
       <Appbar.Header style={styles.headerContainer}>
         <View style={styles.userInfoContainer}>

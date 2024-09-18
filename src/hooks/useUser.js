@@ -113,13 +113,10 @@ export const useUser = () => {
       if (!cityFetched) {
         setCity(fetchedCity);
         setCityFetched(true);
-        console.log("City fetched:", fetchedCity);
       } else {
-        console.log("City was already fetched.");
       }
     },
     onError: (error) => {
-      console.error("Failed to fetch location:", error);
     },
   });
 
@@ -128,13 +125,11 @@ export const useUser = () => {
       queryClient.invalidateQueries(["user"]);
     },
     onError: (error) => {
-      console.error("Failed to update user location:", error);
     },
   });
 
   useEffect(() => {
     if (city && cityFetched) {
-      console.log("Updating location on server with city:", city);
       updateLocation(city);
       locationUpdateRef.current = true;
     }
@@ -251,10 +246,8 @@ export const useUser = () => {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries(["user"]);
-      console.log("Experience deleted successfully");
     },
     onError: (error) => {
-      console.error("Error deleting experience:", error);
     },
   });
 

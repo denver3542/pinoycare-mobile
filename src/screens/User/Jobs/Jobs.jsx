@@ -89,10 +89,9 @@ const JobListings = ({ activeNav, rating }) => {
             )
           }
           <View style={styles.cardContentText}>
-         
               <Text style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{item.title}</Text>
               <Text style={styles.company}>{item.company}</Text>
-              <Text style={{ fontWeight: '500' }}>{item.location}</Text>
+              <Text style={{ fontWeight: '400', fontSize: 12 }}>{item.location}</Text>
               <Matching rating={item.matchScore / 25} />
               <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
           </View>
@@ -117,10 +116,7 @@ const JobListings = ({ activeNav, rating }) => {
         <HeaderMessageNotification />
         <HeaderNotification />
       </Appbar.Header>
-
-      {isLoading ? (
-        <Spinner visible={isLoading} />
-      ) : (
+    
         <FlatList
           data={filteredJobs}
           renderItem={renderJob}
@@ -144,7 +140,6 @@ const JobListings = ({ activeNav, rating }) => {
           }
           contentContainerStyle={styles.listContentContainer}
         />
-      )}
     </View>
   );
 };
@@ -170,7 +165,7 @@ const styles = StyleSheet.create({
   },
   cardContentText: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 15,
   },
   listContentContainer: {
     padding: 8,
@@ -185,19 +180,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   iconButton: {
-    margin: 0,
-    padding: 0,
     position: 'absolute',
+    alignSelf: 'flex-start',
     right: 0,
-    alignSelf: 'flex-start'
+     top: -5
   },
   company: {
     fontSize: 14,
-    fontWeight: '',
+    fontWeight: '400',
   },
   postedDate: {
     color: '#888',
-    fontSize: 12,
+    fontSize: 12
   },
   jobImage: {
     width: 80,
@@ -237,13 +231,13 @@ const styles = StyleSheet.create({
   matchedText: {
     color: '#0A3480',
     fontWeight: '600',
-    fontSize: 13,
+   fontSize: 12
   },
   percentage: {
     color: '#0A3480',
     fontWeight: '600',
     marginRight: 5,
-    fontSize: 13,
+   fontSize: 12
   },
 });
 

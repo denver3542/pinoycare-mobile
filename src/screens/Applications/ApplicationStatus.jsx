@@ -60,7 +60,7 @@ const ApplicationStatus = () => {
     : `<div style="text-align: justify;">${job?.description?.substring(0, 200)}...</div>`;
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container}  showsVerticalScrollIndicator={false}>
             <Appbar.Header style={{ backgroundColor: '#0A3480' }}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
                 <Appbar.Content title="Application Summary" titleStyle={{ color: 'white' }} />
