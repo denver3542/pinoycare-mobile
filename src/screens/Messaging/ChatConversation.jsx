@@ -79,46 +79,52 @@ const ChatConversation = () => {
   const toggleModal = () => setIsImageModalVisible(!isModalVisible);
 
   const sendMessage = async () => {
-    setIsLoading(true);
+    console.log("Attempting to send message");
+  
     if (text.trim() || attachedFiles.length > 0) {
-      try {
-        const formData = new FormData();
-        formData.append("message", text.trim());
-
-        if (!contact || !contact.id) {
-          console.error("Contact or contact ID is undefined");
-          return;
-        }
-        formData.append("to_user_id", contact.id);
-
-        if (replyTo) {
-          if (!replyTo.id) {
-            console.error("ReplyTo ID is undefined");
-            return;
-          }
-          formData.append("reply_to_id", replyTo.id);
-        }
-
-        attachedFiles.forEach((file) => formData.append("files[]", file));
-
-        const storedUser = await AsyncStorage.getItem("upcare_user");
-        if (!storedUser) {
-          console.error("Stored user is undefined");
-          return;
-        }
-
-        const sendMsg = send(formData).then((res) => {
-          refetch();
-          setIsLoading(false);
-          setText("");
-          setReplyTo(null);
-          setAttachedFiles([]);
+      const formData = new FormData();
+      formData.append("message", text.trim());
+      console.log("Message content:", text.trim());
+  
+      if (!contact || !contact.id) {
+        console.error("Contact or contact ID is undefined");
+        return;
+      }
+  
+      formData.append("to_user_id", contact.id);
+      console.log("Message destination user ID:", contact.id);
+  
+      if (replyTo && replyTo.id) {
+        formData.append("reply_to_id", replyTo.id);
+        console.log("Replying to message ID:", replyTo.id);
+      }
+  
+      attachedFiles.forEach((file) => {
+        console.log(`Attaching file: ${file.name}`);
+        formData.append("files[]", {
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
         });
+      });
+  
+      try {
+        await send(formData); // Using the mutation function `send`
+        console.log("Message sent successfully");
+        refetch(); // Refetch inbox after sending the message
+        setText("");
+        setReplyTo(null);
+        setAttachedFiles([]);
       } catch (error) {
         console.error("Failed to send message:", error);
       }
+    } else {
+      console.log("No message text or attachments provided to send.");
     }
   };
+  
+  
+
 
   const handleReply = (message) => {
     setReplyTo(message);
@@ -137,7 +143,7 @@ const ChatConversation = () => {
       if (!result.canceled) {
         const uri = result.assets[0].uri;
         const fileName = uri.split("/").pop();
-        const fileType = result.assets[0].mimeType; // Default to image/jpeg
+        const fileType = result.assets[0].mimeType; 
         setAttachedFiles([
           ...attachedFiles,
           { uri: uri, type: fileType, name: fileName },
@@ -160,7 +166,7 @@ const ChatConversation = () => {
       if (!result.canceled) {
         const uri = result.assets[0].uri;
         const fileName = uri.split("/").pop();
-        const fileType = "image/jpeg"; // Default to image/jpeg
+        const fileType = "image/jpeg"; 
         setAttachedFiles([
           ...attachedFiles,
           { uri: uri, type: fileType, name: fileName },
@@ -249,21 +255,37 @@ const ChatConversation = () => {
         contact.id
       )}-${Math.max(user.id, contact.id)}`;
       const channel = ably.channels.get(channelName);
-
-      channel.subscribe("message", (message) => {
-        try {
-          if (!message || !message.data || !message.data.message) {
-            console.error(
-              "Received an undefined or malformed message:",
-              message
-            );
-            return;
-          }
-          refetch();
-        } catch (error) {
-          console.error("Error processing incoming message:", error);
+      channel.subscribe('message', (message) => {
+        const { data } = message;
+    
+        if (data) {
+            // Validate if required properties are present
+            if (data.from_user_id && data.to_user_id) {
+                console.log("Received message:", data);
+                refetch();
+            } else {
+                console.error("Received an undefined or malformed message:", message);
+            }
+        } else {
+            console.error("Received an empty message:", message);
         }
-      });
+    });
+    
+      // channel.subscribe("message", (message) => {
+        
+      //   try {
+      //     if (!message || !message.data || !message.data.message) {
+      //       console.error(
+      //         "Received an undefined or malformed message:",
+      //         message
+      //       );
+      //       return;
+      //     }
+      //     refetch();
+      //   } catch (error) {
+      //     console.error("Error processing incoming message:", error);
+      //   }
+      // });
 
       return () => channel.unsubscribe();
     }
