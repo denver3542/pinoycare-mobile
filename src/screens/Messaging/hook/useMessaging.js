@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import React from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance, { getJWTHeader } from "../../../../utils/axiosConfig";
 
 // Fetch inbox messages (unchanged)
@@ -11,15 +10,8 @@ async function getInbox() {
     "Content-Type": "multipart/form-data",
   };
 
-  try {
-    const { data } = await axiosInstance.get("/user/messages", {
-      headers,
-    });
-    return data;
-  } catch (error) {
-    console.error("Error fetching inbox:", error.message);
-    throw new Error("Failed to fetch inbox");
-  }
+  const { data } = await axiosInstance.get("/user/messages", { headers });
+  return data;
 }
 
 // Fetch conversation (unchanged)
@@ -38,18 +30,20 @@ async function getConvo(otherUserId) {
         "Content-Type": "application/json;charset=utf-8",
       }
     );
-
     return data;
   } catch (error) {
     console.log(error);
   }
 }
 
-// Custom hook using `useMutation` for sending a message
+
 export default function useMessaging() {
-  // For inbox fetching, still using useQuery
+  const queryClient = useQueryClient();
+
+
   const { data, isFetching, isFetched, isLoading, isRefetching, refetch } =
     useQuery(["inbox"], getInbox);
+
 
   const mutation = useMutation(
     async (formData) => {
@@ -86,6 +80,14 @@ export default function useMessaging() {
         }
         throw new Error("Failed to send message");
       }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["inbox"]);
+      },
+      onError: (error) => {
+        console.error("Error in message mutation:", error.message);
+      },
     }
   );
 
@@ -96,7 +98,7 @@ export default function useMessaging() {
     isLoading,
     isRefetching,
     refetch,
-    send: mutation.mutateAsync, // Call mutation's async mutate function to send a message
+    send: mutation.mutateAsync, 
   };
 }
 
