@@ -1,96 +1,72 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
 import { List, Appbar } from "react-native-paper";
-import useMessaging from "./hook/useMessaging";
+import { useNavigation } from "@react-navigation/native";
 import Spinner from "react-native-loading-spinner-overlay";
+import useMessaging from "./hook/useMessaging";
 import CustomAvatar from "../../components/CustomAvatar";
 
 const MessageList = () => {
   const navigation = useNavigation();
-  const { data, isFetching, isFetched, isRefetching, refetch, isLoading } =
-    useMessaging();
+  const { data, isFetching, isFetched, isRefetching, refetch, isLoading } = useMessaging();
 
+  // Render individual list items
   const renderItem = ({ item }) => {
-    const user = item.user || {};
-    const currentUserId = user.id || {}; 
-    const receivedMessages = Array.isArray(user.received_messages)
-      ? user.received_messages
-      : [];
-    const sentMessages = Array.isArray(user.sent_messages)
-      ? user.sent_messages
-      : [];
-  
-    const mostRecentReceived = receivedMessages.length
-      ? receivedMessages[receivedMessages.length - 1]
-      : null;
+    const { user = {} } = item;
+    const { id: currentUserId, firstname = "", lastname = "", media = [], received_messages = [], sent_messages = [] } = user;
 
-    const mostRecentSent = sentMessages.length
-      ? sentMessages[sentMessages.length - 1]
-      : null;
+    const mostRecentReceived = received_messages.at(-1);
+    const mostRecentSent = sent_messages.at(-1);
 
-    let recentMessage = null;
-    let isRead = true;
-    let senderFirstName = '';
-    
-    if (mostRecentReceived && mostRecentSent) {
-      recentMessage =
-        new Date(mostRecentReceived.created_at) >
-        new Date(mostRecentSent.created_at)
+    // Determine the most recent message between sent and received
+    const recentMessage =
+      mostRecentReceived && mostRecentSent
+        ? new Date(mostRecentReceived.created_at) > new Date(mostRecentSent.created_at)
           ? mostRecentReceived
-          : mostRecentSent;
-    } else if (mostRecentReceived) {
-      recentMessage = mostRecentReceived;
-    } else if (mostRecentSent) {
-      recentMessage = mostRecentSent;
-    }
+          : mostRecentSent
+        : mostRecentReceived || mostRecentSent;
 
-    if (recentMessage) {
-      isRead = !!recentMessage.read_at;
+    // Check if the recent message is read
+    const isRead = recentMessage?.to_user_id === currentUserId && !recentMessage?.read_at;
 
-      if (recentMessage.to_user_id === currentUserId) {
-        senderFirstName = 'You:'; 
-      }
-    }
+    // Prefix "You: " if the user is the sender
+    const messagePrefix = recentMessage?.to_user_id === currentUserId ? "You: " : "";
+
+    // Navigate to chat conversation
+    const handlePress = () => navigation.navigate("ChatConversation", { contact: user });
 
     return (
       <List.Item
-        title={`${user.firstname} ${user.lastname}`}
-        description={
-          recentMessage
-            ? `${senderFirstName} ${recentMessage.message}`
-            : "No recent messages"
-        } 
+        title={`${firstname} ${lastname}`}
+        description={recentMessage ? `${messagePrefix}${recentMessage.message}` : "No recent messages"}
         left={(props) => (
           <CustomAvatar
-            src={user?.media?.[0]?.original_url || ""}
-            name={user.firstname}
+            src={media[0]?.original_url ?? ""}
+            name={firstname}
             {...props}
           />
         )}
         right={(props) => <List.Icon {...props} icon="message-outline" />}
-        onPress={() =>
-          navigation.navigate("ChatConversation", { contact: user })
-        }
-        titleStyle={{ fontWeight: isRead ? "600" : "300" }}
-        descriptionStyle={{ fontWeight: isRead ? "600" : "300" }}
+        onPress={handlePress}
+        titleStyle={{ fontWeight: isRead ? "normal" : "bold" }}
+        descriptionStyle={{ fontWeight: isRead ? "normal" : "bold" }}
       />
     );
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Spinner visible={isLoading} color="#0A3480" animation="fade" />
       <Appbar.Header style={{ backgroundColor: "#0A3480" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Messages" titleStyle={{ color: "white" }} />
       </Appbar.Header>
-      <View style={{ padding: 5, height: "100%" }}>
+      <View style={{ flex: 1, padding: 5 }}>
         {!isLoading && (
           <FlatList
-            data={data.users}
+            data={data?.users || []}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             ItemSeparatorComponent={() => (
               <View style={{ height: 1, backgroundColor: "#f0f0f0" }} />
             )}

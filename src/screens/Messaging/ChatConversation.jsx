@@ -109,7 +109,7 @@ const ChatConversation = () => {
       });
   
       try {
-        await send(formData); 
+        await send(formData); // Using the mutation function `send`
         console.log("Message sent successfully");
         refetch(); // Refetch inbox after sending the message
         setText("");
@@ -244,39 +244,52 @@ const ChatConversation = () => {
   };
 
   useEffect(() => {
-    if (!data?.ablyApiKey || !isFetched) return;
-  
-    const ably = new Ably.Realtime.Promise({
-      key: data.ablyApiKey,
-      clientId: user.id.toString(),
+    if (data?.ablyApiKey && isFetched) {
+      const ably = new Ably.Realtime.Promise({
+        key: data.ablyApiKey,
+        clientId: user.id.toString(),
+      });
+
+      const channelName = `private-chat-${Math.min(
+        user?.id,
+        contact.id
+      )}-${Math.max(user.id, contact.id)}`;
+      const channel = ably.channels.get(channelName);
+      channel.subscribe('message', (message) => {
+        const { data } = message;
+    
+        if (data) {
+            // Validate if required properties are present
+            if (data.from_user_id && data.to_user_id) {
+                console.log("Received message:", data);
+                refetch();
+            } else {
+                console.error("Received an undefined or malformed message:", message);
+            }
+        } else {
+            console.error("Received an empty message:", message);
+        }
     });
-  
-    const channelName = `private-chat-${Math.min(user.id, contact.id)}-${Math.max(user.id, contact.id)}`;
-    const channel = ably.channels.get(channelName);
-  
-    channel.subscribe('message', (message) => {
-      const { data } = message;
-      if (data && data.from_user_id && data.to_user_id) {
-        console.log("Received message:", data);
-        refetch();
-      } else {
-        console.error("Received an undefined or malformed message:", message);
-      }
-    });
-  
-    ably.connection.on('state', (stateChange) => {
-      console.log('Connection state change:', stateChange.current);
-      if (['failed', 'closed'].includes(stateChange.current)) {
-        console.error('Connection failed or closed:', stateChange.reason);
-      }
-    });
-  
-    return () => {
-      channel.unsubscribe('message');
-      ably.close();
-    };
+    
+      // channel.subscribe("message", (message) => {
+        
+      //   try {
+      //     if (!message || !message.data || !message.data.message) {
+      //       console.error(
+      //         "Received an undefined or malformed message:",
+      //         message
+      //       );
+      //       return;
+      //     }
+      //     refetch();
+      //   } catch (error) {
+      //     console.error("Error processing incoming message:", error);
+      //   }
+      // });
+
+      return () => channel.unsubscribe();
+    }
   }, [data?.ablyApiKey, user.id, contact.id, isFetched]);
-  
 
   const renderMessageItem = ({ item }) => {
     if (!item) {
