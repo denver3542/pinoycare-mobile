@@ -31,7 +31,12 @@ const JobApplicationList = ({ application }) => {
     : "";
 
     const badgeValue = applicationStatus === "hired" ? `Hired - ${formattedDate}` : applicationStatus || "n/a";
-
+    const imageUri =
+    media && media.length > 0 && typeof media[0].original_url === 'string' && media[0].original_url.trim() !== ''
+      ? media[0].original_url
+      : typeof logo === 'string' && logo.trim() !== ''
+      ? logo
+      : 'https://via.placeholder.com/150'; 
   return (
     <TouchableHighlight
       onPress={() =>
@@ -41,12 +46,10 @@ const JobApplicationList = ({ application }) => {
       style={styles.container}
     >
       <>
-        <Image
-          source={{
-            uri: media.length > 0 ? media[0].original_url : logo,
-          }}
-          style={styles.jobImage}
-        />
+      <Image
+      source={{ uri: imageUri }}
+      style={styles.jobImage}
+    />
         <View style={styles.applicationDetails}>
           <View style={{ alignSelf: "flex-start" }}>
             <Text style={styles.appliedProfession}>{title}</Text>

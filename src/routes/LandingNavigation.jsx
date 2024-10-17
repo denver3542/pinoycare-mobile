@@ -26,12 +26,14 @@ import UpdateWorkExperience from "../screens/User/Profile/WorkExperience/UpdateW
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTroughVerificationScreen";
 import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
+import FacialVerificationScreen from "../screens/User/Profile/Verify/FacialVerificationScreen";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
 import ApplicationStatus from "../screens/Applications/ApplicationStatus";
 import TodoList from "../screens/Dashboard/Todo/todoList";
 import TodoAdd from "../screens/Dashboard/Todo/todoAdd";
 import OTPVerification from "../screens/Auth/OTPVerification";
+
 // Import hooks
 import { useUser } from "../hooks/useUser";
 import ForgotPasswordScreen from "../screens/Auth/ForgotPassword";
@@ -171,6 +173,10 @@ function LandingNavigation() {
               <Stack.Screen
                 name="VerificationScreen"
                 component={VerificationScreen}
+              />
+               <Stack.Screen
+                name="FacialVerificationScreen"
+                component={FacialVerificationScreen}
               />
               <Stack.Screen
                 name="WalkThroughVerificationScreen"

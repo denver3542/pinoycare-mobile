@@ -39,6 +39,13 @@ const ApplicationListCard = ({ application }) => {
     salary_to,
   } = job;
 
+  const imageUri =
+  media && media.length > 0 && typeof media[0].original_url === 'string' && media[0].original_url.trim() !== ''
+    ? media[0].original_url
+    : typeof logo === 'string' && logo.trim() !== ''
+    ? logo
+    : 'https://via.placeholder.com/150'; 
+
   return (
     <TouchableHighlight
       onPress={() => navigation.navigate("Job", application)}
@@ -48,9 +55,7 @@ const ApplicationListCard = ({ application }) => {
       <>
         <View style={styles.cardContent}>
           <Image
-            source={{
-              uri: media && media.length > 0 ? media[0].original_url : logo,
-            }}
+            source={{ uri: imageUri }}
             style={styles.jobImage}
           />
           <View

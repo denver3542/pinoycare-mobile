@@ -67,14 +67,19 @@ const ApplicationStatus = () => {
             </Appbar.Header>
 
             <View style={styles.contentWrapper}>
-                        {job.media && job.media[0] && job.media[0].original_url && (
-                            <Card style={styles.card}>
-                                <Card.Cover
-                                    source={{ uri: job.media[0].original_url }}
-                                    style={[styles.image, { borderRadius: 0, height: 400 }]}
-                                />
-                            </Card>
-                        )}
+            {job.media && job.media[0] && job.media[0].original_url ? (
+  <Card.Cover
+    source={{ uri: job.media[0].original_url }}
+    resizeMode="stretch"
+    style={[styles.image, { borderRadius: 0, height: 400 }]}
+  />
+) : (
+  <Card.Cover
+    source={{ uri: 'https://via.placeholder.com/150' }} 
+    resizeMode="stretch"
+    style={[styles.image, { borderRadius: 0, height: 400 }]}
+  />
+)}
                 <View style={styles.card}>
                     <View style={{ top: 0 }}>
                         <View style={[styles.cardContent, { alignItems: 'center', margin: 8 }]}>

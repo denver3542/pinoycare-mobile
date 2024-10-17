@@ -21,7 +21,12 @@ const JobApplications = ({ application }) => {
     const applicationStatus = getApplicationStatus(dashboardData.applications, job.id);
     const badgeColor = getBadgeColor(applicationStatus);
     const badgeTextColor = getBadgeTextColor(applicationStatus);
-
+    const imageUri =
+    media && media.length > 0 && typeof media[0].original_url === 'string' && media[0].original_url.trim() !== ''
+      ? media[0].original_url
+      : typeof logo === 'string' && logo.trim() !== ''
+      ? logo
+      : 'https://via.placeholder.com/150'; 
     return (
         <TouchableHighlight onPress={() => navigation.navigate("ApplicationStatus", { job: application })}
         underlayColor="#ddd" style={styles.container}>
@@ -29,11 +34,10 @@ const JobApplications = ({ application }) => {
                 <View style={styles.card}>
                     <View style={styles.cardContent}>
                         <Image
-                            source={{
-                                uri: media && media.length > 0 ? media[0].original_url : logo,
-                            }}
-                            style={styles.jobImage}
-                        />
+   source={{ uri: imageUri }}
+  style={styles.jobImage}
+/>
+
                         <View style={styles.applicationDetails}>
                             <View>
                                 <Text style={styles.appliedProfession}>{title || 'n/a'}</Text>

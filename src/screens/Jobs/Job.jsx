@@ -156,13 +156,20 @@ export default function Job() {
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         {/* <Appbar.Content title={job.title || "Job Details"} titleStyle={{ color: 'white' }} /> */}
       </Appbar.Header>
-      {job.media && job.media[0] && job.media[0].original_url && (
-        <Card.Cover
-          source={{ uri: job.media[0].original_url }}
-          resizeMode="stretch"
-          style={[styles.image, { borderRadius: 0, height: 400 }]}
-        />
-      )}
+      {job.media && job.media[0] && job.media[0].original_url ? (
+  <Card.Cover
+    source={{ uri: job.media[0].original_url }}
+    resizeMode="stretch"
+    style={[styles.image, { borderRadius: 0, height: 400 }]}
+  />
+) : (
+  <Card.Cover
+    source={{ uri: 'https://via.placeholder.com/150' }} // Fallback placeholder image
+    resizeMode="stretch"
+    style={[styles.image, { borderRadius: 0, height: 400 }]}
+  />
+)}
+
       <View style={styles.contentWrapper}>
         <View style={styles.card}>
           <View style={[styles.cardContent, { alignItems: "center" }]}>
