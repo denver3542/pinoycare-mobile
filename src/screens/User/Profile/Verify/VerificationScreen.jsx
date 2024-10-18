@@ -87,16 +87,12 @@ const VerificationScreen = () => {
   };
 
   const retakeImage = () => {
-    setImageUri(null); // Reset imageUri to show the camera again
+    setImageUri(null); 
   };
 
-  if (hasPermission === null) {
-    return (
-      <View>
-        <Text>Requesting camera permission...</Text>
-      </View>
-    );
-  }
+  // if (hasPermission === null) {
+  // }
+  
   if (hasPermission === false) {
     return (
       <View>
@@ -127,11 +123,11 @@ const VerificationScreen = () => {
       <View style={styles.buttonContainer}>
       {!imageUri ? (
           <Button mode="outlined" onPress={captureImage}>
-            Capture Image
+            Capture ID
           </Button>
         ) : (
           <Button mode="outlined" onPress={retakeImage}>
-            Recapture Image
+            Recapture ID
           </Button>
         )}
         <Button
