@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.upcare.mobile",
@@ -22,8 +24,10 @@
         "NSLocationWhenInUseUsageDescription": "This app uses your location to show relevant job offers near you and to enhance your experience by providing location-based services.",
         "NSLocationAlwaysUsageDescription": "This app uses your location to provide continuous location tracking for better service delivery, even when the app is in the background.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs your location to provide accurate and timely services, whether the app is in use or in the background.",
-
-        "UIBackgroundModes": ["fetch", "remote-notification"]
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ]
       },
       "buildNumber": "14",
       "usesAppleSignIn": true
@@ -46,7 +50,14 @@
       }
     },
     "plugins": [
- 
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
+        }
+      ],
       [
         "expo-camera",
         {
@@ -75,7 +86,8 @@
             "deploymentTarget": "13.6"
           }
         }
-      ]
+      ],
+      "react-native-vision-camera"
     ],
     "runtimeVersion": {
       "policy": "appVersion"

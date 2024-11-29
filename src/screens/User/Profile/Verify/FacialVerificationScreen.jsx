@@ -7,7 +7,7 @@ import {
   Portal,
   Paragraph,
   useTheme,
-  Button
+  Button,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -192,22 +192,22 @@ const FacialVerificationScreen = ({ navigation }) => {
         <Text style={styles.subtitle}>
           Scan your face to verify your identity
         </Text>
-    <View style={{ flexGrow: 1 }}>
-    <View style={styles.scanArea}>
-          <Animated.View
-            style={[styles.scanLine, { transform: [{ translateY: moveY }] }]}
-          />
-          {Array.from({ length: 4 }, (_, index) => {
-            const cornerStyles = [
-              styles.cornerTopLeft,
-              styles.cornerTopRight,
-              styles.cornerBottomLeft,
-              styles.cornerBottomRight,
-            ];
-            return <View key={index} style={cornerStyles[index]} />;
-          })}
+        <View style={{ flexGrow: 1 }}>
+          <View style={styles.scanArea}>
+            <Animated.View
+              style={[styles.scanLine, { transform: [{ translateY: moveY }] }]}
+            />
+            {Array.from({ length: 4 }, (_, index) => {
+              const cornerStyles = [
+                styles.cornerTopLeft,
+                styles.cornerTopRight,
+                styles.cornerBottomLeft,
+                styles.cornerBottomRight,
+              ];
+              return <View key={index} style={cornerStyles[index]} />;
+            })}
+          </View>
         </View>
-    </View>
 
         <Button
           mode="contained"
@@ -271,55 +271,63 @@ const FacialVerificationScreen = ({ navigation }) => {
       </BottomSheet>
 
       <Portal>
-  <Dialog 
-    visible={dialogVisible} 
-    style={{ backgroundColor: '#fff', padding: 20 }} 
-  >
-    <Dialog.Title style={{ textAlign: 'center' }}>Success</Dialog.Title> 
-    <Dialog.Content style={{ alignItems: 'center' }}> 
-      <Paragraph style={{ marginBottom: 16 }}>Face verified successfully!</Paragraph> 
-      <View style={{ position: 'relative', width: 200, height: 200, marginBottom: 16 }}> 
-        {capturedImageUri && (
-          <Image
-            source={{ uri: capturedImageUri }}
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: 100,
-              transform: [{ scaleX: -1 }],
-            }}
-          />
-        )}
-        <MaterialIcons
-          name="check-circle"
-          size={25}
-          color="green"
-          style={{
-            position: 'absolute',
-            right: 8,
-            top: 20, 
-            backgroundColor: 'white',
-            borderRadius: 100,
-            padding: 2,
-          }}
-        />
-      </View>
-    </Dialog.Content>
-    <Dialog.Actions style={{ justifyContent: 'center' }}> 
-      <Button
-        mode="contained"
-        onPress={() => {
-          hideDialog();
-          navigation.navigate("Account");
-        }}
-        style={{ width: '100%' }} 
-      >
-        Okay
-      </Button>
-    </Dialog.Actions>
-  </Dialog>
-</Portal>
-
+        <Dialog
+          visible={dialogVisible}
+          style={{ backgroundColor: "#fff", padding: 20 }}
+        >
+          <Dialog.Title style={{ textAlign: "center" }}>Success</Dialog.Title>
+          <Dialog.Content style={{ alignItems: "center" }}>
+            <Paragraph style={{ marginBottom: 16 }}>
+              Face verified successfully!
+            </Paragraph>
+            <View
+              style={{
+                position: "relative",
+                width: 200,
+                height: 200,
+                marginBottom: 16,
+              }}
+            >
+              {capturedImageUri && (
+                <Image
+                  source={{ uri: capturedImageUri }}
+                  style={{
+                    width: 200,
+                    height: 200,
+                    borderRadius: 100,
+                    transform: [{ scaleX: -1 }],
+                  }}
+                />
+              )}
+              <MaterialIcons
+                name="check-circle"
+                size={25}
+                color="green"
+                style={{
+                  position: "absolute",
+                  right: 8,
+                  top: 20,
+                  backgroundColor: "white",
+                  borderRadius: 100,
+                  padding: 2,
+                }}
+              />
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions style={{ justifyContent: "center" }}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                hideDialog();
+                navigation.navigate("Account");
+              }}
+              style={{ width: "100%" }}
+            >
+              Okay
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
