@@ -37,15 +37,8 @@ const FaceDetection = ({ navigation }) => {
   const [capturedPhotoUri, setCapturedPhotoUri] = useState(null);
   const [portalVisible, setPortalVisible] = useState(false);
   const cameraRef = useRef(null);
-  const { hasPermission, requestPermission } = useCameraPermission();
+  const { hasPermission } = useCameraPermission()
   const device = useCameraDevice("front");
-
-  useEffect(() => {
-    (async () => {
-      const status = await Camera.requestCameraPermission();
-      console.log({ status });
-    })();
-  }, [device]);
 
   const [cameraActive, setCameraActive] = useState(false);
 
@@ -64,13 +57,7 @@ const FaceDetection = ({ navigation }) => {
     }.current;
 
   useEffect(() => {
-    if (!hasPermission) {
-      requestPermission().then((status) => {
-        if (status !== "authorized") {
-          console.warn("Camera permission denied!");
-        }
-      });
-    }
+    if (!hasPermission) return <View><Text>No Peermission</Text></View>
 
     Animated.loop(
       Animated.sequence([
@@ -86,7 +73,7 @@ const FaceDetection = ({ navigation }) => {
         }),
       ])
     ).start();
-  }, [hasPermission, requestPermission]);
+  }, []);
 
   useEffect(() => {
     progressAnim.addListener(({ value }) => {
@@ -291,7 +278,7 @@ const FaceDetection = ({ navigation }) => {
               />
             </View>
 
-            <View style={{ paddingHorizontal: 20, gap: 20, marginTop: 20 }}>
+            <View style={{ paddingHorizontal: 15, gap: 20, marginTop: 20 , alignItems: 'center'}}>
               <Text style={styles.statusText}>
                 {isFaceDetected
                   ? progressText
@@ -300,7 +287,7 @@ const FaceDetection = ({ navigation }) => {
 
               <Progress.Bar
                 progress={progressValue}
-                width={300}
+                width={350}
                 color={theme.colors.primary}
                 borderRadius={12}
                 height={10}

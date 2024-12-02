@@ -63,7 +63,7 @@ const VerificationScreen = () => {
         JSON.stringify(response.data)
       );
       queryClient.invalidateQueries("verificationData");
-      navigation.navigate("FacialVerificationScreen");
+      navigation.navigate("FacialRecognition");
       console.log(response.data);
     } catch (error) {
       console.error("Failed to submit verification:", error);

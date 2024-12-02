@@ -162,41 +162,41 @@ export const useUser = () => {
     return data;
   }
 
-  async function verifyUser(images) {
-    const storedUser = await AsyncStorage.getItem("upcare_user");
-    if (!storedUser) {
-      return null;
-    }
+  // async function verifyUser(images) {
+  //   const storedUser = await AsyncStorage.getItem("upcare_user");
+  //   if (!storedUser) {
+  //     return null;
+  //   }
 
-    const user = JSON.parse(storedUser);
-    const headers = getJWTHeader(user);
+  //   const user = JSON.parse(storedUser);
+  //   const headers = getJWTHeader(user);
 
-    try {
-      const formData = new FormData();
-      images.forEach((image, index) => {
-        if (image.uri) {
-          formData.append(`image[${index}]`, {
-            uri: image.uri,
-            type: "image/jpeg",
-            name: `image_${index}.jpg`,
-          });
-        }
-      });
+  //   try {
+  //     const formData = new FormData();
+  //     images.forEach((image, index) => {
+  //       if (image.uri) {
+  //         formData.append(`image[${index}]`, {
+  //           uri: image.uri,
+  //           type: "image/jpeg",
+  //           name: `image_${index}.jpg`,
+  //         });
+  //       }
+  //     });
 
-      const { data } = await axiosInstance.post(
-        "/user/profile/submit-verification",
-        images,
-        {
-          headers,
-          formData,
-        }
-      );
-      return data.user;
-    } catch (error) {
-      console.error("Error verifying user:", error);
-      return null;
-    }
-  }
+  //     const { data } = await axiosInstance.post(
+  //       "/user/profile/submit-verification",
+  //       images,
+  //       {
+  //         headers,
+  //         formData,
+  //       }
+  //     );
+  //     return data.user;
+  //   } catch (error) {
+  //     console.error("Error verifying user:", error);
+  //     return null;
+  //   }
+  // }
 
   const deleteSkill = useMutation({
     mutationFn: (skillsId) =>
@@ -301,7 +301,6 @@ export const useUser = () => {
     updateUser,
     clearUser,
     addPushToken,
-    verifyUser,
     city,
     cityFetched,
     deleteSkill: deleteSkill.mutate,

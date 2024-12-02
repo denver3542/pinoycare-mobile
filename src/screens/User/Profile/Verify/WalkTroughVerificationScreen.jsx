@@ -38,7 +38,7 @@ const WalkThroughVerificationScreen = () => {
       <View style={styles.buttonContainer}>
         <Button
           mode="contained"
-          onPress={() => navigation.navigate("FacialRecognition")}
+          onPress={() => navigation.navigate("VerificationScreen")}
           style={styles.nextButton}
         >
           Next
