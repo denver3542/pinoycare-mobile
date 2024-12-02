@@ -26,7 +26,7 @@ import UpdateWorkExperience from "../screens/User/Profile/WorkExperience/UpdateW
 import SettingsScreen from "../screens/User/Profile/SettingsScreen";
 import WalkThroughVerificationScreen from "../screens/User/Profile/Verify/WalkTroughVerificationScreen";
 import VerificationScreen from "../screens/User/Profile/Verify/VerificationScreen";
-import FacialVerificationScreen from "../screens/User/Profile/Verify/FacialVerificationScreen";
+// import FacialVerificationScreen from "../screens/User/Profile/Verify/FacialVerificationScreen";
 import FacialRecognition from "../screens/User/Profile/Verify/FacialRecognition";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import Job from "../screens/Jobs/Job";
@@ -175,10 +175,10 @@ function LandingNavigation() {
                 name="VerificationScreen"
                 component={VerificationScreen}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="FacialVerificationScreen"
                 component={FacialVerificationScreen}
-              />
+              /> */}
               <Stack.Screen
                 name="WalkThroughVerificationScreen"
                 component={WalkThroughVerificationScreen}

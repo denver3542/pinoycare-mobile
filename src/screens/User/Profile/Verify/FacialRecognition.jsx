@@ -50,7 +50,7 @@ const FaceDetection = ({ navigation }) => {
   const [cameraActive, setCameraActive] = useState(false);
 
   //Hook
-  const {  verifyFace } = useVerifyUser();
+  const { verifyFace } = useVerifyUser();
 
   const faceDetectionOptions =
     useRef <
@@ -92,32 +92,30 @@ const FaceDetection = ({ navigation }) => {
     progressAnim.addListener(({ value }) => {
       setProgressValue(value);
     });
-  
+
     return () => {
       progressAnim.removeAllListeners();
     };
   }, []);
-  
+
   useEffect(() => {
     if (isFaceDetected) {
       Animated.timing(progressAnim, {
-        toValue: 1, 
-        duration: 3000, 
-        easing: Easing.inOut(Easing.ease), 
+        toValue: 1,
+        duration: 3000,
+        easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       }).start();
     } else {
       Animated.timing(progressAnim, {
         toValue: 0,
-        duration: 500, 
+        duration: 500,
         easing: Easing.out(Easing.ease),
         useNativeDriver: false,
       }).start();
-      captureTriggeredRef.current = false; 
+      captureTriggeredRef.current = false;
     }
   }, [isFaceDetected]);
-  
-  
 
   const capturePhoto = async () => {
     try {
@@ -126,88 +124,84 @@ const FaceDetection = ({ navigation }) => {
         Alert.alert("Error", "Camera not ready. Please try again.");
         return;
       }
-  
+
       console.log("Attempting to capture photo...");
       const photo = await cameraRef.current.takePhoto();
-  
+
       if (!photo || !photo.path) {
         console.error("No photo captured or invalid path.");
         Alert.alert("Error", "Failed to capture photo. Please try again.");
         return;
       }
-  
+
       const faceImage = {
-        uri: `file://${photo.path}`, // Ensure the URI includes the correct prefix
+        uri: `file://${photo.path}`,
         type: "image/jpeg",
         name: photo.path.split("/").pop(),
       };
-  
+
       console.log("Prepared faceImage for verification:", faceImage);
-  
-      // Optimistic Update: Update state before verifying
+
       setCapturedPhotoUri(faceImage.uri);
       setPortalVisible(true);
-  
-      // Call the mutation to verify face
+
       await verifyFace.mutateAsync(faceImage);
-  
+
       console.log("Face verification successful!");
     } catch (error) {
       console.error("Error capturing photo or verifying face:", error);
-  
-      // Rollback UI changes in case of error
+
       setCapturedPhotoUri(null);
       setPortalVisible(false);
-  
+
       Alert.alert(
         "Verification Failed",
         error.message || "An error occurred during face verification."
       );
     }
   };
-  
-  
 
-  
-const handleFacesDetection = useCallback(async (faces) => {
-  if (faces.length === 0) {
-    if (isFaceDetected) {
-      console.log("No faces detected.");
-      setIsFaceDetected(false);
-    }
-    setProgressText("No faces detected.");
-    return;
-  }
+  const handleFacesDetection = useCallback(
+    async (faces) => {
+      if (faces.length === 0) {
+        if (isFaceDetected) {
+          console.log("No faces detected.");
+          setIsFaceDetected(false);
+        }
+        setProgressText("No faces detected.");
+        return;
+      }
 
-  console.log(`Detected ${faces.length} face(s).`);
-  
-  if (!isFaceDetected) {
-    setIsFaceDetected(true);
-  }
+      console.log(`Detected ${faces.length} face(s).`);
 
+      if (!isFaceDetected) {
+        setIsFaceDetected(true);
+      }
 
-  let text = "Scanning your face";
-  let newProgressValue = progressValue; 
+      let text = "Scanning your face";
+      let newProgressValue = progressValue;
 
-  if (progressValue >= 0.2 && progressValue < 0.5) {
-    text = "Align your face";
-    newProgressValue = Math.min(progressValue + 0.1, 0.5); 
-  } else if (progressValue >= 0.5 && progressValue < 1) {
-    text = "Verifying...";
-    newProgressValue = Math.min(progressValue + 0.1, 1); 
-  } else if (progressValue === 1) {
-    text = "Verification Successful!";
-    if (!captureTriggeredRef.current) {
-      captureTriggeredRef.current = true;
-      capturePhoto();
-    }
-  }
- 
-  if (newProgressValue !== progressValue) {
-    setProgressText(text);
-    setProgressValue(newProgressValue); 
-  }
-}, [isFaceDetected, progressValue, capturePhoto]);
+      if (progressValue >= 0.2 && progressValue < 0.5) {
+        text = "Align your face";
+        newProgressValue = Math.min(progressValue + 0.1, 0.5);
+      } else if (progressValue >= 0.5 && progressValue < 1) {
+        text = "Verifying...";
+        newProgressValue = Math.min(progressValue + 0.1, 1);
+      } else if (progressValue === 1) {
+        text = "Verification Successful!";
+        if (!captureTriggeredRef.current) {
+          captureTriggeredRef.current = true;
+          capturePhoto();
+        }
+      }
+
+      if (newProgressValue !== progressValue) {
+        setProgressText(text);
+        setProgressValue(newProgressValue);
+      }
+    },
+    [isFaceDetected, progressValue, capturePhoto]
+  );
 
   useEffect(() => {
     if (!cameraActive) {
@@ -237,7 +231,6 @@ const handleFacesDetection = useCallback(async (faces) => {
     if (!photoCaptured) return;
     setPortalVisible(false);
   };
-  
 
   if (!device) {
     return <Text style={styles.noDeviceText}>No Camera Device Found</Text>;
@@ -323,48 +316,47 @@ const handleFacesDetection = useCallback(async (faces) => {
       </BottomSheet>
 
       <Portal>
-  <Modal
-    visible={portalVisible}
-    onDismiss={closePortal}
-    contentContainerStyle={styles.portalContainer}
-  >
-    <Dialog.Title style={{ textAlign: "center" }}>Success</Dialog.Title>
-    <Dialog.Content style={{ alignItems: "center" }}>
-      <Paragraph style={{ marginBottom: 16 }}>
-        Face verified successfully!
-      </Paragraph>
+        <Modal
+          visible={portalVisible}
+          onDismiss={closePortal}
+          contentContainerStyle={styles.portalContainer}
+        >
+          <Dialog.Title style={{ textAlign: "center" }}>Success</Dialog.Title>
+          <Dialog.Content style={{ alignItems: "center" }}>
+            <Paragraph style={{ marginBottom: 16 }}>
+              Face verified successfully!
+            </Paragraph>
 
-      <View style={styles.imageContainer}>
-        {capturedPhotoUri ? (
-          <Image
-            source={{ uri: capturedPhotoUri }}
-            style={styles.capturedImage}
-          />
-        ) : (
-          <Text style={styles.fallbackText}>No image available</Text>
-        )}
-      </View>
+            <View style={styles.imageContainer}>
+              {capturedPhotoUri ? (
+                <Image
+                  source={{ uri: capturedPhotoUri }}
+                  style={styles.capturedImage}
+                />
+              ) : (
+                <Text style={styles.fallbackText}>No image available</Text>
+              )}
+            </View>
 
-      <MaterialIcons
-        name="check-circle"
-        size={25}
-        color="green"
-        style={styles.successIcon}
-      />
-    </Dialog.Content>
-    <Button
-      mode="contained"
-      onPress={() => {
-        closePortal();
-        navigation.navigate("Account");
-      }}
-      style={styles.doneButton}
-    >
-      Close
-    </Button>
-  </Modal>
-</Portal>
-
+            <MaterialIcons
+              name="check-circle"
+              size={25}
+              color="green"
+              style={styles.successIcon}
+            />
+          </Dialog.Content>
+          <Button
+            mode="contained"
+            onPress={() => {
+              closePortal();
+              navigation.navigate("Account");
+            }}
+            style={styles.doneButton}
+          >
+            Close
+          </Button>
+        </Modal>
+      </Portal>
     </View>
   );
 };
