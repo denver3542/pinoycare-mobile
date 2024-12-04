@@ -22,10 +22,12 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useVerifyUser } from "./hooks/useVerifyUser";
 import { Worklets } from "react-native-worklets-core";
+import { useNavigation } from "@react-navigation/native";
 import * as Progress from "react-native-progress";
 
 const FaceDetection = ({ navigation }) => {
   const theme = useTheme();
+  // const navigation = useNavigation();
   const animation = useRef(new Animated.Value(0)).current;
   const [progressValue, setProgressValue] = useState(0);
   const [progressText, setProgressText] = useState("Scanning your face");
@@ -107,46 +109,40 @@ const FaceDetection = ({ navigation }) => {
   const capturePhoto = async () => {
     try {
       if (!cameraRef.current) {
-        console.error("Camera reference is not set.");
         Alert.alert("Error", "Camera not ready. Please try again.");
         return;
       }
-
-      console.log("Attempting to capture photo...");
+  
       const photo = await cameraRef.current.takePhoto();
-
+  
       if (!photo || !photo.path) {
-        console.error("No photo captured or invalid path.");
         Alert.alert("Error", "Failed to capture photo. Please try again.");
         return;
       }
-
+  
       const faceImage = {
         uri: `file://${photo.path}`,
         type: "image/jpeg",
         name: photo.path.split("/").pop(),
       };
-
-      console.log("Prepared faceImage for verification:", faceImage);
-
+  
       setCapturedPhotoUri(faceImage.uri);
       setPortalVisible(true);
-
+  
       await verifyFace.mutateAsync(faceImage);
-
+  
       console.log("Face verification successful!");
     } catch (error) {
-      console.error("Error capturing photo or verifying face:", error);
-
       setCapturedPhotoUri(null);
       setPortalVisible(false);
-
+  
       Alert.alert(
         "Verification Failed",
         error.message || "An error occurred during face verification."
       );
     }
   };
+  
 
   const handleFacesDetection = useCallback(
     async (faces) => {
@@ -305,7 +301,7 @@ const FaceDetection = ({ navigation }) => {
       <Portal>
         <Modal
           visible={portalVisible}
-          onDismiss={closePortal}
+          onDismiss={() => {}}
           contentContainerStyle={styles.portalContainer}
         >
           <Dialog.Title style={{ textAlign: "center" }}>Success</Dialog.Title>

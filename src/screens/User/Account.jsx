@@ -21,7 +21,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import SkillsChip from "./Profile/Skills/SkillsCardList";
 import SeminarsTrainings from "./Profile/SeminarsAndTrainings/SeminarsTrainingsCardList";
