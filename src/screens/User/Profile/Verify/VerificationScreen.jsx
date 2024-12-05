@@ -37,16 +37,19 @@ const VerificationScreen = () => {
       Alert.alert("No Image", "Please capture an image.");
       return;
     }
-
+  
     let formData = new FormData();
     formData.append("verification", {
       uri: imageUri,
       type: `image/${fileName.split(".").pop().toLowerCase()}`,
       name: fileName,
     });
-
+  
     setLoading(true);
+ 
     try {
+      navigation.navigate("FacialRecognition");
+   
       const response = await axiosInstance.post(
         "/user/profile/submit-verification",
         formData,
@@ -57,13 +60,8 @@ const VerificationScreen = () => {
           },
         }
       );
-
-      await AsyncStorage.setItem(
-        "verificationData",
-        JSON.stringify(response.data)
-      );
+      await AsyncStorage.setItem( "verificationData",JSON.stringify(response.data));
       queryClient.invalidateQueries("verificationData");
-      navigation.navigate("FacialRecognition");
       console.log(response.data);
     } catch (error) {
       console.error("Failed to submit verification:", error);
@@ -75,6 +73,7 @@ const VerificationScreen = () => {
       setLoading(false);
     }
   };
+  
 
   const captureImage = async () => {
     if (cameraRef) {

@@ -28,11 +28,7 @@ const educations = ({ educations }) => {
     const [showAllEducations, setShowAllEducations] = useState(false);
     const limitedEducations = showAllEducations ? educations : educations.slice(0, 3);
     const navigation = useNavigation();
-
-    const navigateToAddEducation = () => {
-        navigation.navigate("AddEducationScreen");
-    };
-
+  
     const navigateToEditEducation = () => {
         navigation.navigate("EditEducation");
     };
@@ -44,7 +40,7 @@ const educations = ({ educations }) => {
                     <Text style={styles.cardTitle}>Education</Text>
                 </TouchableOpacity>
             </View>
-            <Divider style={{ marginBottom: 5, bottom: 10, color: 'red', height: 1, }} />
+            <Divider style={{ marginBottom: 5, bottom: 10, height: 1, }} />
             <View style={styles.educationContainer}>
                 {limitedEducations.map((education, index) => (
                     <React.Fragment key={index}>
@@ -59,18 +55,10 @@ const educations = ({ educations }) => {
                                 </Text>
                             </View>
                         </View>
-                        {/* {index < limitedEducations.length - 1 && <Divider style={styles.divider} />} */}
                     </React.Fragment>
                 ))}
-                {/* <Divider style={styles.divider} /> */}
             </View>
-            {/* {educations?.length > 3 && (
-                <TouchableOpacity onPress={() => setShowAllEducations((prev) => !prev)} style={styles.showMoreLessButton}>
-                    <Text style={styles.showMoreLessText}>
-                        {showAllEducations ? "Show Less" : "Show More"}
-                    </Text>
-                </TouchableOpacity>
-            )} */}
+           
         </View>
     );
 };
@@ -102,7 +90,7 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: 'row',
     },
-    educationItem: { marginVertical: 10, },
+    educationItem: { marginVertical: 0, },
     educationContainer: {
         paddingVertical: 0,
     },
