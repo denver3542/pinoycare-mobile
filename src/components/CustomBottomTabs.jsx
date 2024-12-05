@@ -19,7 +19,7 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
 
 const tabScreens = [
-  { name: "Feeds", component: Feeds, iconName: "list" },
+  { name: "Feeds", component: Feeds, iconName: "menu" },
   { name: "Find Jobs", component: Jobs, iconName: "search" },
   { name: "Dashboard", component: Dashboard, iconName: "dashboard" },
   { name: "Application", component: Applications, iconName: "assignment" },

@@ -10,6 +10,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import HeaderMessageNotification from '../../../components/HeaderMessageNotification';
 import HeaderNotification from '../../../components/HeaderNotification';
 import { useSaveJob } from './hook/useJobs';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 const Matching = ({ rating }) => {
     const { colors } = useTheme();
@@ -117,10 +118,12 @@ const JobListings = ({ activeNav, rating }) => {
         <HeaderNotification />
       </Appbar.Header>
     
-        <FlatList
+        <Animated.FlatList
           data={filteredJobs}
           renderItem={renderJob}
           keyExtractor={(item) => item.id.toString()}
+          keyboardDismissMode="on-drag"
+          itemLayoutAnimation={LinearTransition}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 15,
   },
   iconButton: {
     position: 'absolute',
