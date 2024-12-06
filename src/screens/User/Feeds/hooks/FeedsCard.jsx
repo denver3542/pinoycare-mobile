@@ -56,28 +56,53 @@ const FeedsCard = ({ feed }) => {
   const ReactionButton = memo(({ postId, userReactions }) => {
     const { user } = useUser();
     const reactToPostMutation = useReactToPost();
-    const reactionCount = userReactions.filter((react) => react.reaction === "love").length;
-    const selectedReaction = userReactions.some((react) => react.user_id === user.id && react.reaction === "love");
 
+    const [localReactions, setLocalReactions] = useState(userReactions);
+    const reactionCount = localReactions.filter((react) => react.reaction === "love").length;
+    const selectedReaction = localReactions.some(
+      (react) => react.user_id === user.id && react.reaction === "love"
+    );
+  
     const handleReact = async () => {
       try {
-        // Update selectedReaction immediately
         const newSelectedReaction = !selectedReaction;
-        // Optimistic UI update
-        // You can directly update the state or trigger a refresh from a parent component
-        // For simplicity, I'm assuming you have a mechanism to handle optimistic updates
-        // setUserReactions(newReactions); // Assuming setUserReactions is a state updater function
-        // Make the actual API call
-        reactToPostMutation.mutate({ postId, reaction: newSelectedReaction ? "love" : null });
+      
+        setLocalReactions((prevReactions) => {
+          if (newSelectedReaction) {
+            return [...prevReactions, { user_id: user.id, reaction: "love" }];
+          }
+          return prevReactions.filter(
+            (react) => !(react.user_id === user.id && react.reaction === "love")
+          );
+        });
+    
+        await reactToPostMutation.mutateAsync({
+          postId,
+          reaction: newSelectedReaction ? "love" : null,
+        });
       } catch (error) {
         console.error("Error reacting to post:", error);
+  
+        setLocalReactions(userReactions);
       }
     };
-
+  
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, paddingBottom: 15 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          paddingHorizontal: 15,
+          paddingBottom: 15,
+        }}
+      >
         <TouchableOpacity onPress={handleReact} style={{ borderRadius: 50 }}>
-          <Text style={{ color: selectedReaction ? "red" : "black", fontSize: 20 }}>
+          <Text
+            style={{
+              color: selectedReaction ? "red" : "black",
+              fontSize: 20,
+            }}
+          >
             {selectedReaction ? "❤️" : "❤️"}
           </Text>
         </TouchableOpacity>
@@ -85,6 +110,7 @@ const FeedsCard = ({ feed }) => {
       </View>
     );
   });
+  
 
   return (
     <View style={styles.container}>
@@ -119,7 +145,8 @@ const FeedsCard = ({ feed }) => {
 
         <Divider style={{ marginVertical: 10 }} />
         <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-          <ReactionButton postId={feed.id} reaction="love" userReactions={feed.reactions || []} />
+        <ReactionButton postId={feed.id} userReactions={feed.reactions || []} />
+
         </View>
 
         <Portal>

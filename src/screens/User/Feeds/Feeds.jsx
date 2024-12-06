@@ -10,7 +10,7 @@ import { FlashList } from "@shopify/flash-list";
 
 function Feeds({ route, navigation }) {
   const { colors } = useTheme();
-  const { data: feeds = [], isRefetching, refetch } = useFeeds(); // Provide a default value for feeds
+  const { data: feeds = [], isRefetching, refetch } = useFeeds(); 
   const [refreshing, setRefreshing] = useState(false);
   const flashListRef = useRef(null);
   const { post } = route.params || {}; 

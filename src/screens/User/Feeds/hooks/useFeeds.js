@@ -66,64 +66,47 @@ async function reactToPost(postId, reaction) {
 
 export function useReactToPost() {
   const queryClient = useQueryClient();
-  const navigation = useNavigation();
 
   return useMutation(
     async ({ postId, reaction }) => {
-      // Optimistically update the UI assuming the reaction has been successfully added
-      queryClient.setQueryData(["feeds"], (prevData) => {
-        return prevData.map((post) => {
-          if (post.id === postId) {
-            // Determine the previous and new reactions
-            const prevReactions = post.reactions || [];
-            const newReactions = reaction ? [...prevReactions, { reaction }] : prevReactions.filter((react) => react.reaction !== reaction);
-
-            return {
-              ...post,
-              reactions: newReactions,
-            };
-          }
-          return post;
-        });
-      });
-
-      // Make the actual API call to add the reaction
       return reactToPost(postId, reaction);
     },
     {
-      // Rollback the optimistic update on mutation failure
-      onError: async (error, variables, context) => {
-        const { postId } = context;
-        await queryClient.cancelQueries(["feeds"]);
-
-        queryClient.setQueryData(["feeds"], (prevData) => {
-          return prevData.map((post) => {
+      onMutate: async ({ postId, reaction }) => {
+        const user = JSON.parse(await AsyncStorage.getItem("upcare_user"));
+        const userId = user.id;
+       
+        const prevData = queryClient.getQueryData(["feeds"]);
+       
+        queryClient.setQueryData(["feeds"], (oldFeeds) =>
+          oldFeeds.map((post) => {
             if (post.id === postId) {
-              // Revert to the previous reactions
-              return {
-                ...post,
-                reactions: context.prevReactions,
-              };
+              const prevReactions = post.reactions || [];
+              const newReactions = reaction
+                ? [...prevReactions, { user_id: userId, reaction }]
+                : prevReactions.filter(
+                    (react) => !(react.user_id === userId && react.reaction === "love")
+                  );
+              return { ...post, reactions: newReactions };
             }
             return post;
-          });
-        });
+          })
+        );
+       
+        return { prevData };
       },
-      // Invalidate the feeds query on mutation success
+      onError: (error, { postId }, context) => {
+        queryClient.setQueryData(["feeds"], context.prevData);
+      },
       onSettled: () => {
-        queryClient.invalidateQueries("feeds");
+        queryClient.invalidateQueries(["feeds"]);
       },
-      // Context passed to onError to store necessary data for rollback
-      onMutate: async ({ postId, reaction }) => {
-        const prevData = queryClient.getQueryData(["feeds"]);
-
-        // Store previous reactions for rollback
-        const prevReactions = prevData
-          .find((post) => post.id === postId)
-          .reactions.slice();
-
-        return { postId, prevReactions };
+      onSuccess: (updatedPost) => {
+        queryClient.setQueryData(["feeds"], (oldFeeds) =>
+          oldFeeds.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+        );
       },
     }
   );
 }
+
