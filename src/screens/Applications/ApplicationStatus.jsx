@@ -84,7 +84,7 @@ const ApplicationStatus = () => {
                     <View style={{ top: 0 }}>
                         <View style={[styles.cardContent, { alignItems: 'center', margin: 8 }]}>
                             <Text variant='titleLarge' style={{ fontWeight: 'bold' }}>{job.title}</Text>
-                            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#0A3480' }}>{job.company}</Text>
+                            <Text variant='titleLarge' style={{ fontWeight: 'bold', color: '#0A3480' }} numberOfLines={1}>{job.company}</Text>
                             <Text style={{ color: 'gray' }} variant="labelSmall"> Posted {job.created_at ? fDate(job.created_at) : 'n/a'}</Text>
                         </View>
                         <View style={{ flexGrow: 1, backgroundColor: '#fff', padding: 20, marginHorizontal: 8 ,  borderRadius: 14, borderTopRightRadius: 14, borderWidth: 0.5,borderColor: '#ddd' }}>
