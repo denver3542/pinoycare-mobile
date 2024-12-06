@@ -40,7 +40,7 @@ const educations = ({ educations }) => {
                     <Text style={styles.cardTitle}>Education</Text>
                 </TouchableOpacity>
             </View>
-            <Divider style={{ marginBottom: 5, bottom: 10, height: 1, }} />
+            <Divider style={{ marginBottom: 0, bottom: 10, height: 1, }} />
             <View style={styles.educationContainer}>
                 {limitedEducations.map((education, index) => (
                     <React.Fragment key={index}>
