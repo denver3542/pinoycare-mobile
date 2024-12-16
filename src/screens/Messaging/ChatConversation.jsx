@@ -109,9 +109,9 @@ const ChatConversation = () => {
       });
   
       try {
-        await send(formData); // Using the mutation function `send`
+        await send(formData); 
         console.log("Message sent successfully");
-        refetch(); // Refetch inbox after sending the message
+        refetch(); 
         setText("");
         setReplyTo(null);
         setAttachedFiles([]);

@@ -1,34 +1,15 @@
-import React, { useEffect, useState } from "react";
-import HTMLView from "react-native-htmlview";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  RefreshControl,
-  useWindowDimensions,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import {
-  Appbar,
-  Button,
-  Card,
-  Chip,
-  Divider,
-  Modal,
-  Portal,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import { fDate } from "../../../utils/formatTime";
-import { addCommasToNumber } from "../../../utils/currencyFormat";
-import { useUser } from "../../hooks/useUser";
-import useJob from "../../screens/User/Jobs/hook/useJobs";
-import { useQueryClient } from "@tanstack/react-query";
-import { MaterialIcons } from "@expo/vector-icons";
-import RenderHtml from "react-native-render-html";
-import JobMatching from "../User/Jobs/jobMatching";
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, ScrollView, StyleSheet, Dimensions, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { Appbar, Button, Card, Chip, Modal, Portal, Text, useTheme, Divider } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
+import RenderHtml from 'react-native-render-html';
+import JobMatching from '../User/Jobs/jobMatching';
+import { fDate } from '../../../utils/formatTime';
+import { addCommasToNumber } from '../../../utils/currencyFormat';
+import { useUser } from '../../hooks/useUser';
+import useJob from '../../screens/User/Jobs/hook/useJobs';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Job() {
   const { colors } = useTheme();
@@ -38,11 +19,10 @@ export default function Job() {
   const { user, isFetched } = useUser();
   const [isApplied, setIsApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState(null);
-  const [questions, setQuestions] = useState([]);
   const { data: jobData, isFetching, refetch } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
   const { width: contentWidth } = useWindowDimensions();
-  const windowWidth = Dimensions.get("window").width;
+  const windowWidth = Dimensions.get('window').width;
   const maxWidth = Math.min(windowWidth, 768);
   const imageHeight = (maxWidth * 9) / 10;
   const queryClient = useQueryClient();
@@ -51,17 +31,14 @@ export default function Job() {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const truncatedDescriptionLength = 150;
 
-  const toggleDescription = () => {
-    setIsDescriptionExpanded(!isDescriptionExpanded);
-  };
+  const toggleDescription = useCallback(() => {
+    setIsDescriptionExpanded(prevState => !prevState);
+  }, []);
 
   const renderDescription = () => {
-    if (!job?.description) return "";
+    if (!job?.description) return null;
 
-    const truncatedDescription = job.description.substring(
-      0,
-      truncatedDescriptionLength
-    );
+    const truncatedDescription = job.description.substring(0, truncatedDescriptionLength);
     const shouldShowMore = job.description.length > truncatedDescriptionLength;
     const descriptionToShow = isDescriptionExpanded
       ? job.description
@@ -70,84 +47,49 @@ export default function Job() {
     return (
       <RenderHtml
         contentWidth={contentWidth}
-        source={{
-          html: `<div style="text-align: justify;">${descriptionToShow}</div>`,
-        }}
+        source={{ html: `<div style="text-align: justify;">${descriptionToShow}</div>` }}
       />
     );
   };
 
-  const formatSalary = (salary) => {
+  const formatSalary = useCallback((salary) => {
     if (!salary) return "n/a";
     return `${(salary / 1000).toFixed(0)}k`;
-  };
+  }, []);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
-    refetch()
-      .then(() => {})
-      .catch(() => {})
-      .finally(() => {
-        setRefreshing(false);
-      });
-  };
+    refetch().finally(() => {
+      setRefreshing(false);
+    });
+  }, [refetch]);
 
   useEffect(() => {
     if (user && isFetched) {
-      // console.log("User data:", user);
-      // console.log("Job data:", job);
-
-      const appliedJob = job.application?.find(
-        (app) => app.user_id === user.id
-      );
+      const appliedJob = job.application?.find(app => app.user_id === user.id);
       setIsApplied(!!appliedJob);
       setApplicationStatus(appliedJob ? appliedJob.status : null);
-
-      if (appliedJob) {
-        console.log(`User has an application for the job with ID ${job.id}`);
-        console.log(`Application status: ${appliedJob.status}`);
-      } else {
-        console.log(
-          `User does not have an application for the job with ID ${job.id}`
-        );
-      }
-
-      console.log(
-        `Checking application for job with ID ${job.id}: ${
-          appliedJob ? "Application found" : "No application found"
-        }`
-      );
     }
   }, [user, isFetched, job]);
 
-  useEffect(() => {
-    if (job && !isFetching) {
-      setQuestions(job.question || []);
-    }
-  }, [job, isFetching]);
-
-  const handleSave = () => {
-    showModal(true);
-  };
-
-  const handleApply = () => {
+  const handleSave = useCallback(() => setShowSaveModal(true), []);
+  const handleApply = useCallback(() => {
     if (!user) {
       setShowApplyModal(true);
     } else {
-      navigation.navigate("Questionnaire", { job });
+      navigation.navigate('Questionnaire', { job });
     }
-  };
+  }, [user, job, navigation]);
 
-  const signIn = () => {
-    navigation.navigate("Login");
+  const signIn = useCallback(() => {
+    navigation.navigate('Login');
     closeModal();
-  };
+  }, [navigation]);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setShowSaveModal(false);
     setShowApplyModal(false);
-  };
-
+  }, [])
   return (
     <ScrollView
       contentContainerStyle={styles.scrollContainer}
@@ -366,7 +308,7 @@ export default function Job() {
               Vacancy
             </Text>
             <View style={{ paddingHorizontal: 0 }}>
-              <View style={styles.chipContainer}>
+              <View style={styles.chipStyle}>
                 <Chip
                   textStyle={{
                     minHeight: 14,
@@ -533,6 +475,10 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   chipContainer: {
+    // flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  chipStyle: {
     flexDirection: "row",
     flexWrap: "wrap",
   },

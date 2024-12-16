@@ -24,7 +24,7 @@ const FeedsCard = ({ feed }) => {
   const imageHeight = maxWidth * 9 / 9;
   const handleDownload = async () => {
     try {
-      // Explanation to user for permission request
+  
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
