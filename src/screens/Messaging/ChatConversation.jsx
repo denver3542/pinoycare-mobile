@@ -255,11 +255,12 @@ const ChatConversation = () => {
         contact.id
       )}-${Math.max(user.id, contact.id)}`;
       const channel = ably.channels.get(channelName);
+
       channel.subscribe('message', (message) => {
+        console.log("Received message:", message);
         const { data } = message;
     
         if (data) {
-            // Validate if required properties are present
             if (data.from_user_id && data.to_user_id) {
                 console.log("Received message:", data);
                 refetch();

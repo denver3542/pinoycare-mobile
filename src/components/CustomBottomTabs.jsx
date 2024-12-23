@@ -19,7 +19,7 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
 
 const tabScreens = [
-  { name: "Feeds", component: Feeds, iconName: "menu" },
+  { name: "Feeds", component: Feeds, iconName: "list" },
   { name: "Find Jobs", component: Jobs, iconName: "search" },
   { name: "Dashboard", component: Dashboard, iconName: "dashboard" },
   { name: "Application", component: Applications, iconName: "assignment" },
@@ -87,7 +87,8 @@ function CustomBottomTabs() {
 
     const subscription = Notifications.addNotificationReceivedListener(
       (notification) => {
-        // Disable notification alert if this case is true
+        console.log("Notification received in foreground:", notification);
+        alert(`Notification received: ${notification.request.content.title}`);
         if (isMessagingScreen) {
           Notifications.dismissNotificationAsync(
             notification.request.identifier
