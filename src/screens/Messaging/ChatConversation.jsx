@@ -468,7 +468,7 @@ const ChatConversation = () => {
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 40}
     >
       <Spinner visible={isLoading} color="#0A3480" animation="fade" />
-      <Appbar.Header mode="small">
+      <Appbar.Header mode="small" style={{ backgroundColor: "#0A3480" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <CustomAvatar
           src={contact.media[0]?.original_url}
@@ -476,7 +476,7 @@ const ChatConversation = () => {
           style={{ marginRight: 10 }}
           size={34}
         />
-        <Appbar.Content title={data?.otherUser?.name} />
+        <Appbar.Content title={data?.otherUser?.name}  titleStyle={{ color: "white" }}/>
       </Appbar.Header>
 
       {isFetched && (

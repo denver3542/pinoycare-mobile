@@ -121,7 +121,7 @@ export default function Job() {
               <View style={styles.chipContainer}>
                 {job.skills && job.skills.length > 0 ? (
                   job.skills.map((item) => (
-                    <Chip key={item.id} textStyle={{
+                    <Text key={item.id} textStyle={{
                       minHeight: 14,
                       lineHeight: 14,
                       marginRight: 10,
@@ -130,7 +130,7 @@ export default function Job() {
                       fontSize: 14
                     }} style={styles.skillChip}>
                       <Text>{item.skill_name}</Text>
-                    </Chip>
+                    </Text>
                   ))
                 ) : (
                   <Text>No Skills Required</Text>
@@ -139,12 +139,12 @@ export default function Job() {
             </View>
           </View>
           <View style={[styles.cardContent]}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 20 }}>Shift and Schedule</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5, fontSize: 20 }}>TEST</Text>
             <View style={{ paddingHorizontal: 10 }}>
               <View style={styles.chipContainer}>
                 {job.schedules && job.schedules.length > 0 ? (
                   job.schedules.map((schedule, index) => (
-                    <Chip key={index} textStyle={{
+                    <Text key={index} textStyle={{
                       minHeight: 14,
                       lineHeight: 14,
                       marginRight: 10,
@@ -153,7 +153,7 @@ export default function Job() {
                       fontSize: 14
                     }} style={styles.skillChip}>
                       <Text>{schedule}</Text>
-                    </Chip>
+                    </Text>
                   ))
                 ) : (
                   <Text>No Schedule Details</Text>

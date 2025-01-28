@@ -252,20 +252,21 @@ export default function Job() {
               <View style={styles.chipContainer}>
                 {job.skills && job.skills.length > 0 ? (
                   job.skills.map((item) => (
-                    <Chip
+                    <Text
                       key={item.id}
-                      textStyle={{
-                        minHeight: 14,
-                        lineHeight: 14,
-                        marginRight: 10,
-                        marginLeft: 10,
-                        marginVertical: 5,
-                        fontSize: 14,
-                      }}
-                      style={styles.skillChip}
+                      style={{
+                      marginVertical: 3,
+                      marginHorizontal: 0,
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      backgroundColor: "#F5F5F5",
+                      borderRadius: 10,
+                      borderWidth: 0.5,
+                      borderColor: "#ddd",
+                    }}
                     >
-                      <Text>{item.skill_name}</Text>
-                    </Chip>
+                      {item.skill_name}
+                    </Text>
                   ))
                 ) : (
                   <Text>No Skills Required</Text>
@@ -281,20 +282,22 @@ export default function Job() {
               <View style={styles.chipContainer}>
                 {job.schedules && job.schedules.length > 0 ? (
                   job.schedules.map((schedule, index) => (
-                    <Chip
+                    <Text
                       key={index}
-                      textStyle={{
-                        minHeight: 14,
-                        lineHeight: 14,
-                        marginRight: 10,
-                        marginLeft: 10,
-                        marginVertical: 5,
-                        fontSize: 14,
-                      }}
-                      style={styles.skillChip}
+                      style={{
+                      marginVertical: 3,
+                      marginHorizontal: 0,
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      backgroundColor: "#F5F5F5",
+                      borderRadius: 10,
+                      borderWidth: 0.5,
+                      borderColor: "#ddd",
+                    //   color: "black",
+                    }}
                     >
-                      <Text>{schedule}</Text>
-                    </Chip>
+                      {schedule}
+                    </Text>
                   ))
                 ) : (
                   <Text>No Schedule Details</Text>
@@ -309,19 +312,21 @@ export default function Job() {
             </Text>
             <View style={{ paddingHorizontal: 0 }}>
               <View style={styles.chipStyle}>
-                <Chip
-                  textStyle={{
-                    minHeight: 14,
-                    lineHeight: 14,
-                    marginRight: 10,
-                    marginLeft: 10,
-                    marginVertical: 5,
-                    fontSize: 14,
-                  }}
-                  style={styles.skillChip}
+                <Text
+                  style={{
+                      marginVertical: 3,
+                      marginHorizontal: 0,
+                      paddingHorizontal: 10,
+                      paddingVertical: 2,
+                      backgroundColor: "#F5F5F5",
+                      borderRadius: 10,
+                      borderWidth: 0.5,
+                      borderColor: "#ddd",
+                    //   color: "black",
+                    }}
                 >
-                  <Text>{job.max_applicant ?? "n/a"} vacant</Text>
-                </Chip>
+                  {job.max_applicant ?? "n/a"} vacant
+                </Text>
               </View>
             </View>
           </View>
@@ -476,7 +481,7 @@ const styles = StyleSheet.create({
   },
   chipContainer: {
     // flexDirection: "row",
-    flexWrap: "wrap",
+    // flexWrap: "wrap",
   },
   chipStyle: {
     flexDirection: "row",
