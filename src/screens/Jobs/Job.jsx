@@ -146,23 +146,22 @@ export default function Job() {
 
       <View style={styles.contentWrapper}>
         <View style={styles.card}>
-          <View style={[styles.cardContent, { alignItems: "center" }]}>
+          <View
+            style={[styles.cardContent, { alignItems: "center", margin: 8 }]}
+          >
             <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
               {job.title}
             </Text>
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: "#5690FD",
-                textAlign: "center",
-                fontSize: 18,
-              }}
-            >
+             <Text
+                           variant="titleLarge"
+                           style={{ fontWeight: "bold", color: "#0A3480" }}
+                           numberOfLines={1}
+                         >
               {job.creator.name}
             </Text>
             <Text style={{ color: "gray" }} variant="labelSmall">
               {" "}
-              Posted {job.created_at ? fDate(job.created_at) : "n/a"}
+              Posted {job.created_at ? fDate(job.created_at) : ""}
             </Text>
           </View>
 
@@ -348,13 +347,13 @@ export default function Job() {
                 <Text
                   style={{
                     marginVertical: 2,
-                        marginHorizontal: 0,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        backgroundColor: "#fff",
-                        borderRadius: 10,
-                        borderWidth: 0.5,
-                        borderColor: "#ddd",
+                    marginHorizontal: 0,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    backgroundColor: "#fff",
+                    borderRadius: 10,
+                    borderWidth: 0.5,
+                    borderColor: "#ddd",
                     //   color: "black",
                   }}
                 >
@@ -431,15 +430,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
+    backgroundColor: "#F4F7FB",
     flex: 1,
   },
 
   cardContent: {
     paddingHorizontal: 8,
     paddingVertical: 15,
+    gap: 5,
   },
   modal: {
     backgroundColor: "white",
