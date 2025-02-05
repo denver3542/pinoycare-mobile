@@ -17,7 +17,7 @@ const JobApplications = ({ application }) => {
   }
 
   const { job } = application;
-  const { title, company, media } = job;
+  const { title, company, media, creator } = job;
   const applicationStatus = getApplicationStatus(
     dashboardData.applications,
     job.id
@@ -49,7 +49,7 @@ const JobApplications = ({ application }) => {
             <View style={styles.applicationDetails}>
               <View>
                 <Text style={styles.appliedProfession}>{title || "n/a"}</Text>
-                <Text style={styles.appliedCompany}>{company || "n/a"}</Text>
+                <Text style={styles.appliedCompany}>{creator.name || "n/a"}</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                   <Badge
                     value={applicationStatus || "n/a"}

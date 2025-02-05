@@ -18,7 +18,7 @@ const JobApplicationList = ({ application }) => {
   }
 
   const { job, updated_at } = application;
-  const { title = "n/a", company = "n/a", media = [] } = job;
+  const { title = "n/a", company = "n/a", media = [], creator } = job;
   const applicationStatus = getApplicationStatus(
     dashboardData.applications,
     job.id
@@ -55,7 +55,7 @@ const JobApplicationList = ({ application }) => {
         <View style={styles.applicationDetails}>
           <View style={{ alignSelf: "flex-start" }}>
             <Text style={styles.appliedProfession}>{title}</Text>
-            <Text style={styles.appliedCompany}>{company}</Text>
+            <Text style={styles.appliedCompany}>{creator.name}</Text>
             <View
               style={{
                 flexDirection: "row",

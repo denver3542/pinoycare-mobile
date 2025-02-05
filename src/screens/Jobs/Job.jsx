@@ -146,23 +146,22 @@ export default function Job() {
 
       <View style={styles.contentWrapper}>
         <View style={styles.card}>
-          <View style={[styles.cardContent, { alignItems: "center" }]}>
+          <View
+            style={[styles.cardContent, { alignItems: "center", margin: 8 }]}
+          >
             <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
               {job.title}
             </Text>
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: "#5690FD",
-                textAlign: "center",
-                fontSize: 18,
-              }}
-            >
+             <Text
+                           variant="titleLarge"
+                           style={{ fontWeight: "bold", color: "#0A3480" }}
+                           numberOfLines={1}
+                         >
               {job.creator.name}
             </Text>
             <Text style={{ color: "gray" }} variant="labelSmall">
               {" "}
-              Posted {job.created_at ? fDate(job.created_at) : "n/a"}
+              Posted {job.created_at ? fDate(job.created_at) : ""}
             </Text>
           </View>
 
@@ -348,13 +347,13 @@ export default function Job() {
                 <Text
                   style={{
                     marginVertical: 2,
-                        marginHorizontal: 0,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        backgroundColor: "#fff",
-                        borderRadius: 10,
-                        borderWidth: 0.5,
-                        borderColor: "#ddd",
+                    marginHorizontal: 0,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    backgroundColor: "#fff",
+                    borderRadius: 10,
+                    borderWidth: 0.5,
+                    borderColor: "#ddd",
                     //   color: "black",
                   }}
                 >
@@ -431,100 +430,66 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
+    backgroundColor: "#F4F7FB",
     flex: 1,
   },
-
+  card: {
+    flex: 1,
+  },
   cardContent: {
     paddingHorizontal: 8,
     paddingVertical: 15,
+    gap: 5,
   },
-  modal: {
-    backgroundColor: "white",
-    padding: 20,
-    margin: 20,
-    borderRadius: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  button: {
-    marginTop: 10,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingBottom: 20,
-    backgroundColor: "#F4F7FB",
-  },
-  card: {
+  tabContent: {
     width: "100%",
+    padding: 15,
+    // backgroundColor: 'white',
+    marginVertical: 0,
+  },
+  image: {
     borderRadius: 0,
-    margin: 5,
-    backgroundColor: "#F4F7FB",
-  },
-  saveButton: {},
-  applyButton: {
-    backgroundColor: "#0A3480",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  company: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  metaContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  metaIcon: {
-    fontSize: 16,
-  },
-  metaText: {
-    fontSize: 14,
-    marginLeft: 5,
-  },
-  divider: {
-    marginVertical: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  description: {
-    marginTop: 5,
-    textAlign: "justify",
-  },
-
-  infoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  infoText: {
-    fontSize: 16,
-    marginLeft: 5,
-    marginBottom: 0,
-  },
-  chipContainer: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
-  },
-  chipStyle: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    height: 400,
+    width: "100%",
   },
   skillChip: {
-    margin: 2,
+    marginRight: 5,
+    marginBottom: 5,
+    borderRadius: 8,
+    backgroundColor: "#F5F5F5",
+    borderWidth: 0.5,
+    borderColor: "#ddd",
   },
-  a: {
-    fontWeight: "300",
-    color: "red",
+  jobPosition: {
+    fontSize: 12,
+    color: "gray",
+  },
+  jobTitle: {
+    fontWeight: "bold",
+    fontSize: 13,
+  },
+  appliedStatusBadge: {
+    backgroundColor: "green",
+    marginTop: 5,
+  },
+  chipText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  headerTitle: {
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  questionContainer: {
+    marginBottom: 10,
+  },
+  questionTitle: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  answerText: {
+    color: "#454545",
+    marginHorizontal: 15,
+    fontWeight: "700",
   },
 });

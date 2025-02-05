@@ -37,6 +37,7 @@ const ApplicationListCard = ({ application }) => {
     type,
     salary_from,
     salary_to,
+    creator
   } = job;
 
   const imageUri =
@@ -68,7 +69,7 @@ const ApplicationListCard = ({ application }) => {
           >
             <View>
               <Text style={styles.jobTitle}>{title || "n/a"}</Text>
-              <Text style={styles.company}>{company || "n/a"}</Text>
+              <Text style={styles.company}>{creator.name || "n/a"}</Text>
             </View>
             <Icon source="chevron-right" size={25} />
           </View>

@@ -94,10 +94,7 @@ const ApplicationStatus = () => {
           />
         )}
         <View style={styles.card}>
-          <View style={{ top: 0 }}>
-            <View
-              style={[styles.cardContent, { alignItems: "center", margin: 8 }]}
-            >
+            <View style={[styles.cardContent, { alignItems: "center", margin: 8 }]}>
               <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
                 {job.title}
               </Text>
@@ -161,7 +158,7 @@ const ApplicationStatus = () => {
                 />
               </View>
             </View>
-          </View>
+      
         </View>
 
         <View style={[styles.tabContent]}>

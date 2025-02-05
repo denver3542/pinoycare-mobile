@@ -44,6 +44,8 @@ const JobListings = ({ activeNav, rating }) => {
   const windowWidth = useWindowDimensions().width;
   const saveJob = useSaveJob();
 
+  console.log('Jobs', data);
+
   const onRefresh = () => {
     setRefreshing(true);
     refetch()
@@ -91,7 +93,7 @@ const JobListings = ({ activeNav, rating }) => {
           }
           <View style={styles.cardContentText}>
               <Text style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{item.title}</Text>
-              <Text style={styles.company}>{item.company}</Text>
+              <Text style={styles.company}>{item.creator.name}</Text>
               <Text style={{ fontWeight: '400', fontSize: 12 }}>{item.location}</Text>
               <Matching rating={item.matchScore / 25} />
               <Text style={styles.postedDate}>Posted {moment(item.created_at).fromNow()}</Text>
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
   },
   postedDate: {
     color: '#888',
-    fontSize: 12
+    fontSize: 10
   },
   jobImage: {
     width: 80,
