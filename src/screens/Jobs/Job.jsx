@@ -134,13 +134,13 @@ export default function Job() {
         <Card.Cover
           source={{ uri: job.media[0].original_url }}
           resizeMode="stretch"
-          style={[styles.image, { borderRadius: 0, height: 400 }]}
+          style={[styles.image, { borderRadius: 0, height: 450 }]}
         />
       ) : (
         <Card.Cover
-          source={{ uri: "https://via.placeholder.com/150" }} // Fallback placeholder image
+          source={{ uri: "https://via.placeholder.com/150" }}
           resizeMode="stretch"
-          style={[styles.image, { borderRadius: 0, height: 400 }]}
+          style={[styles.image, { borderRadius: 0, height: 450 }]}
         />
       )}
 
@@ -151,14 +151,14 @@ export default function Job() {
               {job.title}
             </Text>
             <Text
-              variant="titleLarge"
               style={{
                 fontWeight: "bold",
                 color: "#5690FD",
                 textAlign: "center",
+                fontSize: 18,
               }}
             >
-              {job.company}
+              {job.creator.name}
             </Text>
             <Text style={{ color: "gray" }} variant="labelSmall">
               {" "}

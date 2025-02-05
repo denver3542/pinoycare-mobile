@@ -73,6 +73,7 @@ function Dashboard() {
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
+  console.log(applications);
   useEffect(() => {
     if (isFetched) {
       setApplications(data?.applications || []);

@@ -84,7 +84,7 @@ const ApplicationStatus = () => {
           <Card.Cover
             source={{ uri: job.media[0].original_url }}
             resizeMode="stretch"
-            style={[styles.image, { borderRadius: 0, height: 400 }]}
+            style={[styles.image, { borderRadius: 0, height: 450 }]}
           />
         ) : (
           <Card.Cover
@@ -106,7 +106,7 @@ const ApplicationStatus = () => {
                 style={{ fontWeight: "bold", color: "#0A3480" }}
                 numberOfLines={1}
               >
-                {job.company}
+                {job.creator.name}
               </Text>
               <Text style={{ color: "gray" }} variant="labelSmall">
                 {" "}
@@ -218,7 +218,7 @@ const ApplicationStatus = () => {
             </View>
           </View>
         </View>
-        
+
         <View style={styles.tabContent}>
           <Text style={[styles.headerTitle, { marginBottom: 10 }]}>Skills</Text>
           <View style={{ paddingHorizontal: 0 }}>
@@ -228,22 +228,21 @@ const ApplicationStatus = () => {
                   <Text
                     key={index}
                     style={{
-                      marginVertical: 3,
+                      marginVertical: 2,
                       marginHorizontal: 0,
                       paddingHorizontal: 10,
                       paddingVertical: 8,
-                      backgroundColor: "#F5F5F5",
+                      backgroundColor: "#fff",
                       borderRadius: 10,
                       borderWidth: 0.5,
                       borderColor: "#ddd",
-                    //   color: "black",
                     }}
                   >
                     {skill.skill_name}
                   </Text>
                 ))
               ) : (
-                <Text style={styles.jobTitle}>No categories available</Text>
+                <Text>No Skills Required</Text>
               )}
             </View>
           </View>
@@ -257,21 +256,22 @@ const ApplicationStatus = () => {
             {job.schedules && job.schedules.length > 0 ? (
               <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                 {job.schedules.map((schedule, index) => (
-                  <Chip
+                  <Text
                     key={index}
-                    mode="flat"
-                    style={styles.skillChip}
-                    textStyle={{
-                      minHeight: 15,
-                      lineHeight: 15,
-                      marginHorizontal: 15,
-                      marginVertical: 5,
-                      fontSize: 12,
+                    style={{
+                      marginVertical: 2,
+                      marginHorizontal: 0,
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      backgroundColor: "#fff",
+                      borderRadius: 10,
+                      borderWidth: 0.5,
+                      borderColor: "#ddd",
                       
                     }}
                   >
                     {schedule}
-                  </Chip>
+                  </Text>
                 ))}
               </View>
             ) : (

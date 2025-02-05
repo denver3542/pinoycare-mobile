@@ -23,6 +23,8 @@ const JobApplicationList = ({ application }) => {
     dashboardData.applications,
     job.id
   );
+
+  console.log("Employer: " + application.job.creator.name);
   const badgeColor = getBadgeColor(applicationStatus);
   const badgeTextColor = getBadgeTextColor(applicationStatus);
 
