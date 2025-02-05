@@ -6,10 +6,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import ImageView from "react-native-image-viewing";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
-import { useReactToPost } from "./useFeeds";
+import { useReactToPost } from "./hooks/useFeeds";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import moment from "moment";
-import { useUser } from "../../../../hooks/useUser";
+import { useUser } from "../../../hooks/useUser";
 
 
 const MAX_LENGTH = 150;
@@ -21,7 +21,7 @@ const FeedsCard = ({ feed }) => {
   const { user } = useUser();
   const windowWidth = Dimensions.get('window').width;
   const maxWidth = Math.min(windowWidth, 768);
-  const imageHeight = maxWidth * 9 / 9;
+  const imageHeight = maxWidth * 9 / 8;
   const handleDownload = async () => {
     try {
   
@@ -117,7 +117,7 @@ const FeedsCard = ({ feed }) => {
       <View style={styles.feedContainer}>
         <View style={styles.header}>
           <View style={styles.creatorInfo}>
-            <Image source={require("../../../../../assets/icon.png")} style={styles.userImage} />
+            <Image source={require("../../../../assets/icon.png")} style={styles.userImage} />
             <View>
               <Text style={styles.creatorName}>Upcare</Text>
               <Text style={styles.publishedDate}>{formattedDate}</Text>

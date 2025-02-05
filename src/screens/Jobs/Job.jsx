@@ -1,15 +1,32 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Dimensions, useWindowDimensions, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Appbar, Button, Card, Chip, Modal, Portal, Text, useTheme, Divider } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
-import RenderHtml from 'react-native-render-html';
-import JobMatching from '../User/Jobs/jobMatching';
-import { fDate } from '../../../utils/formatTime';
-import { addCommasToNumber } from '../../../utils/currencyFormat';
-import { useUser } from '../../hooks/useUser';
-import useJob from '../../screens/User/Jobs/hook/useJobs';
-import { useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  useWindowDimensions,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  Appbar,
+  Button,
+  Card,
+  Chip,
+  Modal,
+  Portal,
+  Text,
+  useTheme,
+  Divider,
+} from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
+import RenderHtml from "react-native-render-html";
+import JobMatching from "../User/Jobs/jobMatching";
+import { fDate } from "../../../utils/formatTime";
+import { addCommasToNumber } from "../../../utils/currencyFormat";
+import { useUser } from "../../hooks/useUser";
+import useJob from "../../screens/User/Jobs/hook/useJobs";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Job() {
   const { colors } = useTheme();
@@ -22,7 +39,7 @@ export default function Job() {
   const { data: jobData, isFetching, refetch } = useJob(job.uuid);
   const [refreshing, setRefreshing] = useState(false);
   const { width: contentWidth } = useWindowDimensions();
-  const windowWidth = Dimensions.get('window').width;
+  const windowWidth = Dimensions.get("window").width;
   const maxWidth = Math.min(windowWidth, 768);
   const imageHeight = (maxWidth * 9) / 10;
   const queryClient = useQueryClient();
@@ -32,13 +49,22 @@ export default function Job() {
   const truncatedDescriptionLength = 150;
 
   const toggleDescription = useCallback(() => {
-    setIsDescriptionExpanded(prevState => !prevState);
+    setIsDescriptionExpanded((prevState) => !prevState);
   }, []);
+
+  const { width } = useWindowDimensions();
+
+  const source = {
+    html: job?.description,
+  };
 
   const renderDescription = () => {
     if (!job?.description) return null;
 
-    const truncatedDescription = job.description.substring(0, truncatedDescriptionLength);
+    const truncatedDescription = job.description.substring(
+      0,
+      truncatedDescriptionLength
+    );
     const shouldShowMore = job.description.length > truncatedDescriptionLength;
     const descriptionToShow = isDescriptionExpanded
       ? job.description
@@ -47,15 +73,21 @@ export default function Job() {
     return (
       <RenderHtml
         contentWidth={contentWidth}
-        source={{ html: `<div style="text-align: justify;">${descriptionToShow}</div>` }}
+        source={{
+          html: `<p style="text-align: justify;">${descriptionToShow}</p>`,
+        }}
+        tagsStyles={{
+          p: { margin: 0, padding: 0, textAlign: "justify" },
+        }}
       />
     );
   };
 
-  const formatSalary = useCallback((salary) => {
-    if (!salary) return "n/a";
-    return `${(salary / 1000).toFixed(0)}k`;
-  }, []);
+  const formatSalary = (from, to, currency) => {
+    return `${currency} ${parseFloat(from).toLocaleString()} - ${parseFloat(
+      to
+    ).toLocaleString()}`;
+  };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -66,7 +98,9 @@ export default function Job() {
 
   useEffect(() => {
     if (user && isFetched) {
-      const appliedJob = job.application?.find(app => app.user_id === user.id);
+      const appliedJob = job.application?.find(
+        (app) => app.user_id === user.id
+      );
       setIsApplied(!!appliedJob);
       setApplicationStatus(appliedJob ? appliedJob.status : null);
     }
@@ -77,40 +111,38 @@ export default function Job() {
     if (!user) {
       setShowApplyModal(true);
     } else {
-      navigation.navigate('Questionnaire', { job });
+      navigation.navigate("Questionnaire", { job });
     }
   }, [user, job, navigation]);
 
   const signIn = useCallback(() => {
-    navigation.navigate('Login');
+    navigation.navigate("Login");
     closeModal();
   }, [navigation]);
 
   const closeModal = useCallback(() => {
     setShowSaveModal(false);
     setShowApplyModal(false);
-  }, [])
+  }, []);
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-    >
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Appbar.Header style={{ backgroundColor: "#0A3480" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         {/* <Appbar.Content title={job.title || "Job Details"} titleStyle={{ color: 'white' }} /> */}
       </Appbar.Header>
       {job.media && job.media[0] && job.media[0].original_url ? (
-  <Card.Cover
-    source={{ uri: job.media[0].original_url }}
-    resizeMode="stretch"
-    style={[styles.image, { borderRadius: 0, height: 400 }]}
-  />
-) : (
-  <Card.Cover
-    source={{ uri: 'https://via.placeholder.com/150' }} // Fallback placeholder image
-    resizeMode="stretch"
-    style={[styles.image, { borderRadius: 0, height: 400 }]}
-  />
-)}
+        <Card.Cover
+          source={{ uri: job.media[0].original_url }}
+          resizeMode="stretch"
+          style={[styles.image, { borderRadius: 0, height: 400 }]}
+        />
+      ) : (
+        <Card.Cover
+          source={{ uri: "https://via.placeholder.com/150" }} // Fallback placeholder image
+          resizeMode="stretch"
+          style={[styles.image, { borderRadius: 0, height: 400 }]}
+        />
+      )}
 
       <View style={styles.contentWrapper}>
         <View style={styles.card}>
@@ -193,8 +225,8 @@ export default function Job() {
                     Salary
                   </Text>
                   <Text variant="labelMedium" style={{ color: "#414141" }}>
-                    {job.currency} {formatSalary(job.salary_from)} -{" "}
-                    {formatSalary(job.salary_to)} / {job.rate_type}
+                    {formatSalary(job.salary_from, job.salary_to, job.currency)}{" "}
+                    / {job.rate_type}
                   </Text>
                 </View>
               </View>
@@ -230,7 +262,7 @@ export default function Job() {
             </View> */}
           </View>
 
-          <View style={[styles.cardContent]}>
+          <View style={[styles.cardContent, { gap: 5 }]}>
             <Text style={{ fontWeight: "bold", fontSize: 18 }}>
               Description
             </Text>
@@ -244,6 +276,7 @@ export default function Job() {
               </TouchableOpacity>
             )}
           </View>
+
           <View style={[styles.cardContent]}>
             <Text style={{ fontWeight: "bold", marginBottom: 5, fontSize: 18 }}>
               Skills
@@ -255,15 +288,15 @@ export default function Job() {
                     <Text
                       key={item.id}
                       style={{
-                      marginVertical: 3,
-                      marginHorizontal: 0,
-                      paddingHorizontal: 10,
-                      paddingVertical: 8,
-                      backgroundColor: "#F5F5F5",
-                      borderRadius: 10,
-                      borderWidth: 0.5,
-                      borderColor: "#ddd",
-                    }}
+                        marginVertical: 2,
+                        marginHorizontal: 0,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        borderWidth: 0.5,
+                        borderColor: "#ddd",
+                      }}
                     >
                       {item.skill_name}
                     </Text>
@@ -285,16 +318,16 @@ export default function Job() {
                     <Text
                       key={index}
                       style={{
-                      marginVertical: 3,
-                      marginHorizontal: 0,
-                      paddingHorizontal: 10,
-                      paddingVertical: 8,
-                      backgroundColor: "#F5F5F5",
-                      borderRadius: 10,
-                      borderWidth: 0.5,
-                      borderColor: "#ddd",
-                    //   color: "black",
-                    }}
+                        marginVertical: 2,
+                        marginHorizontal: 0,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        borderWidth: 0.5,
+                        borderColor: "#ddd",
+                        //   color: "black",
+                      }}
                     >
                       {schedule}
                     </Text>
@@ -314,18 +347,18 @@ export default function Job() {
               <View style={styles.chipStyle}>
                 <Text
                   style={{
-                      marginVertical: 3,
-                      marginHorizontal: 0,
-                      paddingHorizontal: 10,
-                      paddingVertical: 2,
-                      backgroundColor: "#F5F5F5",
-                      borderRadius: 10,
-                      borderWidth: 0.5,
-                      borderColor: "#ddd",
+                    marginVertical: 2,
+                        marginHorizontal: 0,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        borderWidth: 0.5,
+                        borderColor: "#ddd",
                     //   color: "black",
-                    }}
+                  }}
                 >
-                  {job.max_applicant ?? "n/a"} vacant
+                  {job.max_applicant === -1 ? "No Limit" : job.max_applicant}
                 </Text>
               </View>
             </View>

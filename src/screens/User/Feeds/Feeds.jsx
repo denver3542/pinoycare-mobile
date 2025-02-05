@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, RefreshControl, Image } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
-import FeedsCard from "./hooks/FeedsCard";
+import FeedsCard from "./FeedsCard";
 import useFeeds from "./hooks/useFeeds";
 import HeaderMessageNotification from "../../../components/HeaderMessageNotification";
 import HeaderNotification from "../../../components/HeaderNotification";
