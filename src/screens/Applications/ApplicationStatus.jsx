@@ -70,7 +70,10 @@ const ApplicationStatus = () => {
       )}...</div>`;
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.scrollContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <Appbar.Header style={{ backgroundColor: "#0A3480" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content
@@ -78,107 +81,99 @@ const ApplicationStatus = () => {
           titleStyle={{ color: "white" }}
         />
       </Appbar.Header>
+      {job.media && job.media[0] && job.media[0].original_url ? (
+        <Card.Cover
+          source={{ uri: job.media[0].original_url }}
+          resizeMode="stretch"
+          style={[styles.image, { borderRadius: 0, height: 450 }]}
+        />
+      ) : (
+        <Card.Cover
+          source={{ uri: "https://via.placeholder.com/150" }}
+          resizeMode="stretch"
+          style={[styles.image, { borderRadius: 0, height: 400 }]}
+        />
+      )}
 
-      <View style={styles.contentWrapper}>
-        {job.media && job.media[0] && job.media[0].original_url ? (
-          <Card.Cover
-            source={{ uri: job.media[0].original_url }}
-            resizeMode="stretch"
-            style={[styles.image, { borderRadius: 0, height: 450 }]}
-          />
-        ) : (
-          <Card.Cover
-            source={{ uri: "https://via.placeholder.com/150" }}
-            resizeMode="stretch"
-            style={[styles.image, { borderRadius: 0, height: 400 }]}
-          />
-        )}
-        <View style={styles.card}>
-            <View style={[styles.cardContent, { alignItems: "center", margin: 8 }]}>
-              <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                {job.title}
-              </Text>
-              <Text
-                variant="titleLarge"
-                style={{ fontWeight: "bold", color: "#0A3480" }}
-                numberOfLines={1}
-              >
-                {job.creator.name}
-              </Text>
-              <Text style={{ color: "gray" }} variant="labelSmall">
-                {" "}
-                Posted {job.created_at ? fDate(job.created_at) : "n/a"}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexGrow: 1,
-                backgroundColor: "#fff",
-                padding: 20,
-                marginHorizontal: 8,
-                borderRadius: 14,
-                borderTopRightRadius: 14,
-                borderWidth: 0.5,
-                borderColor: "#ddd",
-              }}
-            >
-              <View
-                style={{
-                  flexGrow: 1,
-                  paddingVertical: 0,
-                  flexGrow: 1,
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    padding: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text variant="titleMedium">Your Application Status</Text>
-                </View>
-                <Badge
-                  value={application.status || "n/a"}
-                  badgeStyle={[
-                    styles.appliedStatusBadge,
-                    {
-                      backgroundColor: getBadgeColor(application.status),
-                      borderRadius: 4,
-                      width: "100%",
-                      height: 30,
-                      borderRadius: 10,
-                    },
-                  ]}
-                  textStyle={[
-                    styles.chipText,
-                    { color: getBadgeTextColor(application.status) },
-                  ]}
-                />
-              </View>
-            </View>
-      
-        </View>
-
-        <View style={[styles.tabContent]}>
-          <Text style={styles.headerTitle}>Description</Text>
-          <RenderHtml
-            contentWidth={contentWidth}
-            source={{ html: descriptionHtml }}
-          />
-          <TouchableOpacity onPress={() => setReadMore(!readMore)}>
-            <Text style={{ fontWeight: "700", color: "#0A3480" }}>
-              {readMore ? "Read Less" : "Read More"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.tabContent}>
-          <Text style={[styles.headerTitle, { marginBottom: 15 }]}>
-            Job Summary
+      <View style={styles.card}>
+        <View style={[styles.cardContent, { alignItems: "center" }]}>
+          <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+            {job.title}
           </Text>
-          <View style={{ paddingHorizontal: 10 }}>
+          <Text
+            variant="titleLarge"
+            style={{ fontWeight: "bold", color: "#0A3480" }}
+            numberOfLines={1}
+          >
+            {job.creator.name}
+          </Text>
+          <Text style={{ color: "gray" }} variant="labelSmall">
+            {" "}
+            Posted {job.created_at ? fDate(job.created_at) : "n/a"}
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flexGrow: 1,
+            backgroundColor: "#fff",
+            padding: 20,
+            borderRadius: 14,
+            borderTopRightRadius: 14,
+            borderWidth: 0.5,
+            borderColor: "#ddd",
+          }}
+        >
+          <View
+            style={{
+              padding: 0,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text variant="titleMedium">Your Application Status</Text>
+          </View>
+
+          <Badge
+            value={application.status || "n/a"}
+            badgeStyle={[
+              styles.appliedStatusBadge,
+              {
+                backgroundColor: getBadgeColor(application.status),
+                borderRadius: 4,
+                width: "100%",
+                height: 30,
+                borderRadius: 10,
+              },
+            ]}
+            textStyle={[
+              styles.chipText,
+              { color: getBadgeTextColor(application.status) },
+            ]}
+          />
+        </View>
+
+        <View style={[styles.cardContent]}>
+          <Text style={styles.headerTitle}>Description</Text>
+          <View style={{ paddingHorizontal: 8 }}>
+            <RenderHtml
+              contentWidth={contentWidth}
+              source={{ html: descriptionHtml }}
+              tagsStyles={{
+                p: { margin: 0, padding: 0, textAlign: "justify" },
+              }}
+            />
+            <TouchableOpacity onPress={() => setReadMore(!readMore)}>
+              <Text style={{ fontWeight: "700", color: "#0A3480" }}>
+                {readMore ? "Read Less" : "Read More"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.cardContent}>
+          <Text style={styles.headerTitle}>Job Summary</Text>
+          <View style={{ paddingHorizontal: 8, }}>
             <View
               style={{
                 flexDirection: "row",
@@ -186,7 +181,7 @@ const ApplicationStatus = () => {
                 alignItems: "flex-start",
               }}
             >
-              <View>
+              <View style={{ gap: 2 }}>
                 <Text style={styles.jobPosition}>Job Category</Text>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                   {job.categories && job.categories.length > 0 ? (
@@ -202,9 +197,11 @@ const ApplicationStatus = () => {
                 <Text style={styles.jobPosition}>Job Position</Text>
                 <Text style={styles.jobTitle}>{job?.title}</Text>
                 <Text style={styles.jobPosition}>Vacancy</Text>
-                <Text style={styles.jobTitle}>{job?.max_applicant} vacant</Text>
+                <Text style={styles.jobTitle}>
+                  {job?.max_applicant === -1 ? "No Limit" : job.max_applicant}
+                </Text>
               </View>
-              <View style={{ right: 50 }}>
+              <View style={{ right: 50, gap: 2 }}>
                 <Text style={styles.jobPosition}>Job Work Place</Text>
                 <Text style={styles.jobTitle}>{job?.workplace}</Text>
                 <Text style={styles.jobPosition}>Job Type</Text>
@@ -216,10 +213,10 @@ const ApplicationStatus = () => {
           </View>
         </View>
 
-        <View style={styles.tabContent}>
-          <Text style={[styles.headerTitle, { marginBottom: 10 }]}>Skills</Text>
+        <View style={styles.cardContent}>
+          <Text style={[styles.headerTitle]}>Skills</Text>
           <View style={{ paddingHorizontal: 0 }}>
-            <View style={{ flexDirection: "column" }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {job.skills && job.skills.length > 0 ? (
                 job.skills.map((skill, index) => (
                   <Text
@@ -245,8 +242,8 @@ const ApplicationStatus = () => {
           </View>
         </View>
 
-        <View style={styles.tabContent}>
-          <Text style={[styles.headerTitle, { marginBottom: 10 }]}>
+        <View style={styles.cardContent}>
+          <Text style={[styles.headerTitle]}>
             Shift and Schedule
           </Text>
           <View style={{ paddingHorizontal: 8 }}>
@@ -264,7 +261,7 @@ const ApplicationStatus = () => {
                       borderRadius: 10,
                       borderWidth: 0.5,
                       borderColor: "#ddd",
-                      
+                      marginRight: 2,
                     }}
                   >
                     {schedule}
@@ -277,7 +274,7 @@ const ApplicationStatus = () => {
           </View>
         </View>
 
-        <View style={styles.tabContent}>
+        <View style={styles.cardContent}>
           <Text style={[styles.headerTitle, { marginBottom: 10 }]}>
             Job Questions
           </Text>
@@ -313,27 +310,22 @@ const ApplicationStatus = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentWrapper: {
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 20,
     backgroundColor: "#F4F7FB",
-    flex: 1,
   },
+
   card: {
-    flex: 1,
+    width: "100%",
+    paddingHorizontal: 10,
   },
+
   cardContent: {
-    paddingHorizontal: 8,
-    paddingVertical: 15,
+    paddingVertical: 10,
     gap: 5,
   },
-  tabContent: {
-    width: "100%",
-    padding: 15,
-    // backgroundColor: 'white',
-    marginVertical: 0,
-  },
+
   image: {
     borderRadius: 0,
     height: 400,

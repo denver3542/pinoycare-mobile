@@ -143,20 +143,19 @@ export default function Job() {
           style={[styles.image, { borderRadius: 0, height: 450 }]}
         />
       )}
-
-      <View style={styles.contentWrapper}>
+     
         <View style={styles.card}>
-          <View
-            style={[styles.cardContent, { alignItems: "center", margin: 8 }]}
+
+          <View style={[styles.cardContent, { alignItems: "center" }]}
           >
             <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
               {job.title}
             </Text>
-             <Text
-                           variant="titleLarge"
-                           style={{ fontWeight: "bold", color: "#0A3480" }}
-                           numberOfLines={1}
-                         >
+            <Text
+              variant="titleLarge"
+              style={{ fontWeight: "bold", color: "#0A3480" }}
+              numberOfLines={1}
+            >
               {job.creator.name}
             </Text>
             <Text style={{ color: "gray" }} variant="labelSmall">
@@ -254,19 +253,18 @@ export default function Job() {
                 </View>
               </View>
             </View>
-            {/* <Divider style={{ margin: 20 }} />
-
-            <View style={{ flexDirection: 'column', alignItems: 'center', }}>
-              <JobMatching rating={job.matchScore / 25} />
-            </View> */}
+      
           </View>
 
-          <View style={[styles.cardContent, { gap: 5 }]}>
+
+
+          <View style={styles.cardContent}>
             <Text style={{ fontWeight: "bold", fontSize: 18 }}>
               Description
             </Text>
 
-            {renderDescription()}
+           <View style={{ padding: 5, gap: 5 }}>
+           {renderDescription()}
             {job?.description?.length > truncatedDescriptionLength && (
               <TouchableOpacity onPress={toggleDescription}>
                 <Text style={{ fontWeight: "700", color: "#0A3480" }}>
@@ -274,6 +272,7 @@ export default function Job() {
                 </Text>
               </TouchableOpacity>
             )}
+           </View>
           </View>
 
           <View style={[styles.cardContent]}>
@@ -281,7 +280,7 @@ export default function Job() {
               Skills
             </Text>
             <View style={{ paddingHorizontal: 0 }}>
-              <View style={styles.chipContainer}>
+            <View style={styles.chipContainer}>
                 {job.skills && job.skills.length > 0 ? (
                   job.skills.map((item) => (
                     <Text
@@ -306,6 +305,7 @@ export default function Job() {
               </View>
             </View>
           </View>
+
           <View style={[styles.cardContent]}>
             <Text style={{ fontWeight: "bold", marginBottom: 5, fontSize: 18 }}>
               Shift and Schedule
@@ -325,6 +325,7 @@ export default function Job() {
                         borderRadius: 10,
                         borderWidth: 0.5,
                         borderColor: "#ddd",
+                        marginRight: 5
                         //   color: "black",
                       }}
                     >
@@ -372,7 +373,6 @@ export default function Job() {
             </View>
           </View>
         </View>
-      </View>
       <Divider style={{ marginVertical: 10 }} />
       <View style={{ marginHorizontal: 10 }}>
         {!user && !isFetched && (
@@ -426,19 +426,22 @@ export default function Job() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentWrapper: {
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 20,
     backgroundColor: "#F4F7FB",
-    flex: 1,
+  },
+
+  card: {
+    width: "100%",
+    paddingHorizontal: 10,
   },
 
   cardContent: {
-    paddingHorizontal: 8,
-    paddingVertical: 15,
+    paddingVertical: 10,
     gap: 5,
   },
+
   modal: {
     backgroundColor: "white",
     padding: 20,
@@ -452,17 +455,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 10,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingBottom: 20,
-    backgroundColor: "#F4F7FB",
-  },
-  card: {
-    width: "100%",
-    borderRadius: 0,
-    margin: 5,
-    backgroundColor: "#F4F7FB",
-  },
+
   saveButton: {},
   applyButton: {
     backgroundColor: "#0A3480",
@@ -511,8 +504,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   chipContainer: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   chipStyle: {
     flexDirection: "row",

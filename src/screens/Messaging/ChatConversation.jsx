@@ -28,7 +28,7 @@ import {
 } from "react-native-paper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import moment from "moment";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -40,7 +40,6 @@ import useMessaging, { useConvo } from "./hook/useMessaging";
 import Ably from "ably/promises";
 import { useUser } from "../../hooks/useUser";
 import ImageView from "react-native-image-viewing";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "./style";
 import * as MediaLibrary from "expo-media-library";
 import CustomAvatar from "../../components/CustomAvatar";
@@ -64,6 +63,15 @@ const ChatConversation = () => {
   const { send } = useMessaging();
   const messagesEndRef = useRef(null);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+
+
 
   const toggleBottomSheet = () => {
     Keyboard.dismiss();
